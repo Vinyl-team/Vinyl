@@ -1,2 +1,4 @@
-/.idea
+.idea
+target
 *.iml
+src/main/java/com/vinylteam/vinyl/Main.java
