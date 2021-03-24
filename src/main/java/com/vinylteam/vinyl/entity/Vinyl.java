@@ -61,8 +61,12 @@ public class Vinyl {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Vinyl vinyl = (Vinyl) o;
         return Objects.equals(release, vinyl.release) &&
                 Objects.equals(artist, vinyl.artist) &&

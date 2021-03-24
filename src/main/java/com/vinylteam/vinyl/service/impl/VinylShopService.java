@@ -77,8 +77,8 @@ public class VinylShopService implements ShopService {
                 String vinylLink = startLink + pageElement.getElementsByClass("img-showcase-release").select("a").attr("href");
                 String[] imageLinks = pageElement.getElementsByClass("img-showcase-release").attr("style").split("'");
                 String imageLink = imageLinks[1];
-                String[] genres = pageLink.split("[/?]");
-                String genre = genres[4];
+                String[] linkComponents = pageLink.split("[/?]");
+                String genre = linkComponents[4];
 
                 Vinyl vinyl = new Vinyl();
                 vinyl.setRelease(release);
