@@ -1,8 +1,6 @@
 language: java
 jdk: "-openjdk11"
 
-script: "./mvnw clean test"
-
 env:
   global:
     - CODECOV_TOKEN='9b3f4403-014a-4ea3-b09a-bc93708a17b8'
