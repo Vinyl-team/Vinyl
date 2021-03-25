@@ -14,10 +14,9 @@ public class VinylUaShopService implements ShopService {
     private final String startLink = "http://vinyl.ua";
 
     HashSet<String> getGenresLinks() throws IOException {
-        HashSet<String> showcaseLinks = new HashSet<>();
+        HashSet<String> genreLinks = new HashSet<>();
         Document doc = Jsoup.connect(startLink).get();
-        Elements innerLinks;
-        innerLinks = doc.getElementsByTag("a");
+        Elements innerLinks = doc.getElementsByClass("dropdown-menu dropdown-menu-left").select("a");
 
         for (Element innerLink : innerLinks) {
             String link;
@@ -26,12 +25,10 @@ public class VinylUaShopService implements ShopService {
             } else {
                 link = startLink + innerLink.attr("href");
             }
-            if (link.contains("http://vinyl.ua/showcase/")) {
-                showcaseLinks.add(link);
-            }
+            genreLinks.add(link);
         }
 
-        return showcaseLinks;
+        return genreLinks;
     }
 
     HashSet<String> getPageLinks(HashSet<String> showcaseLinks) throws IOException {
@@ -98,7 +95,7 @@ public class VinylUaShopService implements ShopService {
     public List<Vinyl> getDataProduct() throws IOException {
         HashSet<String> showcaseLinks = getGenresLinks();
         HashSet<String> pageLinks = getPageLinks(showcaseLinks);
-        HashSet<Vinyl>  vinyls = readProductDataFromPage(pageLinks);
+        HashSet<Vinyl> vinyls = readProductDataFromPage(pageLinks);
         return new ArrayList<>(vinyls);
     }
 }
