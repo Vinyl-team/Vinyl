@@ -10,35 +10,35 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class VinylShopServiceITest {
-    private VinylShopService vinylShopService;
+class VinylUaShopServiceITest {
+    private VinylUaShopService vinylUaShopService;
     private HashSet<String> oneTestLink;
 
     @BeforeEach
     void setUp() {
-        vinylShopService = new VinylShopService();
+        vinylUaShopService = new VinylUaShopService();
         oneTestLink = new HashSet<>();
         oneTestLink.add("http://vinyl.ua/showcase/reggae");
     }
 
     @Test
     void getShowcaseLinksTest() throws IOException {
-        assertFalse(vinylShopService.getShowcaseLinks().isEmpty());
+        assertFalse(vinylUaShopService.getShowcaseLinks().isEmpty());
     }
 
     @Test
     void getPageLinksTest() throws IOException {
-        assertFalse(vinylShopService.getPageLinks(oneTestLink).isEmpty());
+        assertFalse(vinylUaShopService.getPageLinks(oneTestLink).isEmpty());
     }
 
     @Test
     void readProductDataFromPageTest() throws IOException {
-        assertFalse(vinylShopService.readProductDataFromPage(oneTestLink).isEmpty());
+        assertFalse(vinylUaShopService.readProductDataFromPage(oneTestLink).isEmpty());
     }
 
     @Test
     void getDataProduct() throws IOException {
-        List<Vinyl> actualVinyls = vinylShopService.getDataProduct();
+        List<Vinyl> actualVinyls = vinylUaShopService.getDataProduct();
         assertFalse(actualVinyls.isEmpty());
     }
 }

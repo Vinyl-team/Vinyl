@@ -10,7 +10,7 @@ import com.vinylteam.vinyl.service.ShopService;
 import java.io.IOException;
 import java.util.*;
 
-public class VinylShopService implements ShopService {
+public class VinylUaShopService implements ShopService {
     private final String startLink = "http://vinyl.ua";
 
     HashSet<String> getShowcaseLinks() throws IOException {
