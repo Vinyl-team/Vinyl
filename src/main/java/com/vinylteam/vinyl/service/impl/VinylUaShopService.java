@@ -31,11 +31,11 @@ public class VinylUaShopService implements ShopService {
         return genreLinks;
     }
 
-    HashSet<String> getPageLinks(HashSet<String> showcaseLinks) throws IOException {
+    HashSet<String> getPageLinks(HashSet<String> genreLinks) throws IOException {
         LinkedHashSet<String> pageLinks = new LinkedHashSet<>();
 
-        for (String showcaseLink : showcaseLinks) {
-            Document doc = Jsoup.connect(showcaseLink).get();
+        for (String genreLink : genreLinks) {
+            Document doc = Jsoup.connect(genreLink).get();
             Elements innerLinks = doc.getElementsByTag("a");
 
             for (Element innerLink : innerLinks) {
