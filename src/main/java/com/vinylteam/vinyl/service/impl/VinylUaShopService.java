@@ -13,7 +13,7 @@ import java.util.*;
 public class VinylUaShopService implements ShopService {
     private final String startLink = "http://vinyl.ua";
 
-    HashSet<String> getShowcaseLinks() throws IOException {
+    HashSet<String> getGenresLinks() throws IOException {
         HashSet<String> showcaseLinks = new HashSet<>();
         Document doc = Jsoup.connect(startLink).get();
         Elements innerLinks;
@@ -96,7 +96,7 @@ public class VinylUaShopService implements ShopService {
 
     @Override
     public List<Vinyl> getDataProduct() throws IOException {
-        HashSet<String> showcaseLinks = getShowcaseLinks();
+        HashSet<String> showcaseLinks = getGenresLinks();
         HashSet<String> pageLinks = getPageLinks(showcaseLinks);
         HashSet<Vinyl>  vinyls = readProductDataFromPage(pageLinks);
         return new ArrayList<>(vinyls);

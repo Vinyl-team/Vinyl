@@ -22,8 +22,8 @@ class VinylUaShopServiceITest {
     }
 
     @Test
-    void getShowcaseLinksTest() throws IOException {
-        assertFalse(vinylUaShopService.getShowcaseLinks().isEmpty());
+    void getGenresLinksTest() throws IOException {
+        assertFalse(vinylUaShopService.getGenresLinks().isEmpty());
     }
 
     @Test
