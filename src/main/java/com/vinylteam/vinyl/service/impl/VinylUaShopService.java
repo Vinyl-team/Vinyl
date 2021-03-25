@@ -93,8 +93,8 @@ public class VinylUaShopService implements ShopService {
 
     @Override
     public List<Vinyl> getDataProduct() throws IOException {
-        HashSet<String> showcaseLinks = getGenresLinks();
-        HashSet<String> pageLinks = getPageLinks(showcaseLinks);
+        HashSet<String> genresLinks = getGenresLinks();
+        HashSet<String> pageLinks = getPageLinks(genresLinks);
         HashSet<Vinyl> vinyls = readProductDataFromPage(pageLinks);
         return new ArrayList<>(vinyls);
     }
