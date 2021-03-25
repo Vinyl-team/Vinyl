@@ -19,12 +19,7 @@ public class VinylUaShopService implements ShopService {
         Elements innerLinks = doc.getElementsByClass("dropdown-menu dropdown-menu-left").select("a");
 
         for (Element innerLink : innerLinks) {
-            String link;
-            if (innerLink.attr("href").contains("www") || innerLink.attr("href").contains("http")) {
-                link = innerLink.attr("href");
-            } else {
-                link = startLink + innerLink.attr("href");
-            }
+            String link = startLink + innerLink.attr("href");
             genreLinks.add(link);
         }
 
@@ -36,15 +31,10 @@ public class VinylUaShopService implements ShopService {
 
         for (String genreLink : genreLinks) {
             Document doc = Jsoup.connect(genreLink).get();
-            Elements innerLinks = doc.getElementsByTag("a");
+            Elements innerLinks = doc.getElementsByClass("pagination-wrapper margin-top-20").select("a");
 
             for (Element innerLink : innerLinks) {
-                String link;
-                if (innerLink.attr("href").contains("www") || innerLink.attr("href").contains("http")) {
-                    link = innerLink.attr("href");
-                } else {
-                    link = startLink + innerLink.attr("href");
-                }
+                String link = startLink + innerLink.attr("href");
                 if (link.contains("?page=") && !link.contains("ussr?page=2")) {
                     pageLinks.add(link);
                 }
