@@ -24,7 +24,7 @@ class UserRowMapperTest {
         mockedFilledResultSet = mock(ResultSet.class);
         mockedEmptyResultSet = mock(ResultSet.class);
         when(mockedFilledResultSet.getString("email")).thenReturn("testuser@vinyl.com");
-        when(mockedFilledResultSet.getString("hash")).thenReturn("HASH");
+        when(mockedFilledResultSet.getString("password")).thenReturn("HASH");
         when(mockedFilledResultSet.getString("salt")).thenReturn("salt");
         when(mockedFilledResultSet.getInt("iterations")).thenReturn(1);
         when(mockedFilledResultSet.getString("role")).thenReturn("USER");
