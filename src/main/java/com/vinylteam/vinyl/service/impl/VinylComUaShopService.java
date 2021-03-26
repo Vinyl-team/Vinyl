@@ -37,7 +37,7 @@ public class VinylComUaShopService implements ShopService {
             for (Element link : nextPageLinks) {
                 if (link.text().equals("2")) {
                     String nextPageLink = link.attr("href");
-                    String idGenre = nextPageLink.substring(nextPageLink.length() - 1);
+                    String idGenre = nextPageLink.replace("https://vinyl.com.ua/vinyl/?lt=2&page=2&d%5B3%5D%5B0%5D=", "");
                     String lastPageLink = genreLink + "/?page=100000&d[3][]=" + idGenre;
                     Document lastPageDoc = Jsoup.connect(lastPageLink).get();
                     int numberOfLastPage = Integer.parseInt(lastPageDoc.getElementsByClass("hidden-xs active").text());
