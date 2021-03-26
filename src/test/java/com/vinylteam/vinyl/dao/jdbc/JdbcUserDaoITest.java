@@ -133,4 +133,5 @@ class JdbcUserDaoITest {
                 "HASH2", "", 0, Role.USER)));
         assertEquals(2, jdbcUserDao.countAll());
     }
+
 }
