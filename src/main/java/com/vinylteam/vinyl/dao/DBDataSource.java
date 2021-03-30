@@ -13,12 +13,12 @@ public class DBDataSource {
         dataSource = new PGSimpleDataSource();
         PropertiesReader propertiesReader = new PropertiesReader();
 
-        this.dataSource.setPassword(propertiesReader.getPassword());
-        this.dataSource.setUser(propertiesReader.getUser());
+        this.dataSource.setPassword(propertiesReader.getJdbcPassword());
+        this.dataSource.setUser(propertiesReader.getJdbcUser());
 
-        this.dataSource.setDatabaseName(propertiesReader.getDatabaseName());
-        this.dataSource.setServerNames(new String[]{propertiesReader.getServerName()});
-        this.dataSource.setPortNumbers(new int[]{Integer.parseInt(propertiesReader.getPgPort())});
+        this.dataSource.setDatabaseName(propertiesReader.getJdbcDatabase());
+        this.dataSource.setServerNames(new String[]{propertiesReader.getJdbcServer()});
+        this.dataSource.setPortNumbers(new int[]{Integer.parseInt(propertiesReader.getJdbcPort())});
     }
 
     public DefaultUserService getServiceImplementation() {

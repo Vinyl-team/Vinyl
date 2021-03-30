@@ -1,47 +1,46 @@
 package com.vinylteam.vinyl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
 public class PropertiesReader {
 
+    Logger logger = LoggerFactory.getLogger(getClass());
+
     public PropertiesReader() {
-        InputStream inputStream;
 
-        inputStream = getClass().getClassLoader().getResourceAsStream("application.properties");
-
-        setProperties(inputStream);
+        try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+            properties.load(inputStream);
+        } catch (IOException e) {
+            logger.error("Error during loading properties", e);
+            throw new RuntimeException(e);
+        }
     }
 
     private final Properties properties = new Properties();
 
-    private void setProperties(InputStream inputStream) {
-        try {
-            properties.load(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException("Was unable to load properties", e);
-        }
+    public String getJdbcUser() {
+        return properties.getProperty("jdbc.user");
     }
 
-    public String getUser() {
-        return properties.getProperty("user");
+    public String getJdbcPassword() {
+        return properties.getProperty("jdbc.password");
     }
 
-    public String getPassword() {
-        return properties.getProperty("password");
+    public String getJdbcDatabase() {
+        return properties.getProperty("jdbc.database");
     }
 
-    public String getDatabaseName() {
-        return properties.getProperty("databaseName");
+    public String getJdbcServer() {
+        return properties.getProperty("jdbc.server");
     }
 
-    public String getServerName() {
-        return properties.getProperty("serverName");
-    }
-
-    public String getPgPort() {
-        return properties.getProperty("pgPort");
+    public String getJdbcPort() {
+        return properties.getProperty("jdbc.port");
     }
 
     public String getAppPort() {

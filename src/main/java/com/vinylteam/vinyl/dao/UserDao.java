@@ -12,8 +12,4 @@ public interface UserDao {
 
     boolean removeUser(String email);
 
-    int countAll();
-
-    boolean doesExistByEmail(String email);
-
 }

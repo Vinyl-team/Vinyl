@@ -5,6 +5,8 @@ import com.vinylteam.vinyl.dao.jdbc.mapper.UserRowMapper;
 import com.vinylteam.vinyl.entity.User;
 import org.postgresql.ds.PGSimpleDataSource;
 import org.postgresql.util.PSQLException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
@@ -15,16 +17,17 @@ public class JdbcUserDao implements UserDao {
     private final String FIND_BY_EMAIL = "SELECT * FROM public.users" +
             " WHERE email=?";
     private final String INSERT = "INSERT INTO public.users" +
-            " (\"email\", \"password\", \"salt\", \"iterations\", \"role\")" +
+            " (email, password, salt, iterations, role)" +
             " VALUES (?, ?, ?, ?, ?)";
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public JdbcUserDao(PGSimpleDataSource dataSource) {
         this.dataSource = dataSource;
     }
 
     public boolean add(User user) {
-
-        boolean isAdded = false;
+        boolean isAdded;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement insertStatement = connection.prepareStatement(INSERT)) {
             insertStatement.setString(1, user.getEmail());
@@ -36,10 +39,11 @@ public class JdbcUserDao implements UserDao {
             insertStatement.executeUpdate();
             isAdded = true;
         } catch (PSQLException e) {
-            e.printStackTrace();
+            logger.info("Database error while adding user to public.users", e);
             isAdded = false;
         } catch (SQLException e) {
-            throw new RuntimeException("Error while adding user to public.users", e);
+            logger.error("Error while adding user to public.users", e);
+            throw new RuntimeException(e);
         }
         return isAdded;
     }
@@ -53,12 +57,17 @@ public class JdbcUserDao implements UserDao {
              PreparedStatement findByEmailStatement = connection.prepareStatement(FIND_BY_EMAIL)) {
             findByEmailStatement.setString(1, email);
             try (ResultSet resultSet = findByEmailStatement.executeQuery()) {
-                while (resultSet.next()) {
+                if (resultSet.next()) {
                     user = UserRowMapper.mapRow(resultSet);
+                    if (resultSet.next()) {
+                        logger.error("More than one user was found for email: {}", email);
+                        throw new SQLException("More than one user was found for email: ".concat(email));
+                    }
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("SQLException retrieving user by email from public.users", e);
+            logger.error("SQLException retrieving user by email from public.users", e);
+            throw new RuntimeException(e);
         }
         return user;
     }
@@ -67,7 +76,7 @@ public class JdbcUserDao implements UserDao {
         return false;
     }
 
-    public int countAll() {
+    int countAll() {
 
         int count = -1;
         try (Connection connection = dataSource.getConnection();
@@ -77,13 +86,11 @@ public class JdbcUserDao implements UserDao {
                 count = resultSet.getInt(1);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("SQLException while counting amount of rows in public.users", e);
+            logger.error("SQLException while counting amount of rows in public.users", e);
+            throw new RuntimeException(e);
         }
 
         return count;
     }
 
-    public boolean doesExistByEmail(String email) {
-        return false;
-    }
 }

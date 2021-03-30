@@ -3,6 +3,8 @@ package com.vinylteam.vinyl.security.impl;
 import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.security.SecurityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -11,30 +13,46 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Random;
 
 public class DefaultSecurityService implements SecurityService {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final Random random = new SecureRandom();
+    private final SecretKeyFactory secretKeyFactory;
+
+    {
+        try {
+            secretKeyFactory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
+        } catch (NoSuchAlgorithmException e) {
+            logger.error("Error during initialisation of SecretKeyFactory" +
+                    " with algorithm", e);
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public String hashPassword(char[] password, byte[] salt, int iterations) {
 
         try {
-            SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA512");
-            PBEKeySpec spec = new PBEKeySpec(password, salt, iterations, 256);
-            SecretKey key = skf.generateSecret(spec);
-            byte[] res = key.getEncoded();
-            return Arrays.toString(res);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new RuntimeException("Exception while hashing password", e);
+            PBEKeySpec pbeKeySpec = new PBEKeySpec(password, salt, iterations, 256);
+            Arrays.fill(password, '\u0000');
+            password = null;
+            SecretKey secretKey = secretKeyFactory.generateSecret(pbeKeySpec);
+            byte[] result = secretKey.getEncoded();
+            return Arrays.toString(result);
+        } catch (InvalidKeySpecException e) {
+            logger.error("Error during hashing password", e);
+            throw new RuntimeException(e);
         }
     }
 
     @Override
     public byte[] generateSalt() {
-        Random r = new SecureRandom();
         byte[] salt = new byte[20];
-        r.nextBytes(salt);
+        random.nextBytes(salt);
         return salt;
     }
 
@@ -42,10 +60,22 @@ public class DefaultSecurityService implements SecurityService {
     public User createUserWithHashedPassword(String email, char[] password) {
 
         byte[] salt = generateSalt();
-        int iterations = 1;
+        int iterations = 10000;
         String hashedPassword = hashPassword(password, salt, iterations);
-        Arrays.fill(password, '\u0000');
-        return new User(email, hashedPassword, Arrays.toString(salt),
+
+        return new User(email, hashedPassword, salt,
                 iterations, Role.USER);
+    }
+
+    @Override
+    public boolean checkPasswordAgainstUserPassword(User user, char[] password) {
+        if (user == null) {
+            return false;
+        } else {
+            boolean isSameHash;
+            isSameHash = (user.getPassword().equals(
+                    hashPassword(password, Base64.getDecoder().decode(user.getSalt()), user.getIterations())));
+            return isSameHash;
+        }
     }
 }

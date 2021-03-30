@@ -57,8 +57,7 @@ public class VinylShopService implements ShopService {
         return pageLinks;
     }
 
-
-    HashSet<Vinyl> readProductDataFromPage(HashSet<String> pageLinks) throws IOException {
+HashSet<Vinyl> readProductDataFromPage(HashSet<String> pageLinks) throws IOException {
         HashSet<Vinyl> dataOfProducts = new HashSet<>();
 
         for (String pageLink : pageLinks) {

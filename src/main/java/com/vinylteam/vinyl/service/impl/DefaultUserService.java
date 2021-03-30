@@ -34,11 +34,6 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public int countAll() {
-        return jdbcUserDao.countAll();
-    }
-
-    @Override
     public boolean doesExistByEmail(String email) {
         return false;
     }
