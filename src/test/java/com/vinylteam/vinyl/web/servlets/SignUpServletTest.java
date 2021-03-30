@@ -7,17 +7,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import org.mockito.internal.InOrderImpl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class SignInServletTest {
+class SignUpServletTest {
 
     private DefaultUserService mockedDefaultUserService;
     private DefaultSecurityService mockedDefaultSecurityService;
@@ -47,14 +45,14 @@ class SignInServletTest {
     @Test
     void doPostWithExistingUserTest() throws IOException {
 
-        SignInServlet signInServlet = new SignInServlet(mockedDefaultUserService, mockedDefaultSecurityService);
+        SignUpServlet signUpServlet = new SignUpServlet(mockedDefaultUserService, mockedDefaultSecurityService);
 
         when(mockedDefaultUserService.add(mockedUser)).thenReturn(true);
 
         InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
         InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
 
-        signInServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
+        signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
 
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
@@ -70,14 +68,14 @@ class SignInServletTest {
     @Test
     void doPostWithNewUserTest() throws IOException {
 
-        SignInServlet signInServlet = new SignInServlet(mockedDefaultUserService, mockedDefaultSecurityService);
+        SignUpServlet signUpServlet = new SignUpServlet(mockedDefaultUserService, mockedDefaultSecurityService);
 
         when(mockedDefaultUserService.add(mockedUser)).thenReturn(false);
 
         InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
         InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
 
-        signInServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
+        signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
 
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
