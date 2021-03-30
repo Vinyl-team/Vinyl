@@ -42,7 +42,7 @@ public class DefaultSecurityService implements SecurityService {
             password = null;
             SecretKey secretKey = secretKeyFactory.generateSecret(pbeKeySpec);
             byte[] result = secretKey.getEncoded();
-            return Arrays.toString(result);
+            return Base64.getEncoder().encodeToString(result);
         } catch (InvalidKeySpecException e) {
             logger.error("Error during hashing password", e);
             throw new RuntimeException(e);

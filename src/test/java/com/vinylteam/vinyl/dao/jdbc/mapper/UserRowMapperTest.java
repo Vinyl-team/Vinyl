@@ -20,7 +20,7 @@ class UserRowMapperTest {
     ResultSet mockedEmptyResultSet;
 
     @BeforeAll
-    void mapRowTest() throws SQLException {
+    void beforeAll() throws SQLException {
         mockedFilledResultSet = mock(ResultSet.class);
         mockedEmptyResultSet = mock(ResultSet.class);
         when(mockedFilledResultSet.getString("email")).thenReturn("testuser@vinyl.com");

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Base64;
 
 public class UserRowMapper {
 
@@ -24,7 +25,7 @@ public class UserRowMapper {
             salt = resultSet.getString("salt");
             iterations = resultSet.getInt("iterations");
             role = Role.valueOf(resultSet.getString("role"));
-            return new User(email, password, salt.getBytes(), iterations, role);
+            return new User(email, password, Base64.getDecoder().decode(salt), iterations, role);
         } catch (SQLException e){
             logger.error("Error while getting data from result set", e);
             throw new RuntimeException(e);

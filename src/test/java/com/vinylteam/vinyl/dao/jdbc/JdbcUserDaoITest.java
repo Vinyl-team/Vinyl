@@ -19,7 +19,7 @@ class JdbcUserDaoITest {
     private final JdbcUserDao jdbcUserDao = dbDataSource.getJDBCUserDAO();
 
     private final String INSERT_INTO_TABLE = "insert into public.users " +
-            "(email, password, salt, iterations, role) " +
+            "(\"email\", \"password\", \"salt\", \"iterations\", \"role\") " +
             "values (?, ?, ?, ?, ?), (?, ?, ?, ?, ?)";
     private final String TRUNCATE_TABLE_RESTART_IDENTITY = "TRUNCATE public.users RESTART IDENTITY";
     private Connection connection;
