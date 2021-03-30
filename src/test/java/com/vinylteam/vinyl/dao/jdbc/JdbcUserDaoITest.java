@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,7 +20,7 @@ class JdbcUserDaoITest {
     private final JdbcUserDao jdbcUserDao = dbDataSource.getJDBCUserDAO();
 
     private final String INSERT_INTO_TABLE = "insert into public.users " +
-            "(\"email\", \"password\", \"salt\", \"iterations\", \"role\") " +
+            "(email, password, salt, iterations, role) " +
             "values (?, ?, ?, ?, ?), (?, ?, ?, ?, ?)";
     private final String TRUNCATE_TABLE_RESTART_IDENTITY = "TRUNCATE public.users RESTART IDENTITY";
     private Connection connection;
@@ -101,7 +102,7 @@ class JdbcUserDaoITest {
     @Test
     void addNewTest() {
         assertTrue(jdbcUserDao.add(new User("newtestuser3@vinyl.com",
-                "HASH3", "".getBytes(), 0, Role.USER)));
+                "HASH3", Base64.getDecoder().decode(""), 0, Role.USER)));
 
         assertEquals(3, jdbcUserDao.countAll());
         User addedUser = jdbcUserDao.getByEmail("newtestuser3@vinyl.com");
@@ -116,21 +117,21 @@ class JdbcUserDaoITest {
     @Test
     void addExistingWithSamePasswordTest() {
         assertFalse(jdbcUserDao.add(new User("testuser2@vinyl.com",
-                "HASH2", "".getBytes(), 0, Role.USER)));
+                "HASH2", Base64.getDecoder().decode(""), 0, Role.USER)));
         assertEquals(2, jdbcUserDao.countAll());
     }
 
     @Test
     void addExistingWithNewPasswordTest() {
         assertFalse(jdbcUserDao.add(new User("testuser2@vinyl.com",
-                "HASH3", "".getBytes(), 0, Role.USER)));
+                "HASH3", Base64.getDecoder().decode(""), 0, Role.USER)));
         assertEquals(2, jdbcUserDao.countAll());
     }
 
     @Test
     void addWithNullEmailTest() {
         assertFalse(jdbcUserDao.add(new User(null,
-                "HASH2", "".getBytes(), 0, Role.USER)));
+                "HASH2", Base64.getDecoder().decode(""), 0, Role.USER)));
         assertEquals(2, jdbcUserDao.countAll());
     }
 

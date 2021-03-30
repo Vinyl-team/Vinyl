@@ -15,9 +15,9 @@ public class JdbcUserDao implements UserDao {
     private final PGSimpleDataSource dataSource;
     private final String COUNT_ALL = "SELECT COUNT(*) FROM public.users";
     private final String FIND_BY_EMAIL = "SELECT * FROM public.users" +
-            " WHERE \"email\"=?";
+            " WHERE email=?";
     private final String INSERT = "INSERT INTO public.users" +
-            " (\"email\", \"password\", \"salt\", \"iterations\", \"role\")" +
+            " (email, password, salt, iterations, role)" +
             " VALUES (?, ?, ?, ?, ?)";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
