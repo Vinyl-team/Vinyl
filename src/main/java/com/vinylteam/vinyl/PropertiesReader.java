@@ -21,6 +21,7 @@ public class PropertiesReader {
         String beginningOfErrorMessage = "Error during loading properties from ";
         try (InputStream inputStream = getClass().getClassLoader()
                 .getResourceAsStream("application.properties")) {
+            validateInputStream(inputStream);
             properties.load(inputStream);
         } catch (IOException e) {
             logger.error(beginningOfErrorMessage + "application.properties", e);
@@ -30,6 +31,7 @@ public class PropertiesReader {
         if (System.getenv("env") == null) {
             try (InputStream inputStream = getClass().getClassLoader()
                     .getResourceAsStream("dev.application.properties")) {
+                validateInputStream(inputStream);
                 properties.load(inputStream);
             } catch (IOException e) {
                 logger.error(beginningOfErrorMessage + "dev.application.properties", e);
@@ -51,6 +53,7 @@ public class PropertiesReader {
         } else if (System.getenv("env").equals("DEV")) {
             try (InputStream inputStream = getClass().getClassLoader()
                     .getResourceAsStream("travis.application.properties")) {
+                validateInputStream(inputStream);
                 properties.load(inputStream);
             } catch (IOException e) {
                 logger.error(beginningOfErrorMessage + "travis.application.properties", e);
@@ -87,4 +90,11 @@ public class PropertiesReader {
         }
     }
 
+    private void validateInputStream(InputStream inputStream) {
+        if (inputStream == null) {
+            RuntimeException e = new RuntimeException();
+            logger.error(".properties file not found.", e);
+            throw e;
+        }
+    }
 }

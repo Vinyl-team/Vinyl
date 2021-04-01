@@ -2,7 +2,6 @@ package com.vinylteam.vinyl.dao.jdbc.mapper;
 
 import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
@@ -16,23 +15,20 @@ import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserRowMapperTest {
-    ResultSet mockedFilledResultSet;
-    ResultSet mockedEmptyResultSet;
 
-    @BeforeAll
-    void beforeAll() throws SQLException {
-        mockedFilledResultSet = mock(ResultSet.class);
-        mockedEmptyResultSet = mock(ResultSet.class);
+    private final UserRowMapper userRowMapper = new UserRowMapper();
+
+    @Test
+    void mapFilledRowTest() throws SQLException {
+
+        ResultSet mockedFilledResultSet = mock(ResultSet.class);
         when(mockedFilledResultSet.getString("email")).thenReturn("testuser@vinyl.com");
         when(mockedFilledResultSet.getString("password")).thenReturn("HASH");
         when(mockedFilledResultSet.getString("salt")).thenReturn("salt");
         when(mockedFilledResultSet.getInt("iterations")).thenReturn(1);
         when(mockedFilledResultSet.getString("role")).thenReturn("USER");
-    }
 
-    @Test
-    void mapFilledRowTest() {
-        User actualUser = UserRowMapper.mapRow(mockedFilledResultSet);
+        User actualUser = userRowMapper.mapRow(mockedFilledResultSet);
 
         assertEquals("testuser@vinyl.com", actualUser.getEmail());
         assertEquals("HASH", actualUser.getPassword());
@@ -43,8 +39,9 @@ class UserRowMapperTest {
 
     @Test
     void mapEmptyRowTest() {
+        ResultSet mockedEmptyResultSet = mock(ResultSet.class);
         assertThrows(RuntimeException.class, () -> {
-            UserRowMapper.mapRow(mockedEmptyResultSet);
+            userRowMapper.mapRow(mockedEmptyResultSet);
         });
     }
 

@@ -39,7 +39,6 @@ public class DefaultSecurityService implements SecurityService {
         try {
             PBEKeySpec pbeKeySpec = new PBEKeySpec(password, salt, iterations, 256);
             Arrays.fill(password, '\u0000');
-            password = null;
             SecretKey secretKey = secretKeyFactory.generateSecret(pbeKeySpec);
             byte[] result = secretKey.getEncoded();
             return Base64.getEncoder().encodeToString(result);
@@ -62,9 +61,14 @@ public class DefaultSecurityService implements SecurityService {
         byte[] salt = generateSalt();
         int iterations = 10000;
         String hashedPassword = hashPassword(password, salt, iterations);
+        User user = new User();
+        user.setEmail(email);
+        user.setPassword(hashedPassword);
+        user.setSalt(Base64.getEncoder().encodeToString(salt));
+        user.setIterations(iterations);
+        user.setRole(Role.USER);
 
-        return new User(email, hashedPassword, salt,
-                iterations, Role.USER);
+        return user;
     }
 
     @Override

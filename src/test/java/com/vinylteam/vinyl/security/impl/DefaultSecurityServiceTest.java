@@ -2,10 +2,15 @@ package com.vinylteam.vinyl.security.impl;
 
 import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+
+import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DefaultSecurityServiceTest {
 
     private final DefaultSecurityService defaultSecurityService = new DefaultSecurityService();
@@ -13,9 +18,18 @@ class DefaultSecurityServiceTest {
     private final String wrongPassword = "existingUserWrongPassword";
     private final String passwordToHash = "password";
     private final byte[] salt = defaultSecurityService.generateSalt();
-    private final User existingUser = new User("testuser1@vinyl.com",
-            defaultSecurityService.hashPassword(rightPassword.toCharArray(), salt, 10000),
-            salt, 10000, Role.USER);
+    private final User existingUser = new User();
+
+    @BeforeAll
+    void beforeAll() {
+        existingUser.setEmail("testuser1@vinyl.com");
+        existingUser.setPassword(defaultSecurityService
+                .hashPassword(rightPassword.toCharArray(), salt, 10000));
+        existingUser.setSalt(Base64.getEncoder().encodeToString(salt));
+        existingUser.setIterations(10000);
+        existingUser.setRole(Role.USER);
+
+    }
 
     @Test
     void hashPasswordWithTenThousandIterationsTest() {

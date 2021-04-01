@@ -14,16 +14,15 @@ import java.util.Optional;
 public class JdbcUserDao implements UserDao {
 
     private final String COUNT_ALL = "SELECT COUNT(*) FROM public.users";
-    private final String FIND_BY_EMAIL = "SELECT * FROM public.users" +
+    private final String FIND_BY_EMAIL = "SELECT email, password, salt, iterations, role" +
+            " FROM public.users" +
             " WHERE email=?";
     private final String INSERT = "INSERT INTO public.users" +
             " (email, password, salt, iterations, role)" +
             " VALUES (?, ?, ?, ?, ?)";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-
-    public JdbcUserDao() {
-    }
+    private final UserRowMapper userRowMapper = new UserRowMapper();
 
     public boolean add(User user) {
         boolean isAdded;
@@ -47,9 +46,6 @@ public class JdbcUserDao implements UserDao {
         return isAdded;
     }
 
-    public void updatePassword(String email, String newPassword, int iterations, String newSalt) {
-    }
-
     public Optional<User> getByEmail(String email) {
         User user = null;
         try (Connection connection = DBDataSource.getConnection();
@@ -57,7 +53,7 @@ public class JdbcUserDao implements UserDao {
             findByEmailStatement.setString(1, email);
             try (ResultSet resultSet = findByEmailStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    user = UserRowMapper.mapRow(resultSet);
+                    user = userRowMapper.mapRow(resultSet);
                     if (resultSet.next()) {
                         logger.error("More than one user was found for email: {}", email);
                         throw new SQLException("More than one user was found for email: ".concat(email));
@@ -69,10 +65,6 @@ public class JdbcUserDao implements UserDao {
             throw new RuntimeException(e);
         }
         return Optional.ofNullable(user);
-    }
-
-    public boolean removeUser(String email) {
-        return false;
     }
 
     int countAll() {

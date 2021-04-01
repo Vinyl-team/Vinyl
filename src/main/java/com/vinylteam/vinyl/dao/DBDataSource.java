@@ -40,7 +40,7 @@ public class DBDataSource {
     private DBDataSource() {
     }
 
-    public DefaultUserService getServiceImplementation() {
+    public static DefaultUserService getServiceImplementation() {
         return new DefaultUserService();
     }
 
@@ -48,7 +48,7 @@ public class DBDataSource {
         return new JdbcUserDao();
     }
 
-    public DataSource getDataSource() {
+    public static DataSource getDataSource() {
         return dataSource;
     }
 

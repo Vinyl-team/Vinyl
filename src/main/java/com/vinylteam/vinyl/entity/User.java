@@ -1,7 +1,5 @@
 package com.vinylteam.vinyl.entity;
 
-import java.util.Base64;
-
 public class User {
 
     private String email;
@@ -10,12 +8,7 @@ public class User {
     private int iterations;
     private Role role;
 
-    public User(String email, String password, byte[] salt, int iterations, Role role) {
-        this.email = email;
-        this.password = password;
-        this.salt = Base64.getEncoder().encodeToString(salt);
-        this.iterations = iterations;
-        this.role = role;
+    public User() {
     }
 
     public String getEmail() {

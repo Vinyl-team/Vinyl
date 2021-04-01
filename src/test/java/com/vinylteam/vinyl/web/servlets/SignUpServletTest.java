@@ -43,7 +43,6 @@ class SignUpServletTest {
 
     @Test
     void doPostWithExistingUserTest() throws IOException {
-
         SignUpServlet signUpServlet = new SignUpServlet(mockedDefaultUserService, mockedDefaultSecurityService);
         when(mockedDefaultUserService.add(mockedUser)).thenReturn(true);
         InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
@@ -58,13 +57,12 @@ class SignUpServletTest {
         verify(mockedDefaultUserService)
                 .add(mockedUser);
 
-        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_OK);
+        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signIn");
     }
 
     @Test
     void doPostWithNewUserTest() throws IOException {
-
         SignUpServlet signUpServlet = new SignUpServlet(mockedDefaultUserService, mockedDefaultSecurityService);
         when(mockedDefaultUserService.add(mockedUser)).thenReturn(false);
         InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
@@ -81,7 +79,6 @@ class SignUpServletTest {
                 .add(mockedUser);
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
         inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signUp");
-
     }
 
     @Test
