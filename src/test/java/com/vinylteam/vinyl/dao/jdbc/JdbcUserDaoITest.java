@@ -10,14 +10,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Base64;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JdbcUserDaoITest {
 
-    private final DBDataSource dbDataSource = new DBDataSource();
-    private final JdbcUserDao jdbcUserDao = dbDataSource.getJDBCUserDAO();
+    private final JdbcUserDao jdbcUserDao = DBDataSource.getJDBCUserDAO();
 
     private final String INSERT_INTO_TABLE = "insert into public.users " +
             "(email, password, salt, iterations, role) " +
@@ -26,8 +26,8 @@ class JdbcUserDaoITest {
     private Connection connection;
 
     @BeforeAll
-    void beforeAll() throws SQLException {
-        connection = dbDataSource.getDataSource().getConnection();
+    void beforeAll() {
+        connection = DBDataSource.getConnection();
     }
 
     @AfterAll
@@ -73,29 +73,23 @@ class JdbcUserDaoITest {
 
     @Test
     void getByExistingEmail() {
-        User userGottenByExistingEmail;
-        userGottenByExistingEmail = jdbcUserDao.getByEmail("testuser1@vinyl.com");
+        Optional<User> optionalUserGottenByExistingEmail;
+        optionalUserGottenByExistingEmail = jdbcUserDao.getByEmail("testuser1@vinyl.com");
 
-        assertEquals("testuser1@vinyl.com", userGottenByExistingEmail.getEmail());
-        assertEquals("HASH1", userGottenByExistingEmail.getPassword());
-        assertEquals("", userGottenByExistingEmail.getSalt());
-        assertEquals(0, userGottenByExistingEmail.getIterations());
-        assertEquals(Role.USER, userGottenByExistingEmail.getRole());
+        assertFalse(optionalUserGottenByExistingEmail.isEmpty());
+        assertEquals("testuser1@vinyl.com", optionalUserGottenByExistingEmail.get().getEmail());
+        assertEquals("HASH1", optionalUserGottenByExistingEmail.get().getPassword());
+        assertEquals("", optionalUserGottenByExistingEmail.get().getSalt());
+        assertEquals(0, optionalUserGottenByExistingEmail.get().getIterations());
+        assertEquals(Role.USER, optionalUserGottenByExistingEmail.get().getRole());
         assertEquals(2, jdbcUserDao.countAll());
     }
 
     @Test
     void getByNotExistingEmail() {
 
-        User userGottenByNonexistentEmail = jdbcUserDao.getByEmail("testuser3@vinyluserGottenByExistingEmail.com");
-        assertNull(userGottenByNonexistentEmail);
-        assertEquals(2, jdbcUserDao.countAll());
-    }
-
-    @Test
-    void getByNullEmail() {
-        User userGottenByNullEmail = jdbcUserDao.getByEmail(null);
-        assertNull(userGottenByNullEmail);
+        Optional<User> optionalUserGottenByNonexistentEmail = jdbcUserDao.getByEmail("testuser3@vinyluserGottenByExistingEmail.com");
+        assertFalse(optionalUserGottenByNonexistentEmail.isPresent());
         assertEquals(2, jdbcUserDao.countAll());
     }
 
@@ -105,13 +99,14 @@ class JdbcUserDaoITest {
                 "HASH3", Base64.getDecoder().decode(""), 0, Role.USER)));
 
         assertEquals(3, jdbcUserDao.countAll());
-        User addedUser = jdbcUserDao.getByEmail("newtestuser3@vinyl.com");
+        Optional<User> optionalAddedUser = jdbcUserDao.getByEmail("newtestuser3@vinyl.com");
 
-        assertEquals("newtestuser3@vinyl.com", addedUser.getEmail());
-        assertEquals("HASH3", addedUser.getPassword());
-        assertEquals("", addedUser.getSalt());
-        assertEquals(0, addedUser.getIterations());
-        assertEquals(Role.USER, addedUser.getRole());
+        assertFalse(optionalAddedUser.isEmpty());
+        assertEquals("newtestuser3@vinyl.com", optionalAddedUser.get().getEmail());
+        assertEquals("HASH3", optionalAddedUser.get().getPassword());
+        assertEquals("", optionalAddedUser.get().getSalt());
+        assertEquals(0, optionalAddedUser.get().getIterations());
+        assertEquals(Role.USER, optionalAddedUser.get().getRole());
     }
 
     @Test
@@ -125,13 +120,6 @@ class JdbcUserDaoITest {
     void addExistingWithNewPasswordTest() {
         assertFalse(jdbcUserDao.add(new User("testuser2@vinyl.com",
                 "HASH3", Base64.getDecoder().decode(""), 0, Role.USER)));
-        assertEquals(2, jdbcUserDao.countAll());
-    }
-
-    @Test
-    void addWithNullEmailTest() {
-        assertFalse(jdbcUserDao.add(new User(null,
-                "HASH2", Base64.getDecoder().decode(""), 0, Role.USER)));
         assertEquals(2, jdbcUserDao.countAll());
     }
 

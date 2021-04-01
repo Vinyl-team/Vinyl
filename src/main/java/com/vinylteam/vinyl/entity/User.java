@@ -1,7 +1,5 @@
 package com.vinylteam.vinyl.entity;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Base64;
 
 public class User {

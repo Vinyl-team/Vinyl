@@ -3,33 +3,52 @@ package com.vinylteam.vinyl.dao;
 import com.vinylteam.vinyl.PropertiesReader;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
 import com.vinylteam.vinyl.service.impl.DefaultUserService;
-import org.postgresql.ds.PGSimpleDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class DBDataSource {
 
-    private final PGSimpleDataSource dataSource;
+    private static final HikariDataSource dataSource;
+    private static final HikariConfig config = new HikariConfig();
+    private static final Logger logger = LoggerFactory.getLogger("com.vinylteam.vinyl.dao.DBDataSource");
 
-    public DBDataSource() {
-        dataSource = new PGSimpleDataSource();
+    static {
         PropertiesReader propertiesReader = new PropertiesReader();
+        config.setJdbcUrl(propertiesReader.getJdbcUrl());
+        config.setUsername(propertiesReader.getJdbcUser());
+        config.setPassword(propertiesReader.getJdbcPassword());
+        config.setDriverClassName(propertiesReader.getJdbcDriver());
+        config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getJdbcMaximumPoolSize()));
+        dataSource = new HikariDataSource(config);
+    }
 
-        this.dataSource.setPassword(propertiesReader.getJdbcPassword());
-        this.dataSource.setUser(propertiesReader.getJdbcUser());
+    public static Connection getConnection() {
+        try {
+            return dataSource.getConnection();
+        } catch (SQLException e) {
+            logger.error("Error during getting connection from data source", e);
+            throw new RuntimeException(e);
+        }
+    }
 
-        this.dataSource.setDatabaseName(propertiesReader.getJdbcDatabase());
-        this.dataSource.setServerNames(new String[]{propertiesReader.getJdbcServer()});
-        this.dataSource.setPortNumbers(new int[]{Integer.parseInt(propertiesReader.getJdbcPort())});
+    private DBDataSource() {
     }
 
     public DefaultUserService getServiceImplementation() {
-        return new DefaultUserService(this.dataSource);
+        return new DefaultUserService();
     }
 
-    public JdbcUserDao getJDBCUserDAO() {
-        return new JdbcUserDao(this.dataSource);
+    public static JdbcUserDao getJDBCUserDAO() {
+        return new JdbcUserDao();
     }
 
-    public PGSimpleDataSource getDataSource() {
+    public DataSource getDataSource() {
         return dataSource;
     }
 

@@ -10,7 +10,6 @@ import org.mockito.Mockito;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 import static org.mockito.Mockito.*;
@@ -46,9 +45,7 @@ class SignUpServletTest {
     void doPostWithExistingUserTest() throws IOException {
 
         SignUpServlet signUpServlet = new SignUpServlet(mockedDefaultUserService, mockedDefaultSecurityService);
-
         when(mockedDefaultUserService.add(mockedUser)).thenReturn(true);
-
         InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
         InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
 
@@ -56,11 +53,11 @@ class SignUpServletTest {
 
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
-
         verify(mockedDefaultSecurityService)
                 .createUserWithHashedPassword("testuser1@vinyl.com", "password".toCharArray());
         verify(mockedDefaultUserService)
                 .add(mockedUser);
+
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signIn");
     }
@@ -69,9 +66,7 @@ class SignUpServletTest {
     void doPostWithNewUserTest() throws IOException {
 
         SignUpServlet signUpServlet = new SignUpServlet(mockedDefaultUserService, mockedDefaultSecurityService);
-
         when(mockedDefaultUserService.add(mockedUser)).thenReturn(false);
-
         InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
         InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
 
@@ -84,8 +79,48 @@ class SignUpServletTest {
                 .createUserWithHashedPassword("testuser1@vinyl.com", "password".toCharArray());
         verify(mockedDefaultUserService)
                 .add(mockedUser);
-        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
         inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signUp");
 
+    }
+
+    @Test
+    void doPostWithNullEmailTest() throws IOException {
+        SignUpServlet signUpServlet = new SignUpServlet(mockedDefaultUserService, mockedDefaultSecurityService);
+        when(mockedHttpServletRequest.getParameter("email")).thenReturn(null);
+        InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
+        InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
+
+        signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
+
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
+        verify(mockedDefaultSecurityService, never())
+                .createUserWithHashedPassword(null, "password".toCharArray());
+        verify(mockedDefaultUserService, never())
+                .add(null);
+
+        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signUp");
+    }
+
+    @Test
+    void doPostWithNullPasswordTest() throws IOException {
+        SignUpServlet signUpServlet = new SignUpServlet(mockedDefaultUserService, mockedDefaultSecurityService);
+        when(mockedHttpServletRequest.getParameter("password")).thenReturn(null);
+        InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
+        InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
+
+        signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
+
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
+        verify(mockedDefaultSecurityService, never())
+                .createUserWithHashedPassword("testuser1@vinyl.com", null);
+        verify(mockedDefaultUserService, never())
+                .add(any());
+
+        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signUp");
     }
 }

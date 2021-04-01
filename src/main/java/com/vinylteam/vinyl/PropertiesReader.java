@@ -5,42 +5,78 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
 
 public class PropertiesReader {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Properties properties = new Properties();
+    private String user;
+    private String password;
+    private String jdbcUrl;
 
     public PropertiesReader() {
-
-        try(InputStream inputStream = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+        String beginningOfErrorMessage = "Error during loading properties from ";
+        try (InputStream inputStream = getClass().getClassLoader()
+                .getResourceAsStream("application.properties")) {
             properties.load(inputStream);
         } catch (IOException e) {
-            logger.error("Error during loading properties", e);
+            logger.error(beginningOfErrorMessage + "application.properties", e);
             throw new RuntimeException(e);
+        }
+
+        if (System.getenv("env") == null) {
+            try (InputStream inputStream = getClass().getClassLoader()
+                    .getResourceAsStream("dev.application.properties")) {
+                properties.load(inputStream);
+            } catch (IOException e) {
+                logger.error(beginningOfErrorMessage + "dev.application.properties", e);
+                throw new RuntimeException(e);
+            }
+        } else if (System.getenv("env").equals("PROD")) {
+            URI databaseUri;
+            try {
+                databaseUri = new URI(System.getenv("DATABASE_URL"));
+            } catch (URISyntaxException e) {
+                logger.error("Error during getting databaseUri", e);
+                throw new RuntimeException(e);
+            }
+            user = databaseUri.getUserInfo().split(":")[0];
+            password = databaseUri.getUserInfo().split(":")[1];
+            jdbcUrl = "jdbc:postgresql://" +
+                    databaseUri.getHost() + ':' +
+                    databaseUri.getPort() + databaseUri.getPath();
+        } else if (System.getenv("env").equals("DEV")) {
+            try (InputStream inputStream = getClass().getClassLoader()
+                    .getResourceAsStream("travis.application.properties")) {
+                properties.load(inputStream);
+            } catch (IOException e) {
+                logger.error(beginningOfErrorMessage + "travis.application.properties", e);
+                throw new RuntimeException(e);
+            }
         }
     }
 
-    private final Properties properties = new Properties();
-
     public String getJdbcUser() {
-        return properties.getProperty("jdbc.user");
+        return user == null ? properties.getProperty("jdbc.user") : user;
     }
 
     public String getJdbcPassword() {
-        return properties.getProperty("jdbc.password");
+        return password == null ? properties.getProperty("jdbc.password") : password;
     }
 
-    public String getJdbcDatabase() {
-        return properties.getProperty("jdbc.database");
+    public String getJdbcUrl() {
+        return jdbcUrl == null ? properties.getProperty("jdbc.url") : jdbcUrl;
     }
 
-    public String getJdbcServer() {
-        return properties.getProperty("jdbc.server");
+    public String getJdbcDriver() {
+        return properties.getProperty("jdbc.driver");
     }
 
-    public String getJdbcPort() {
-        return properties.getProperty("jdbc.port");
+    public String getJdbcMaximumPoolSize() {
+        return properties.getProperty("jdbc.maximum.pool.size");
     }
 
     public String getAppPort() {

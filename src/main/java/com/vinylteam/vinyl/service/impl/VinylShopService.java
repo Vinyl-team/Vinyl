@@ -1,14 +1,17 @@
 package com.vinylteam.vinyl.service.impl;
 
 import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.service.ShopService;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import com.vinylteam.vinyl.service.ShopService;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 public class VinylShopService implements ShopService {
     private final String startLink = "http://vinyl.ua";
@@ -57,7 +60,7 @@ public class VinylShopService implements ShopService {
         return pageLinks;
     }
 
-HashSet<Vinyl> readProductDataFromPage(HashSet<String> pageLinks) throws IOException {
+    HashSet<Vinyl> readProductDataFromPage(HashSet<String> pageLinks) throws IOException {
         HashSet<Vinyl> dataOfProducts = new HashSet<>();
 
         for (String pageLink : pageLinks) {
@@ -97,7 +100,7 @@ HashSet<Vinyl> readProductDataFromPage(HashSet<String> pageLinks) throws IOExcep
     public List<Vinyl> getDataProduct() throws IOException {
         HashSet<String> showcaseLinks = getShowcaseLinks();
         HashSet<String> pageLinks = getPageLinks(showcaseLinks);
-        HashSet<Vinyl>  vinyls = readProductDataFromPage(pageLinks);
+        HashSet<Vinyl> vinyls = readProductDataFromPage(pageLinks);
         return new ArrayList<>(vinyls);
     }
 }

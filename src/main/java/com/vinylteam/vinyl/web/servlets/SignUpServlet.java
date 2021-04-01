@@ -23,28 +23,21 @@ public class SignUpServlet {
         this.defaultSecurityService = defaultSecurityService;
     }
 
-    public void doPost(HttpServletRequest request, HttpServletResponse response) {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String email = request.getParameter("email");
-        char[] password = request.getParameter("password").toCharArray();
+        String password = request.getParameter("password");
 
-        User userToAdd = defaultSecurityService
-                .createUserWithHashedPassword(email, password);
-        if (defaultUserService.add(userToAdd)) {
-            response.setStatus(HttpServletResponse.SC_OK);
-            try {
+        if (email != null && password != null) {
+            User userToAdd = defaultSecurityService
+                    .createUserWithHashedPassword(email, password.toCharArray());
+
+            if (defaultUserService.add(userToAdd)) {
+                response.setStatus(HttpServletResponse.SC_OK);
                 response.sendRedirect("/signIn");
-            } catch (IOException e) {
-                logger.error("Failed redirect to /signIn.", e);
-                throw new RuntimeException(e);
-            }
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
-            try {
-                response.sendRedirect("/signUp");
-            } catch (IOException e) {
-                logger.error("Failed redirect to /signUp.", e);
-                throw new RuntimeException(e);
+                return;
             }
         }
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.sendRedirect("/signUp");
     }
 }

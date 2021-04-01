@@ -3,14 +3,15 @@ package com.vinylteam.vinyl.service.impl;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.service.UserService;
-import org.postgresql.ds.PGSimpleDataSource;
+
+import java.util.Optional;
 
 public class DefaultUserService implements UserService {
 
     private final JdbcUserDao jdbcUserDao;
 
-    public DefaultUserService(PGSimpleDataSource dataSource) {
-        this.jdbcUserDao = new JdbcUserDao(dataSource);
+    public DefaultUserService() {
+        this.jdbcUserDao = new JdbcUserDao();
     }
 
     @Override
@@ -24,7 +25,7 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public User getByEmail(String email) {
+    public Optional<User> getByEmail(String email) {
         return jdbcUserDao.getByEmail(email);
     }
 
