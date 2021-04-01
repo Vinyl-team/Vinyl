@@ -13,7 +13,7 @@ public class UserRowMapper {
 
     public User mapRow(ResultSet resultSet) {
         if (resultSet != null) {
-            User user = newgi User();
+            User user = new User();
             try {
                 user.setEmail(resultSet.getString("email"));
                 user.setPassword(resultSet.getString("password"));
