@@ -8,7 +8,7 @@
             <pattern>%-5(%d{HH:mm:ss.SSS} [%thread]) %class{10} %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
-    <root level="warning">
+    <root level="info">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

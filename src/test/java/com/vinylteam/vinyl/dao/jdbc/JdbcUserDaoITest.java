@@ -87,7 +87,6 @@ class JdbcUserDaoITest {
 
     @Test
     void getByNotExistingEmail() {
-
         Optional<User> optionalUserGottenByNonexistentEmail = jdbcUserDao.getByEmail("testuser3@vinyluserGottenByExistingEmail.com");
         assertFalse(optionalUserGottenByNonexistentEmail.isPresent());
         assertEquals(2, jdbcUserDao.countAll());
