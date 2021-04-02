@@ -14,12 +14,12 @@ import java.util.Optional;
 public class JdbcUserDao implements UserDao {
 
     private final String COUNT_ALL = "SELECT COUNT(*) FROM public.users";
-    private final String FIND_BY_EMAIL = "SELECT email, password, salt, iterations, role" +
+    private final String FIND_BY_EMAIL = "SELECT email, password, salt, iterations, role, status" +
             " FROM public.users" +
             " WHERE email=?";
     private final String INSERT = "INSERT INTO public.users" +
-            " (email, password, salt, iterations, role)" +
-            " VALUES (?, ?, ?, ?, ?)";
+            " (email, password, salt, iterations, role, status)" +
+            " VALUES (?, ?, ?, ?, ?, ?)";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserRowMapper userRowMapper = new UserRowMapper();
@@ -33,6 +33,7 @@ public class JdbcUserDao implements UserDao {
             insertStatement.setString(3, user.getSalt());
             insertStatement.setInt(4, user.getIterations());
             insertStatement.setString(5, user.getRole().toString());
+            insertStatement.setBoolean(6, user.getStatus());
 
             insertStatement.executeUpdate();
             isAdded = true;

@@ -7,6 +7,7 @@ public class User {
     private String salt;
     private int iterations;
     private Role role;
+    private boolean status;
 
     public String getEmail() {
         return email;
@@ -47,6 +48,15 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
+
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
 
     @Override
     public String toString() {

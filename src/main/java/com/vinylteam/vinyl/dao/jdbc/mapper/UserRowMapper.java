@@ -20,6 +20,7 @@ public class UserRowMapper {
                 user.setSalt(resultSet.getString("salt"));
                 user.setIterations(resultSet.getInt("iterations"));
                 user.setRole(Role.valueOf(resultSet.getString("role")));
+                user.setStatus(resultSet.getBoolean("status"));
                 return user;
             } catch (Exception e) {
                 logger.error("Error while getting data from result set", e);

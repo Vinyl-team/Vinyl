@@ -43,14 +43,12 @@ public class PropertiesReader {
                 logger.error("Error during getting databaseUri", e);
                 throw new RuntimeException(e);
             }
-            String user = databaseUri.getUserInfo().split(":")[0];
-            String password = databaseUri.getUserInfo().split(":")[1];
-            String jdbcUrl = "jdbc:postgresql://" +
+
+            properties.setProperty("jdbc.user", databaseUri.getUserInfo().split(":")[0]);
+            properties.setProperty("jdbc.password", databaseUri.getUserInfo().split(":")[1]);
+            properties.setProperty("jdbc.url", "jdbc:postgresql://" +
                     databaseUri.getHost() + ':' +
-                    databaseUri.getPort() + databaseUri.getPath();
-            properties.setProperty("jdbc.user", user);
-            properties.setProperty("jdbc.password", password);
-            properties.setProperty("jdbc.url", jdbcUrl);
+                    databaseUri.getPort() + databaseUri.getPath());
             properties.setProperty("appPort", System.getenv("PORT"));
 
         } else if (System.getenv("env").equals("DEV")) {
@@ -64,6 +62,8 @@ public class PropertiesReader {
             }
             properties.setProperty("appPort", System.getenv("PORT"));
         }
+
+        logger.info("DB properties: {}", properties);
     }
 
     public String getJdbcUser() {

@@ -15,19 +15,22 @@ public class DBDataSource {
     private static final HikariDataSource dataSource;
     private static final HikariConfig config = new HikariConfig();
     private static final Logger logger = LoggerFactory.getLogger("com.vinylteam.vinyl.dao.DBDataSource");
+    private static final PropertiesReader propertiesReader = new PropertiesReader();
 
     static {
-        PropertiesReader propertiesReader = new PropertiesReader();
+        logger.info("Properties reader read properties");
         config.setJdbcUrl(propertiesReader.getJdbcUrl());
         config.setUsername(propertiesReader.getJdbcUser());
         config.setPassword(propertiesReader.getJdbcPassword());
         config.setDriverClassName(propertiesReader.getJdbcDriver());
         config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getJdbcMaximumPoolSize()));
         dataSource = new HikariDataSource(config);
+        logger.info("Data source: {}", dataSource);
     }
 
     public static Connection getConnection() {
         try {
+            logger.info("Trying to get connection from data source: {}", dataSource);
             return dataSource.getConnection();
         } catch (SQLException e) {
             logger.error("Error during getting connection from data source", e);
@@ -35,8 +38,10 @@ public class DBDataSource {
         }
     }
 
+    private DBDataSource() {
+    }
+
     public static DataSource getDataSource() {
         return dataSource;
     }
-
 }

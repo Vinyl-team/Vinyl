@@ -22,8 +22,8 @@ class JdbcUserDaoITest {
     private final JdbcUserDao jdbcUserDao = new JdbcUserDao();
 
     private final String INSERT_INTO_TABLE = "INSERT INTO public.users " +
-            "(email, password, salt, iterations, role) " +
-            "VALUES (?, ?, ?, ?, ?), (?, ?, ?, ?, ?)";
+            "(email, password, salt, iterations, role, status) " +
+            "VALUES (?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)";
     private final String TRUNCATE_TABLE_RESTART_IDENTITY = "TRUNCATE public.users RESTART IDENTITY";
     private Connection connection;
 
@@ -51,11 +51,13 @@ class JdbcUserDaoITest {
             insertStatement.setString(3, "");
             insertStatement.setInt(4, 0);
             insertStatement.setString(5, Role.USER.toString());
-            insertStatement.setString(6, "testuser2@vinyl.com");
-            insertStatement.setString(7, "HASH2");
-            insertStatement.setString(8, "");
-            insertStatement.setInt(9, 0);
-            insertStatement.setString(10, Role.USER.toString());
+            insertStatement.setBoolean(6, true);
+            insertStatement.setString(7, "testuser2@vinyl.com");
+            insertStatement.setString(8, "HASH2");
+            insertStatement.setString(9, "");
+            insertStatement.setInt(10, 0);
+            insertStatement.setString(11, Role.USER.toString());
+            insertStatement.setBoolean(12, true);
             insertStatement.executeUpdate();
         }
     }
@@ -120,6 +122,7 @@ class JdbcUserDaoITest {
         user.setSalt("");
         user.setIterations(0);
         user.setRole(Role.USER);
+        user.setStatus(true);
 
         assertTrue(jdbcUserDao.add(user));
 
@@ -132,6 +135,7 @@ class JdbcUserDaoITest {
         assertEquals("", optionalAddedUser.get().getSalt());
         assertEquals(0, optionalAddedUser.get().getIterations());
         assertEquals(Role.USER, optionalAddedUser.get().getRole());
+        assertEquals(true, optionalAddedUser.get().getStatus());
     }
 
     @Test
@@ -144,6 +148,7 @@ class JdbcUserDaoITest {
         user.setSalt("");
         user.setIterations(0);
         user.setRole(Role.USER);
+        user.setStatus(true);
         assertFalse(jdbcUserDao.add(user));
         assertEquals(2, jdbcUserDao.countAll());
     }
@@ -158,6 +163,7 @@ class JdbcUserDaoITest {
         user.setSalt("");
         user.setIterations(0);
         user.setRole(Role.USER);
+        user.setStatus(true);
 
         assertFalse(jdbcUserDao.add(user));
         assertEquals(2, jdbcUserDao.countAll());
