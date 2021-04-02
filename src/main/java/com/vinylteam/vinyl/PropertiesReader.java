@@ -13,9 +13,6 @@ public class PropertiesReader {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Properties properties = new Properties();
-    private String user;
-    private String password;
-    private String jdbcUrl;
 
     public PropertiesReader() {
         String beginningOfErrorMessage = "Error during loading properties from ";
@@ -45,11 +42,16 @@ public class PropertiesReader {
                 logger.error("Error during getting databaseUri", e);
                 throw new RuntimeException(e);
             }
-            user = databaseUri.getUserInfo().split(":")[0];
-            password = databaseUri.getUserInfo().split(":")[1];
-            jdbcUrl = "jdbc:postgresql://" +
+            String user = databaseUri.getUserInfo().split(":")[0];
+            String password = databaseUri.getUserInfo().split(":")[1];
+            String jdbcUrl = "jdbc:postgresql://" +
                     databaseUri.getHost() + ':' +
                     databaseUri.getPort() + databaseUri.getPath();
+            properties.setProperty("jdbc.user", user);
+            properties.setProperty("jdbc.password", password);
+            properties.setProperty("jdbc.url", jdbcUrl);
+            properties.setProperty("appPort", System.getenv("PORT"));
+
         } else if (System.getenv("env").equals("DEV")) {
             try (InputStream inputStream = getClass().getClassLoader()
                     .getResourceAsStream("travis.application.properties")) {
@@ -59,19 +61,20 @@ public class PropertiesReader {
                 logger.error(beginningOfErrorMessage + "travis.application.properties", e);
                 throw new RuntimeException(e);
             }
+            properties.setProperty("appPort", System.getenv("PORT"));
         }
     }
 
     public String getJdbcUser() {
-        return user == null ? properties.getProperty("jdbc.user") : user;
+        return properties.getProperty("jdbc.user");
     }
 
     public String getJdbcPassword() {
-        return password == null ? properties.getProperty("jdbc.password") : password;
+        return properties.getProperty("jdbc.password");
     }
 
     public String getJdbcUrl() {
-        return jdbcUrl == null ? properties.getProperty("jdbc.url") : jdbcUrl;
+        return properties.getProperty("jdbc.url");
     }
 
     public String getJdbcDriver() {
@@ -83,11 +86,7 @@ public class PropertiesReader {
     }
 
     public String getAppPort() {
-        if (System.getenv("env") == null) {
-            return properties.getProperty("appPort");
-        } else {
-            return System.getenv("PORT");
-        }
+        return properties.getProperty("appPort");
     }
 
     private void validateInputStream(InputStream inputStream) {

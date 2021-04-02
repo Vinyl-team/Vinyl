@@ -1,0 +1,58 @@
+package com.vinylteam.vinyl;
+
+import org.junit.jupiter.api.Test;
+
+import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class PropertiesReaderTest {
+
+    @Test
+    void testPropertiesReaderAsOnLocalMachine() throws Exception {
+        final PropertiesReader[] propertiesReader = new PropertiesReader[1];
+        withEnvironmentVariable("env", null)
+                .execute(() -> propertiesReader[0] = new PropertiesReader());
+
+        assertEquals("postgres", propertiesReader[0].getJdbcUser());
+        assertEquals("root", propertiesReader[0].getJdbcPassword());
+        assertEquals("jdbc:postgresql://localhost:5432/test-agregator-service",
+                propertiesReader[0].getJdbcUrl());
+        assertEquals("org.postgresql.Driver", propertiesReader[0].getJdbcDriver());
+        assertEquals("5", propertiesReader[0].getJdbcMaximumPoolSize());
+        assertEquals("8080", propertiesReader[0].getAppPort());
+    }
+
+    @Test
+    void testPropertiesReaderAsOnHeroku() throws Exception {
+        final PropertiesReader[] propertiesReader = new PropertiesReader[1];
+        withEnvironmentVariable("env", "PROD")
+                .and("DATABASE_URL", "postgres://allconsonantsuser:longpassword" +
+                        "@some-amazonw:5122/lostamongotherdatabases")
+                .and("PORT", "4125")
+                .execute(() -> propertiesReader[0] = new PropertiesReader());
+        withEnvironmentVariable("env", "PROD");
+        assertEquals("allconsonantsuser", propertiesReader[0].getJdbcUser());
+        assertEquals("longpassword", propertiesReader[0].getJdbcPassword());
+        assertEquals("jdbc:postgresql://some-amazonw:5122/lostamongotherdatabases",
+                propertiesReader[0].getJdbcUrl());
+        assertEquals("org.postgresql.Driver", propertiesReader[0].getJdbcDriver());
+        assertEquals("5", propertiesReader[0].getJdbcMaximumPoolSize());
+        assertEquals("4125", propertiesReader[0].getAppPort());
+    }
+
+    @Test
+    void testPropertiesReaderAsOnTravis() throws Exception {
+        final PropertiesReader[] propertiesReader = new PropertiesReader[1];
+        withEnvironmentVariable("env", "DEV")
+                .and("PORT", "4321")
+                .execute(() -> propertiesReader[0] = new PropertiesReader());
+        assertEquals("xcqnbxpbnrplli", propertiesReader[0].getJdbcUser());
+        assertEquals("cc9e5ab179e0a7a954d240e6eaa73c2e19a4740aebbf6b3bfa8fa94e769dabc1",
+                propertiesReader[0].getJdbcPassword());
+        assertEquals("jdbc:postgresql://ec2-52-1-115-6.compute-1.amazonaws.com:" +
+                "5432/d60ghtqgakdp60", propertiesReader[0].getJdbcUrl());
+        assertEquals("org.postgresql.Driver", propertiesReader[0].getJdbcDriver());
+        assertEquals("5", propertiesReader[0].getJdbcMaximumPoolSize());
+        assertEquals("4321", propertiesReader[0].getAppPort());
+    }
+}
