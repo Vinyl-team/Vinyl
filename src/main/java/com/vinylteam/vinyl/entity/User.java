@@ -8,9 +8,6 @@ public class User {
     private int iterations;
     private Role role;
 
-    public User() {
-    }
-
     public String getEmail() {
         return email;
     }

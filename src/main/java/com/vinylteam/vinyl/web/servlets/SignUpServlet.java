@@ -32,7 +32,7 @@ public class SignUpServlet {
                     .createUserWithHashedPassword(email, password.toCharArray());
 
             if (defaultUserService.add(userToAdd)) {
-                response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+                response.setStatus(HttpServletResponse.SC_OK);
                 response.sendRedirect("/signIn");
                 return;
             }

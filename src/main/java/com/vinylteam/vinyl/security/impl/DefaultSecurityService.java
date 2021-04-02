@@ -35,7 +35,6 @@ public class DefaultSecurityService implements SecurityService {
 
     @Override
     public String hashPassword(char[] password, byte[] salt, int iterations) {
-
         try {
             PBEKeySpec pbeKeySpec = new PBEKeySpec(password, salt, iterations, 256);
             Arrays.fill(password, '\u0000');
@@ -57,7 +56,6 @@ public class DefaultSecurityService implements SecurityService {
 
     @Override
     public User createUserWithHashedPassword(String email, char[] password) {
-
         byte[] salt = generateSalt();
         int iterations = 10000;
         String hashedPassword = hashPassword(password, salt, iterations);
@@ -67,7 +65,6 @@ public class DefaultSecurityService implements SecurityService {
         user.setSalt(Base64.getEncoder().encodeToString(salt));
         user.setIterations(iterations);
         user.setRole(Role.USER);
-
         return user;
     }
 

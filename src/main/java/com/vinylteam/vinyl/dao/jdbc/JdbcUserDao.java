@@ -56,7 +56,7 @@ public class JdbcUserDao implements UserDao {
                     user = userRowMapper.mapRow(resultSet);
                     if (resultSet.next()) {
                         logger.error("More than one user was found for email: {}", email);
-                        throw new SQLException("More than one user was found for email: ".concat(email));
+                        throw new RuntimeException("More than one user was found for email: ".concat(email));
                     }
                 }
             }

@@ -45,4 +45,10 @@ class UserRowMapperTest {
         });
     }
 
+    @Test
+    void mapNullRowTest() {
+        assertThrows(RuntimeException.class, () -> {
+            userRowMapper.mapRow(null);
+        });
+    }
 }

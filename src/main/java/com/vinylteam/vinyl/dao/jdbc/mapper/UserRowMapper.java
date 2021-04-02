@@ -26,9 +26,8 @@ public class UserRowMapper {
                 throw new RuntimeException(e);
             }
         } else {
-            RuntimeException e = new RuntimeException();
-            logger.error("ResultSet is null.", e);
-            throw e;
+            logger.error("ResultSet is null.");
+            throw new RuntimeException();
         }
     }
 }

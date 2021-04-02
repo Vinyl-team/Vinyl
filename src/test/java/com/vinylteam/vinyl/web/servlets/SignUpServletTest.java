@@ -57,7 +57,7 @@ class SignUpServletTest {
         verify(mockedDefaultUserService)
                 .add(mockedUser);
 
-        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signIn");
     }
 

@@ -28,7 +28,6 @@ class DefaultSecurityServiceTest {
         existingUser.setSalt(Base64.getEncoder().encodeToString(salt));
         existingUser.setIterations(10000);
         existingUser.setRole(Role.USER);
-
     }
 
     @Test
@@ -40,7 +39,6 @@ class DefaultSecurityServiceTest {
 
     @Test
     void hashPasswordWithZeroIterationsTest() {
-
         assertThrows(IllegalArgumentException.class, () ->
                 defaultSecurityService.hashPassword(passwordToHash.toCharArray(), salt, 0));
     }
