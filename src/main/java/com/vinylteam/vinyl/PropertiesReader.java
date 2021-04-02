@@ -60,12 +60,11 @@ public class PropertiesReader {
                 validateInputStream(inputStream);
                 logger.info("Input stream validated: {}", inputStream);
                 properties.load(inputStream);
-                logger.info("Properties loaded: {}", inputStream);
+                logger.info("Properties loaded: {}", properties);
             } catch (IOException e) {
                 logger.error(beginningOfErrorMessage + "travis.application.properties", e);
                 throw new RuntimeException(e);
             }
-            properties.setProperty("appPort", System.getenv("PORT"));
         }
 
         logger.info("DB properties: {}", properties);
