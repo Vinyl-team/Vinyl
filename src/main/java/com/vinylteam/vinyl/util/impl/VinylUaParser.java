@@ -1,38 +1,37 @@
-package com.vinylteam.vinyl.service.impl;
+package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.util.VinylParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import com.vinylteam.vinyl.service.ShopService;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 
-public class VinylUaShopService implements ShopService {
+public class VinylUaParser implements VinylParser {
     private final String startLink = "http://vinyl.ua";
 
     HashSet<String> getGenresLinks() throws IOException {
         HashSet<String> genreLinks = new HashSet<>();
         Document doc = Jsoup.connect(startLink).get();
         Elements innerLinks = doc.getElementsByClass("dropdown-menu dropdown-menu-left").select("a");
-
         for (Element innerLink : innerLinks) {
             String link = startLink + innerLink.attr("href");
             genreLinks.add(link);
         }
-
         return genreLinks;
     }
 
     HashSet<String> getPageLinks(HashSet<String> genreLinks) throws IOException {
         LinkedHashSet<String> pageLinks = new LinkedHashSet<>();
-
         for (String genreLink : genreLinks) {
             Document doc = Jsoup.connect(genreLink).get();
             Elements innerLinks = doc.getElementsByClass("pagination-wrapper margin-top-20").select("a");
-
             for (Element innerLink : innerLinks) {
                 String link = startLink + innerLink.attr("href");
                 if (link.contains("?page=") && !link.contains("ussr?page=2")) {
@@ -40,10 +39,8 @@ public class VinylUaShopService implements ShopService {
                 }
             }
         }
-
         return pageLinks;
     }
-
 
     HashSet<Vinyl> readProductDataFromPage(HashSet<String> pageLinks) throws IOException {
         HashSet<Vinyl> dataOfProducts = new HashSet<>();
@@ -54,12 +51,10 @@ public class VinylUaShopService implements ShopService {
             for (Element pageElement : pageElements) {
                 String release = pageElement.getElementsByClass("margin-top-clear margin-bot-5").text();
                 String artist = pageElement.getElementsByClass("text-ellipsis").select("a").text();
-
-                //FIXME http://vinyl.ua/release/567/various-phatmix-volume-2 - there is problem, because there is no teg <a>, because there is no name Artist
                 if (artist.equals("")) {
-                    artist = pageElement.getElementsByClass("text-ellipsis").select("span").text();
+                    artist = "Various Artists";
                 }
-
+                String fullNameVinyl = release + " - " + artist;
                 String price = pageElement.getElementsByClass("pull-left margin-top-5 showcase-release-price").text();
                 String vinylLink = startLink + pageElement.getElementsByClass("img-showcase-release").select("a").attr("href");
                 String[] imageLinks = pageElement.getElementsByClass("img-showcase-release").attr("style").split("'");
@@ -68,8 +63,10 @@ public class VinylUaShopService implements ShopService {
                 String genre = linkComponents[4];
 
                 Vinyl vinyl = new Vinyl();
+                vinyl.setShopId(1);
                 vinyl.setRelease(release);
                 vinyl.setArtist(artist);
+                vinyl.setFullNameVinyl(fullNameVinyl);
                 vinyl.setPrice(price);
                 vinyl.setVinylLink(vinylLink);
                 vinyl.setImageLink(imageLink);
@@ -77,7 +74,6 @@ public class VinylUaShopService implements ShopService {
                 dataOfProducts.add(vinyl);
             }
         }
-
         return dataOfProducts;
     }
 
