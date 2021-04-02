@@ -15,9 +15,9 @@ public class DBDataSource {
     private static final HikariDataSource dataSource;
     private static final HikariConfig config = new HikariConfig();
     private static final Logger logger = LoggerFactory.getLogger("com.vinylteam.vinyl.dao.DBDataSource");
-    private static final PropertiesReader propertiesReader = new PropertiesReader();
 
     static {
+        PropertiesReader propertiesReader = new PropertiesReader();
         logger.info("Properties reader read properties");
         config.setJdbcUrl(propertiesReader.getJdbcUrl());
         config.setUsername(propertiesReader.getJdbcUser());

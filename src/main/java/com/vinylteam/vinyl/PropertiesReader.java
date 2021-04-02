@@ -60,10 +60,7 @@ public class PropertiesReader {
                 logger.error(beginningOfErrorMessage + "travis.application.properties", e);
                 throw new RuntimeException(e);
             }
-            properties.setProperty("appPort", System.getenv("PORT"));
         }
-
-        logger.info("DB properties: {}", properties);
     }
 
     public String getJdbcUser() {

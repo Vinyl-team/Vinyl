@@ -40,7 +40,6 @@ class PropertiesReaderTest {
     void testPropertiesReaderAsOnTravis() throws Exception {
         final PropertiesReader[] propertiesReader = new PropertiesReader[1];
         withEnvironmentVariable("env", "DEV")
-                .and("PORT", "4321")
                 .execute(() -> propertiesReader[0] = new PropertiesReader());
         assertEquals("xcqnbxpbnrplli", propertiesReader[0].getJdbcUser());
         assertEquals("cc9e5ab179e0a7a954d240e6eaa73c2e19a4740aebbf6b3bfa8fa94e769dabc1",
@@ -49,6 +48,5 @@ class PropertiesReaderTest {
                 "5432/d60ghtqgakdp60", propertiesReader[0].getJdbcUrl());
         assertEquals("org.postgresql.Driver", propertiesReader[0].getJdbcDriver());
         assertEquals("5", propertiesReader[0].getJdbcMaximumPoolSize());
-        assertEquals("4321", propertiesReader[0].getAppPort());
     }
 }
