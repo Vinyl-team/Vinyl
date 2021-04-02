@@ -56,8 +56,11 @@ public class PropertiesReader {
             logger.info("Environment DEV");
             try (InputStream inputStream = getClass().getClassLoader()
                     .getResourceAsStream("travis.application.properties")) {
+                logger.info("Got input stream: {}", inputStream);
                 validateInputStream(inputStream);
+                logger.info("Input stream validated: {}", inputStream);
                 properties.load(inputStream);
+                logger.info("Properties loaded: {}", inputStream);
             } catch (IOException e) {
                 logger.error(beginningOfErrorMessage + "travis.application.properties", e);
                 throw new RuntimeException(e);
@@ -93,6 +96,7 @@ public class PropertiesReader {
     }
 
     private void validateInputStream(InputStream inputStream) {
+        logger.info("Input stream validation: {}", inputStream);
         if (inputStream == null) {
             RuntimeException e = new RuntimeException();
             logger.error(".properties file not found.", e);

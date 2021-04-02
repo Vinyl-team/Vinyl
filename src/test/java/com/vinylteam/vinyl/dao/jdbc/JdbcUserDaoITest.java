@@ -25,11 +25,11 @@ class JdbcUserDaoITest {
             "(email, password, salt, iterations, role, status) " +
             "VALUES (?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)";
     private final String TRUNCATE_TABLE_RESTART_IDENTITY = "TRUNCATE public.users RESTART IDENTITY";
-    private static Connection connection;
+    private Connection connection;
 
     @BeforeAll
     void beforeAll() throws SQLException {
-        logger.info("Trying to get connection: from {}", DBDataSource.getDataSource());
+        logger.info("Trying to get connection from: {}", DBDataSource.getDataSource());
         connection = DBDataSource.getConnection();
         logger.info("Connection: {}", connection);
         try (Statement truncateStatement = connection.createStatement()) {
