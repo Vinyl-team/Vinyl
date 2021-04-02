@@ -26,6 +26,7 @@ public class PropertiesReader {
         }
 
         if (System.getenv("env") == null) {
+            logger.info("Environment NULL");
             try (InputStream inputStream = getClass().getClassLoader()
                     .getResourceAsStream("dev.application.properties")) {
                 validateInputStream(inputStream);
@@ -35,7 +36,7 @@ public class PropertiesReader {
                 throw new RuntimeException(e);
             }
         } else if (System.getenv("env").equals("PROD")) {
-
+            logger.info("Environment PROD");
             URI databaseUri;
             try {
                 databaseUri = new URI(System.getenv("DATABASE_URL"));
@@ -52,6 +53,7 @@ public class PropertiesReader {
             properties.setProperty("appPort", System.getenv("PORT"));
 
         } else if (System.getenv("env").equals("DEV")) {
+            logger.info("Environment DEV");
             try (InputStream inputStream = getClass().getClassLoader()
                     .getResourceAsStream("travis.application.properties")) {
                 validateInputStream(inputStream);
