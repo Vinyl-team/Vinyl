@@ -14,12 +14,8 @@ class PropertiesReaderTest {
                 .execute(() -> propertiesReader[0] = new PropertiesReader());
 
         assertEquals("postgres", propertiesReader[0].getJdbcUser());
-        assertEquals("root", propertiesReader[0].getJdbcPassword());
-        assertEquals("jdbc:postgresql://localhost:5432/test-agregator-service",
-                propertiesReader[0].getJdbcUrl());
         assertEquals("org.postgresql.Driver", propertiesReader[0].getJdbcDriver());
         assertEquals("5", propertiesReader[0].getJdbcMaximumPoolSize());
-        assertEquals("8080", propertiesReader[0].getAppPort());
     }
 
     @Test

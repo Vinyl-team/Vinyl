@@ -35,6 +35,7 @@ public class PropertiesReader {
                 throw new RuntimeException(e);
             }
         } else if (System.getenv("env").equals("PROD")) {
+
             URI databaseUri;
             try {
                 databaseUri = new URI(System.getenv("DATABASE_URL"));

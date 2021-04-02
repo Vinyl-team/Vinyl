@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class JdbcUserDaoITest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final JdbcUserDao jdbcUserDao = DBDataSource.getJDBCUserDAO();
+    private final JdbcUserDao jdbcUserDao = new JdbcUserDao();
 
     private final String INSERT_INTO_TABLE = "INSERT INTO public.users " +
             "(email, password, salt, iterations, role) " +

@@ -1,8 +1,6 @@
 package com.vinylteam.vinyl.dao;
 
 import com.vinylteam.vinyl.PropertiesReader;
-import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
-import com.vinylteam.vinyl.service.impl.DefaultUserService;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
@@ -35,17 +33,6 @@ public class DBDataSource {
             logger.error("Error during getting connection from data source", e);
             throw new RuntimeException(e);
         }
-    }
-
-    private DBDataSource() {
-    }
-
-    public static DefaultUserService getServiceImplementation() {
-        return new DefaultUserService();
-    }
-
-    public static JdbcUserDao getJDBCUserDAO() {
-        return new JdbcUserDao();
     }
 
     public static DataSource getDataSource() {
