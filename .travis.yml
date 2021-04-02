@@ -6,6 +6,8 @@ env:
     - CODECOV_TOKEN='9b3f4403-014a-4ea3-b09a-bc93708a17b8'
     - env='DEV'
 
+script: ./mvnw clean test -X
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 
