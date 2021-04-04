@@ -4,12 +4,15 @@ jdk: "-openjdk11"
 env:
   global:
     - CODECOV_TOKEN='9b3f4403-014a-4ea3-b09a-bc93708a17b8'
+    - env='DEV'
 
 after_success:
-- bash <(curl -s https://codecov.io/bash)
-
+  - bash <(curl -s https://codecov.io/bash)
 
 notifications:
   slack:
     secure: SEjl1uPdAn1S6VH0EUzPepP2M0YI8/GO3XX3tq/krFQYAuQGTRm3R8xsNHGPs/Brc5Vk50rkKgqlQy+DP8XMAVqv9s88UKdWwLo0lhKLP19Iy1HTY4YqNqpk3YQP8c2VET7iTLNZx9H1Xtp8N8G1UTqALSXPNhRrlrOuQ11Varc0fDOcCa8AwyvfYNqo4oR8zuhpQpaww48yk0dahRkFlf+LPUfAsfwMcKHv2HJdQjeotWdKJiOFycMGvd4CECHQvyHoU6AIM5iGsfqBrosQzseX+FyA6too1oM6bJoH4+y825s53qrALorBsSSb60ZQYmiYHRdcVmKcpOecXTZHNRDskBfB0WHmfdAhKkZJ5uP8pyid5ve+mMmFoUymTbqWX5/r78dEVw3tsOqEL7H9vlAPJopmOkiyQ7L8J9yVQajNoyVt3fbBwq/CRhiQU+mcp/r5Rif9Mm0JCeP4d9vmsJcXC83Tnt0C1TIolq++TdiIIJim8OomZwaPbU1wswCE98JoO4fSmyu5GuRrsVPF0NNjFOnyqgOhav1rXBHZu94u/+3s38eDcAiWVBhYSAgHzdKB+IRXVBE8sI+uEKfeveOOI520Ibv/mq4ORit17c+WzVEYoFpN/SDK7MVzA0+BQW9XtIbKX+sBCr6sD34AUMwxa/TdM8oX31qGnW/BEhA=
   email: glushkov18@gmail.com
+
+services:
+  - postgresql
