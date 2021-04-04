@@ -6,29 +6,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.Base64;
 
 public class UserRowMapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserRowMapper.class);
+    private final Logger logger = LoggerFactory.getLogger(UserRowMapper.class);
 
-    public static User mapRow(ResultSet resultSet) {
-        String email;
-        String password;
-        String salt;
-        int iterations;
-        Role role;
-        try {
-            email = resultSet.getString("email");
-            password = resultSet.getString("password");
-            salt = resultSet.getString("salt");
-            iterations = resultSet.getInt("iterations");
-            role = Role.valueOf(resultSet.getString("role"));
-            return new User(email, password, Base64.getDecoder().decode(salt), iterations, role);
-        } catch (SQLException e){
-            logger.error("Error while getting data from result set", e);
-            throw new RuntimeException(e);
+    public User mapRow(ResultSet resultSet) {
+        if (resultSet != null) {
+            User user = new User();
+            try {
+                user.setEmail(resultSet.getString("email"));
+                user.setPassword(resultSet.getString("password"));
+                user.setSalt(resultSet.getString("salt"));
+                user.setIterations(resultSet.getInt("iterations"));
+                user.setRole(Role.valueOf(resultSet.getString("role")));
+                user.setStatus(resultSet.getBoolean("status"));
+                return user;
+            } catch (Exception e) {
+                logger.error("Error while getting data from result set", e);
+                throw new RuntimeException(e);
+            }
+        } else {
+            logger.error("ResultSet is null.");
+            throw new RuntimeException();
         }
     }
 }

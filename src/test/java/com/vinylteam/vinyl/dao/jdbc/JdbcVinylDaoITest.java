@@ -24,15 +24,19 @@ class JdbcVinylDaoITest {
     private static final String INSERT_VINYLS = "INSERT INTO vinyls(release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id)" +
             "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    private final DBDataSource dbDataSource = new DBDataSource();
-    private final VinylDao vinylDao = dbDataSource.getJDBCVinylDAO();
+    private final VinylDao vinylDao = new JdbcVinylDao(DBDataSource.getDataSource());
 
     private List<Vinyl> vinylList;
     private Connection connection;
 
     @BeforeAll
     void beforeAll() throws SQLException {
-        connection = dbDataSource.getDataSource().getConnection();
+        connection = DBDataSource.getDataSource().getConnection();
+        try (Statement truncateUniqueVinyls = connection.createStatement();
+             Statement truncateVinyls = connection.createStatement()) {
+            truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
+            truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
+        }
     }
 
     @BeforeEach

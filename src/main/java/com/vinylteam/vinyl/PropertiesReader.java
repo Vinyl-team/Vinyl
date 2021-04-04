@@ -5,23 +5,63 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Properties;
 
 public class PropertiesReader {
 
-    Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Properties properties = new Properties();
 
     public PropertiesReader() {
-
-        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("application.properties")) {
+        String beginningOfErrorMessage = "Error during loading properties from ";
+        try (InputStream inputStream = getClass().getClassLoader()
+                .getResourceAsStream("application.properties")) {
+            validateInputStream(inputStream);
             properties.load(inputStream);
         } catch (IOException e) {
-            logger.error("Error during loading properties", e);
+            logger.error(beginningOfErrorMessage + "application.properties", e);
             throw new RuntimeException(e);
         }
-    }
 
-    private final Properties properties = new Properties();
+        if (System.getenv("env") == null) {
+            try (InputStream inputStream = getClass().getClassLoader()
+                    .getResourceAsStream("dev.application.properties")) {
+                validateInputStream(inputStream);
+                properties.load(inputStream);
+            } catch (IOException e) {
+                logger.error(beginningOfErrorMessage + "dev.application.properties", e);
+                throw new RuntimeException(e);
+            }
+        } else if (System.getenv("env").equals("PROD")) {
+
+            URI databaseUri;
+            try {
+                databaseUri = new URI(System.getenv("DATABASE_URL"));
+            } catch (URISyntaxException e) {
+                logger.error("Error during getting databaseUri", e);
+                throw new RuntimeException(e);
+            }
+
+            properties.setProperty("jdbc.user", databaseUri.getUserInfo().split(":")[0]);
+            properties.setProperty("jdbc.password", databaseUri.getUserInfo().split(":")[1]);
+            properties.setProperty("jdbc.url", "jdbc:postgresql://" +
+                    databaseUri.getHost() + ':' +
+                    databaseUri.getPort() + databaseUri.getPath());
+            properties.setProperty("appPort", System.getenv("PORT"));
+
+        } else if (System.getenv("env").equals("DEV")) {
+            try (InputStream inputStream = getClass().getClassLoader()
+                    .getResourceAsStream("travis.application.properties")) {
+                validateInputStream(inputStream);
+                properties.load(inputStream);
+            } catch (IOException e) {
+                logger.error(beginningOfErrorMessage + "travis.application.properties", e);
+                throw new RuntimeException(e);
+            }
+        }
+    }
 
     public String getJdbcUser() {
         return properties.getProperty("jdbc.user");
@@ -31,24 +71,27 @@ public class PropertiesReader {
         return properties.getProperty("jdbc.password");
     }
 
-    public String getJdbcDatabase() {
-        return properties.getProperty("jdbc.database");
+    public String getJdbcUrl() {
+        return properties.getProperty("jdbc.url");
     }
 
-    public String getJdbcServer() {
-        return properties.getProperty("jdbc.server");
+    public String getJdbcDriver() {
+        return properties.getProperty("jdbc.driver");
     }
 
-    public String getJdbcPort() {
-        return properties.getProperty("jdbc.port");
+    public String getJdbcMaximumPoolSize() {
+        return properties.getProperty("jdbc.maximum.pool.size");
     }
 
     public String getAppPort() {
-        if (System.getenv("env") == null) {
-            return properties.getProperty("appPort");
-        } else {
-            return System.getenv("PORT");
-        }
+        return properties.getProperty("appPort");
     }
 
+    private void validateInputStream(InputStream inputStream) {
+        if (inputStream == null) {
+            RuntimeException e = new RuntimeException();
+            logger.error(".properties file not found.", e);
+            throw e;
+        }
+    }
 }

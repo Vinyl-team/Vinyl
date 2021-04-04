@@ -4,8 +4,8 @@ import com.vinylteam.vinyl.dao.VinylDao;
 import com.vinylteam.vinyl.dao.jdbc.mapper.UniqueVinylRowMapper;
 import com.vinylteam.vinyl.dao.jdbc.mapper.VinylRowMapper;
 import com.vinylteam.vinyl.entity.Vinyl;
-import org.postgresql.ds.PGSimpleDataSource;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,11 +22,11 @@ public class JdbcVinylDao implements VinylDao {
     private static final String SELECT_VINYLS = "SELECT id, release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id FROM vinyls";
     private static final String SELECT_VINYL_BY_ID = "SELECT id, release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id FROM vinyls WHERE id=?";
 
-    private final PGSimpleDataSource dataSource;
+    private final DataSource dataSource;
     private final VinylRowMapper vinylRowMapper = new VinylRowMapper();
     private final UniqueVinylRowMapper uniqueVinylRowMapper = new UniqueVinylRowMapper();
 
-    public JdbcVinylDao(PGSimpleDataSource dataSource) {
+    public JdbcVinylDao(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

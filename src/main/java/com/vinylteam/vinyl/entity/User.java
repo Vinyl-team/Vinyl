@@ -1,9 +1,5 @@
 package com.vinylteam.vinyl.entity;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Base64;
-
 public class User {
 
     private String email;
@@ -11,14 +7,7 @@ public class User {
     private String salt;
     private int iterations;
     private Role role;
-
-    public User(String email, String password, byte[] salt, int iterations, Role role) {
-        this.email = email;
-        this.password = password;
-        this.salt = Base64.getEncoder().encodeToString(salt);
-        this.iterations = iterations;
-        this.role = role;
-    }
+    private boolean status;
 
     public String getEmail() {
         return email;
@@ -60,6 +49,14 @@ public class User {
         this.role = role;
     }
 
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -67,7 +64,8 @@ public class User {
                 ", password='" + password + '\'' +
                 ", salt='" + salt + '\'' +
                 ", iterations=" + iterations +
-                ", role=" + role.toString() +
+                ", role=" + role +
+                ", status=" + status +
                 '}';
     }
 }
