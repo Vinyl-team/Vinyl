@@ -15,7 +15,7 @@ class UniqueVinylRowMapperTest {
     private final UniqueVinylRowMapper uniqueVinylRowMapper = new UniqueVinylRowMapper();
 
     @Test
-    void mapRowWithFillResultSetTest() throws SQLException {
+    void mapRowWithFilledResultSetTest() throws SQLException {
         ResultSet mockedResultSet = mock(ResultSet.class);
         //prepared
         when(mockedResultSet.getInt("id")).thenReturn(1);
@@ -34,7 +34,7 @@ class UniqueVinylRowMapperTest {
     }
 
     @Test
-    void mapRowWithNullParameterTest() {
+    void mapRowWithNullResultSetTest() {
         assertThrows(RuntimeException.class, () -> {
             uniqueVinylRowMapper.mapRow(null);
         });

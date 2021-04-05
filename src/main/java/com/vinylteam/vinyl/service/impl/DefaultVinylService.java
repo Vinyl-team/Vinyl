@@ -16,32 +16,32 @@ public class DefaultVinylService implements VinylService {
     }
 
     @Override
-    public void saveUniqueVinyls(List<Vinyl> uniqueVinyls) {
-        vinylDao.saveUniqueVinyls(uniqueVinyls);
+    public void saveAllUnique(List<Vinyl> uniqueVinyls) {
+        vinylDao.saveAllUnique(uniqueVinyls);
     }
 
     @Override
-    public void saveVinyls(List<Vinyl> vinyls) {
-        vinylDao.saveVinyls(vinyls);
+    public void saveAll(List<Vinyl> vinyls) {
+        vinylDao.saveAll(vinyls);
     }
 
     @Override
-    public List<Vinyl> getUniqueVinyls() {
-        return vinylDao.getUniqueVinyls();
+    public List<Vinyl> getAllUnique() {
+        return vinylDao.getAllUnique();
     }
 
     @Override
-    public List<Vinyl> getVinyls() {
-        return vinylDao.getVinyls();
+    public List<Vinyl> getAll() {
+        return vinylDao.getAll();
     }
 
     @Override
-    public Vinyl getUniqueVinylById(long id) {
-        return vinylDao.getUniqueVinylById(id);
+    public Vinyl getUniqueById(long id) {
+        return vinylDao.getUniqueById(id);
     }
 
     @Override
-    public Vinyl getVinylById(long id) {
-        return vinylDao.getVinylById(id);
+    public Vinyl getById(long id) {
+        return vinylDao.getById(id);
     }
 }

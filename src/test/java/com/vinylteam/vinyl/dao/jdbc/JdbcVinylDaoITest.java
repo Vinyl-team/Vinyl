@@ -17,11 +17,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JdbcVinylDaoITest {
-    private static final String TRUNCATE_UNIQUE_VINYLS = "TRUNCATE unique_vinyls RESTART IDENTITY CASCADE";
-    private static final String TRUNCATE_VINYLS = "TRUNCATE vinyls RESTART IDENTITY";
-    private static final String INSERT_UNIQUE_VINYLS = "INSERT INTO unique_vinyls(id, release, artist, full_name, link_to_image)" +
+    private final String TRUNCATE_UNIQUE_VINYLS = "TRUNCATE unique_vinyls RESTART IDENTITY CASCADE";
+    private final String TRUNCATE_VINYLS = "TRUNCATE vinyls RESTART IDENTITY";
+    private final String INSERT_UNIQUE_VINYLS = "INSERT INTO unique_vinyls(id, release, artist, full_name, link_to_image)" +
             "VALUES(?, ?, ?, ?, ?), (?, ?, ?, ?, ?)";
-    private static final String INSERT_VINYLS = "INSERT INTO vinyls(release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id)" +
+    private final String INSERT_VINYLS = "INSERT INTO vinyls(release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id)" +
             "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private final VinylDao vinylDao = new JdbcVinylDao(DBDataSource.getDataSource());
@@ -37,6 +37,16 @@ class JdbcVinylDaoITest {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
             truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
         }
+    }
+
+    @AfterAll
+    void afterAll() throws SQLException {
+        try (Statement truncateUniqueVinyls = connection.createStatement();
+             Statement truncateVinyls = connection.createStatement()) {
+            truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
+            truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
+        }
+        connection.close();
     }
 
     @BeforeEach
@@ -128,8 +138,8 @@ class JdbcVinylDaoITest {
     void saveUniqueVinylsITest() throws SQLException {
         try (Statement truncateUniqueVinyls = connection.createStatement()) {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
-            vinylDao.saveUniqueVinyls(vinylList);
-            List<Vinyl> vinyls = vinylDao.getUniqueVinyls();
+            vinylDao.saveAllUnique(vinylList);
+            List<Vinyl> vinyls = vinylDao.getAllUnique();
             assertEquals(1, vinyls.get(0).getVinylId());
             assertEquals("cool release", vinyls.get(0).getRelease());
             assertEquals("best artist", vinyls.get(0).getArtist());
@@ -150,7 +160,7 @@ class JdbcVinylDaoITest {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
             vinylList.get(1).setUniqueVinylId(1);
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.saveUniqueVinyls(vinylList);
+                vinylDao.saveAllUnique(vinylList);
             });
         }
     }
@@ -161,7 +171,7 @@ class JdbcVinylDaoITest {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
             vinylList.get(0).setRelease(null);
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.saveUniqueVinyls(vinylList);
+                vinylDao.saveAllUnique(vinylList);
             });
         }
     }
@@ -172,7 +182,7 @@ class JdbcVinylDaoITest {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
             vinylList.get(0).setArtist(null);
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.saveUniqueVinyls(vinylList);
+                vinylDao.saveAllUnique(vinylList);
             });
         }
     }
@@ -183,7 +193,7 @@ class JdbcVinylDaoITest {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
             vinylList.get(0).setImageLink(null);
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.saveUniqueVinyls(vinylList);
+                vinylDao.saveAllUnique(vinylList);
             });
         }
     }
@@ -192,8 +202,8 @@ class JdbcVinylDaoITest {
     void saveVinylsITest() throws SQLException {
         try (Statement truncateVinyls = connection.createStatement()) {
             truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
-            vinylDao.saveVinyls(vinylList);
-            List<Vinyl> vinyls = vinylDao.getVinyls();
+            vinylDao.saveAll(vinylList);
+            List<Vinyl> vinyls = vinylDao.getAll();
             assertEquals(1, vinyls.get(0).getVinylId());
             assertEquals("cool release", vinyls.get(0).getRelease());
             assertEquals("best artist", vinyls.get(0).getArtist());
@@ -224,7 +234,7 @@ class JdbcVinylDaoITest {
             truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
             vinylList.get(0).setRelease(null);
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.saveVinyls(vinylList);
+                vinylDao.saveAll(vinylList);
             });
         }
     }
@@ -235,7 +245,7 @@ class JdbcVinylDaoITest {
             truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
             vinylList.get(0).setArtist(null);
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.saveVinyls(vinylList);
+                vinylDao.saveAll(vinylList);
             });
         }
     }
@@ -246,7 +256,7 @@ class JdbcVinylDaoITest {
             truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
             vinylList.get(0).setVinylLink(null);
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.saveVinyls(vinylList);
+                vinylDao.saveAll(vinylList);
             });
         }
     }
@@ -257,7 +267,7 @@ class JdbcVinylDaoITest {
             truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
             vinylList.get(0).setImageLink(null);
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.saveVinyls(vinylList);
+                vinylDao.saveAll(vinylList);
             });
         }
     }
@@ -278,7 +288,7 @@ class JdbcVinylDaoITest {
             vinyl.setUniqueVinylId(1);
             newVinylList.add(vinyl);
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.saveVinyls(newVinylList);
+                vinylDao.saveAll(newVinylList);
             });
         }
     }
@@ -299,14 +309,14 @@ class JdbcVinylDaoITest {
             vinyl.setShopId(1);
             newVinylList.add(vinyl);
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.saveVinyls(newVinylList);
+                vinylDao.saveAll(newVinylList);
             });
         }
     }
 
     @Test
     void getUniqueVinylsITest() {
-        List<Vinyl> uniqueVinyls = vinylDao.getUniqueVinyls();
+        List<Vinyl> uniqueVinyls = vinylDao.getAllUnique();
 
         assertEquals(1, uniqueVinyls.get(0).getVinylId());
         assertEquals("cool release", uniqueVinyls.get(0).getRelease());
@@ -322,8 +332,17 @@ class JdbcVinylDaoITest {
     }
 
     @Test
+    void getVinylsFromEmptyUniqueVinylsTableITest() throws SQLException {
+        try (Statement truncateUniqueVinyls = connection.createStatement()) {
+            truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
+        }
+        List<Vinyl> uniqueVinyls = vinylDao.getAllUnique();
+        assertEquals(0, uniqueVinyls.size());
+    }
+
+    @Test
     void getVinylsITest() {
-        List<Vinyl> allVinyls = vinylDao.getVinyls();
+        List<Vinyl> allVinyls = vinylDao.getAll();
 
         assertEquals(1, allVinyls.get(0).getVinylId());
         assertEquals("cool release", allVinyls.get(0).getRelease());
@@ -360,8 +379,17 @@ class JdbcVinylDaoITest {
     }
 
     @Test
+    void getVinylsFromEmptyVinylsTableITest() throws SQLException {
+        try (Statement truncateVinyls = connection.createStatement()) {
+            truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
+        }
+        List<Vinyl> allVinyls = vinylDao.getAll();
+        assertEquals(0, allVinyls.size());
+    }
+
+    @Test
     void getUniqueVinylByIdITest() {
-        Vinyl uniqueVinyl = vinylDao.getUniqueVinylById(2);
+        Vinyl uniqueVinyl = vinylDao.getUniqueById(2);
         assertEquals(2, uniqueVinyl.getVinylId());
         assertEquals("wow effect", uniqueVinyl.getRelease());
         assertEquals("best of the best", uniqueVinyl.getArtist());
@@ -372,13 +400,13 @@ class JdbcVinylDaoITest {
     @Test
     void getUniqueVinylByNonExistedIdITest() {
         assertThrows(RuntimeException.class, () -> {
-            vinylDao.getUniqueVinylById(15);
+            vinylDao.getUniqueById(15);
         });
     }
 
     @Test
     void getVinylByIdITest() {
-        Vinyl vinyl = vinylDao.getVinylById(2);
+        Vinyl vinyl = vinylDao.getById(2);
         assertEquals(2, vinyl.getVinylId());
         assertEquals("cool release (Vinyl)", vinyl.getRelease());
         assertEquals("best artist", vinyl.getArtist());
@@ -394,17 +422,7 @@ class JdbcVinylDaoITest {
     @Test
     void getVinylByNonExistedIdITest() {
         assertThrows(RuntimeException.class, () -> {
-            vinylDao.getVinylById(15);
+            vinylDao.getById(15);
         });
-    }
-
-    @AfterAll
-    void afterAll() throws SQLException {
-        try (Statement truncateUniqueVinyls = connection.createStatement();
-             Statement truncateVinyls = connection.createStatement()) {
-            truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
-            truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
-        }
-        connection.close();
     }
 }

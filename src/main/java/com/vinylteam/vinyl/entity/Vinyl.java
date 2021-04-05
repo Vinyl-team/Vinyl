@@ -96,23 +96,38 @@ public class Vinyl {
     }
 
     @Override
+    public String toString() {
+        return "Vinyl{" +
+                "vinylId=" + vinylId +
+                ", shopId=" + shopId +
+                ", uniqueVinylId=" + uniqueVinylId +
+                ", release='" + release + '\'' +
+                ", artist='" + artist + '\'' +
+                ", fullNameVinyl='" + fullNameVinyl + '\'' +
+                ", price='" + price + '\'' +
+                ", vinylLink='" + vinylLink + '\'' +
+                ", imageLink='" + imageLink + '\'' +
+                ", genre='" + genre + '\'' +
+                '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Vinyl vinyl = (Vinyl) o;
-        return Objects.equals(release, vinyl.release) &&
-                Objects.equals(artist, vinyl.artist) &&
-                Objects.equals(fullNameVinyl, vinyl.fullNameVinyl) &&
-                Objects.equals(vinylLink, vinyl.vinylLink) &&
-                Objects.equals(imageLink, vinyl.imageLink);
+        return vinylId == vinyl.vinylId &&
+                shopId == vinyl.shopId &&
+                uniqueVinylId == vinyl.uniqueVinylId &&
+                release.equals(vinyl.release) &&
+                artist.equals(vinyl.artist) &&
+                fullNameVinyl.equals(vinyl.fullNameVinyl) &&
+                vinylLink.equals(vinyl.vinylLink) &&
+                imageLink.equals(vinyl.imageLink);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(release, artist, fullNameVinyl, vinylLink, imageLink);
+        return Objects.hash(vinylId, shopId, uniqueVinylId, release, artist, fullNameVinyl, vinylLink, imageLink);
     }
 }

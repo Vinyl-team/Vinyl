@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JdbcVinylDao implements VinylDao {
-    private static final String INSERT_UNIQUE_VINYLS = "INSERT INTO unique_vinyls(id, release, artist, full_name, link_to_image) VALUES(?, ?, ?, ?, ?)";
-    private static final String SELECT_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image FROM unique_vinyls ORDER BY id";
-    private static final String SELECT_UNIQUE_VINYL_BY_ID = "SELECT id, release, artist, full_name, link_to_image FROM unique_vinyls WHERE id=?";
+    private final String INSERT_UNIQUE_VINYLS = "INSERT INTO unique_vinyls(id, release, artist, full_name, link_to_image) VALUES(?, ?, ?, ?, ?)";
+    private final String SELECT_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image FROM unique_vinyls ORDER BY id";
+    private final String SELECT_UNIQUE_VINYL_BY_ID = "SELECT id, release, artist, full_name, link_to_image FROM unique_vinyls WHERE id=?";
 
-    private static final String INSERT_VINYLS = "INSERT INTO vinyls(release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private static final String SELECT_VINYLS = "SELECT id, release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id FROM vinyls";
-    private static final String SELECT_VINYL_BY_ID = "SELECT id, release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id FROM vinyls WHERE id=?";
+    private final String INSERT_VINYLS = "INSERT INTO vinyls(release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private final String SELECT_VINYLS = "SELECT id, release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id FROM vinyls";
+    private final String SELECT_VINYL_BY_ID = "SELECT id, release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id FROM vinyls WHERE id=?";
 
     private final DataSource dataSource;
     private final VinylRowMapper vinylRowMapper = new VinylRowMapper();
@@ -31,7 +31,7 @@ public class JdbcVinylDao implements VinylDao {
     }
 
     @Override
-    public void saveUniqueVinyls(List<Vinyl> uniqueVinyls) {
+    public void saveAllUnique(List<Vinyl> uniqueVinyls) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement insertUniqueVinylsStatement = connection.prepareStatement(INSERT_UNIQUE_VINYLS)) {
             connection.setAutoCommit(false);
@@ -51,7 +51,7 @@ public class JdbcVinylDao implements VinylDao {
     }
 
     @Override
-    public void saveVinyls(List<Vinyl> vinyls) {
+    public void saveAll(List<Vinyl> vinyls) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement insertVinylsStatement = connection.prepareStatement(INSERT_VINYLS)) {
             connection.setAutoCommit(false);
@@ -75,7 +75,7 @@ public class JdbcVinylDao implements VinylDao {
     }
 
     @Override
-    public List<Vinyl> getUniqueVinyls() {
+    public List<Vinyl> getAllUnique() {
         List<Vinyl> uniqueVinyls = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement getUniqueVinylsStatement = connection.prepareStatement(SELECT_UNIQUE_VINYLS);
@@ -91,7 +91,7 @@ public class JdbcVinylDao implements VinylDao {
     }
 
     @Override
-    public List<Vinyl> getVinyls() {
+    public List<Vinyl> getAll() {
         List<Vinyl> allVinyls = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement getAllVinylsStatement = connection.prepareStatement(SELECT_VINYLS);
@@ -107,7 +107,7 @@ public class JdbcVinylDao implements VinylDao {
     }
 
     @Override
-    public Vinyl getUniqueVinylById(long id) {
+    public Vinyl getUniqueById(long id) {
         Vinyl vinyl;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement getUniqueVinylByIdStatement = connection.prepareStatement(SELECT_UNIQUE_VINYL_BY_ID)) {
@@ -126,7 +126,7 @@ public class JdbcVinylDao implements VinylDao {
     }
 
     @Override
-    public Vinyl getVinylById(long id) {
+    public Vinyl getById(long id) {
         Vinyl vinyl;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement getVinylByIdStatement = connection.prepareStatement(SELECT_VINYL_BY_ID)) {

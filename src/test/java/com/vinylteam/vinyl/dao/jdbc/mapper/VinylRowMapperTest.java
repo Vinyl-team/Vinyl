@@ -15,7 +15,7 @@ class VinylRowMapperTest {
     private final VinylRowMapper vinylRowMapper = new VinylRowMapper();
 
     @Test
-    void mapRow() throws SQLException {
+    void mapRowFilledResultSetTest() throws SQLException {
         ResultSet vinylResult = mock(ResultSet.class);
         //prepare
         when(vinylResult.getInt("id")).thenReturn(1);
@@ -44,7 +44,7 @@ class VinylRowMapperTest {
     }
 
     @Test
-    void mapRowWithNullParameterTest() {
+    void mapRowWithNullResultSetTest() {
         assertThrows(RuntimeException.class, () -> {
             vinylRowMapper.mapRow(null);
         });
