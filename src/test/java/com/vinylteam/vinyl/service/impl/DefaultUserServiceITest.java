@@ -1,10 +1,13 @@
 package com.vinylteam.vinyl.service.impl;
 
 import com.vinylteam.vinyl.dao.DBDataSource;
+import com.vinylteam.vinyl.dao.UserDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
 import com.vinylteam.vinyl.entity.SignInCheckResult;
 import com.vinylteam.vinyl.entity.User;
+import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
+import com.vinylteam.vinyl.service.UserService;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class DefaultUserServiceITest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final DefaultSecurityService defaultSecurityService = new DefaultSecurityService();
-    private final JdbcUserDao jdbcUserDao = new JdbcUserDao();
-    private final DefaultUserService defaultUserService = new
-            DefaultUserService(jdbcUserDao, defaultSecurityService);
+    private final SecurityService securityService = new DefaultSecurityService();
+    private final UserDao userDao = new JdbcUserDao();
+    private final UserService userService = new
+            DefaultUserService(userDao, securityService);
 
     private User verifiedUser;
     private User notVerifiedUser;
@@ -37,10 +40,10 @@ class DefaultUserServiceITest {
             truncateStatement.executeUpdate(TRUNCATE_TABLE_RESTART_IDENTITY);
             logger.info("Truncated table before all tests.");
         }
-        verifiedUser = defaultSecurityService
+        verifiedUser = securityService
                 .createUserWithHashedPassword("verifieduser@vinyl.com", "password1".toCharArray());
         verifiedUser.setStatus(true);
-        notVerifiedUser = defaultSecurityService
+        notVerifiedUser = securityService
                 .createUserWithHashedPassword("notverifieduser@vinyl.com", "password2".toCharArray());
     }
 
@@ -53,8 +56,8 @@ class DefaultUserServiceITest {
     void beforeEach() {
         logger.info("Adding one verified and one not verified user" +
                 " to table users before the method.");
-        jdbcUserDao.add(verifiedUser);
-        jdbcUserDao.add(notVerifiedUser);
+        userDao.add(verifiedUser);
+        userDao.add(notVerifiedUser);
     }
 
     @AfterEach
@@ -68,62 +71,62 @@ class DefaultUserServiceITest {
     @Test
     void signInCheckNullEmailTest() {
         assertEquals(SignInCheckResult.FAIL,
-                defaultUserService.signInCheck(null, "password"));
+                userService.signInCheck(null, "password"));
     }
 
     @Test
     void signInCheckNullPasswordTest() {
         assertEquals(SignInCheckResult.FAIL,
-                defaultUserService.signInCheck("verifieduser@vinyl.com", null));
+                userService.signInCheck("verifieduser@vinyl.com", null));
     }
 
     @Test
     void signInCheckNonExistingUserTest() {
         assertEquals(SignInCheckResult.FAIL,
-                defaultUserService.signInCheck("testuser3@vinyl.com", "password3"));
+                userService.signInCheck("testuser3@vinyl.com", "password3"));
     }
 
     @Test
     void signInCheckExistingVerifiedUserWrongPasswordTest() {
         assertEquals(SignInCheckResult.FAIL,
-                defaultUserService.signInCheck("verifieduser@vinyl.com", "wrong password"));
+                userService.signInCheck("verifieduser@vinyl.com", "wrong password"));
     }
 
     @Test
     void signInCheckExistingNotVerifiedUserWrongPasswordTest() {
         assertEquals(SignInCheckResult.FAIL,
-                defaultUserService.signInCheck("notverifieduser@vinyl.com", "wrong password"));
+                userService.signInCheck("notverifieduser@vinyl.com", "wrong password"));
     }
 
     @Test
     void signInCheckExistingVerifiedUserRightPasswordTest() {
         assertEquals(SignInCheckResult.OK_VERIFIED,
-                defaultUserService.signInCheck("verifieduser@vinyl.com", "password1"));
+                userService.signInCheck("verifieduser@vinyl.com", "password1"));
     }
 
     @Test
     void signInCheckExistingNotVerifiedUserRightPasswordTest() {
         assertEquals(SignInCheckResult.OK_NOT_VERIFIED,
-                defaultUserService.signInCheck("notverifieduser@vinyl.com", "password2"));
+                userService.signInCheck("notverifieduser@vinyl.com", "password2"));
     }
 
     @Test
     void addWithNullEmailTest() {
-        assertFalse(defaultUserService.add(null, "password"));
+        assertFalse(userService.add(null, "password"));
     }
 
     @Test
     void addWithNullPasswordTest() {
-        assertFalse(defaultUserService.add("email@vinyl.com", null));
+        assertFalse(userService.add("email@vinyl.com", null));
     }
 
     @Test
     void addWithExistingEmail() {
-        assertFalse(defaultUserService.add("verifieduser@vinyl.com", "password1"));
+        assertFalse(userService.add("verifieduser@vinyl.com", "password1"));
     }
 
     @Test
     void addWithNewEmail() {
-        assertTrue(defaultUserService.add("newuser@vinyl.com", "password3"));
+        assertTrue(userService.add("newuser@vinyl.com", "password3"));
     }
 }

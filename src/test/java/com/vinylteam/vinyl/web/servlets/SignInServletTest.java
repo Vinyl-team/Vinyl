@@ -1,8 +1,9 @@
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.SignInCheckResult;
-import com.vinylteam.vinyl.service.impl.DefaultUserService;
+import com.vinylteam.vinyl.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
@@ -14,28 +15,29 @@ import static org.mockito.Mockito.*;
 
 class SignInServletTest {
 
-    private DefaultUserService mockedDefaultUserService;
+    private UserService mockedUserService;
     private HttpServletRequest mockedHttpServletRequest;
     private HttpServletResponse mockedHttpServletResponse;
 
     @BeforeEach
     void beforeEach() {
-        mockedDefaultUserService = null;
         mockedHttpServletRequest = null;
         mockedHttpServletResponse = null;
 
-        mockedDefaultUserService = mock(DefaultUserService.class);
+        mockedUserService = mock(UserService.class);
         mockedHttpServletRequest = mock(HttpServletRequest.class);
         mockedHttpServletResponse = mock(HttpServletResponse.class);
     }
 
     @Test
+    @DisplayName("Checks if all right methods are called and response has code set to 200 and redirected to /home " +
+            "when email and password are right, and user's email is verified(user's status==true).")
     void doPostWithVerifiedUserRightPasswordTest() throws IOException {
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("verifieduser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("right password");
-        when(mockedDefaultUserService.signInCheck("verifieduser@vinyl.com", "right password"))
+        when(mockedUserService.signInCheck("verifieduser@vinyl.com", "right password"))
                 .thenReturn(SignInCheckResult.OK_VERIFIED);
-        SignInServlet signInServlet = new SignInServlet(mockedDefaultUserService);
+        SignInServlet signInServlet = new SignInServlet(mockedUserService);
         InOrder inOrderRequest = inOrder(mockedHttpServletRequest);
         InOrder inOrderResponse = inOrder(mockedHttpServletResponse);
 
@@ -43,19 +45,21 @@ class SignInServletTest {
 
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
-        verify(mockedDefaultUserService)
+        verify(mockedUserService)
                 .signInCheck("verifieduser@vinyl.com", "right password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/home");
     }
 
     @Test
+    @DisplayName("Checks if all right methods are called and response has code set to 400 and redirected to /signIn " +
+            "when email is right but password is wrong, and user's email is verified(user's status==true).")
     void doPostWithVerifiedUserWrongPasswordTest() throws IOException {
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("verifieduser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("wrong password");
-        when(mockedDefaultUserService.signInCheck("verifieduser@vinyl.com", "wrong password"))
+        when(mockedUserService.signInCheck("verifieduser@vinyl.com", "wrong password"))
                 .thenReturn(SignInCheckResult.FAIL);
-        SignInServlet signInServlet = new SignInServlet(mockedDefaultUserService);
+        SignInServlet signInServlet = new SignInServlet(mockedUserService);
         InOrder inOrderRequest = inOrder(mockedHttpServletRequest);
         InOrder inOrderResponse = inOrder(mockedHttpServletResponse);
 
@@ -63,19 +67,21 @@ class SignInServletTest {
 
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
-        verify(mockedDefaultUserService)
+        verify(mockedUserService)
                 .signInCheck("verifieduser@vinyl.com", "wrong password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
         inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signIn");
     }
 
     @Test
+    @DisplayName("Checks if all right methods are called and response has code set to 303 and redirected to /signIn " +
+            "when email and password are right, and user's email is not verified(user's status==false).")
     void doPostWithNotVerifiedUserRightPasswordTest() throws IOException {
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("notverifieduser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("right password");
-        when(mockedDefaultUserService.signInCheck("notverifieduser@vinyl.com", "right password"))
+        when(mockedUserService.signInCheck("notverifieduser@vinyl.com", "right password"))
                 .thenReturn(SignInCheckResult.OK_NOT_VERIFIED);
-        SignInServlet signInServlet = new SignInServlet(mockedDefaultUserService);
+        SignInServlet signInServlet = new SignInServlet(mockedUserService);
         InOrder inOrderRequest = inOrder(mockedHttpServletRequest);
         InOrder inOrderResponse = inOrder(mockedHttpServletResponse);
 
@@ -83,19 +89,21 @@ class SignInServletTest {
 
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
-        verify(mockedDefaultUserService)
+        verify(mockedUserService)
                 .signInCheck("notverifieduser@vinyl.com", "right password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_SEE_OTHER);
-        inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/verify");
+        inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signIn");
     }
 
     @Test
+    @DisplayName("Checks if all right methods are called and response has code set to 400 and redirected to /signIn " +
+            "when email is right but password is wrong, and user's email is verified(user's status==true).")
     void doPostWithNotVerifiedUserWrongPasswordTest() throws IOException {
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("notverifieduser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("wrong password");
-        when(mockedDefaultUserService.signInCheck("notverifieduser@vinyl.com", "wrong password"))
+        when(mockedUserService.signInCheck("notverifieduser@vinyl.com", "wrong password"))
                 .thenReturn(SignInCheckResult.FAIL);
-        SignInServlet signInServlet = new SignInServlet(mockedDefaultUserService);
+        SignInServlet signInServlet = new SignInServlet(mockedUserService);
         InOrder inOrderRequest = inOrder(mockedHttpServletRequest);
         InOrder inOrderResponse = inOrder(mockedHttpServletResponse);
 
@@ -103,7 +111,7 @@ class SignInServletTest {
 
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
-        verify(mockedDefaultUserService)
+        verify(mockedUserService)
                 .signInCheck("notverifieduser@vinyl.com", "wrong password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
         inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signIn");
