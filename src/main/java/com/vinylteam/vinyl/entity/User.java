@@ -57,7 +57,6 @@ public class User {
         this.status = status;
     }
 
-
     @Override
     public String toString() {
         return "User{" +
@@ -65,7 +64,8 @@ public class User {
                 ", password='" + password + '\'' +
                 ", salt='" + salt + '\'' +
                 ", iterations=" + iterations +
-                ", role=" + role.toString() +
+                ", role=" + role +
+                ", status=" + status +
                 '}';
     }
 }

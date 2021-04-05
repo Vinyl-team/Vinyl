@@ -1,4 +1,4 @@
-package com.vinylteam.vinyl.service.impl;
+package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.Vinyl;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,35 +10,35 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class VinylShopServiceITest {
-    private VinylShopService vinylShopService;
+class VinylUaParserITest {
+    private VinylUaParser vinylUaParser;
     private HashSet<String> oneTestLink;
 
     @BeforeEach
     void setUp() {
-        vinylShopService = new VinylShopService();
+        vinylUaParser = new VinylUaParser();
         oneTestLink = new HashSet<>();
         oneTestLink.add("http://vinyl.ua/showcase/reggae");
     }
 
     @Test
-    void getShowcaseLinksTest() throws IOException {
-        assertFalse(vinylShopService.getShowcaseLinks().isEmpty());
+    void getGenresLinksTest() throws IOException {
+        assertFalse(vinylUaParser.getGenresLinks().isEmpty());
     }
 
     @Test
     void getPageLinksTest() throws IOException {
-        assertFalse(vinylShopService.getPageLinks(oneTestLink).isEmpty());
+        assertFalse(vinylUaParser.getPageLinks(oneTestLink).isEmpty());
     }
 
     @Test
     void readProductDataFromPageTest() throws IOException {
-        assertFalse(vinylShopService.readProductDataFromPage(oneTestLink).isEmpty());
+        assertFalse(vinylUaParser.readProductDataFromPage(oneTestLink).isEmpty());
     }
 
     @Test
     void getDataProduct() throws IOException {
-        List<Vinyl> actualVinyls = vinylShopService.getDataProduct();
+        List<Vinyl> actualVinyls = vinylUaParser.getDataProduct();
         assertFalse(actualVinyls.isEmpty());
     }
 }

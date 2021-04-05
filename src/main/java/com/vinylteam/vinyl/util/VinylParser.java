@@ -1,12 +1,10 @@
-package com.vinylteam.vinyl.service;
+package com.vinylteam.vinyl.util;
 
 import com.vinylteam.vinyl.entity.Vinyl;
 
 import java.io.IOException;
 import java.util.List;
 
-public interface ShopService {
-
+public interface VinylParser {
     List<Vinyl> getDataProduct() throws IOException;
-
 }
