@@ -2,7 +2,6 @@ package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.service.UserService;
 import com.vinylteam.vinyl.service.impl.DefaultUserService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -16,19 +15,9 @@ import static org.mockito.Mockito.*;
 
 class SignUpServletTest {
 
-    private UserService mockedUserService;
-    private HttpServletRequest mockedHttpServletRequest;
-    private HttpServletResponse mockedHttpServletResponse;
-
-    @BeforeEach
-    void beforeEach() {
-        mockedHttpServletRequest = null;
-        mockedHttpServletResponse = null;
-
-        mockedUserService = mock(DefaultUserService.class);
-        mockedHttpServletRequest = mock(HttpServletRequest.class);
-        mockedHttpServletResponse = mock(HttpServletResponse.class);
-    }
+    private final UserService mockedUserService = mock(DefaultUserService.class);
+    private final HttpServletRequest mockedHttpServletRequest = mock(HttpServletRequest.class);
+    private final HttpServletResponse mockedHttpServletResponse = mock(HttpServletResponse.class);
 
     @Test
     @DisplayName("Checks if all right methods are called and response has code set to 400 and redirected to /signUp " +

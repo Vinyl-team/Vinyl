@@ -47,7 +47,6 @@ public class DefaultUserService implements UserService {
                     }
                 }
             }
-
         }
         return SignInCheckResult.FAIL;
     }

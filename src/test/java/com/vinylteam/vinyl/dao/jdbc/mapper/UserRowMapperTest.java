@@ -39,7 +39,6 @@ class UserRowMapperTest {
     }
 
     @Test
-
     @DisplayName("Checks if passing null ResultSet causes RuntimeException.")
     void mapNullRowTest() {
         assertThrows(RuntimeException.class, () -> {
