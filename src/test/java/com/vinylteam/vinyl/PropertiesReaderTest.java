@@ -1,5 +1,6 @@
 package com.vinylteam.vinyl;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static com.github.stefanbirkner.systemlambda.SystemLambda.withEnvironmentVariable;
@@ -8,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class PropertiesReaderTest {
 
     @Test
+    @DisplayName("Checks properties read from the right file when the project is running locally.")
     void testPropertiesReaderAsOnLocalMachine() throws Exception {
         final PropertiesReader[] propertiesReader = new PropertiesReader[1];
         withEnvironmentVariable("env", null)
@@ -19,6 +21,7 @@ class PropertiesReaderTest {
     }
 
     @Test
+    @DisplayName("Checks properties read from the right file when the project is running on Heroku.")
     void testPropertiesReaderAsOnHeroku() throws Exception {
         final PropertiesReader[] propertiesReader = new PropertiesReader[1];
         withEnvironmentVariable("env", "PROD")
@@ -37,6 +40,7 @@ class PropertiesReaderTest {
     }
 
     @Test
+    @DisplayName("Checks properties read from the right file when the project is running on Travis CI.")
     void testPropertiesReaderAsOnTravis() throws Exception {
         final PropertiesReader[] propertiesReader = new PropertiesReader[1];
         withEnvironmentVariable("env", "DEV")

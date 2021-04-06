@@ -65,6 +65,7 @@ public class DefaultSecurityService implements SecurityService {
         user.setSalt(Base64.getEncoder().encodeToString(salt));
         user.setIterations(iterations);
         user.setRole(Role.USER);
+        user.setStatus(false);
         return user;
     }
 
