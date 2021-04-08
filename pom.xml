@@ -99,6 +99,18 @@
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
         </dependency>
+        <!--JETTY-SERVER-->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>11.0.2</version>
+        </dependency>
+        <!--JETTY-SERVLET-->
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>11.0.2</version>
+        </dependency>
         <!--JSOUP-->
         <dependency>
             <groupId>org.jsoup</groupId>
