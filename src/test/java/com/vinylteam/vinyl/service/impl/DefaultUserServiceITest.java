@@ -30,7 +30,7 @@ class DefaultUserServiceITest {
     private User verifiedUser;
     private User notVerifiedUser;
 
-    private final String TRUNCATE_TABLE_RESTART_IDENTITY = "TRUNCATE public.users RESTART IDENTITY";
+    private final String TRUNCATE_TABLE_RESTART_IDENTITY = "TRUNCATE public.users RESTART IDENTITY CASCADE";
     private Connection connection;
 
     @BeforeAll

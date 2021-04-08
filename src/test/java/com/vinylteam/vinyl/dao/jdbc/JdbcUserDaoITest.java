@@ -24,7 +24,7 @@ class JdbcUserDaoITest {
     private final String INSERT_INTO_TABLE = "INSERT INTO public.users " +
             "(email, password, salt, iterations, role, status) " +
             "VALUES (?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)";
-    private final String TRUNCATE_TABLE_RESTART_IDENTITY = "TRUNCATE public.users RESTART IDENTITY";
+    private final String TRUNCATE_TABLE_RESTART_IDENTITY = "TRUNCATE public.users RESTART IDENTITY CASCADE";
     private Connection connection;
 
     @BeforeAll
