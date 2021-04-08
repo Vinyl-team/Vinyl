@@ -2,6 +2,7 @@ package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.Vinyl;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -15,30 +16,34 @@ class VinylUaParserITest {
     private HashSet<String> oneTestLink;
 
     @BeforeEach
-    void setUp() {
+    void beforeEach() {
         vinylUaParser = new VinylUaParser();
         oneTestLink = new HashSet<>();
         oneTestLink.add("http://vinyl.ua/showcase/reggae");
     }
 
     @Test
+    @DisplayName("Checks that returned hashset of genres links isn't empty after parsing.")
     void getGenresLinksTest() throws IOException {
         assertFalse(vinylUaParser.getGenresLinks().isEmpty());
     }
 
     @Test
+    @DisplayName("Checks that returned hashset of pages links in one genre isn't empty after parsing.")
     void getPageLinksTest() throws IOException {
         assertFalse(vinylUaParser.getPageLinks(oneTestLink).isEmpty());
     }
 
     @Test
-    void readProductDataFromPageTest() throws IOException {
-        assertFalse(vinylUaParser.readProductDataFromPage(oneTestLink).isEmpty());
+    @DisplayName("Checks that returned hashset of vinyls isn't empty after parsing.")
+    void readVinylsDataFromAllPagesTest() throws IOException {
+        assertFalse(vinylUaParser.readVinylsDataFromAllPages(oneTestLink).isEmpty());
     }
 
     @Test
-    void getDataProduct() throws IOException {
-        List<Vinyl> actualVinyls = vinylUaParser.getDataProduct();
+    @DisplayName("Checks that returned list of vinyls isn't empty after parsing.")
+    void getAllVinylsFromShopListTest() throws IOException {
+        List<Vinyl> actualVinyls = vinylUaParser.getAllVinylsFromShopList();
         assertFalse(actualVinyls.isEmpty());
     }
 }

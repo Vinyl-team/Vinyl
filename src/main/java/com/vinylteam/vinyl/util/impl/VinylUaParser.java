@@ -1,5 +1,6 @@
 package com.vinylteam.vinyl.util.impl;
 
+import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.util.VinylParser;
 import org.jsoup.Jsoup;
@@ -42,8 +43,8 @@ public class VinylUaParser implements VinylParser {
         return pageLinks;
     }
 
-    HashSet<Vinyl> readProductDataFromPage(HashSet<String> pageLinks) throws IOException {
-        HashSet<Vinyl> dataOfProducts = new HashSet<>();
+    HashSet<Vinyl> readVinylsDataFromAllPages(HashSet<String> pageLinks) throws IOException {
+        HashSet<Vinyl> vinylsData = new HashSet<>();
 
         for (String pageLink : pageLinks) {
             Document doc = Jsoup.connect(pageLink).get();
@@ -55,7 +56,9 @@ public class VinylUaParser implements VinylParser {
                     artist = "Various Artists";
                 }
                 String fullNameVinyl = release + " - " + artist;
-                String price = pageElement.getElementsByClass("pull-left margin-top-5 showcase-release-price").text();
+                String priceDetails = pageElement.getElementsByClass("pull-left margin-top-5 showcase-release-price").text();
+                String priceNumber = priceDetails.substring(0, priceDetails.indexOf(' '));
+                String priceCurrency = priceDetails.substring(priceDetails.indexOf(' ') + 1);
                 String vinylLink = startLink + pageElement.getElementsByClass("img-showcase-release").select("a").attr("href");
                 String[] imageLinks = pageElement.getElementsByClass("img-showcase-release").attr("style").split("'");
                 String imageLink = imageLinks[1];
@@ -67,21 +70,22 @@ public class VinylUaParser implements VinylParser {
                 vinyl.setRelease(release);
                 vinyl.setArtist(artist);
                 vinyl.setFullNameVinyl(fullNameVinyl);
-                vinyl.setPrice(price);
+                vinyl.setPrice(Double.parseDouble(priceNumber));
+                vinyl.setCurrency(Currency.getCurrency(priceCurrency));
                 vinyl.setVinylLink(vinylLink);
                 vinyl.setImageLink(imageLink);
                 vinyl.setGenre(genre);
-                dataOfProducts.add(vinyl);
+                vinylsData.add(vinyl);
             }
         }
-        return dataOfProducts;
+        return vinylsData;
     }
 
     @Override
-    public List<Vinyl> getDataProduct() throws IOException {
+    public List<Vinyl> getAllVinylsFromShopList() throws IOException {
         HashSet<String> genresLinks = getGenresLinks();
         HashSet<String> pageLinks = getPageLinks(genresLinks);
-        HashSet<Vinyl> vinyls = readProductDataFromPage(pageLinks);
+        HashSet<Vinyl> vinyls = readVinylsDataFromAllPages(pageLinks);
         return new ArrayList<>(vinyls);
     }
 }

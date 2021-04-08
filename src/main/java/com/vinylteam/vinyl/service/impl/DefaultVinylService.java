@@ -11,18 +11,18 @@ import java.util.List;
 public class DefaultVinylService implements VinylService {
     private final VinylDao vinylDao;
 
-    public DefaultVinylService(PGSimpleDataSource dataSource) {
-        this.vinylDao = new JdbcVinylDao(dataSource);
+    public DefaultVinylService(VinylDao vinylDao) {
+        this.vinylDao = vinylDao;
     }
 
     @Override
-    public void saveAllUnique(List<Vinyl> uniqueVinyls) {
-        vinylDao.saveAllUnique(uniqueVinyls);
+    public void addAllUnique(List<Vinyl> uniqueVinyls) {
+        vinylDao.addAllUnique(uniqueVinyls);
     }
 
     @Override
-    public void saveAll(List<Vinyl> vinyls) {
-        vinylDao.saveAll(vinyls);
+    public void addAll(List<Vinyl> vinyls) {
+        vinylDao.addAll(vinyls);
     }
 
     @Override
