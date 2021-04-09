@@ -6,5 +6,5 @@ import java.io.IOException;
 import java.util.List;
 
 public interface VinylParser {
-    List<Vinyl> getDataProduct() throws IOException;
+    List<Vinyl> getAllVinylsFromShopList() throws IOException;
 }

@@ -5,9 +5,9 @@ import com.vinylteam.vinyl.entity.Vinyl;
 import java.util.List;
 
 public interface VinylDao {
-    void saveAllUnique(List<Vinyl> uniqueVinyls);
+    void addAllUnique(List<Vinyl> uniqueVinyls);
 
-    void saveAll(List<Vinyl> vinyls);
+    void addAll(List<Vinyl> vinyls);
 
     List<Vinyl> getAllUnique();
 

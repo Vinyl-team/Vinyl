@@ -17,7 +17,6 @@ class UserRowMapperTest {
     private final UserRowMapper userRowMapper = new UserRowMapper();
 
     @Test
-
     @DisplayName("Checks if user created from resultSet has all fields right.")
     void mapFilledRowTest() throws SQLException {
         ResultSet mockedFilledResultSet = mock(ResultSet.class);

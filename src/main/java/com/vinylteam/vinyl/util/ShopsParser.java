@@ -13,11 +13,11 @@ public class ShopsParser {
         this.vinylParserList = vinylParserList;
     }
 
-    public List<Vinyl> getAllProducts() throws IOException {
+    public List<Vinyl> getAllVinyls() throws IOException {
         List<Vinyl> allVinyls = new ArrayList<>();
 
         for (VinylParser vinylParser : vinylParserList) {
-            allVinyls.addAll(vinylParser.getDataProduct());
+            allVinyls.addAll(vinylParser.getAllVinylsFromShopList());
         }
         return allVinyls;
     }

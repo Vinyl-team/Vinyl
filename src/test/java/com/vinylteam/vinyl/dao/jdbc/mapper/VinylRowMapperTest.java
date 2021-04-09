@@ -1,6 +1,8 @@
 package com.vinylteam.vinyl.dao.jdbc.mapper;
 
+import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.Vinyl;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.sql.ResultSet;
@@ -15,35 +17,39 @@ class VinylRowMapperTest {
     private final VinylRowMapper vinylRowMapper = new VinylRowMapper();
 
     @Test
+    @DisplayName("Checks if user created from resultSet has all fields right.")
     void mapRowFilledResultSetTest() throws SQLException {
         ResultSet vinylResult = mock(ResultSet.class);
         //prepare
         when(vinylResult.getInt("id")).thenReturn(1);
-        when(vinylResult.getString("release")).thenReturn("some release");
-        when(vinylResult.getString("artist")).thenReturn("new artist");
-        when(vinylResult.getString("full_name")).thenReturn("some release - new artist");
+        when(vinylResult.getString("release")).thenReturn("release1");
+        when(vinylResult.getString("artist")).thenReturn("artist1");
+        when(vinylResult.getString("full_name")).thenReturn("release1 - artist1");
         when(vinylResult.getString("genre")).thenReturn("rock");
-        when(vinylResult.getString("price")).thenReturn("1000 euro");
-        when(vinylResult.getString("link_to_vinyl")).thenReturn("https://vinylsite.com/there/coolreleasevinyl");
-        when(vinylResult.getString("link_to_image")).thenReturn("https://imagestore.com/there/imagerelease.jpg");
+        when(vinylResult.getDouble("price")).thenReturn(1000.0);
+        when(vinylResult.getString("currency")).thenReturn("EUR");
+        when(vinylResult.getString("link_to_vinyl")).thenReturn("https://vinylsite.com/there/release1");
+        when(vinylResult.getString("link_to_image")).thenReturn("https://imagestore.com/there/image1.jpg");
         when(vinylResult.getInt("shop_id")).thenReturn(2);
         when(vinylResult.getLong("unique_vinyl_id")).thenReturn((long) 1);
         //when
         Vinyl vinyl = vinylRowMapper.mapRow(vinylResult);
         //then
         assertEquals(1, vinyl.getVinylId());
-        assertEquals("some release", vinyl.getRelease());
-        assertEquals("new artist", vinyl.getArtist());
-        assertEquals("some release - new artist", vinyl.getFullNameVinyl());
+        assertEquals("release1", vinyl.getRelease());
+        assertEquals("artist1", vinyl.getArtist());
+        assertEquals("release1 - artist1", vinyl.getFullNameVinyl());
         assertEquals("rock", vinyl.getGenre());
-        assertEquals("1000 euro", vinyl.getPrice());
-        assertEquals("https://vinylsite.com/there/coolreleasevinyl", vinyl.getVinylLink());
-        assertEquals("https://imagestore.com/there/imagerelease.jpg", vinyl.getImageLink());
+        assertEquals(1000.0, vinyl.getPrice());
+        assertEquals(Currency.EUR, vinyl.getCurrency().get());
+        assertEquals("https://vinylsite.com/there/release1", vinyl.getVinylLink());
+        assertEquals("https://imagestore.com/there/image1.jpg", vinyl.getImageLink());
         assertEquals(2, vinyl.getShopId());
         assertEquals(1, vinyl.getUniqueVinylId());
     }
 
     @Test
+    @DisplayName("Checks if passing null ResultSet causes RuntimeException.")
     void mapRowWithNullResultSetTest() {
         assertThrows(RuntimeException.class, () -> {
             vinylRowMapper.mapRow(null);
