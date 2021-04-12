@@ -1,6 +1,6 @@
 package com.vinylteam.vinyl.dao;
 
-import com.vinylteam.vinyl.PropertiesReader;
+import com.vinylteam.vinyl.util.PropertiesReader;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
@@ -19,11 +19,11 @@ public class DBDataSource {
     static {
         PropertiesReader propertiesReader = new PropertiesReader();
         logger.info("Properties reader read properties");
-        config.setJdbcUrl(propertiesReader.getJdbcUrl());
-        config.setUsername(propertiesReader.getJdbcUser());
-        config.setPassword(propertiesReader.getJdbcPassword());
-        config.setDriverClassName(propertiesReader.getJdbcDriver());
-        config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getJdbcMaximumPoolSize()));
+        config.setJdbcUrl(propertiesReader.getProperties().getProperty("jdbc.url"));
+        config.setUsername(propertiesReader.getProperties().getProperty("jdbc.user"));
+        config.setPassword(propertiesReader.getProperties().getProperty("jdbc.password"));
+        config.setDriverClassName(propertiesReader.getProperties().getProperty("jdbc.driver"));
+        config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getProperties().getProperty("jdbc.maximum.pool.size")));
         dataSource = new HikariDataSource(config);
         logger.info("Data source: {}", dataSource);
     }
@@ -38,7 +38,7 @@ public class DBDataSource {
         }
     }
 
-    private DBDataSource() {
+    public DBDataSource() {
     }
 
     public static DataSource getDataSource() {

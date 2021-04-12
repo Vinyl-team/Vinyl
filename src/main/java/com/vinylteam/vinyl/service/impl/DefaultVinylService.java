@@ -1,18 +1,17 @@
 package com.vinylteam.vinyl.service.impl;
 
 import com.vinylteam.vinyl.dao.VinylDao;
-import com.vinylteam.vinyl.dao.jdbc.JdbcVinylDao;
 import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.service.VinylService;
-import org.postgresql.ds.PGSimpleDataSource;
 
 import java.util.List;
+import java.util.Optional;
 
 public class DefaultVinylService implements VinylService {
     private final VinylDao vinylDao;
 
-    public DefaultVinylService(PGSimpleDataSource dataSource) {
-        this.vinylDao = new JdbcVinylDao(dataSource);
+    public DefaultVinylService(VinylDao vinylDao) {
+        this.vinylDao = vinylDao;
     }
 
     @Override
@@ -43,5 +42,10 @@ public class DefaultVinylService implements VinylService {
     @Override
     public Vinyl getById(long id) {
         return vinylDao.getById(id);
+    }
+
+    @Override
+    public Optional<Vinyl> getByRelease(String vinylsRelease) {
+        return vinylDao.getByRelease(vinylsRelease);
     }
 }

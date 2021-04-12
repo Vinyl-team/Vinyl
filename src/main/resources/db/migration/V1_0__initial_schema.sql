@@ -56,8 +56,6 @@ create table user_posts
 );
 
 
-
-
 create table confirmation_links
 (
     id                serial       not null
@@ -66,7 +64,8 @@ create table confirmation_links
     user_id           integer      not null
         constraint user_id_fk
             references users,
-    confirmation_link varchar(500) not null
+    confirmation_link varchar(500) not null,
+    date_and_time timestamp without time zone not null
 );
 
 
@@ -79,7 +78,8 @@ create table vinyls
     artist          varchar(200)  not null,
     full_name       varchar(400)  not null,
     genre           varchar(100),
-    price           varchar(50)   not null,
+    price           double precision not null,
+    currency        character varying(50) COLLATE pg_catalog."default" NOT NULL,
     link_to_vinyl   varchar(1000) not null,
     link_to_image   varchar(1000) not null,
     shop_id         integer       not null
@@ -92,7 +92,9 @@ create table vinyls
             references unique_vinyls (id)
         constraint chk_unique_vinyl_id
             check (unique_vinyl_id > 0)
+        constraint either_of_four_currencies check (currency::text = 'UAH'::text OR currency::text = 'USD'::text OR currency::text = 'GBP'::text OR currency::text = 'EUR'::text)
 );
+
 
 create table vinyls_browsing_history
 (

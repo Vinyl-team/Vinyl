@@ -1,4 +1,4 @@
-package com.vinylteam.vinyl;
+package com.vinylteam.vinyl.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,28 +63,8 @@ public class PropertiesReader {
         }
     }
 
-    public String getJdbcUser() {
-        return properties.getProperty("jdbc.user");
-    }
-
-    public String getJdbcPassword() {
-        return properties.getProperty("jdbc.password");
-    }
-
-    public String getJdbcUrl() {
-        return properties.getProperty("jdbc.url");
-    }
-
-    public String getJdbcDriver() {
-        return properties.getProperty("jdbc.driver");
-    }
-
-    public String getJdbcMaximumPoolSize() {
-        return properties.getProperty("jdbc.maximum.pool.size");
-    }
-
-    public String getAppPort() {
-        return properties.getProperty("appPort");
+    public Properties getProperties() {
+        return properties;
     }
 
     private void validateInputStream(InputStream inputStream) {
