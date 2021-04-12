@@ -73,14 +73,12 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Checks the number of rows")
     void countAllFilledTest() {
-        logger.info("countAllFilledTest()");
         assertEquals(2, jdbcUserDao.countAll());
     }
 
     @Test
     @DisplayName("Checks the number of rows when table is empty")
     void countAllEmptyTest() throws SQLException {
-        logger.info("countAllEmptyTest()");
         try (Statement truncateStatement = connection.createStatement()) {
             truncateStatement.executeUpdate(TRUNCATE_TABLE_RESTART_IDENTITY);
         }
@@ -90,7 +88,6 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Gets an existing user from db")
     void getByExistingEmail() {
-        logger.info("getByExistingEmail()");
         Optional<User> optionalUserGottenByExistingEmail;
         optionalUserGottenByExistingEmail = jdbcUserDao.getByEmail("testuser1@vinyl.com");
 
@@ -106,7 +103,6 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Gets not existing user from db")
     void getByNotExistingEmail() {
-        logger.info("getByNotExistingEmail()");
         Optional<User> optionalUserGottenByNonexistentEmail = jdbcUserDao.getByEmail("testuser3@vinyluserGottenByExistingEmail.com");
         assertFalse(optionalUserGottenByNonexistentEmail.isPresent());
         assertEquals(2, jdbcUserDao.countAll());
@@ -115,7 +111,6 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Adds user to db")
     void addNewTest() {
-        logger.info("addNewTest()");
         User user = new User();
         user.setEmail("testuser3@vinyl.com");
         user.setPassword("HASH3");
@@ -135,13 +130,12 @@ class JdbcUserDaoITest {
         assertEquals("", optionalAddedUser.get().getSalt());
         assertEquals(0, optionalAddedUser.get().getIterations());
         assertEquals(Role.USER, optionalAddedUser.get().getRole());
-        assertEquals(true, optionalAddedUser.get().getStatus());
+        assertTrue(optionalAddedUser.get().getStatus());
     }
 
     @Test
     @DisplayName("Adds existing user with the same password")
     void addExistingWithSamePasswordTest() {
-        logger.info("addExistingWithSamePasswordTest()");
         User user = new User();
         user.setEmail("testuser2@vinyl.com");
         user.setPassword("HASH2");
@@ -156,7 +150,6 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Adds existing user with new password")
     void addExistingWithNewPasswordTest() {
-        logger.info("addExistingWithNewPasswordTest");
         User user = new User();
         user.setEmail("testuser2@vinyl.com");
         user.setPassword("HASH3");

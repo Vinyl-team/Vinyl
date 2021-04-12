@@ -13,34 +13,57 @@ public class PropertiesReader {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final Properties properties = new Properties();
+    private final String independentPropertiesFile = "application.properties";
 
     public PropertiesReader() {
-        String beginningOfErrorMessage = "Error during loading properties from ";
+        logger.debug("Starting constructor PropertiesReader()");
+        String beginningOfErrorMessage = "Error during loading properties from";
+
         try (InputStream inputStream = getClass().getClassLoader()
-                .getResourceAsStream("application.properties")) {
+                .getResourceAsStream(independentPropertiesFile)) {
+            logger.debug("Created input stream from file " +
+                    "{'inputStream':{}, 'fileName':{}}", inputStream, independentPropertiesFile);
             validateInputStream(inputStream);
             properties.load(inputStream);
+            logger.debug("Loaded properties from input stream " +
+                    "{'properties':{}, 'inputStream':{}}", properties, inputStream);
         } catch (IOException e) {
-            logger.error(beginningOfErrorMessage + "application.properties", e);
+            logger.error("{} {'fileName':{}}", beginningOfErrorMessage, independentPropertiesFile, e);
             throw new RuntimeException(e);
         }
 
-        if (System.getenv("env") == null) {
+        String dependentOnEnvPropertiesFile;
+        String env = System.getenv("env");
+        logger.debug("Created and initialised String env with the value of environmental variable \"env\" " +
+                "{'env':{}}", env);
+        if (env == null) {
+            dependentOnEnvPropertiesFile = "dev.application.properties";
+
             try (InputStream inputStream = getClass().getClassLoader()
-                    .getResourceAsStream("dev.application.properties")) {
+                    .getResourceAsStream(dependentOnEnvPropertiesFile)) {
+                logger.debug("Created input stream from file " +
+                        "{'inputStream':{}, 'fileName':{}}", inputStream, dependentOnEnvPropertiesFile);
                 validateInputStream(inputStream);
                 properties.load(inputStream);
+                logger.debug("Loaded properties from input stream " +
+                        "{'properties':{}, 'inputStream':{}}", properties, inputStream);
             } catch (IOException e) {
-                logger.error(beginningOfErrorMessage + "dev.application.properties", e);
+                logger.error("{} {'fileName':{}}", beginningOfErrorMessage, dependentOnEnvPropertiesFile, e);
                 throw new RuntimeException(e);
             }
-        } else if (System.getenv("env").equals("PROD")) {
-
+        } else if (env.equals("PROD")) {
             URI databaseUri;
+            String databaseUrlVariable = System.getenv("DATABASE_URL");
+            String portVariable = System.getenv("PORT");
+            logger.debug("Read \"DATABASE_URL\" and \"PORT\" variables from environment " +
+                    "{'DATABASE_URL':{}, 'PORT':{}}", databaseUrlVariable, portVariable);
             try {
-                databaseUri = new URI(System.getenv("DATABASE_URL"));
+                databaseUri = new URI(databaseUrlVariable);
+                logger.debug("Initialized databaseUri with URI from value of environmental variable \"DATABASE_URL\" " +
+                        "{'databaseUri':{}, 'DATABASE_URI':{}}", databaseUri, databaseUrlVariable);
             } catch (URISyntaxException e) {
-                logger.error("Error during getting databaseUri", e);
+                logger.error("Error during initializing databaseUri with URI from value of environmental variable \"DATABASE_URL\" " +
+                        "{'DATABASE_URI':{}}", databaseUrlVariable, e);
                 throw new RuntimeException(e);
             }
 
@@ -49,18 +72,25 @@ public class PropertiesReader {
             properties.setProperty("jdbc.url", "jdbc:postgresql://" +
                     databaseUri.getHost() + ':' +
                     databaseUri.getPort() + databaseUri.getPath());
-            properties.setProperty("appPort", System.getenv("PORT"));
-
-        } else if (System.getenv("env").equals("DEV")) {
+            properties.setProperty("appPort", portVariable);
+            logger.debug("Set properties with data from databaseUri and value of environmental variable \"PORT\" " +
+                    "{'properties':{}, 'databaseUri':{}, 'PORT':{}}", properties, databaseUri, portVariable);
+        } else if (env.equals("DEV")) {
+            dependentOnEnvPropertiesFile = "travis.application.properties";
             try (InputStream inputStream = getClass().getClassLoader()
-                    .getResourceAsStream("travis.application.properties")) {
+                    .getResourceAsStream(dependentOnEnvPropertiesFile)) {
+                logger.debug("Created input stream from file " +
+                        "{'inputStream':{}, 'fileName':{}}", inputStream, dependentOnEnvPropertiesFile);
                 validateInputStream(inputStream);
                 properties.load(inputStream);
+                logger.debug("Loaded properties from input stream " +
+                        "{'properties':{}, 'inputStream':{}}", properties, inputStream);
             } catch (IOException e) {
-                logger.error(beginningOfErrorMessage + "travis.application.properties", e);
+                logger.error("{} {'fileName':{}}", beginningOfErrorMessage, dependentOnEnvPropertiesFile, e);
                 throw new RuntimeException(e);
             }
         }
+        logger.info("Loaded properties in {}", getClass());
     }
 
     public String getJdbcUser() {
@@ -88,10 +118,14 @@ public class PropertiesReader {
     }
 
     private void validateInputStream(InputStream inputStream) {
+        logger.debug("Start of function PropertiesReader.validateInputStream(InputStream inputStream) with " +
+                "{'inputStream':{}}", inputStream);
         if (inputStream == null) {
             RuntimeException e = new RuntimeException();
-            logger.error(".properties file not found.", e);
+            logger.error(".properties file not found, input stream is null", e);
             throw e;
         }
+        logger.debug("Input stream is valid " +
+                "{'inputStream':{}}", inputStream);
     }
 }

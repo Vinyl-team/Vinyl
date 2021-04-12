@@ -17,31 +17,35 @@ public class DBDataSource {
     private static final Logger logger = LoggerFactory.getLogger("com.vinylteam.vinyl.dao.DBDataSource");
 
     static {
+        logger.debug("Started static initializer in DBDataSource");
         PropertiesReader propertiesReader = new PropertiesReader();
-        logger.info("Properties reader read properties");
+        logger.debug("Created properties reader, starts reading properties" +
+                "{'propertiesReader':{}}", propertiesReader);
         config.setJdbcUrl(propertiesReader.getJdbcUrl());
         config.setUsername(propertiesReader.getJdbcUser());
         config.setPassword(propertiesReader.getJdbcPassword());
         config.setDriverClassName(propertiesReader.getJdbcDriver());
         config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getJdbcMaximumPoolSize()));
         dataSource = new HikariDataSource(config);
-        logger.info("Data source: {}", dataSource);
+        logger.info("Configured and created HikariDataSource object {'dataSource':{}}", dataSource);
     }
 
     public static Connection getConnection() {
+        logger.debug("Start of function DBDataSource.getConnection()");
         try {
-            logger.info("Trying to get connection from data source: {}", dataSource);
-            return dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
+            logger.debug("Got connection from data source" +
+                    " {'dataSource':{}, 'connection':{}}", dataSource, connection);
+            return connection;
         } catch (SQLException e) {
-            logger.error("Error during getting connection from data source", e);
+            logger.error("Error during getting connection from data source {'dataSource':{}}", dataSource, e);
             throw new RuntimeException(e);
         }
     }
 
-    private DBDataSource() {
-    }
-
     public static DataSource getDataSource() {
+        logger.debug("Start of function DBDataSource.getDataSource()");
+        logger.debug("Returning data source {'dataSource':{}}", dataSource);
         return dataSource;
     }
 }

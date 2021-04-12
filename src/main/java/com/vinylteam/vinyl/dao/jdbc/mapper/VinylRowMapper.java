@@ -2,16 +2,25 @@ package com.vinylteam.vinyl.dao.jdbc.mapper;
 
 import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.Vinyl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
 public class VinylRowMapper {
-    public Vinyl mapRow(ResultSet resultSet) {
+
+    private static final Logger logger = LoggerFactory.getLogger(VinylRowMapper.class);
+
+    public static Vinyl mapRow(ResultSet resultSet) {
+        logger.debug("Start of function VinylRowMapper.mapRow(ResultSet resultSet)" +
+                " with {'resultSet':{}}", resultSet);
         if (resultSet != null) {
             Vinyl vinyl = new Vinyl();
+            logger.debug("Created Vinyl object {'vinyl':{}}", vinyl);
             try {
+                logger.debug("Starting reading {'resultSet':{}} into vinyl object", resultSet);
                 vinyl.setVinylId(resultSet.getInt("id"));
                 vinyl.setRelease(resultSet.getString("release"));
                 vinyl.setArtist(resultSet.getString("artist"));
@@ -23,12 +32,17 @@ public class VinylRowMapper {
                 vinyl.setImageLink(resultSet.getString("link_to_image"));
                 vinyl.setShopId(resultSet.getInt("shop_id"));
                 vinyl.setUniqueVinylId(resultSet.getLong("unique_vinyl_id"));
+                logger.debug("Filled vinyl object {'vinyl':{}}", vinyl);
                 return vinyl;
             } catch (SQLException e) {
-                throw new RuntimeException("Exception while getting data from ResultSet in VinylRowMapper!", e);
+                logger.error("Error while getting data from result set into Vinyl object {'vinyl':{}}",
+                        vinyl, e);
+                throw new RuntimeException(e);
             }
         } else {
-            throw new RuntimeException("ResultSet in VinylRowMapper is null!");
+            RuntimeException e = new RuntimeException();
+            logger.error("ResultSet passed to VinylRowMapper is null", e);
+            throw e;
         }
     }
 }

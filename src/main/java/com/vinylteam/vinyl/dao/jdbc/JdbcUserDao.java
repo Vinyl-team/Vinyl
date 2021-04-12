@@ -25,34 +25,52 @@ public class JdbcUserDao implements UserDao {
     private final UserRowMapper userRowMapper = new UserRowMapper();
 
     public boolean add(User user) {
+        logger.debug("Start of function JdbcUserDao.add(User user)" +
+                " with {'user':{}}", user);
         boolean isAdded;
         try (Connection connection = DBDataSource.getConnection();
              PreparedStatement insertStatement = connection.prepareStatement(INSERT)) {
+            logger.debug("Got connection to db from DBDataSource, created prepared statement" +
+                    "{'preparedStatement':{}}. Starting to fill it.", insertStatement);
             insertStatement.setString(1, user.getEmail());
             insertStatement.setString(2, user.getPassword());
             insertStatement.setString(3, user.getSalt());
             insertStatement.setInt(4, user.getIterations());
             insertStatement.setString(5, user.getRole().toString());
             insertStatement.setBoolean(6, user.getStatus());
-
+            logger.debug("Prepared statement filled" +
+                    "{'preparedStatement':{}}.", insertStatement);
             insertStatement.executeUpdate();
             isAdded = true;
         } catch (PSQLException e) {
-            logger.info("Database error while adding user to public.users", e);
+            logger.debug("Database error while adding user to public.users", e);
             isAdded = false;
         } catch (SQLException e) {
             logger.error("Error while adding user to public.users", e);
             throw new RuntimeException(e);
         }
+        if (isAdded) {
+            logger.info("User is added to the database {'user':{}}.", user);
+        } else {
+            logger.info("Failed to add user to the database {'user':{}}.", user);
+        }
         return isAdded;
     }
 
     public Optional<User> getByEmail(String email) {
+        logger.debug("Start of function JdbcUserDao.getByEmail(String email)" +
+                " with {'email':{}}", email);
         User user = null;
         try (Connection connection = DBDataSource.getConnection();
              PreparedStatement findByEmailStatement = connection.prepareStatement(FIND_BY_EMAIL)) {
+            logger.debug("Got connection to db from DBDataSource, created prepared statement" +
+                    "{'preparedStatement':{}}. Starting to fill it.", findByEmailStatement);
             findByEmailStatement.setString(1, email);
+            logger.debug("Prepared statement filled" +
+                    "{'preparedStatement':{}}.", findByEmailStatement);
             try (ResultSet resultSet = findByEmailStatement.executeQuery()) {
+                logger.debug("Executed statement, result set after executing" +
+                        "{'preparedStatement':{}, 'resultSet':{}}", findByEmailStatement, resultSet);
                 if (resultSet.next()) {
                     user = userRowMapper.mapRow(resultSet);
                     if (resultSet.next()) {
@@ -65,15 +83,19 @@ public class JdbcUserDao implements UserDao {
             logger.error("SQLException retrieving user by email from public.users", e);
             throw new RuntimeException(e);
         }
+        logger.debug("Resulting optional with user is {'Optional.ofNullable(user)':{}}",
+                Optional.ofNullable(user));
         return Optional.ofNullable(user);
     }
 
     int countAll() {
-
+        logger.debug("Start of function JdbcUserDao.count()");
         int count = -1;
         try (Connection connection = DBDataSource.getConnection();
              Statement countStatement = connection.createStatement();
              ResultSet resultSet = countStatement.executeQuery(COUNT_ALL)) {
+            logger.debug("Got connection to db from DBDataSource, created statement, executed statement with result set" +
+                    "{'statement':{}, 'resultSet':{}}", countStatement, resultSet);
             if (resultSet.next()) {
                 count = resultSet.getInt(1);
             }
@@ -81,7 +103,7 @@ public class JdbcUserDao implements UserDao {
             logger.error("SQLException while counting amount of rows in public.users", e);
             throw new RuntimeException(e);
         }
-
+        logger.debug("Resulting count is {'count':{}}", count);
         return count;
     }
 

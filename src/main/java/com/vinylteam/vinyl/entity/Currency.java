@@ -1,5 +1,8 @@
 package com.vinylteam.vinyl.entity;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Optional;
 
 public enum Currency {
@@ -7,6 +10,8 @@ public enum Currency {
     USD("$"),
     GBP("£"),
     EUR("€");
+
+    private final static Logger logger = LoggerFactory.getLogger(Currency.class);
 
     private final String symbol;
 
@@ -19,6 +24,8 @@ public enum Currency {
     }
 
     public static Optional<Currency> getCurrency(String currencyDescription) {
+        logger.debug("Start of function Currency.getCurrency(String currencyDescription)" +
+                " with {currencyDescription':{}}", currencyDescription);
         Currency resultingCurrency = null;
         if (currencyDescription.equals("грн") || currencyDescription.equals("₴")) {
             resultingCurrency = UAH;
@@ -33,6 +40,8 @@ public enum Currency {
                 || currencyDescription.equals("&nbsp;€")) {
             resultingCurrency = EUR;
         }
+        logger.debug("Resulting optional with currency is {'Optional.ofNullable(resultingCurrency)':{}}",
+                Optional.ofNullable(resultingCurrency));
         return Optional.ofNullable(resultingCurrency);
     }
 }
