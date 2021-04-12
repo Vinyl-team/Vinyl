@@ -1,11 +1,11 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
+import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.dao.VinylDao;
 import com.vinylteam.vinyl.dao.jdbc.mapper.UniqueVinylRowMapper;
 import com.vinylteam.vinyl.dao.jdbc.mapper.VinylRowMapper;
 import com.vinylteam.vinyl.entity.Vinyl;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,26 +15,32 @@ import java.util.List;
 import java.util.Optional;
 
 public class JdbcVinylDao implements VinylDao {
-    private static final String SELECT_VINYL_BY_RELEASE = "SELECT id, release, artist, full_name, link_to_image FROM unique_vinyls WHERE full_name ILIKE '%'||?||'%'";
-    private final String INSERT_UNIQUE_VINYLS = "INSERT INTO unique_vinyls(id, release, artist, full_name, link_to_image) VALUES(?, ?, ?, ?, ?)";
-    private final String SELECT_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image FROM unique_vinyls ORDER BY id";
-    private final String SELECT_UNIQUE_VINYL_BY_ID = "SELECT id, release, artist, full_name, link_to_image FROM unique_vinyls WHERE id=?";
+    private final String INSERT_UNIQUE_VINYLS = "INSERT INTO unique_vinyls(id, release, artist, full_name," +
+            " link_to_image)" +
+            " VALUES(?, ?, ?, ?, ?)";
+    private final String SELECT_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image" +
+            " FROM unique_vinyls ORDER BY id";
+    private final String SELECT_UNIQUE_VINYL_BY_ID = "SELECT id, release, artist, full_name, link_to_image" +
+            " FROM unique_vinyls WHERE id=?";
 
-    private final String INSERT_VINYLS = "INSERT INTO vinyls(release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private final String SELECT_VINYLS = "SELECT id, release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id FROM vinyls";
-    private final String SELECT_VINYL_BY_ID = "SELECT id, release, artist, full_name, genre, price, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id FROM vinyls WHERE id=?";
+    private final String INSERT_VINYLS = "INSERT INTO vinyls(release, artist, full_name, genre," +
+            " price, currency, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id)" +
+            " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private final String SELECT_VINYLS = "SELECT id, release, artist, full_name, genre," +
+            " price, currency, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id" +
+            " FROM vinyls";
+    private final String SELECT_VINYL_BY_ID = "SELECT id, release, artist, full_name, genre," +
+            " price, currency, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id" +
+            " FROM vinyls WHERE id=?";
+    private final String SELECT_VINYL_BY_RELEASE = "SELECT id, release, artist, full_name, link_to_image " +
+            "FROM unique_vinyls WHERE full_name ILIKE '%'||?||'%'";
 
-    private final DataSource dataSource;
     private final VinylRowMapper vinylRowMapper = new VinylRowMapper();
     private final UniqueVinylRowMapper uniqueVinylRowMapper = new UniqueVinylRowMapper();
 
-    public JdbcVinylDao(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
-
     @Override
-    public void saveAllUnique(List<Vinyl> uniqueVinyls) {
-        try (Connection connection = dataSource.getConnection();
+    public void addAllUnique(List<Vinyl> uniqueVinyls) {
+        try (Connection connection = DBDataSource.getConnection();
              PreparedStatement insertUniqueVinylsStatement = connection.prepareStatement(INSERT_UNIQUE_VINYLS)) {
             connection.setAutoCommit(false);
             for (Vinyl uniqueVinyl : uniqueVinyls) {
@@ -53,8 +59,8 @@ public class JdbcVinylDao implements VinylDao {
     }
 
     @Override
-    public void saveAll(List<Vinyl> vinyls) {
-        try (Connection connection = dataSource.getConnection();
+    public void addAll(List<Vinyl> vinyls) {
+        try (Connection connection = DBDataSource.getConnection();
              PreparedStatement insertVinylsStatement = connection.prepareStatement(INSERT_VINYLS)) {
             connection.setAutoCommit(false);
             for (Vinyl vinyl : vinyls) {
@@ -62,11 +68,16 @@ public class JdbcVinylDao implements VinylDao {
                 insertVinylsStatement.setString(2, vinyl.getArtist());
                 insertVinylsStatement.setString(3, vinyl.getFullNameVinyl());
                 insertVinylsStatement.setString(4, vinyl.getGenre());
-                insertVinylsStatement.setString(5, vinyl.getPrice());
-                insertVinylsStatement.setString(6, vinyl.getVinylLink());
-                insertVinylsStatement.setString(7, vinyl.getImageLink());
-                insertVinylsStatement.setInt(8, vinyl.getShopId());
-                insertVinylsStatement.setLong(9, vinyl.getUniqueVinylId());
+                insertVinylsStatement.setDouble(5, vinyl.getPrice());
+                if (vinyl.getCurrency().isPresent()) {
+                    insertVinylsStatement.setString(6, vinyl.getCurrency().get().toString());
+                } else {
+                    throw new RuntimeException("No defined currency.");
+                }
+                insertVinylsStatement.setString(7, vinyl.getVinylLink());
+                insertVinylsStatement.setString(8, vinyl.getImageLink());
+                insertVinylsStatement.setInt(9, vinyl.getShopId());
+                insertVinylsStatement.setLong(10, vinyl.getUniqueVinylId());
                 insertVinylsStatement.addBatch();
             }
             insertVinylsStatement.executeBatch();
@@ -79,7 +90,7 @@ public class JdbcVinylDao implements VinylDao {
     @Override
     public List<Vinyl> getAllUnique() {
         List<Vinyl> uniqueVinyls = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection();
+        try (Connection connection = DBDataSource.getConnection();
              PreparedStatement getUniqueVinylsStatement = connection.prepareStatement(SELECT_UNIQUE_VINYLS);
              ResultSet resultSet = getUniqueVinylsStatement.executeQuery()) {
             while (resultSet.next()) {
@@ -95,7 +106,7 @@ public class JdbcVinylDao implements VinylDao {
     @Override
     public List<Vinyl> getAll() {
         List<Vinyl> allVinyls = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection();
+        try (Connection connection = DBDataSource.getConnection();
              PreparedStatement getAllVinylsStatement = connection.prepareStatement(SELECT_VINYLS);
              ResultSet resultSet = getAllVinylsStatement.executeQuery()) {
             while (resultSet.next()) {
@@ -111,7 +122,7 @@ public class JdbcVinylDao implements VinylDao {
     @Override
     public Vinyl getUniqueById(long id) {
         Vinyl vinyl;
-        try (Connection connection = dataSource.getConnection();
+        try (Connection connection = DBDataSource.getConnection();
              PreparedStatement getUniqueVinylByIdStatement = connection.prepareStatement(SELECT_UNIQUE_VINYL_BY_ID)) {
             getUniqueVinylByIdStatement.setLong(1, id);
             try (ResultSet resultSet = getUniqueVinylByIdStatement.executeQuery()) {
@@ -130,7 +141,7 @@ public class JdbcVinylDao implements VinylDao {
     @Override
     public Vinyl getById(long id) {
         Vinyl vinyl;
-        try (Connection connection = dataSource.getConnection();
+        try (Connection connection = DBDataSource.getConnection();
              PreparedStatement getVinylByIdStatement = connection.prepareStatement(SELECT_VINYL_BY_ID)) {
             getVinylByIdStatement.setLong(1, id);
             try (ResultSet resultSet = getVinylByIdStatement.executeQuery()) {
@@ -149,7 +160,7 @@ public class JdbcVinylDao implements VinylDao {
     @Override
     public Optional<Vinyl> getByRelease(String vinylRelease) {
         Vinyl vinyl = null;
-        try (Connection connection = dataSource.getConnection();
+        try (Connection connection = DBDataSource.getConnection();
              PreparedStatement getVinylByIdStatement = connection.prepareStatement(SELECT_VINYL_BY_RELEASE)) {
             getVinylByIdStatement.setString(1, vinylRelease);
             try (ResultSet resultSet = getVinylByIdStatement.executeQuery()) {

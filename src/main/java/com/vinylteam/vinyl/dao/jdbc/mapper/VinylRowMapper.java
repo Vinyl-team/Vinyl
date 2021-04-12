@@ -1,9 +1,11 @@
 package com.vinylteam.vinyl.dao.jdbc.mapper;
 
+import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.Vinyl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class VinylRowMapper {
     public Vinyl mapRow(ResultSet resultSet) {
@@ -15,7 +17,8 @@ public class VinylRowMapper {
                 vinyl.setArtist(resultSet.getString("artist"));
                 vinyl.setFullNameVinyl(resultSet.getString("full_name"));
                 vinyl.setGenre(resultSet.getString("genre"));
-                vinyl.setPrice(resultSet.getString("price"));
+                vinyl.setPrice(resultSet.getDouble("price"));
+                vinyl.setCurrency(Optional.of(Currency.valueOf(resultSet.getString("currency"))));
                 vinyl.setVinylLink(resultSet.getString("link_to_vinyl"));
                 vinyl.setImageLink(resultSet.getString("link_to_image"));
                 vinyl.setShopId(resultSet.getInt("shop_id"));

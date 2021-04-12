@@ -5,7 +5,7 @@
         </filter>
 
         <encoder>
-            <pattern>%-5(%d{HH:mm:ss.SSS} [%thread]) %class{10} %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%-5(%d{HH:mm:ss.SSS} [%thread]) %class{36} %-5level - %msg%n</pattern>
         </encoder>
     </appender>
     <root level="info">

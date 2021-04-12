@@ -3,24 +3,36 @@ package com.vinylteam.vinyl.entity;
 import java.util.Optional;
 
 public enum Currency {
-    UAH("₴"), EUR("€"), USD("$"), GBP("£");
+    UAH("₴"),
+    USD("$"),
+    GBP("£"),
+    EUR("€");
 
-    Currency(String currencySymbol) {
+    private final String symbol;
+
+    Currency(String symbol) {
+        this.symbol = symbol;
     }
 
-    static Optional<Currency> getCurrency(String currencyDescription) {
-        if (currencyDescription.equals(" грн.") || currencyDescription.equals("₴")) {
-         return Optional.of(UAH);
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public static Optional<Currency> getCurrency(String currencyDescription) {
+        Currency resultingCurrency = null;
+        if (currencyDescription.equals("грн") || currencyDescription.equals("₴")) {
+            resultingCurrency = UAH;
         }
-        if (currencyDescription.equals("EUR") || currencyDescription.equals("€")) {
-            return Optional.of(EUR);
+        if (currencyDescription.equals("GBP") || currencyDescription.equals("£")) {
+            resultingCurrency = GBP;
         }
         if (currencyDescription.equals("USD") || currencyDescription.equals("$")) {
-            return Optional.of(USD);
+            resultingCurrency = USD;
         }
-        if (currencyDescription.equals("GBP") || currencyDescription.equals("£")){
-            return Optional.of(GBP);
+        if (currencyDescription.equals(" EUR") || currencyDescription.equals("EUR") || currencyDescription.equals("€")
+                || currencyDescription.equals("&nbsp;€")) {
+            resultingCurrency = EUR;
         }
-        return Optional.empty();
+        return Optional.ofNullable(resultingCurrency);
     }
 }

@@ -15,13 +15,13 @@ public class DefaultVinylService implements VinylService {
     }
 
     @Override
-    public void saveAllUnique(List<Vinyl> uniqueVinyls) {
-        vinylDao.saveAllUnique(uniqueVinyls);
+    public void addAllUnique(List<Vinyl> uniqueVinyls) {
+        vinylDao.addAllUnique(uniqueVinyls);
     }
 
     @Override
-    public void saveAll(List<Vinyl> vinyls) {
-        vinylDao.saveAll(vinyls);
+    public void addAll(List<Vinyl> vinyls) {
+        vinylDao.addAll(vinyls);
     }
 
     @Override

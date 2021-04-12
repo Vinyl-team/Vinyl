@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface VinylDao {
-    void saveAllUnique(List<Vinyl> uniqueVinyls);
+    void addAllUnique(List<Vinyl> uniqueVinyls);
 
-    void saveAll(List<Vinyl> vinyls);
+    void addAll(List<Vinyl> vinyls);
 
     List<Vinyl> getAllUnique();
 

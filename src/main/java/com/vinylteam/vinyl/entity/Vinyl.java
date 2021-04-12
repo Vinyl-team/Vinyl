@@ -1,6 +1,7 @@
 package com.vinylteam.vinyl.entity;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class Vinyl {
 
@@ -10,7 +11,8 @@ public class Vinyl {
     private String release;
     private String artist;
     private String fullNameVinyl;
-    private String price;
+    private Double price;
+    private Optional<Currency> currency;
     private String vinylLink;
     private String imageLink;
     private String genre;
@@ -39,8 +41,12 @@ public class Vinyl {
         this.fullNameVinyl = fullNameVinyl;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public void setCurrency(Optional<Currency> currency) {
+        this.currency = currency;
     }
 
     public void setVinylLink(String vinylLink) {
@@ -79,8 +85,12 @@ public class Vinyl {
         return fullNameVinyl;
     }
 
-    public String getPrice() {
+    public Double getPrice() {
         return price;
+    }
+
+    public Optional<Currency> getCurrency() {
+        return currency;
     }
 
     public String getVinylLink() {
@@ -105,6 +115,7 @@ public class Vinyl {
                 ", artist='" + artist + '\'' +
                 ", fullNameVinyl='" + fullNameVinyl + '\'' +
                 ", price='" + price + '\'' +
+                ", currency='" + currency + '\'' +
                 ", vinylLink='" + vinylLink + '\'' +
                 ", imageLink='" + imageLink + '\'' +
                 ", genre='" + genre + '\'' +
@@ -130,4 +141,6 @@ public class Vinyl {
     public int hashCode() {
         return Objects.hash(vinylId, shopId, uniqueVinylId, release, artist, fullNameVinyl, vinylLink, imageLink);
     }
+
+
 }
