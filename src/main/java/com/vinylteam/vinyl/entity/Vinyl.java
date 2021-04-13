@@ -142,5 +142,4 @@ public class Vinyl {
         return Objects.hash(vinylId, shopId, uniqueVinylId, release, artist, fullNameVinyl, vinylLink, imageLink);
     }
 
-
 }

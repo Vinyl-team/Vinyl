@@ -17,7 +17,6 @@ create table users
             check (((role)::text = 'USER'::text) OR ((role)::text = 'ADMIN'::text))
 );
 
-
 create table unique_vinyls
 (
     id            bigint        not null
@@ -29,7 +28,6 @@ create table unique_vinyls
     link_to_image varchar(1000) not null
 );
 
-
 create table shops
 (
     id                serial       not null
@@ -39,7 +37,6 @@ create table shops
     link_to_image     varchar(500) not null,
     name              varchar(500) not null
 );
-
 
 create table user_posts
 (
@@ -55,9 +52,6 @@ create table user_posts
     message varchar(1000) not null
 );
 
-
-
-
 create table confirmation_links
 (
     id                serial       not null
@@ -68,7 +62,6 @@ create table confirmation_links
             references users,
     confirmation_link varchar(500) not null
 );
-
 
 create table vinyls
 (
@@ -112,6 +105,4 @@ values ('http://vinyl.ua/', 'http://vinyl.ua/img/logo/icon/55.png', 'VinylUa');
 
 insert into shops (link_to_main_page, link_to_image, name)
 values ('https://www.juno.co.uk/', 'https://www.logosvgpng.com/wp-content/uploads/2018/04/juno-records-logo-vector.png', 'JunoCoUk');
-
-
 

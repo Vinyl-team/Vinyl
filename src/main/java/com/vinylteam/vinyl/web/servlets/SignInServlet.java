@@ -18,38 +18,29 @@ public class SignInServlet {
     private final String failRedirect = "/signIn";
 
     public SignInServlet(UserService userService) {
-        logger.debug("Starting constructor SignInServlet(UserService userService) with " +
-                "{'UserService':{}}", userService);
         this.userService = userService;
-        logger.debug("Initialized this.userService " +
-                "{'userService':{}}", this.userService);
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        logger.debug("Start of function SignInServlet.doPost(HttpServletRequest request, " +
-                "HttpServletResponse response) with " +
-                "{'request':{},\n 'response':{}}", request, response);
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
         SignInCheckResult checkResult = userService.signInCheck(email, password);
-        logger.debug("Got result of checking user with passed email and password " +
-                "{'email':{}, 'checkResult':{}}", email, checkResult);
+        logger.debug("Got result of checking user with " +
+                "passed email and password {'email':{}, 'checkResult':{}}", email, checkResult);
         if (checkResult == SignInCheckResult.OK_VERIFIED) {
             response.setStatus(HttpServletResponse.SC_OK);
-            logger.debug("Set response status to " +
-                    "{'status':{}}", HttpServletResponse.SC_OK);
+            logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
             response.sendRedirect(verifiedRedirect);
         } else if (checkResult == SignInCheckResult.OK_NOT_VERIFIED) {
             response.setStatus(HttpServletResponse.SC_SEE_OTHER);
-            logger.debug("Set response status to " +
-                    "{'status':{}}", HttpServletResponse.SC_SEE_OTHER);
+            logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_SEE_OTHER);
             response.sendRedirect(notVerifiedRedirect);
         } else if (checkResult == SignInCheckResult.FAIL) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            logger.debug("Set response status to " +
-                    "{'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
+            logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
             response.sendRedirect(failRedirect);
         }
     }
+
 }

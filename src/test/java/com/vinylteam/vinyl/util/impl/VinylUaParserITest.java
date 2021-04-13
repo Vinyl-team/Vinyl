@@ -12,6 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class VinylUaParserITest {
+
     private VinylUaParser vinylUaParser;
     private HashSet<String> oneTestLink;
 
@@ -46,4 +47,5 @@ class VinylUaParserITest {
         List<Vinyl> actualVinyls = vinylUaParser.getAllVinylsFromShopList();
         assertFalse(actualVinyls.isEmpty());
     }
+
 }

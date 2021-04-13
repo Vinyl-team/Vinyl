@@ -17,37 +17,27 @@ public class DefaultUserService implements UserService {
     private final SecurityService securityService;
 
     public DefaultUserService(UserDao userDao, SecurityService securityService) {
-        logger.debug("Starting constructor DefaultUserService(UserDao userDao, SecurityService securityService) with " +
-                "{'userDao':{}, 'securityService':{}}", userDao, securityService);
         this.userDao = userDao;
         this.securityService = securityService;
-        logger.debug("Initialized this.userDao, this.securityService " +
-                "{'userDao':{}, 'securityService':{}}", this.userDao, this.securityService);
     }
 
     @Override
     public boolean add(String email, String password) {
-        logger.debug("Start of function DefaultUserService.add(String email, String password)" +
-                " with {'email':{}}", email);
         boolean isAdded = false;
         if (email != null && password != null) {
             User userToAdd = securityService
                     .createUserWithHashedPassword(email, password.toCharArray());
-            logger.debug("Created user to add {'user':{}}", userToAdd);
             isAdded = userDao.add(userToAdd);
-            logger.debug("Attempted to add created user to db with boolean result " +
-                    "{'user':{}, 'isAdded':{}}", userToAdd, isAdded);
+            logger.debug("Attempted to add created user to db with boolean result {'isAdded':{}}",
+                    isAdded);
         }
         logger.debug("Result of attempting to add user, created from passed email and password" +
-                " if both are not null is" +
-                "{'isAdded': {}, 'email':{}}", isAdded, email);
+                " if both are not null is {'isAdded': {}, 'email':{}}", isAdded, email);
         return isAdded;
     }
 
     @Override
     public Optional<User> getByEmail(String email) {
-        logger.debug("Start of function DefaultUserService.getByEmail(String email) " +
-                "with {'email':{}}", email);
         Optional<User> resultingOptional = userDao.getByEmail(email);
         logger.debug("Resulting optional is {'optional':{}}", resultingOptional);
         return resultingOptional;
@@ -55,18 +45,16 @@ public class DefaultUserService implements UserService {
 
     @Override
     public SignInCheckResult signInCheck(String email, String password) {
-        logger.debug("Start of function DefaultUserService.signInCheck(String email, String password) " +
-                "with {'email':{}}", email);
         SignInCheckResult checkResult = SignInCheckResult.FAIL;
         if (email != null && password != null) {
             Optional<User> optionalUser = userDao.getByEmail(email);
-            logger.debug("Got optional with user from db by email " +
-                    "{'email':{}, 'optionalUser':{}}", email, optionalUser);
+            logger.debug("Got optional with user from db by email {'email':{}, 'optionalUser':{}}",
+                    email, optionalUser);
             if (optionalUser.isPresent()) {
                 if (securityService.checkPasswordAgainstUserPassword(
                         optionalUser.get(), password.toCharArray())) {
-                    logger.debug("Hashed password passed as argument matches hashed password of user by passed email " +
-                            "{'email':{}}", email);
+                    logger.debug("Hashed password passed as argument matches hashed password " +
+                            "of user by passed email {'email':{}}", email);
                     if (optionalUser.get().getStatus()) {
                         logger.debug("User's status is {'status':{}}", optionalUser.get().getStatus());
                         checkResult = SignInCheckResult.OK_VERIFIED;

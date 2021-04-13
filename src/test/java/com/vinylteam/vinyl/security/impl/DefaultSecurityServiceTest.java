@@ -68,4 +68,5 @@ class DefaultSecurityServiceTest {
         assertFalse(securityService.checkPasswordAgainstUserPassword(
                 null, rightPassword.toCharArray()));
     }
+
 }

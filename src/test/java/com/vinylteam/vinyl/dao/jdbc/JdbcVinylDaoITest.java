@@ -4,7 +4,6 @@ import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.dao.VinylDao;
 import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.Vinyl;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -20,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JdbcVinylDaoITest {
+
     private final String TRUNCATE_UNIQUE_VINYLS = "TRUNCATE unique_vinyls RESTART IDENTITY CASCADE";
     private final String TRUNCATE_VINYLS = "TRUNCATE vinyls RESTART IDENTITY";
     private final String INSERT_UNIQUE_VINYLS = "INSERT INTO unique_vinyls(id, release, artist, full_name, link_to_image)" +
@@ -94,7 +94,7 @@ class JdbcVinylDaoITest {
             insertVinyls.setString(22, "artist2");
             insertVinyls.setString(23, "release2 - artist2");
             insertVinyls.setString(24, "rock");
-            insertVinyls.setDouble(25,1500);
+            insertVinyls.setDouble(25, 1500);
             insertVinyls.setString(26, Currency.EUR.toString());
             insertVinyls.setString(27, "https://bestvinyl.com/here/release2");
             insertVinyls.setString(28, "https://imagestore.com/somewhere/image2.jpg");
@@ -452,4 +452,5 @@ class JdbcVinylDaoITest {
             vinylDao.getById(15);
         });
     }
+
 }
