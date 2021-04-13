@@ -37,7 +37,8 @@ public class DBDataSource {
             logger.debug("Got connection from data source {'dataSource':{}, 'connection':{}}", dataSource, connection);
             return connection;
         } catch (SQLException e) {
-            logger.error("Error during getting connection from data source {'dataSource':{}}", dataSource, e);
+            logger.error("Error during getting connection from data source {'dataSource':{}}",
+                    dataSource, e);
             throw new RuntimeException(e);
         }
     }
