@@ -90,7 +90,7 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Gets an existing user from db")
     void getByExistingEmail() {
-        logger.info("getByExistingEmail()");
+        logger.info("countAllEmptyTest()");
         Optional<User> optionalUserGottenByExistingEmail;
         optionalUserGottenByExistingEmail = jdbcUserDao.getByEmail("testuser1@vinyl.com");
 
@@ -135,7 +135,7 @@ class JdbcUserDaoITest {
         assertEquals("", optionalAddedUser.get().getSalt());
         assertEquals(0, optionalAddedUser.get().getIterations());
         assertEquals(Role.USER, optionalAddedUser.get().getRole());
-        assertEquals(true, optionalAddedUser.get().getStatus());
+        assertTrue(optionalAddedUser.get().getStatus());
     }
 
     @Test
@@ -156,7 +156,7 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Adds existing user with new password")
     void addExistingWithNewPasswordTest() {
-        logger.info("addExistingWithNewPasswordTest");
+        logger.info("addExistingWithNewPasswordTest()");
         User user = new User();
         user.setEmail("testuser2@vinyl.com");
         user.setPassword("HASH3");

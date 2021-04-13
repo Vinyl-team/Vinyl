@@ -17,19 +17,16 @@ public class DefaultErrorHandler extends ErrorPageErrorHandler {
     protected void generateAcceptableResponse(Request baseRequest, HttpServletRequest request, HttpServletResponse response,
                                               int code, String message, String mimeType) {
         Map<String, Object> parameterMap = new HashMap<>();
-
         String servletName = (String) request.getAttribute("javax.servlet.error.servlet_name");
         Exception exception = (Exception) request.getAttribute("javax.servlet.error.exception");
-
-        logger.error("Error in servlet: {},\n code: {},\n message: {}", servletName, code, message, exception);
-
+        logger.error("Error in {'servlet':{},\n 'code':{},\n 'message':{}}", servletName, code, message, exception);
         baseRequest.setHandled(true);
-
         parameterMap.put("code", code);
         parameterMap.put("message", message);
-
         response.setContentType("text/html;charset=utf-8");
-        response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setStatus(javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        logger.debug("Set response status to " +
+                "{'status':{}}", javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
 }

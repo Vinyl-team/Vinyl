@@ -34,15 +34,20 @@ public class JdbcUserDao implements UserDao {
             insertStatement.setInt(4, user.getIterations());
             insertStatement.setString(5, user.getRole().toString());
             insertStatement.setBoolean(6, user.getStatus());
-
+            logger.debug("Prepared statement {'preparedStatement':{}}.", insertStatement);
             insertStatement.executeUpdate();
             isAdded = true;
         } catch (PSQLException e) {
-            logger.info("Database error while adding user to public.users", e);
+            logger.debug("Database error while adding user to public.users", e);
             isAdded = false;
         } catch (SQLException e) {
             logger.error("Error while adding user to public.users", e);
             throw new RuntimeException(e);
+        }
+        if (isAdded) {
+            logger.info("User is added to the database {'user':{}}.", user);
+        } else {
+            logger.info("Failed to add user to the database {'user':{}}.", user);
         }
         return isAdded;
     }
@@ -52,12 +57,14 @@ public class JdbcUserDao implements UserDao {
         try (Connection connection = DBDataSource.getConnection();
              PreparedStatement findByEmailStatement = connection.prepareStatement(FIND_BY_EMAIL)) {
             findByEmailStatement.setString(1, email);
+            logger.debug("Prepared statement {'preparedStatement':{}}.", findByEmailStatement);
             try (ResultSet resultSet = findByEmailStatement.executeQuery()) {
                 if (resultSet.next()) {
                     user = userRowMapper.mapRow(resultSet);
                     if (resultSet.next()) {
-                        logger.error("More than one user was found for email: {}", email);
-                        throw new RuntimeException("More than one user was found for email: ".concat(email));
+                        RuntimeException e = new RuntimeException();
+                        logger.error("More than one user was found for email: {}", email, e);
+                        throw e;
                     }
                 }
             }
@@ -65,15 +72,16 @@ public class JdbcUserDao implements UserDao {
             logger.error("SQLException retrieving user by email from public.users", e);
             throw new RuntimeException(e);
         }
+        logger.debug("Resulting optional with user is {'Optional.ofNullable(user)':{}}", Optional.ofNullable(user));
         return Optional.ofNullable(user);
     }
 
     int countAll() {
-
         int count = -1;
         try (Connection connection = DBDataSource.getConnection();
              Statement countStatement = connection.createStatement();
              ResultSet resultSet = countStatement.executeQuery(COUNT_ALL)) {
+            logger.debug("Executed statement {'statement':{}}", countStatement);
             if (resultSet.next()) {
                 count = resultSet.getInt(1);
             }
@@ -81,7 +89,7 @@ public class JdbcUserDao implements UserDao {
             logger.error("SQLException while counting amount of rows in public.users", e);
             throw new RuntimeException(e);
         }
-
+        logger.debug("Resulting count is {'count':{}}", count);
         return count;
     }
 

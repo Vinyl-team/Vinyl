@@ -105,4 +105,5 @@ class SignInServletTest {
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
         inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signIn");
     }
+
 }

@@ -1,5 +1,6 @@
 package com.vinylteam.vinyl;
 
+import com.vinylteam.vinyl.util.PropertiesReader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -53,4 +54,5 @@ class PropertiesReaderTest {
         assertEquals("org.postgresql.Driver", propertiesReader[0].getJdbcDriver());
         assertEquals("5", propertiesReader[0].getJdbcMaximumPoolSize());
     }
+
 }

@@ -144,4 +144,5 @@ class DefaultUserServiceITest {
     void addWithNewEmail() {
         assertTrue(userService.add("newuser@vinyl.com", "password3"));
     }
+
 }

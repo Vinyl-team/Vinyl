@@ -41,7 +41,7 @@ class DefaultErrorHandlerTest {
 
         InOrder inOrderResponse = Mockito.inOrder(mockedResponse);
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
-        inOrderResponse.verify(mockedResponse).setStatus(jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        inOrderResponse.verify(mockedResponse).setStatus(javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
 }
