@@ -53,7 +53,6 @@ public class JdbcVinylDao implements VinylDao {
             }
             logger.debug("Prepared statement {'preparedStatement':{}}.", insertUniqueVinylsStatement);
             insertUniqueVinylsStatement.executeBatch();
-            logger.debug("Executed statement {'preparedStatement':{}}", insertUniqueVinylsStatement);
             connection.commit();
         } catch (SQLException e) {
             logger.error("Error while adding unique vinyls to db {'uniqueVinyls':{}}", uniqueVinyls, e);
@@ -87,7 +86,6 @@ public class JdbcVinylDao implements VinylDao {
             }
             logger.debug("Prepared statement {'preparedStatement':{}}.", insertVinylsStatement);
             insertVinylsStatement.executeBatch();
-            logger.debug("Executed statement {'preparedStatement':{}}", insertVinylsStatement);
             connection.commit();
         } catch (SQLException e) {
             logger.error("Error while adding vinyls to db {'uniqueVinyls':{}}", vinyls, e);
@@ -141,7 +139,6 @@ public class JdbcVinylDao implements VinylDao {
             getUniqueVinylByIdStatement.setLong(1, id);
             logger.debug("Prepared statement {'preparedStatement':{}}.", getUniqueVinylByIdStatement);
             try (ResultSet resultSet = getUniqueVinylByIdStatement.executeQuery()) {
-                logger.debug("Executed statement {'preparedStatement':{}}", getUniqueVinylByIdStatement);
                 if (resultSet.next()) {
                     uniqueVinyl = uniqueVinylRowMapper.mapRow(resultSet);
                 } else {
@@ -160,14 +157,12 @@ public class JdbcVinylDao implements VinylDao {
 
     @Override
     public Vinyl getById(long id) {
-
         Vinyl vinyl;
         try (Connection connection = DBDataSource.getConnection();
              PreparedStatement getVinylByIdStatement = connection.prepareStatement(SELECT_VINYL_BY_ID)) {
             getVinylByIdStatement.setLong(1, id);
             logger.debug("Prepared statement {'preparedStatement':{}}.", getVinylByIdStatement);
             try (ResultSet resultSet = getVinylByIdStatement.executeQuery()) {
-                logger.debug("Executed statement {'preparedStatement':{}}", getVinylByIdStatement);
                 if (resultSet.next()) {
                     vinyl = vinylRowMapper.mapRow(resultSet);
                 } else {

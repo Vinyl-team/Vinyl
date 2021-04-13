@@ -72,8 +72,8 @@ public class VinylUaParser implements VinylParser {
             logger.debug("Got document out of page link {'pageLink':{}, 'document':{}", pageLink, document);
             Elements vinylElements = document.getElementsByClass(classContainingVinyl);
             logger.debug("Got collection of vinyl elements {'vinylElements':{}}", vinylElements);
-            for (Element vinylElement : vinylElements) {
 
+            for (Element vinylElement : vinylElements) {
                 String release = vinylElement.getElementsByClass(classContainingVinylRelease).text();
                 String artist = vinylElement.getElementsByClass(classContainingVinylArtist).select("a").text();
                 if (artist.equals("")) {

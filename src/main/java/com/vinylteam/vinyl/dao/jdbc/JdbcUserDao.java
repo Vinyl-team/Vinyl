@@ -36,7 +36,6 @@ public class JdbcUserDao implements UserDao {
             insertStatement.setBoolean(6, user.getStatus());
             logger.debug("Prepared statement {'preparedStatement':{}}.", insertStatement);
             insertStatement.executeUpdate();
-            logger.debug("Executed statement {'preparedStatement':{}}", insertStatement);
             isAdded = true;
         } catch (PSQLException e) {
             logger.debug("Database error while adding user to public.users", e);
@@ -60,7 +59,6 @@ public class JdbcUserDao implements UserDao {
             findByEmailStatement.setString(1, email);
             logger.debug("Prepared statement {'preparedStatement':{}}.", findByEmailStatement);
             try (ResultSet resultSet = findByEmailStatement.executeQuery()) {
-                logger.debug("Executed statement {'preparedStatement':{}}", findByEmailStatement);
                 if (resultSet.next()) {
                     user = userRowMapper.mapRow(resultSet);
                     if (resultSet.next()) {
