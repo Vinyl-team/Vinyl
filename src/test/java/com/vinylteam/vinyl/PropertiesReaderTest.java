@@ -1,5 +1,6 @@
 package com.vinylteam.vinyl;
 
+import com.vinylteam.vinyl.util.PropertiesReader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

@@ -4,7 +4,6 @@ import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.dao.VinylDao;
 import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.Vinyl;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
@@ -94,7 +93,7 @@ class JdbcVinylDaoITest {
             insertVinyls.setString(22, "artist2");
             insertVinyls.setString(23, "release2 - artist2");
             insertVinyls.setString(24, "rock");
-            insertVinyls.setDouble(25,1500);
+            insertVinyls.setDouble(25, 1500);
             insertVinyls.setString(26, Currency.EUR.toString());
             insertVinyls.setString(27, "https://bestvinyl.com/here/release2");
             insertVinyls.setString(28, "https://imagestore.com/somewhere/image2.jpg");

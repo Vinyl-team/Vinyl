@@ -12,11 +12,8 @@ public class UserRowMapper {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public User mapRow(ResultSet resultSet) {
-        logger.debug("Start of function UserRowMapper.mapRow(ResultSet resultSet)" +
-                " with {'resultSet':{}}", resultSet);
         if (resultSet != null) {
             User user = new User();
-            logger.debug("Created User object {'user':{}}", user);
             try {
                 user.setEmail(resultSet.getString("email"));
                 user.setPassword(resultSet.getString("password"));
@@ -24,7 +21,7 @@ public class UserRowMapper {
                 user.setIterations(resultSet.getInt("iterations"));
                 user.setRole(Role.valueOf(resultSet.getString("role")));
                 user.setStatus(resultSet.getBoolean("status"));
-                logger.debug("Filled User object {'user':{}}", user);
+                logger.debug("Resulting User object {'user':{}}", user);
                 return user;
             } catch (Exception e) {
                 logger.error("Error while getting data from result set into User object {'user':{}}",

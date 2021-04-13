@@ -25,21 +25,17 @@ public class JdbcUserDao implements UserDao {
     private final UserRowMapper userRowMapper = new UserRowMapper();
 
     public boolean add(User user) {
-        logger.debug("Start of function JdbcUserDao.add(User user)" +
-                " with {'user':{}}", user);
+
         boolean isAdded;
         try (Connection connection = DBDataSource.getConnection();
              PreparedStatement insertStatement = connection.prepareStatement(INSERT)) {
-            logger.debug("Got connection to db from DBDataSource, created prepared statement" +
-                    "{'preparedStatement':{}}. Starting to fill it.", insertStatement);
             insertStatement.setString(1, user.getEmail());
             insertStatement.setString(2, user.getPassword());
             insertStatement.setString(3, user.getSalt());
             insertStatement.setInt(4, user.getIterations());
             insertStatement.setString(5, user.getRole().toString());
             insertStatement.setBoolean(6, user.getStatus());
-            logger.debug("Prepared statement filled" +
-                    "{'preparedStatement':{}}.", insertStatement);
+            logger.debug("Prepared statement {'preparedStatement':{}}.", insertStatement);
             insertStatement.executeUpdate();
             isAdded = true;
         } catch (PSQLException e) {
@@ -58,24 +54,20 @@ public class JdbcUserDao implements UserDao {
     }
 
     public Optional<User> getByEmail(String email) {
-        logger.debug("Start of function JdbcUserDao.getByEmail(String email)" +
-                " with {'email':{}}", email);
         User user = null;
         try (Connection connection = DBDataSource.getConnection();
              PreparedStatement findByEmailStatement = connection.prepareStatement(FIND_BY_EMAIL)) {
-            logger.debug("Got connection to db from DBDataSource, created prepared statement" +
-                    "{'preparedStatement':{}}. Starting to fill it.", findByEmailStatement);
             findByEmailStatement.setString(1, email);
-            logger.debug("Prepared statement filled" +
-                    "{'preparedStatement':{}}.", findByEmailStatement);
+            logger.debug("Prepared statement {'preparedStatement':{}}.", findByEmailStatement);
             try (ResultSet resultSet = findByEmailStatement.executeQuery()) {
-                logger.debug("Executed statement, result set after executing" +
-                        "{'preparedStatement':{}, 'resultSet':{}}", findByEmailStatement, resultSet);
+                logger.debug("Executed statement with result set {'preparedStatement':{}, 'resultSet':{}}",
+                        findByEmailStatement, resultSet);
                 if (resultSet.next()) {
                     user = userRowMapper.mapRow(resultSet);
                     if (resultSet.next()) {
-                        logger.error("More than one user was found for email: {}", email);
-                        throw new RuntimeException("More than one user was found for email: ".concat(email));
+                        RuntimeException e = new RuntimeException();
+                        logger.error("More than one user was found for email: {}", email, e);
+                        throw e;
                     }
                 }
             }
@@ -89,13 +81,12 @@ public class JdbcUserDao implements UserDao {
     }
 
     int countAll() {
-        logger.debug("Start of function JdbcUserDao.count()");
         int count = -1;
         try (Connection connection = DBDataSource.getConnection();
              Statement countStatement = connection.createStatement();
              ResultSet resultSet = countStatement.executeQuery(COUNT_ALL)) {
-            logger.debug("Got connection to db from DBDataSource, created statement, executed statement with result set" +
-                    "{'statement':{}, 'resultSet':{}}", countStatement, resultSet);
+            logger.debug("Executed statement with result set {'statement':{}, 'resultSet':{}}",
+                    countStatement, resultSet);
             if (resultSet.next()) {
                 count = resultSet.getInt(1);
             }

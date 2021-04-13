@@ -9,25 +9,22 @@ import java.sql.SQLException;
 
 public class UniqueVinylRowMapper {
 
-    private static Logger logger = LoggerFactory.getLogger(UniqueVinylRowMapper.class);
+    private Logger logger = LoggerFactory.getLogger(getClass());
 
-    public static Vinyl mapRow(ResultSet resultSet) {
-        logger.debug("Start of function UniqueVinylRowMapper.mapRow(ResultSet resultSet)" +
-                " with {'resultSet':{}}", resultSet);
+    public Vinyl mapRow(ResultSet resultSet) {
         if (resultSet != null) {
-            Vinyl vinyl = new Vinyl();
-            logger.debug("Created Vinyl object {'vinyl':{}}", vinyl);
+            Vinyl uniqueVinyl = new Vinyl();
             try {
-                vinyl.setVinylId(resultSet.getInt("id"));
-                vinyl.setRelease(resultSet.getString("release"));
-                vinyl.setArtist(resultSet.getString("artist"));
-                vinyl.setFullNameVinyl(resultSet.getString("full_name"));
-                vinyl.setImageLink(resultSet.getString("link_to_image"));
-                logger.debug("Filled vinyl object {'vinyl':{}}", vinyl);
-                return vinyl;
+                uniqueVinyl.setVinylId(resultSet.getInt("id"));
+                uniqueVinyl.setRelease(resultSet.getString("release"));
+                uniqueVinyl.setArtist(resultSet.getString("artist"));
+                uniqueVinyl.setFullNameVinyl(resultSet.getString("full_name"));
+                uniqueVinyl.setImageLink(resultSet.getString("link_to_image"));
+                logger.debug("Resulting Vinyl object {'uniqueVinyl':{}}", uniqueVinyl);
+                return uniqueVinyl;
             } catch (SQLException e) {
                 logger.error("Error while getting data from result set into Vinyl object {'vinyl':{}}",
-                        vinyl, e);
+                        uniqueVinyl, e);
                 throw new RuntimeException(e);
             }
         } else {

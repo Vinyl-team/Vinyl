@@ -24,8 +24,7 @@ public enum Currency {
     }
 
     public static Optional<Currency> getCurrency(String currencyDescription) {
-        logger.debug("Start of function Currency.getCurrency(String currencyDescription)" +
-                " with {currencyDescription':{}}", currencyDescription);
+        logger.debug("getCurrency started with {currencyDescription':{}}", currencyDescription);
         Currency resultingCurrency = null;
         if (currencyDescription.equals("грн") || currencyDescription.equals("₴")) {
             resultingCurrency = UAH;
