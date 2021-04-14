@@ -46,11 +46,11 @@ class PropertiesReaderTest {
         final PropertiesReader[] propertiesReader = new PropertiesReader[1];
         withEnvironmentVariable("env", "DEV")
                 .execute(() -> propertiesReader[0] = new PropertiesReader());
-        assertEquals("xcqnbxpbnrplli", propertiesReader[0].getJdbcUser());
-        assertEquals("cc9e5ab179e0a7a954d240e6eaa73c2e19a4740aebbf6b3bfa8fa94e769dabc1",
+        assertEquals("hmqwbuqjhtmxwy", propertiesReader[0].getJdbcUser());
+        assertEquals("73385b8ffeef2088d3939cf5d4db69092d44d90c4a035a6cd1af5be574fbe305",
                 propertiesReader[0].getJdbcPassword());
-        assertEquals("jdbc:postgresql://ec2-52-1-115-6.compute-1.amazonaws.com:" +
-                "5432/d60ghtqgakdp60", propertiesReader[0].getJdbcUrl());
+        assertEquals("jdbc:postgresql://ec2-34-233-0-64.compute-1.amazonaws.com:" +
+                "5432/d8am3goqm85uam", propertiesReader[0].getJdbcUrl());
         assertEquals("org.postgresql.Driver", propertiesReader[0].getJdbcDriver());
         assertEquals("5", propertiesReader[0].getJdbcMaximumPoolSize());
     }
