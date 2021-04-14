@@ -54,4 +54,5 @@ class PropertiesReaderTest {
         assertEquals("org.postgresql.Driver", propertiesReader[0].getProperties().getProperty("jdbc.driver"));
         assertEquals("5", propertiesReader[0].getProperties().getProperty("jdbc.maximum.pool.size"));
     }
+
 }

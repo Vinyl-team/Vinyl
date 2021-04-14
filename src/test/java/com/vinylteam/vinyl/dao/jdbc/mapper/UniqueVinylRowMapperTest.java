@@ -13,6 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class UniqueVinylRowMapperTest {
+
     private final UniqueVinylRowMapper uniqueVinylRowMapper = new UniqueVinylRowMapper();
 
     @Test
@@ -42,4 +43,5 @@ class UniqueVinylRowMapperTest {
             uniqueVinylRowMapper.mapRow(null);
         });
     }
+
 }

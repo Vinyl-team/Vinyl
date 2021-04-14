@@ -14,9 +14,10 @@ public class DBDataSource {
 
     private static final HikariDataSource dataSource;
     private static final HikariConfig config = new HikariConfig();
-    private static final Logger logger = LoggerFactory.getLogger("com.vinylteam.vinyl.dao.DBDataSource");
+    private static final Logger logger = LoggerFactory.getLogger(DBDataSource.class);
 
     static {
+        logger.debug("Started static initializer in DBDataSource");
         PropertiesReader propertiesReader = new PropertiesReader();
         logger.info("Properties reader read properties");
         config.setJdbcUrl(propertiesReader.getProperties().getProperty("jdbc.url"));
@@ -25,23 +26,27 @@ public class DBDataSource {
         config.setDriverClassName(propertiesReader.getProperties().getProperty("jdbc.driver"));
         config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getProperties().getProperty("jdbc.maximum.pool.size")));
         dataSource = new HikariDataSource(config);
-        logger.info("Data source: {}", dataSource);
+        logger.info("Configured and created HikariDataSource object {'dataSource':{}}", dataSource);
+    }
+
+    private DBDataSource() {
     }
 
     public static Connection getConnection() {
         try {
-            logger.info("Trying to get connection from data source: {}", dataSource);
-            return dataSource.getConnection();
+            Connection connection = dataSource.getConnection();
+            logger.debug("Got connection from data source {'dataSource':{}, 'connection':{}}", dataSource, connection);
+            return connection;
         } catch (SQLException e) {
-            logger.error("Error during getting connection from data source", e);
+            logger.error("Error during getting connection from data source {'dataSource':{}}",
+                    dataSource, e);
             throw new RuntimeException(e);
         }
     }
 
-    public DBDataSource() {
-    }
-
     public static DataSource getDataSource() {
+        logger.debug("Returning data source {'dataSource':{}}", dataSource);
         return dataSource;
     }
+
 }

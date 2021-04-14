@@ -44,4 +44,5 @@ class UserRowMapperTest {
             userRowMapper.mapRow(null);
         });
     }
+
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface VinylService {
+
     void addAllUnique(List<Vinyl> uniqueVinyls);
 
     void addAll(List<Vinyl> vinyls);
@@ -19,4 +20,5 @@ public interface VinylService {
     Vinyl getById(long id);
 
     Optional<Vinyl> getByRelease(String vinylsRelease);
+
 }
