@@ -31,7 +31,7 @@ public class Starter {
         context.setErrorHandler(new DefaultErrorHandler());
         context.addServlet(new ServletHolder(signUpServlet), "/signUp");
         context.addServlet(new ServletHolder(signInServlet), "/signIn");
-        context.addServlet(DefaultServlet.class, "/*");
+        context.addServlet(DefaultServlet.class, "/");
 
         Server server = new Server(parseInt(propertiesReader.getAppPort()));
         server.setHandler(context);
