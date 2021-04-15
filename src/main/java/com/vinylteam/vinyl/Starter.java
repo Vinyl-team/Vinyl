@@ -40,6 +40,7 @@ public class Starter {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) throws Exception {
+
         /*DAO*/
         UserDao userDao = new JdbcUserDao();
         VinylDao vinylDao = new JdbcVinylDao();
@@ -48,6 +49,8 @@ public class Starter {
         DiscogsService discogsService = new DefaultDiscogsService(propertiesReader.getProperty("consumer.key"),
                 propertiesReader.getProperty("consumer.secret"), propertiesReader.getProperty("user.agent"),
                 propertiesReader.getProperty("callback.url"), objectMapper);
+
+        logger.info("Discogs service initialized");
 
         SecurityService securityService = new DefaultSecurityService();
         UserService userService = new DefaultUserService(userDao, securityService);
@@ -61,9 +64,11 @@ public class Starter {
         List<Vinyl> allVinyls = shopsParser.getAllVinyls(vinylParserList);
         Map<String, List<Vinyl>> mapWithAllAndUniqueLists = vinylSorter.getMapWithAllAndUniqueLists(allVinyls);
 
-        /*DATA*/
-/*        vinylService.addAllUnique(mapWithAllAndUniqueLists.get("all"));
-        vinylService.addAll(mapWithAllAndUniqueLists.get("unique"));*/
+        /*FILL IN DATABASE*/
+        vinylService.addAllUnique(mapWithAllAndUniqueLists.get("unique"));
+        vinylService.addAll(mapWithAllAndUniqueLists.get("all"));
+
+        logger.info("Vinyls added to DB");
 
         /*WEB*/
         SignInServlet signInServlet = new SignInServlet(userService);
@@ -79,6 +84,8 @@ public class Starter {
         Server server = new Server(Integer.parseInt(propertiesReader.getProperty("appPort")));
         server.setHandler(servletContextHandler);
         server.start();
+
+        logger.info("Server started");
     }
 
 }
