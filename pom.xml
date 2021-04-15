@@ -128,7 +128,6 @@
                         <web>java $JAVA_OPTS -cp target/classes:target/com/vinylteam/vinyl/Starter</web>
                     </processTypes>
                 </configuration>
-
             </plugin>
 
         </plugins>
