@@ -19,7 +19,7 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
  * IN THE SOFTWARE.
  */
-package com.vinylteam.vinyl.util.discogs4j.util;
+package com.vinylteam.vinyl.discogs4j.util;
 
 import javax.net.ssl.*;
 import java.io.*;

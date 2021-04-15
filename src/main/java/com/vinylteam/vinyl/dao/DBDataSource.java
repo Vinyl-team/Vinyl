@@ -20,11 +20,11 @@ public class DBDataSource {
         logger.debug("Started static initializer in DBDataSource");
         PropertiesReader propertiesReader = new PropertiesReader();
         logger.info("Properties reader read properties");
-        config.setJdbcUrl(propertiesReader.getProperties().getProperty("jdbc.url"));
-        config.setUsername(propertiesReader.getProperties().getProperty("jdbc.user"));
-        config.setPassword(propertiesReader.getProperties().getProperty("jdbc.password"));
-        config.setDriverClassName(propertiesReader.getProperties().getProperty("jdbc.driver"));
-        config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getProperties().getProperty("jdbc.maximum.pool.size")));
+        config.setJdbcUrl(propertiesReader.getProperty("jdbc.url"));
+        config.setUsername(propertiesReader.getProperty("jdbc.user"));
+        config.setPassword(propertiesReader.getProperty("jdbc.password"));
+        config.setDriverClassName(propertiesReader.getProperty("jdbc.driver"));
+        config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getProperty("jdbc.maximum.pool.size")));
         dataSource = new HikariDataSource(config);
         logger.info("Configured and created HikariDataSource object {'dataSource':{}}", dataSource);
     }

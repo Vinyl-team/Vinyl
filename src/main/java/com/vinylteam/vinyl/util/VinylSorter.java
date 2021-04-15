@@ -1,11 +1,9 @@
 package com.vinylteam.vinyl.util;
 
 import com.vinylteam.vinyl.entity.Vinyl;
-import com.vinylteam.vinyl.util.impl.VinylUaParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,16 +13,11 @@ public class VinylSorter {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public Map<String, List<Vinyl>> getMapWithAllAndUniqueLists() throws IOException {
+    public Map<String, List<Vinyl>> getMapWithAllAndUniqueLists(List<Vinyl> allVinyls) {
         Map<String, List<Vinyl>> allAndUniqueMap = new HashMap<>();
-        List<VinylParser> vinylParsersList = List.of(new VinylUaParser());
-        ShopsParser shopsParser = new ShopsParser(vinylParsersList);
-        logger.debug("Created and initialized shopsParser with {'shopsParser':{}, 'vinylParsersList':{}}",
-                shopsParser, vinylParsersList);
-        List<Vinyl> all = shopsParser.getAllVinyls();
-        int[] duplicatesArray = getDuplicatesIds(all);
-        List<Vinyl> unique = getUnique(all, duplicatesArray);
-        allAndUniqueMap.put("all", all);
+        int[] duplicatesArray = getDuplicatesIds(allVinyls);
+        List<Vinyl> unique = getUnique(allVinyls, duplicatesArray);
+        allAndUniqueMap.put("all", allVinyls);
         allAndUniqueMap.put("unique", unique);
         logger.debug("Resulting map of all vinyls list and unique vinyls list is {'allAndUniqueMap':{}}", allAndUniqueMap);
         return allAndUniqueMap;

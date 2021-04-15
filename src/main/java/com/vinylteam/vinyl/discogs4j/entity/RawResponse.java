@@ -1,4 +1,4 @@
-package com.vinylteam.vinyl.util.discogs4j.entity;
+package com.vinylteam.vinyl.discogs4j.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

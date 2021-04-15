@@ -63,8 +63,8 @@ public class PropertiesReader {
         }
     }
 
-    public Properties getProperties() {
-        return properties;
+    public String getProperty(String propertyName) {
+        return properties.getProperty(propertyName);
     }
 
     private void validateInputStream(InputStream inputStream) {

@@ -2,13 +2,10 @@ package com.vinylteam.vinyl.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vinylteam.vinyl.util.discogs4j.client.DiscogsClient;
-import com.vinylteam.vinyl.util.discogs4j.entity.DiscogsVinylInfo;
-import com.vinylteam.vinyl.util.discogs4j.entity.RawResponse;
-import com.vinylteam.vinyl.util.PropertiesReader;
-import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.service.DiscogsService;
-import com.vinylteam.vinyl.service.VinylService;
+import com.vinylteam.vinyl.discogs4j.client.DiscogsClient;
+import com.vinylteam.vinyl.discogs4j.entity.DiscogsVinylInfo;
+import com.vinylteam.vinyl.discogs4j.entity.RawResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,9 +15,7 @@ import java.util.Optional;
 
 public class DefaultDiscogsService implements DiscogsService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final PropertiesReader propertiesReader = new PropertiesReader();
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final VinylService vinylService;
+    private final ObjectMapper objectMapper;
     private final DiscogsClient discogsClient;
 
     private final String CONSUMER_KEY;
@@ -28,30 +23,31 @@ public class DefaultDiscogsService implements DiscogsService {
     private final String USER_AGENT;
     private final String CALLBACK_URL;
 
-    public DefaultDiscogsService(VinylService vinylService) {
-        this.vinylService = vinylService;
-        this.CONSUMER_KEY = propertiesReader.getProperties().getProperty("consumer.key");
-        this.CONSUMER_SECRET = propertiesReader.getProperties().getProperty("consumer.secret");
-        this.USER_AGENT = propertiesReader.getProperties().getProperty("user.agent");
-        this.CALLBACK_URL = propertiesReader.getProperties().getProperty("callback.url");
+    public DefaultDiscogsService(String consumerKey, String consumerSecret, String userAgent, String callbackUrl,
+                                 ObjectMapper objectMapper) {
+        this.CONSUMER_KEY = consumerKey;
+        this.CONSUMER_SECRET = consumerSecret;
+        this.USER_AGENT = userAgent;
+        this.CALLBACK_URL = callbackUrl;
         this.discogsClient = new DiscogsClient(CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL);
+        this.objectMapper = objectMapper;
 
         try {
             discogsClient.getRequestToken();
         } catch (ArrayIndexOutOfBoundsException e) {
             logger.error("Failed to connect to discogs user with consumer key: {}, consumer secret: {}, user agent: {}," +
-                    " callback url: {} ", CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL);
+                    " callback url: {} ", CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL, e);
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public List<Vinyl> getVinylsFromDiscogsWantList(String discogsUserName) {
+    public List<String> getVinylsReleasesFromDiscogsWantList(String discogsUserName) {
         String discogsWantList = discogsClient.wantlist(discogsUserName);
         Optional<List<DiscogsVinylInfo>> optionalDiscogsVinylInfoList = parseDiscogsWantList(discogsWantList);
         logger.info("Want list: {}", discogsWantList);
         if (optionalDiscogsVinylInfoList.isPresent()) {
-            return getVinylsByReleasesFromDB(optionalDiscogsVinylInfoList.get());
+            return getVinylsReleases(optionalDiscogsVinylInfoList.get());
         }
         return List.of();
     }
@@ -66,14 +62,13 @@ public class DefaultDiscogsService implements DiscogsService {
         }
     }
 
-    List<Vinyl> getVinylsByReleasesFromDB(List<DiscogsVinylInfo> discogsVinylInfoList) {
-        List<Vinyl> vinylsList = new ArrayList<>();
+    List<String> getVinylsReleases(List<DiscogsVinylInfo> discogsVinylInfoList) {
+        List<String> vinylsReleasesList = new ArrayList<>();
 
         for (DiscogsVinylInfo discogsVinylInfo : discogsVinylInfoList) {
-            Optional<Vinyl> optionalVinyl = vinylService.getByRelease(discogsVinylInfo.getRelease());
-            optionalVinyl.ifPresent(vinylsList::add);
+            vinylsReleasesList.add(discogsVinylInfo.getRelease());
         }
-        return vinylsList;
+        return vinylsReleasesList;
     }
 
 }

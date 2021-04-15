@@ -1,6 +1,6 @@
-package com.vinylteam.vinyl.util.discogs4j.client;
+package com.vinylteam.vinyl.discogs4j.client;
 
-import com.vinylteam.vinyl.util.discogs4j.util.HttpRequest;
+import com.vinylteam.vinyl.discogs4j.util.HttpRequest;
 
 import java.util.HashMap;
 import java.util.Map;

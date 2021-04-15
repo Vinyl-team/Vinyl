@@ -2,6 +2,7 @@ package com.vinylteam.vinyl.service.impl;
 
 import com.vinylteam.vinyl.dao.VinylDao;
 import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.service.VinylService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +14,11 @@ public class DefaultVinylService implements VinylService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final VinylDao vinylDao;
+    private final DiscogsService discogsService;
 
-    public DefaultVinylService(VinylDao vinylDao) {
+    public DefaultVinylService(VinylDao vinylDao, DiscogsService discogsService) {
         this.vinylDao = vinylDao;
+        this.discogsService = discogsService;
     }
 
     @Override

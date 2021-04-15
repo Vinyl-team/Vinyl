@@ -2,13 +2,13 @@ package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.service.UserService;
 import com.vinylteam.vinyl.service.impl.DefaultUserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static org.mockito.Mockito.*;
