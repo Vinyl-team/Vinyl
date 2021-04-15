@@ -20,14 +20,16 @@ public class JdbcVinylDao implements VinylDao {
     private final String INSERT_UNIQUE_VINYLS = "INSERT INTO unique_vinyls(id, release, artist, full_name," +
             " link_to_image)" +
             " VALUES(?, ?, ?, ?, ?)";
-    private final String SELECT_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image" +
+    private final String SELECT_ALL_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image" +
             " FROM unique_vinyls ORDER BY id";
+    private final String SELECT_MANY_RANDOM_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image " +
+            "FROM unique_vinyls TABLESAMPLE SYSTEM_ROWS(?) LIMIT ?;";
     private final String SELECT_UNIQUE_VINYL_BY_ID = "SELECT id, release, artist, full_name, link_to_image" +
             " FROM unique_vinyls WHERE id=?";
     private final String INSERT_VINYLS = "INSERT INTO vinyls(release, artist, full_name, genre," +
             " price, currency, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id)" +
             " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    private final String SELECT_VINYLS = "SELECT id, release, artist, full_name, genre," +
+    private final String SELECT_ALL_VINYLS = "SELECT id, release, artist, full_name, genre," +
             " price, currency, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id" +
             " FROM vinyls";
     private final String SELECT_VINYL_BY_ID = "SELECT id, release, artist, full_name, genre," +
@@ -97,7 +99,7 @@ public class JdbcVinylDao implements VinylDao {
     public List<Vinyl> getAllUnique() {
         List<Vinyl> uniqueVinyls = new ArrayList<>();
         try (Connection connection = DBDataSource.getConnection();
-             PreparedStatement getUniqueVinylsStatement = connection.prepareStatement(SELECT_UNIQUE_VINYLS);
+             PreparedStatement getUniqueVinylsStatement = connection.prepareStatement(SELECT_ALL_UNIQUE_VINYLS);
              ResultSet resultSet = getUniqueVinylsStatement.executeQuery()) {
             logger.debug("Executed statement {'statement':{}}", getUniqueVinylsStatement);
             while (resultSet.next()) {
@@ -113,10 +115,33 @@ public class JdbcVinylDao implements VinylDao {
     }
 
     @Override
+    public List<Vinyl> getManyRandomUnique(int amount) {
+        List<Vinyl> randomUniqueVinyls = new ArrayList<>();
+        try (Connection connection = DBDataSource.getConnection();
+             PreparedStatement getManyRandomUniqueVinylsStatement = connection.prepareStatement(SELECT_MANY_RANDOM_UNIQUE_VINYLS)) {
+            getManyRandomUniqueVinylsStatement.setInt(1, amount * 2);
+            getManyRandomUniqueVinylsStatement.setInt(2, amount);
+            logger.info("Prepared statement {'preparedStatement':{}}.", getManyRandomUniqueVinylsStatement);
+            try (ResultSet resultSet = getManyRandomUniqueVinylsStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Vinyl randomUniqueVinyl = uniqueVinylRowMapper.mapRow(resultSet);
+                    randomUniqueVinyls.add(randomUniqueVinyl);
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error while getting list of random unique vinyls with amount from db {'randomUniqueVinyls':{}, 'amount':{}}",
+                    randomUniqueVinyls, amount);
+            throw new RuntimeException(e);
+        }
+        logger.debug("Resulting list of random unique vinyls is {'randomUniqueVinyls':{}}", randomUniqueVinyls);
+        return randomUniqueVinyls;
+    }
+
+    @Override
     public List<Vinyl> getAll() {
         List<Vinyl> vinyls = new ArrayList<>();
         try (Connection connection = DBDataSource.getConnection();
-             PreparedStatement getAllVinylsStatement = connection.prepareStatement(SELECT_VINYLS);
+             PreparedStatement getAllVinylsStatement = connection.prepareStatement(SELECT_ALL_VINYLS);
              ResultSet resultSet = getAllVinylsStatement.executeQuery()) {
             logger.debug("Executed statement {'statement':{}}", getAllVinylsStatement);
             while (resultSet.next()) {

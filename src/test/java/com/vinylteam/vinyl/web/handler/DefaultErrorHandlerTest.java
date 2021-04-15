@@ -1,13 +1,12 @@
 package com.vinylteam.vinyl.web.handler;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.server.Request;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import static org.mockito.Mockito.*;
 
@@ -41,7 +40,7 @@ class DefaultErrorHandlerTest {
 
         InOrder inOrderResponse = Mockito.inOrder(mockedResponse);
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
-        inOrderResponse.verify(mockedResponse).setStatus(javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        inOrderResponse.verify(mockedResponse).setStatus(jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
 }

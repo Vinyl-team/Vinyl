@@ -31,8 +31,15 @@ public class DefaultVinylService implements VinylService {
 
     @Override
     public List<Vinyl> getAllUnique() {
+        List<Vinyl> gottenRandomUniqueVinyls = vinylDao.getAllUnique();
+        logger.debug("Resulting list of random unique vinyls is {'randomUniqueVinyls':{}}", gottenRandomUniqueVinyls);
+        return gottenRandomUniqueVinyls;
+    }
+
+    @Override
+    public List<Vinyl> getManyRandomUnique(int amount) {
         List<Vinyl> gottenUniqueVinyls = vinylDao.getAllUnique();
-        logger.debug("Resulting list of all unique vinyls from db is {'uniqueVinyls':{}}", gottenUniqueVinyls);
+        logger.debug("Resulting list of amount unique vinyls from db is {'uniqueVinyls':{}}", gottenUniqueVinyls);
         return gottenUniqueVinyls;
     }
 
