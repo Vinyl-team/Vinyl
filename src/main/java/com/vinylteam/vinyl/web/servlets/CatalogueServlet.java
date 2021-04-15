@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CatalogueServlet extends HttpServlet {
 
-    VinylService vinylService;
+    private final VinylService vinylService;
 
     public CatalogueServlet(VinylService vinylService) {
         this.vinylService = vinylService;
