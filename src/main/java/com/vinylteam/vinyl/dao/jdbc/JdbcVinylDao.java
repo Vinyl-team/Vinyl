@@ -121,7 +121,7 @@ public class JdbcVinylDao implements VinylDao {
              PreparedStatement getManyRandomUniqueVinylsStatement = connection.prepareStatement(SELECT_MANY_RANDOM_UNIQUE_VINYLS)) {
             getManyRandomUniqueVinylsStatement.setInt(1, amount * 2);
             getManyRandomUniqueVinylsStatement.setInt(2, amount);
-            logger.info("Prepared statement {'preparedStatement':{}}.", getManyRandomUniqueVinylsStatement);
+            logger.debug("Prepared statement {'preparedStatement':{}}.", getManyRandomUniqueVinylsStatement);
             try (ResultSet resultSet = getManyRandomUniqueVinylsStatement.executeQuery()) {
                 while (resultSet.next()) {
                     Vinyl randomUniqueVinyl = uniqueVinylRowMapper.mapRow(resultSet);

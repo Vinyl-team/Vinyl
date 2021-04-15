@@ -1,9 +1,14 @@
 package com.vinylteam.vinyl;
 
+import com.vinylteam.vinyl.dao.UserDao;
+import com.vinylteam.vinyl.dao.VinylDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcVinylDao;
 import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
+import com.vinylteam.vinyl.service.UserService;
+import com.vinylteam.vinyl.service.VinylService;
 import com.vinylteam.vinyl.service.impl.DefaultUserService;
 import com.vinylteam.vinyl.service.impl.DefaultVinylService;
 import com.vinylteam.vinyl.util.PropertiesReader;
@@ -27,15 +32,16 @@ public class Starter {
     public static void main(String[] args) throws Exception {
 
         PropertiesReader propertiesReader = new PropertiesReader();
-        JdbcUserDao jdbcUserDao = new JdbcUserDao();
-        JdbcVinylDao jdbcVinylDao = new JdbcVinylDao();
-        DefaultSecurityService defaultSecurityService = new DefaultSecurityService();
-        VinylSorter vinylSorter = new VinylSorter();
-        DefaultUserService defaultUserService = new DefaultUserService(jdbcUserDao, defaultSecurityService);
-        DefaultVinylService defaultVinylService = new DefaultVinylService(jdbcVinylDao);
 
-        SignUpServlet signUpServlet = new SignUpServlet(defaultUserService);
-        SignInServlet signInServlet = new SignInServlet(defaultUserService);
+        UserDao userDao = new JdbcUserDao();
+        VinylDao vinylDao = new JdbcVinylDao();
+        SecurityService securityService = new DefaultSecurityService();
+        VinylSorter vinylSorter = new VinylSorter();
+        UserService userService = new DefaultUserService(userDao, securityService);
+        VinylService vinylService = new DefaultVinylService(vinylDao);
+
+        SignUpServlet signUpServlet = new SignUpServlet(userService);
+        SignInServlet signInServlet = new SignInServlet(userService);
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setBaseResource(new PathResource(Starter.class.getClassLoader().getResource("static")));
 
@@ -45,8 +51,8 @@ public class Starter {
         context.addServlet(DefaultServlet.class, "/");
 
         Map<String, List<Vinyl>> allAndUnique = vinylSorter.getMapWithAllAndUniqueLists();
-        defaultVinylService.addAllUnique(allAndUnique.get("unique"));
-        defaultVinylService.addAll(allAndUnique.get("all"));
+        vinylService.addAllUnique(allAndUnique.get("unique"));
+        vinylService.addAll(allAndUnique.get("all"));
 
         Server server = new Server(parseInt(propertiesReader.getAppPort()));
         server.setHandler(context);
