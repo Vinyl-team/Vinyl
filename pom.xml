@@ -20,12 +20,12 @@
 
         <!--Dependencies-->
         <postgresql.version>42.2.17</postgresql.version>
+        <jetty.version>11.0.2</jetty.version>
         <jsoup.version>1.13.1</jsoup.version>
         <logback.classic.version>1.2.3</logback.classic.version>
         <slf4j.api.version>1.7.30</slf4j.api.version>
         <hikari.cp.version>3.4.5</hikari.cp.version>
         <jackson.databind.version>2.11.3</jackson.databind.version>
-        <jetty.version>11.0.2</jetty.version>
 
         <!--Test Dependencies-->
         <junit.jupiter.engine.version>5.7.1</junit.jupiter.engine.version>
@@ -215,11 +215,6 @@
             <artifactId>system-lambda</artifactId>
             <version>${system.lambda.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-maven-plugin</artifactId>
-            <version>${jetty.version}</version>
         </dependency>
 
     </dependencies>

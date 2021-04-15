@@ -13,6 +13,8 @@ public interface VinylDao {
 
     List<Vinyl> getAllUnique();
 
+    List<Vinyl> getManyRandomUnique(int amount);
+
     List<Vinyl> getAll();
 
     Vinyl getUniqueById(long id);

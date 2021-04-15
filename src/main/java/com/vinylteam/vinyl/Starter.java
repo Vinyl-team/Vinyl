@@ -19,6 +19,7 @@ import com.vinylteam.vinyl.util.ShopsParser;
 import com.vinylteam.vinyl.util.VinylParser;
 import com.vinylteam.vinyl.util.VinylSorter;
 import com.vinylteam.vinyl.util.impl.VinylUaParser;
+import com.vinylteam.vinyl.web.handler.DefaultErrorHandler;
 import com.vinylteam.vinyl.web.servlets.SignInServlet;
 import com.vinylteam.vinyl.web.servlets.SignUpServlet;
 import org.eclipse.jetty.server.Server;
@@ -35,8 +36,9 @@ import java.util.Map;
 
 public class Starter {
     private static final Logger logger = LoggerFactory.getLogger(Starter.class);
-    private static final String RESOURCE_PATH = "static";
     private static final PropertiesReader propertiesReader = new PropertiesReader();
+    private static final String RESOURCE_PATH = propertiesReader.getProperty("resource.path");
+
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) throws Exception {
@@ -76,9 +78,10 @@ public class Starter {
 
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+        servletContextHandler.setErrorHandler(new DefaultErrorHandler());
         servletContextHandler.setBaseResource(resource);
-        servletContextHandler.addServlet(new ServletHolder(signInServlet),"/login");
-        servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/registration");
+        servletContextHandler.addServlet(new ServletHolder(signInServlet),"/signUp");
+        servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/signIn");
         servletContextHandler.addServlet(DefaultServlet.class, "/");
 
         Server server = new Server(Integer.parseInt(propertiesReader.getProperty("appPort")));

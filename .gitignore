@@ -4,3 +4,4 @@ target
 *.log
 src/main/resources/dev.application.properties
 src/main/java/com/vinylteam/vinyl/Main.java
+*.log
