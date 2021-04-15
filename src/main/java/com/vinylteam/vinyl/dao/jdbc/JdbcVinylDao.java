@@ -216,9 +216,7 @@ public class JdbcVinylDao implements VinylDao {
             try (ResultSet resultSet = getVinylByIdStatement.executeQuery()) {
                 if (resultSet.next()) {
                     vinyl = uniqueVinylRowMapper.mapRow(resultSet);
-                } /*else {
-                    throw new SQLException("Vinyl with release = " + vinylRelease + " is not exist in unique vinyls table of DataBase!");
-                }*/
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException("Exception while getting vinyl by release from unique vinyls table of DataBase!", e);

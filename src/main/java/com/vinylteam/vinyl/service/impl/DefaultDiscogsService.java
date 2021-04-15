@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class DefaultDiscogsService implements DiscogsService {
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ObjectMapper objectMapper;
     private final DiscogsClient discogsClient;
@@ -35,8 +36,8 @@ public class DefaultDiscogsService implements DiscogsService {
         try {
             discogsClient.getRequestToken();
         } catch (ArrayIndexOutOfBoundsException e) {
-            logger.error("Failed to connect to discogs user with consumer key: {}, consumer secret: {}, user agent: {}," +
-                    " callback url: {} ", CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL, e);
+            logger.error("Failed to connect to discogs user with {'consumer key': {}}, {'consumer secret': {}}, {'user agent': {}}," +
+                    " {'callback url': {}} ", CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL, e);
             throw new RuntimeException(e);
         }
     }
@@ -45,7 +46,7 @@ public class DefaultDiscogsService implements DiscogsService {
     public List<String> getVinylsReleasesFromDiscogsWantList(String discogsUserName) {
         String discogsWantList = discogsClient.wantlist(discogsUserName);
         Optional<List<DiscogsVinylInfo>> optionalDiscogsVinylInfoList = parseDiscogsWantList(discogsWantList);
-        logger.info("Want list: {}", discogsWantList);
+        logger.info("{'WantList':{}}", discogsWantList);
         if (optionalDiscogsVinylInfoList.isPresent()) {
             return getVinylsReleases(optionalDiscogsVinylInfoList.get());
         }
@@ -54,10 +55,13 @@ public class DefaultDiscogsService implements DiscogsService {
 
     Optional<List<DiscogsVinylInfo>> parseDiscogsWantList(String discogsWantList) {
         try {
-            RawResponse rawResponse = objectMapper.readValue(discogsWantList, RawResponse.class);
-            return rawResponse.getVinylsInfo();
+            if (discogsWantList != null) {
+                RawResponse rawResponse = objectMapper.readValue(discogsWantList, RawResponse.class);
+                return rawResponse.getVinylsInfo();
+            }
+            return Optional.empty();
         } catch (JsonProcessingException e) {
-            logger.error("Want list: {}", discogsWantList);
+            logger.error("{'WantList':{}}", discogsWantList);
             throw new RuntimeException("Exception while want list json processing", e);
         }
     }

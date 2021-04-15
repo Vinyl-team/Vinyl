@@ -58,7 +58,7 @@ class DefaultDiscogsServiceITest {
 
     @Test
     @DisplayName("Returns list of releases names from want list")
-    void getVinylsByReleasesFromDB() {
+    void getVinylsByReleasesTest() {
         //prepare
         DiscogsVinylInfo discogsVinylInfo = new DiscogsVinylInfo();
         discogsVinylInfo.setArtist("The Detectors");

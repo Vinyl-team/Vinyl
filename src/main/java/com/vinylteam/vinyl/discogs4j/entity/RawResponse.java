@@ -8,10 +8,12 @@ import java.util.Optional;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RawResponse {
+
     @JsonProperty("wants")
     private List<DiscogsVinylInfo> vinylsInfo;
 
     public Optional<List<DiscogsVinylInfo>> getVinylsInfo() {
         return Optional.ofNullable(vinylsInfo);
     }
+
 }

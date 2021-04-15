@@ -12,6 +12,7 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DiscogsVinylInfo {
+
     private final Logger logger = LoggerFactory.getLogger(getClass());
     @JsonIgnore
     private String release;
@@ -52,7 +53,6 @@ public class DiscogsVinylInfo {
                 ", artist='" + artist + '\'' +
                 '}';
     }
-
 
 }
 
