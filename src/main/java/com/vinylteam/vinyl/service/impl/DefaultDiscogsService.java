@@ -36,8 +36,8 @@ public class DefaultDiscogsService implements DiscogsService {
         try {
             discogsClient.getRequestToken();
         } catch (ArrayIndexOutOfBoundsException e) {
-            logger.error("Failed to connect to discogs user with {'consumeKey': {}}, {'consumerSecret': {}}, " +
-                 "{'userAgent': {}}, {'callbackUrl': {}} ", CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL, e);
+            logger.error("Failed to connect to discogs user with {'consumeKey': {}, {'consumerSecret': {}, " +
+                 "{'userAgent': {}, {'callbackUrl': {}} ", CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL, e);
             throw new RuntimeException(e);
         }
     }
@@ -46,7 +46,7 @@ public class DefaultDiscogsService implements DiscogsService {
     public List<String> getVinylsReleasesFromDiscogsWantList(String discogsUserName) {
         String discogsWantList = discogsClient.wantlist(discogsUserName);
         Optional<List<DiscogsVinylInfo>> optionalDiscogsVinylInfoList = parseDiscogsWantList(discogsWantList);
-        logger.info("{'WantList':{}}", discogsWantList);
+        logger.info("{'wantList':{}}", discogsWantList);
         if (optionalDiscogsVinylInfoList.isPresent()) {
             return getVinylsReleases(optionalDiscogsVinylInfoList.get());
         }

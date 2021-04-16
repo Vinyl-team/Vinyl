@@ -102,17 +102,6 @@ create table vinyls_browsing_history
             references unique_vinyls (id)
 );
 
-CREATE OR REPLACE FUNCTION public.system_rows(
-    internal)
-    RETURNS tsm_handler
-    LANGUAGE 'c'
-
-    COST 1
-    VOLATILE STRICT
-
-AS '$libdir/tsm_system_rows', 'tsm_system_rows_handler'
-;
-
 insert into shops (link_to_main_page, link_to_image, name)
 values ('http://vinyl.ua/', 'http://vinyl.ua/img/logo/icon/55.png', 'VinylUa');
 
