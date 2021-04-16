@@ -8,17 +8,18 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
-public class CatalogueServlet extends HttpServlet {
+public class SearchResultsServlet extends HttpServlet {
 
     private final VinylService vinylService;
 
-    public CatalogueServlet(VinylService vinylService) {
+    public SearchResultsServlet(VinylService vinylService) {
         this.vinylService = vinylService;
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        List<Vinyl> randomUniqueVinyls = vinylService.getManyRandomUnique(50);
+        String matcher = request.getParameter("matcher");
+        List<Vinyl> filteredUniqueVinyls = vinylService.getManyFilteredUnique(matcher);
     }
 
 }

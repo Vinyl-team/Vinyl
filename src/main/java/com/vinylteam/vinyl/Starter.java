@@ -8,10 +8,8 @@ import com.vinylteam.vinyl.dao.jdbc.JdbcVinylDao;
 import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
-import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.service.UserService;
 import com.vinylteam.vinyl.service.VinylService;
-import com.vinylteam.vinyl.service.impl.DefaultDiscogsService;
 import com.vinylteam.vinyl.service.impl.DefaultUserService;
 import com.vinylteam.vinyl.service.impl.DefaultVinylService;
 import com.vinylteam.vinyl.util.PropertiesReader;
@@ -49,15 +47,9 @@ public class Starter {
         VinylDao vinylDao = new JdbcVinylDao();
 
         /*SERVICE*/
-        DiscogsService discogsService = new DefaultDiscogsService(propertiesReader.getProperty("consumer.key"),
-                propertiesReader.getProperty("consumer.secret"), propertiesReader.getProperty("user.agent"),
-                propertiesReader.getProperty("callback.url"), objectMapper);
-
-        logger.info("Discogs service initialized");
-
         SecurityService securityService = new DefaultSecurityService();
         UserService userService = new DefaultUserService(userDao, securityService);
-        VinylService vinylService = new DefaultVinylService(vinylDao, discogsService);
+        VinylService vinylService = new DefaultVinylService(vinylDao);
 
         /*UTIL*/
         ShopsParser shopsParser = new ShopsParser();

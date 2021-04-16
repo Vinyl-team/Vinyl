@@ -25,6 +25,8 @@ public class JdbcVinylDao implements VinylDao {
             " FROM unique_vinyls ORDER BY id";
     private final String SELECT_MANY_RANDOM_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image " +
             "FROM unique_vinyls TABLESAMPLE SYSTEM_ROWS(?) LIMIT ?;";
+    private final String SELECT_MANY_UNIQUE_VINYLS_BY_FULL_NAME_MATCH = "SELECT id, release, artist, full_name, link_to_image " +
+            "FROM unique_vinyls WHERE full_name LIKE ?";
     private final String SELECT_UNIQUE_VINYL_BY_ID = "SELECT id, release, artist, full_name, link_to_image" +
             " FROM unique_vinyls WHERE id=?";
     private final String INSERT_VINYLS = "INSERT INTO vinyls(release, artist, full_name, genre," +
@@ -132,12 +134,35 @@ public class JdbcVinylDao implements VinylDao {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error while getting list of random unique vinyls with amount from db {'randomUniqueVinyls':{}, 'amount':{}}",
+            logger.error("Error while getting list with that amount random unique vinyls from db {'randomUniqueVinyls':{}, 'amount':{}}",
                     randomUniqueVinyls, amount);
             throw new RuntimeException(e);
         }
         logger.debug("Resulting list of random unique vinyls is {'randomUniqueVinyls':{}}", randomUniqueVinyls);
         return randomUniqueVinyls;
+    }
+
+    @Override
+    public List<Vinyl> getManyFilteredUnique(String matcher) {
+        List<Vinyl> filteredUniqueVinyls = new ArrayList<>();
+        try (Connection connection = DBDataSource.getConnection();
+             PreparedStatement getManyUniqueVinylsByFullNameMatch = connection
+                     .prepareStatement(SELECT_MANY_UNIQUE_VINYLS_BY_FULL_NAME_MATCH)) {
+            getManyUniqueVinylsByFullNameMatch.setString(1, '%' + matcher + '%');
+            logger.debug("Prepared statement {'preparedStatement':{}}", getManyUniqueVinylsByFullNameMatch);
+            try (ResultSet resultSet = getManyUniqueVinylsByFullNameMatch.executeQuery()) {
+                while (resultSet.next()) {
+                    Vinyl uniqueVinyl = uniqueVinylRowMapper.mapRow(resultSet);
+                    filteredUniqueVinyls.add(uniqueVinyl);
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error while getting list of unique vinyls filtered by full name matcher from db {'matcher':{}, 'filteredUniqueVinyls':{}}",
+                    matcher, filteredUniqueVinyls, e);
+            throw new RuntimeException(e);
+        }
+        logger.debug("Resulting list of unique vinyls filtered by match in full name is {'filteredUniqueVinyls':{}}", filteredUniqueVinyls);
+        return filteredUniqueVinyls;
     }
 
     @Override
