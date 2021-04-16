@@ -24,7 +24,7 @@ class SearchResultsServletTest {
         when(mockedVinylService.getManyFilteredUnique("release1")).thenReturn(new ArrayList<Vinyl>());
 
         SearchResultsServlet searchResultsServlet = new SearchResultsServlet(mockedVinylService);
-        searchResultsServlet.doGet(mockedRequest, mockedResponse);
+        searchResultsServlet.doPost(mockedRequest, mockedResponse);
 
         verify(mockedRequest).getParameter("matcher");
         verify(mockedVinylService).getManyFilteredUnique("release1");
