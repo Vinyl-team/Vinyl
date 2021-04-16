@@ -22,6 +22,11 @@ public class DefaultVinylService implements VinylService {
         this.discogsService = discogsService;
     }
 
+    public DefaultVinylService(VinylDao vinylDao) {
+        this.vinylDao = vinylDao;
+        this.discogsService = null;
+    }
+
     @Override
     public void addAllUnique(List<Vinyl> uniqueVinyls) {
         vinylDao.addAllUnique(uniqueVinyls);
