@@ -16,7 +16,7 @@ class SearchResultsServletTest {
 
     @Test
     @DisplayName("Checks if all right methods are called")
-    void doGetTest() {
+    void doPostTest() {
         HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
         HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
         VinylService mockedVinylService = mock(DefaultVinylService.class);
