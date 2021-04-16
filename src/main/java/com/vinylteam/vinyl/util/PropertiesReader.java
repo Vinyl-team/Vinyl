@@ -92,28 +92,8 @@ public class PropertiesReader {
         logger.info("Loaded properties in {}", getClass());
     }
 
-    public String getJdbcUser() {
-        return properties.getProperty("jdbc.user");
-    }
-
-    public String getJdbcPassword() {
-        return properties.getProperty("jdbc.password");
-    }
-
-    public String getJdbcUrl() {
-        return properties.getProperty("jdbc.url");
-    }
-
-    public String getJdbcDriver() {
-        return properties.getProperty("jdbc.driver");
-    }
-
-    public String getJdbcMaximumPoolSize() {
-        return properties.getProperty("jdbc.maximum.pool.size");
-    }
-
-    public String getAppPort() {
-        return properties.getProperty("appPort");
+    public String getProperty(String propertyName) {
+        return properties.getProperty(propertyName);
     }
 
     private void validateInputStream(InputStream inputStream) {

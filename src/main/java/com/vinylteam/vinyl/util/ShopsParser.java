@@ -11,13 +11,8 @@ import java.util.List;
 public class ShopsParser {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private List<VinylParser> vinylParserList;
 
-    public ShopsParser(List<VinylParser> vinylParserList) {
-        this.vinylParserList = vinylParserList;
-    }
-
-    public List<Vinyl> getAllVinyls() throws IOException {
+    public List<Vinyl> getAllVinyls(List<VinylParser> vinylParserList) throws IOException {
         List<Vinyl> allVinyls = new ArrayList<>();
         for (VinylParser vinylParser : vinylParserList) {
             allVinyls.addAll(vinylParser.getAllVinylsFromShopList());
