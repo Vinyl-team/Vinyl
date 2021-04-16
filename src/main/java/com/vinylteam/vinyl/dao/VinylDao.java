@@ -15,6 +15,8 @@ public interface VinylDao {
 
     List<Vinyl> getManyRandomUnique(int amount);
 
+    List<Vinyl> getManyFilteredUnique(String matcher);
+
     List<Vinyl> getAll();
 
     Vinyl getUniqueById(long id);
