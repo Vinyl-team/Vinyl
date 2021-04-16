@@ -33,12 +33,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Starter {
-
     private static final Logger logger = LoggerFactory.getLogger(Starter.class);
     private static final PropertiesReader propertiesReader = new PropertiesReader();
     private static final String RESOURCE_PATH = propertiesReader.getProperty("resource.path");
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) throws Exception {
 
@@ -59,9 +56,9 @@ public class Starter {
         List<Vinyl> allVinyls = shopsParser.getAllVinyls(vinylParserList);
         Map<String, List<Vinyl>> mapWithAllAndUniqueLists = vinylSorter.getMapWithAllAndUniqueLists(allVinyls);
 
-        /*FILL IN DATABASE*/
+/*        *//*FILL IN DATABASE*//*
         vinylService.addAllUnique(mapWithAllAndUniqueLists.get("unique"));
-        vinylService.addAll(mapWithAllAndUniqueLists.get("all"));
+        vinylService.addAll(mapWithAllAndUniqueLists.get("all"));*/
 
         logger.info("Vinyls added to DB");
 
