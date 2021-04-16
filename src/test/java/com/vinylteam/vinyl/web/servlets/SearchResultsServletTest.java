@@ -17,7 +17,7 @@ class SearchResultsServletTest {
 
     @Test
     @DisplayName("Checks if all right methods are called")
-    void doGetTest() throws IOException {
+    void doPostTest() throws IOException {
         HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
         HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
         VinylService mockedVinylService = mock(DefaultVinylService.class);

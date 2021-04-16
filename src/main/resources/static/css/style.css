@@ -307,6 +307,12 @@ body{
   width: 100%;
 }
 
+.content-search__no-result{
+  font-size: 3em;
+  font-weight: bold;
+  color: #F6A325;
+}
+
 /* main of vinyl page */
 
 .shops-list{
