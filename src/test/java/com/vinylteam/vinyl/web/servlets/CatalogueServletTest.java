@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -17,7 +18,7 @@ class CatalogueServletTest {
 
     @Test
     @DisplayName("Checks if all right methods are called")
-    void doGetTest() {
+    void doGetTest() throws IOException {
         HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
         HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
         VinylService mockedVinylService = mock(DefaultVinylService.class);
