@@ -1,6 +1,5 @@
-package com.vinylteam.vinyl;
+package com.vinylteam.vinyl.util;
 
-import com.vinylteam.vinyl.util.PropertiesReader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,9 +15,9 @@ class PropertiesReaderTest {
         withEnvironmentVariable("env", null)
                 .execute(() -> propertiesReader[0] = new PropertiesReader());
 
-        assertEquals("postgres", propertiesReader[0].getJdbcUser());
-        assertEquals("org.postgresql.Driver", propertiesReader[0].getJdbcDriver());
-        assertEquals("5", propertiesReader[0].getJdbcMaximumPoolSize());
+        assertEquals("postgres", propertiesReader[0].getProperty("jdbc.user"));
+        assertEquals("org.postgresql.Driver", propertiesReader[0].getProperty("jdbc.driver"));
+        assertEquals("5", propertiesReader[0].getProperty("jdbc.maximum.pool.size"));
     }
 
     @Test
@@ -31,13 +30,13 @@ class PropertiesReaderTest {
                 .and("PORT", "4125")
                 .execute(() -> propertiesReader[0] = new PropertiesReader());
         withEnvironmentVariable("env", "PROD");
-        assertEquals("allconsonantsuser", propertiesReader[0].getJdbcUser());
-        assertEquals("longpassword", propertiesReader[0].getJdbcPassword());
+        assertEquals("allconsonantsuser", propertiesReader[0].getProperty("jdbc.user"));
+        assertEquals("longpassword", propertiesReader[0].getProperty("jdbc.password"));
         assertEquals("jdbc:postgresql://some-amazonw:5122/lostamongotherdatabases",
-                propertiesReader[0].getJdbcUrl());
-        assertEquals("org.postgresql.Driver", propertiesReader[0].getJdbcDriver());
-        assertEquals("5", propertiesReader[0].getJdbcMaximumPoolSize());
-        assertEquals("4125", propertiesReader[0].getAppPort());
+                propertiesReader[0].getProperty("jdbc.url"));
+        assertEquals("org.postgresql.Driver", propertiesReader[0].getProperty("jdbc.driver"));
+        assertEquals("5", propertiesReader[0].getProperty("jdbc.maximum.pool.size"));
+        assertEquals("4125", propertiesReader[0].getProperty("appPort"));
     }
 
     @Test
@@ -46,13 +45,13 @@ class PropertiesReaderTest {
         final PropertiesReader[] propertiesReader = new PropertiesReader[1];
         withEnvironmentVariable("env", "DEV")
                 .execute(() -> propertiesReader[0] = new PropertiesReader());
-        assertEquals("hmqwbuqjhtmxwy", propertiesReader[0].getJdbcUser());
+        assertEquals("hmqwbuqjhtmxwy", propertiesReader[0].getProperty("jdbc.user"));
         assertEquals("73385b8ffeef2088d3939cf5d4db69092d44d90c4a035a6cd1af5be574fbe305",
-                propertiesReader[0].getJdbcPassword());
-        assertEquals("jdbc:postgresql://ec2-34-233-0-64.compute-1.amazonaws.com:" +
-                "5432/d8am3goqm85uam", propertiesReader[0].getJdbcUrl());
-        assertEquals("org.postgresql.Driver", propertiesReader[0].getJdbcDriver());
-        assertEquals("5", propertiesReader[0].getJdbcMaximumPoolSize());
+                propertiesReader[0].getProperty("jdbc.password"));
+        assertEquals("jdbc:postgresql://ec2-34-233-0-64.compute-1.amazonaws.com:5432/d8am3goqm85uam",
+                propertiesReader[0].getProperty("jdbc.url"));
+        assertEquals("org.postgresql.Driver", propertiesReader[0].getProperty("jdbc.driver"));
+        assertEquals("5", propertiesReader[0].getProperty("jdbc.maximum.pool.size"));
     }
 
 }

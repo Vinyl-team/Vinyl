@@ -12,8 +12,6 @@ public enum Currency {
     GBP("£"),
     EUR("€");
 
-    private final static Logger logger = LoggerFactory.getLogger(Currency.class);
-
     private final String symbol;
 
     Currency(String symbol) {
@@ -25,6 +23,7 @@ public enum Currency {
     }
 
     public static Optional<Currency> getCurrency(String currencyDescription) {
+        Logger logger = LoggerFactory.getLogger(Currency.class);
         logger.debug("getCurrency started with {currencyDescription':{}}", currencyDescription);
         Currency resultingCurrency = null;
         if (currencyDescription.equals("грн") || currencyDescription.equals("₴")) {

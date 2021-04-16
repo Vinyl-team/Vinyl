@@ -24,9 +24,9 @@ public class DefaultErrorHandler extends ErrorPageErrorHandler {
         parameterMap.put("code", code);
         parameterMap.put("message", message);
         response.setContentType("text/html;charset=utf-8");
-        response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         logger.debug("Set response status to " +
-                "{'status':{}}", jakarta.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                "{'status':{}}", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
 }
