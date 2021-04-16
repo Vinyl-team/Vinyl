@@ -2,20 +2,24 @@ package com.vinylteam.vinyl.service.impl;
 
 import com.vinylteam.vinyl.dao.VinylDao;
 import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.service.VinylService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class DefaultVinylService implements VinylService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final VinylDao vinylDao;
+    private final DiscogsService discogsService;
 
-    public DefaultVinylService(VinylDao vinylDao) {
+    public DefaultVinylService(VinylDao vinylDao, DiscogsService discogsService) {
         this.vinylDao = vinylDao;
+        this.discogsService = discogsService;
     }
 
     @Override
@@ -96,6 +100,11 @@ public class DefaultVinylService implements VinylService {
         }
         logger.debug("Resulting vinyl is {'vinyl':{}}", gottenVinyl);
         return gottenVinyl;
+    }
+
+    @Override
+    public Optional<Vinyl> getByRelease(String vinylsRelease) {
+        return vinylDao.getByRelease(vinylsRelease);
     }
 
 }
