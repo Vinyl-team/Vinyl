@@ -16,9 +16,10 @@ public class PropertiesReader {
     private final String independentPropertiesFile = "application.properties";
 
     public PropertiesReader() {
-        String beginningOfErrorMessage = "Error during loading properties from ";
+        String beginningOfErrorMessage = "Error during loading properties from";
+
         try (InputStream inputStream = getClass().getClassLoader()
-                .getResourceAsStream("application.properties")) {
+                .getResourceAsStream(independentPropertiesFile)) {
             logger.debug("Created input stream from file {'inputStream':{}, 'fileName':{}}",
                     inputStream, independentPropertiesFile);
             validateInputStream(inputStream);
@@ -34,11 +35,11 @@ public class PropertiesReader {
         String env = System.getenv("env");
         logger.debug("Created and initialised String env with the value " +
                 "of environmental variable \"env\" {'env':{}}", env);
-        if (System.getenv("env") == null) {
+        if (env == null) {
             dependentOnEnvPropertiesFile = "dev.application.properties";
 
             try (InputStream inputStream = getClass().getClassLoader()
-                    .getResourceAsStream("dev.application.properties")) {
+                    .getResourceAsStream(dependentOnEnvPropertiesFile)) {
                 logger.debug("Created input stream from file {'inputStream':{}, 'fileName':{}}",
                         inputStream, dependentOnEnvPropertiesFile);
                 validateInputStream(inputStream);
@@ -98,8 +99,10 @@ public class PropertiesReader {
     private void validateInputStream(InputStream inputStream) {
         if (inputStream == null) {
             RuntimeException e = new RuntimeException();
-            logger.error(".properties file not found.", e);
+            logger.error(".properties file not found, input stream is null", e);
             throw e;
         }
+        logger.debug("Input stream is valid {'inputStream':{}}", inputStream);
     }
+
 }

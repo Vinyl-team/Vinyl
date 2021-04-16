@@ -61,7 +61,7 @@ public class DefaultDiscogsService implements DiscogsService {
             }
             return Optional.empty();
         } catch (JsonProcessingException e) {
-            logger.error("{'WantList':{}}", discogsWantList);
+            logger.error("{'WantList':{}}", discogsWantList, e);
             throw new RuntimeException("Exception while want list json processing", e);
         }
     }
@@ -72,6 +72,7 @@ public class DefaultDiscogsService implements DiscogsService {
         for (DiscogsVinylInfo discogsVinylInfo : discogsVinylInfoList) {
             vinylsReleasesList.add(discogsVinylInfo.getRelease());
         }
+        logger.debug("Resulting vinyls releases list is {'releasesList':{}}", vinylsReleasesList);
         return vinylsReleasesList;
     }
 
