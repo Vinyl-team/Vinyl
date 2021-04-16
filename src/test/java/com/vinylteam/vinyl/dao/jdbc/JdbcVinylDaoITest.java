@@ -393,12 +393,12 @@ class JdbcVinylDaoITest {
         List<Vinyl> uniqueVinyls = vinylDao.getManyRandomUnique(2);
 
         assertEquals(2, uniqueVinyls.size());
-        assertFalse(uniqueVinyls.get(0).getVinylId() == uniqueVinyls.get(1).getVinylId());
-        assertFalse(uniqueVinyls.get(0).getRelease().equals(uniqueVinyls.get(1).getRelease()));
-        assertFalse(uniqueVinyls.get(0).getArtist().equals(uniqueVinyls.get(1).getArtist()));
-        assertFalse(uniqueVinyls.get(0).getFullNameVinyl().equals(uniqueVinyls.get(1).getFullNameVinyl()));
-        assertFalse(uniqueVinyls.get(0).getImageLink().equals(uniqueVinyls.get(1).getImageLink()));
-   }
+        assertNotEquals(uniqueVinyls.get(1).getVinylId(), uniqueVinyls.get(0).getVinylId());
+        assertNotEquals(uniqueVinyls.get(1).getRelease(), uniqueVinyls.get(0).getRelease());
+        assertNotEquals(uniqueVinyls.get(1).getArtist(), uniqueVinyls.get(0).getArtist());
+        assertNotEquals(uniqueVinyls.get(1).getFullNameVinyl(), uniqueVinyls.get(0).getFullNameVinyl());
+        assertNotEquals(uniqueVinyls.get(1).getImageLink(), uniqueVinyls.get(0).getImageLink());
+    }
 
     @Test
     @DisplayName("Gets random unique vinyls from db by amount 0")
@@ -422,13 +422,13 @@ class JdbcVinylDaoITest {
         List<Vinyl> uniqueVinyls = vinylDao.getManyRandomUnique(10);
 
         assertEquals(2, uniqueVinyls.size());
-        assertFalse(uniqueVinyls.get(0).getVinylId() == uniqueVinyls.get(1).getVinylId());
+        assertNotEquals(uniqueVinyls.get(1).getVinylId(), uniqueVinyls.get(0).getVinylId());
     }
 
     @Test
     @DisplayName("Check that getting negative amount of random unique vinyls from db throws RuntimeException.")
     void getManyRandomUniqueWithAmountBelowZeroTest() {
-        assertThrows(RuntimeException.class,() -> {
+        assertThrows(RuntimeException.class, () -> {
             List<Vinyl> uniqueVinyls = vinylDao.getManyRandomUnique(-2);
         });
     }
@@ -441,6 +441,48 @@ class JdbcVinylDaoITest {
         }
 
         List<Vinyl> uniqueVinyls = vinylDao.getManyRandomUnique(1);
+
+        assertEquals(0, uniqueVinyls.size());
+    }
+
+    @Test
+    @DisplayName("Gets random unique vinyls from db by amount 0")
+    void getManyFilteredUniqueWithMatcherThatMatchesAllTest() {
+        List<Vinyl> uniqueVinyls = vinylDao.getManyFilteredUnique("release");
+
+        assertEquals(2, uniqueVinyls.size());
+        assertNotEquals(uniqueVinyls.get(1), uniqueVinyls.get(0));
+    }
+
+    @Test
+    @DisplayName("Gets random unique vinyls from db by amount 0")
+    void getManyFilteredUniqueWithMatcherThatMatchesOneTest() {
+        List<Vinyl> uniqueVinyls = vinylDao.getManyFilteredUnique("release2");
+
+        assertEquals(1, uniqueVinyls.size());
+        assertEquals(2, uniqueVinyls.get(0).getVinylId());
+        assertEquals("release2", uniqueVinyls.get(0).getRelease());
+        assertEquals("artist2", uniqueVinyls.get(0).getArtist());
+        assertEquals("release2 - artist2", uniqueVinyls.get(0).getFullNameVinyl());
+        assertEquals("https://imagestore.com/somewhere/image2.jpg", uniqueVinyls.get(0).getImageLink());
+    }
+
+    @Test
+    @DisplayName("Gets random unique vinyls from db by amount 1")
+    void getManyFilteredUniqueWithMatcherThatMatchesZeroTest() {
+        List<Vinyl> uniqueVinyls = vinylDao.getManyFilteredUnique("release3");
+
+        assertTrue(uniqueVinyls.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Tests that a list of filtered unique vinyls from empty table is empty.")
+    void getManyFilteredUniqueFromEmptyTableTest() throws SQLException {
+        try (Statement truncateUniqueVinyls = connection.createStatement()) {
+            truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
+        }
+
+        List<Vinyl> uniqueVinyls = vinylDao.getManyFilteredUnique("release");
 
         assertEquals(0, uniqueVinyls.size());
     }
