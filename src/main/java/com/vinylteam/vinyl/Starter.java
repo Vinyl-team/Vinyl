@@ -34,7 +34,6 @@ public class Starter {
     private static final Logger logger = LoggerFactory.getLogger(Starter.class);
     private static final PropertiesReader propertiesReader = new PropertiesReader();
     private static final String RESOURCE_PATH = propertiesReader.getProperty("resource.path");
-
     public static void main(String[] args) throws Exception {
         /*DAO*/
         UserDao userDao = new JdbcUserDao();
@@ -73,3 +72,21 @@ public class Starter {
         logger.info("Server started");
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
