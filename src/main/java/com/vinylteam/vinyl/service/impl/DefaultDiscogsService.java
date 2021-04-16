@@ -36,8 +36,8 @@ public class DefaultDiscogsService implements DiscogsService {
         try {
             discogsClient.getRequestToken();
         } catch (ArrayIndexOutOfBoundsException e) {
-            logger.error("Failed to connect to discogs user with {'consumer key': {}}, {'consumer secret': {}}, {'user agent': {}}," +
-                    " {'callback url': {}} ", CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL, e);
+            logger.error("Failed to connect to discogs user with {'consumeKey': {}}, {'consumerSecret': {}}, " +
+                 "{'userAgent': {}}, {'callbackUrl': {}} ", CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL, e);
             throw new RuntimeException(e);
         }
     }
@@ -61,7 +61,7 @@ public class DefaultDiscogsService implements DiscogsService {
             }
             return Optional.empty();
         } catch (JsonProcessingException e) {
-            logger.error("{'WantList':{}}", discogsWantList, e);
+            logger.error("{'wantList':{}}", discogsWantList, e);
             throw new RuntimeException("Exception while want list json processing", e);
         }
     }
