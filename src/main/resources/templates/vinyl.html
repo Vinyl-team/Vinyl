@@ -26,7 +26,7 @@
               <a href="#" class="header__menu-item">about</a>
             </li>
             <li>
-              <a href="#" class="header__menu-item">catalog</a>
+              <a href="catalog" class="header__menu-item">catalog</a>
             </li>
             <li>
               <a href="index.html" class="header__logo">
@@ -57,16 +57,12 @@
 
       <!-- header search -->
 
-      <div class="header__search">
+      <form action="search" method="post" class="header__search">
         <label class="search">
-          <input class="search__input" type="text" placeholder="Search by artist or title...">
-          <a href="#" class="search__button">
-            <img
-                src="data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M9.67503 18.8108C4.57652 18.8108 0.443369 14.5999 0.443369 9.4054C0.443369 4.21094 4.57652 0 9.67503 0C14.7735 0 18.9067 4.21094 18.9067 9.4054C18.9067 11.6522 18.1334 13.7149 16.8433 15.3325L23.7203 22.339C24.0932 22.719 24.0932 23.335 23.7203 23.715C23.3473 24.095 22.7427 24.095 22.3697 23.715L15.4927 16.7085C13.905 18.023 11.8803 18.8108 9.67503 18.8108ZM9.67439 16.8649C13.718 16.8649 16.996 13.5251 16.996 9.4054C16.996 5.28565 13.718 1.94594 9.67439 1.94594C5.63074 1.94594 2.35273 5.28565 2.35273 9.4054C2.35273 13.5251 5.63074 16.8649 9.67439 16.8649Z' fill='white'/%3E%3C/svg%3E%0A"
-                alt="search">
-          </a>
+          <input class="search__input" type="search" placeholder="Search by artist or title...">
+          <input type="submit" value="" class="search__button">
         </label>
-      </div>
+      </form>
 
     </div>
   </header>

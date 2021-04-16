@@ -42,7 +42,7 @@ public class PageGenerator {
         if (!list.isEmpty()){
             context.setVariable("firstVinyl", list.get(0));
         }
-        if (list.size()>1 && list.size()<6){
+        if (list.size()>1){
             for (int i = 1; i < 5; i++) {
                 firstVinylRow.add(list.get(i));
             }
