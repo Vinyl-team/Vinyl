@@ -10,17 +10,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-public class CatalogueServlet extends HttpServlet {
+public class SearchServlet extends HttpServlet {
 
     private final VinylService vinylService;
 
-    public CatalogueServlet(VinylService vinylService) {
+    public SearchServlet(VinylService vinylService) {
         this.vinylService = vinylService;
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<Vinyl> randomUniqueVinyls = vinylService.getManyRandomUnique(50);
-        PageGenerator.getInstance().process("catalog", randomUniqueVinyls, response.getWriter());
+        PageGenerator.getInstance().process("search", randomUniqueVinyls, response.getWriter());
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
     }

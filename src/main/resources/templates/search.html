@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org ">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -86,42 +87,21 @@
               <div class="first-vinyl__wrapper">
                 <div class="first-vinyl__item vinyl">
                   <a class="first-vinyl__image" href="#">
-                    <img src="img/goods/first_vinyl.jpg" alt="first vinyl">
+                    <img th:src="${firstVinyl.imageLink}" alt="first vinyl">
                   </a>
-                  <a class="first-vinyl__realise" href="#">Quattro</a>
-                  <a class="first-vinyl__artist" href="#">Modus</a>
+                  <a th:text="${firstVinyl.release}" class="first-vinyl__realise" href="#">No release</a>
+                  <a th:text="${firstVinyl.artist}" class="first-vinyl__artist" href="#">No artist</a>
                 </div>
               </div>
             </div>
 
             <div class="other-vinyls">
-              <div class="other-vinyls__item vinyl">
+              <div th:each="vinylFromFirstRow : ${firstVinylRow}" class="other-vinyls__item vinyl">
                 <a class="other-vinyls__image" href="#">
-                  <img src="img/goods/vinyl_1.jpg" alt="vinyl image">
+                  <img th:src="${vinylFromFirstRow.imageLink}" alt="vinyl image">
                 </a>
-                <a href="#" class="other-vinyls__realise">On The Edge Of Ecstacy</a>
-                <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
-              </div>
-              <div class="other-vinyls__item vinyl">
-                <a class="other-vinyls__image" href="#">
-                  <img src="img/goods/vinyl_2.jpg" alt="vinyl image">
-                </a>
-                <a href="#" class="other-vinyls__realise">Darkness On The Edge Of Ecstacy</a>
-                <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
-              </div>
-              <div class="other-vinyls__item vinyl">
-                <a class="other-vinyls__image" href="#">
-                  <img src="img/goods/vinyl_3.jpg" alt="vinyl image">
-                </a>
-                <a href="#" class="other-vinyls__realise">Darkness On The Edge Of Ecstacy</a>
-                <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
-              </div>
-              <div class="other-vinyls__item vinyl">
-                <a class="other-vinyls__image" href="#">
-                  <img src="img/goods/vinyl_2.jpg" alt="vinyl image">
-                </a>
-                <a href="#" class="other-vinyls__realise">Darkness On The Edge Of Ecstacy</a>
-                <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
+                <a th:text="${vinylFromFirstRow.release}" href="#" class="other-vinyls__realise">No release</a>
+                <a th:text="${vinylFromFirstRow.artist}" href="#" class="other-vinyls__artist">No artist</a>
               </div>
             </div>
             
@@ -130,62 +110,15 @@
 
         <div class="content-search__row">
           <div class="other-vinyls">
-            <div class="other-vinyls__item vinyl">
+
+            <div th:each="vinylFromOtherRow : ${otherVinylRow}" class="other-vinyls__item vinyl">
               <a class="other-vinyls__image" href="#">
-                <img src="img/goods/vinyl_2.jpg" alt="vinyl image">
+                <img th:src="${vinylFromOtherRow.imageLink}" alt="vinyl image">
               </a>
-              <a href="#" class="other-vinyls__realise">Darkness On The Edge Of Ecstacy</a>
-              <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
+              <a th:text="${vinylFromOtherRow.release}" href="#" class="other-vinyls__realise">No release</a>
+              <a th:text="${vinylFromOtherRow.artist}" href="#" class="other-vinyls__artist">No artist</a>
             </div>
-            <div class="other-vinyls__item vinyl">
-              <a class="other-vinyls__image" href="#">
-                <img src="img/goods/image_3.jpg" alt="vinyl image">
-              </a>
-              <a href="#" class="other-vinyls__realise">Darkness On The Edge Of Ecstacy</a>
-              <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
-            </div>
-            <div class="other-vinyls__item vinyl">
-              <a class="other-vinyls__image" href="#">
-                <img src="img/background_home.jpg" alt="vinyl image">
-              </a>
-              <a href="#" class="other-vinyls__realise">Darkness On The Edge Of Ecstacy</a>
-              <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
-            </div>
-            <div class="other-vinyls__item vinyl">
-              <a class="other-vinyls__image" href="#">
-                <img src="img/goods/vinyl_5.jpg" alt="vinyl image">
-              </a>
-              <a href="#" class="other-vinyls__realise">Darkness On The Edge Of Ecstacy</a>
-              <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
-            </div>
-            <div class="other-vinyls__item vinyl">
-              <a class="other-vinyls__image" href="#">
-                <img src="img/goods/vinyl_6.jpg" alt="vinyl image">
-              </a>
-              <a href="#" class="other-vinyls__realise">Darkness On The Edge Of Ecstacy</a>
-              <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
-            </div>
-            <div class="other-vinyls__item vinyl">
-              <a class="other-vinyls__image" href="#">
-                <img src="img/goods/vinyl_7.jpg" alt="vinyl image">
-              </a>
-              <a href="#" class="other-vinyls__realise">Darkness On The Edge Of Ecstacy</a>
-              <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
-            </div>
-            <div class="other-vinyls__item vinyl">
-              <a class="other-vinyls__image" href="#">
-                <img src="img/goods/vinyl_8.jpg" alt="vinyl image">
-              </a>
-              <a href="#" class="other-vinyls__realise">Darkness On The Edge Of Ecstacy</a>
-              <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
-            </div>
-            <div class="other-vinyls__item vinyl">
-              <a class="other-vinyls__image" href="#">
-                <img src="img/goods/vinyl_9.jpg" alt="vinyl image">
-              </a>
-              <a href="#" class="other-vinyls__realise">Darkness On The Edge Of Ecstacy</a>
-              <a href="#" class="other-vinyls__artist">Jonatan Bäckelie</a>
-            </div>
+
           </div>
         </div>
 

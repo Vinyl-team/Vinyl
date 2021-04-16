@@ -6,6 +6,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PageGenerator {
@@ -20,6 +21,7 @@ public class PageGenerator {
     }
 
     private PageGenerator(){
+        templateEngine = new TemplateEngine();
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/templates/");
         templateResolver.setSuffix(".html");
@@ -28,8 +30,30 @@ public class PageGenerator {
     }
 
     public void process(String fileName, List<Vinyl> list, Writer writer){
-        Context context = new Context();
-        context.setVariable("vinylList", list);
+        Context context = getContext(list);
         templateEngine.process(fileName, context, writer);
+    }
+
+    private Context getContext(List<Vinyl> list){
+        Context context = new Context();
+        List<Vinyl> firstVinylRow = new ArrayList<>();
+        List<Vinyl> otherVinylRow = new ArrayList<>();
+        context.setVariable("vinylList", list);
+        if (!list.isEmpty()){
+            context.setVariable("firstVinyl", list.get(0));
+        }
+        if (list.size()>1 && list.size()<6){
+            for (int i = 1; i < 5; i++) {
+                firstVinylRow.add(list.get(i));
+            }
+            context.setVariable("firstVinylRow", firstVinylRow);
+        }
+        if (list.size()>5){
+            for (int i = 5; i < list.size(); i++) {
+                otherVinylRow.add(list.get(i));
+            }
+            context.setVariable("otherVinylRow", otherVinylRow);
+        }
+        return context;
     }
 }
