@@ -1,4 +1,5 @@
 package com.vinylteam.vinyl;
+
 import com.vinylteam.vinyl.dao.UserDao;
 import com.vinylteam.vinyl.dao.VinylDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
@@ -28,12 +29,15 @@ import org.eclipse.jetty.util.resource.JarFileResource;
 import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.List;
 import java.util.Map;
+
 public class Starter {
     private static final Logger logger = LoggerFactory.getLogger(Starter.class);
     private static final PropertiesReader propertiesReader = new PropertiesReader();
     private static final String RESOURCE_PATH = propertiesReader.getProperty("resource.path");
+
     public static void main(String[] args) throws Exception {
         /*DAO*/
         UserDao userDao = new JdbcUserDao();
@@ -42,16 +46,17 @@ public class Starter {
         SecurityService securityService = new DefaultSecurityService();
         UserService userService = new DefaultUserService(userDao, securityService);
         VinylService vinylService = new DefaultVinylService(vinylDao);
-        /*UTIL*/
-        ShopsParser shopsParser = new ShopsParser();
+        /*UTIL, FILL IN DATABASE*/
+/*        ShopsParser shopsParser = new ShopsParser();
         VinylSorter vinylSorter = new VinylSorter();
         List<VinylParser> vinylParserList = List.of(new VinylUaParser());
         List<Vinyl> allVinyls = shopsParser.getAllVinyls(vinylParserList);
+
         Map<String, List<Vinyl>> mapWithAllAndUniqueLists = vinylSorter.getMapWithAllAndUniqueLists(allVinyls);
-        /*FILL IN DATABASE*/
         vinylService.addAllUnique(mapWithAllAndUniqueLists.get("unique"));
         vinylService.addAll(mapWithAllAndUniqueLists.get("all"));
-        logger.info("Vinyls added to DB");
+        logger.info("Vinyls added to DB");*/
+
         /*WEB*/
         SignInServlet signInServlet = new SignInServlet(userService);
         SignUpServlet signUpServlet = new SignUpServlet(userService);
@@ -61,7 +66,7 @@ public class Starter {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContextHandler.setErrorHandler(new DefaultErrorHandler());
         servletContextHandler.setBaseResource(resource);
-        servletContextHandler.addServlet(new ServletHolder(signInServlet),"/signUp");
+        servletContextHandler.addServlet(new ServletHolder(signInServlet), "/signUp");
         servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/signIn");
         servletContextHandler.addServlet(new ServletHolder(catalogueServlet), "/catalog");
         servletContextHandler.addServlet(new ServletHolder(searchResultsServlet), "/search");
