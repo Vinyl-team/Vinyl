@@ -26,7 +26,9 @@ public class JdbcVinylDao implements VinylDao {
     private final String SELECT_MANY_RANDOM_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image " +
             "FROM unique_vinyls TABLESAMPLE SYSTEM_ROWS(?) LIMIT ?;";
     private final String SELECT_MANY_UNIQUE_VINYLS_BY_FULL_NAME_MATCH = "SELECT id, release, artist, full_name, link_to_image " +
-            "FROM unique_vinyls WHERE full_name LIKE ?";
+            "FROM unique_vinyls WHERE full_name ILIKE ?";
+    private final String SELECT_MANY_UNIQUE_VINYLS_BY_ARTIST = "SELECT id, release, artist, full_name, link_to_image " +
+            "FROM unique_vinyls WHERE artist LIKE ?";
     private final String SELECT_UNIQUE_VINYL_BY_ID = "SELECT id, release, artist, full_name, link_to_image" +
             " FROM unique_vinyls WHERE id=?";
     private final String INSERT_VINYLS = "INSERT INTO vinyls(release, artist, full_name, genre," +
@@ -35,6 +37,9 @@ public class JdbcVinylDao implements VinylDao {
     private final String SELECT_ALL_VINYLS = "SELECT id, release, artist, full_name, genre," +
             " price, currency, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id" +
             " FROM vinyls";
+    private final String SELECT_MANY_VINYLS_BY_UNIQUE_VINYL_ID = "SELECT id, release, artist, full_name, genre," +
+            " price, currency, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id" +
+            " FROM vinyls WHERE unique_vinyl_id=?";
     private final String SELECT_VINYL_BY_ID = "SELECT id, release, artist, full_name, genre," +
             " price, currency, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id" +
             " FROM vinyls WHERE id=?";
@@ -166,6 +171,29 @@ public class JdbcVinylDao implements VinylDao {
     }
 
     @Override
+    public List<Vinyl> getManyUniqueByArtist(String artist) {
+        List<Vinyl> uniqueVinyls = new ArrayList<>();
+        try (Connection connection = DBDataSource.getConnection();
+             PreparedStatement getManyUniqueVinylsByFullNameMatch = connection
+                     .prepareStatement(SELECT_MANY_UNIQUE_VINYLS_BY_ARTIST)) {
+            getManyUniqueVinylsByFullNameMatch.setString(1, artist);
+            logger.debug("Prepared statement {'preparedStatement':{}}", getManyUniqueVinylsByFullNameMatch);
+            try (ResultSet resultSet = getManyUniqueVinylsByFullNameMatch.executeQuery()) {
+                while (resultSet.next()) {
+                    Vinyl uniqueVinyl = uniqueVinylRowMapper.mapRow(resultSet);
+                    uniqueVinyls.add(uniqueVinyl);
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error while getting list of unique vinyls filtered by full name matcher from db {'artist':{}, 'uniqueVinyls':{}}",
+                    artist, uniqueVinyls, e);
+            throw new RuntimeException(e);
+        }
+        logger.debug("Resulting list of unique vinyls filtered by match in full name is {'uniqueVinyls':{}}", uniqueVinyls);
+        return uniqueVinyls;
+    }
+
+    @Override
     public List<Vinyl> getAll() {
         List<Vinyl> vinyls = new ArrayList<>();
         try (Connection connection = DBDataSource.getConnection();
@@ -178,6 +206,27 @@ public class JdbcVinylDao implements VinylDao {
             }
         } catch (SQLException e) {
             logger.error("Error while getting vinyls from db {'vinyls':{}}", vinyls, e);
+            throw new RuntimeException(e);
+        }
+        logger.debug("Resulting list of vinyls is {'vinyls':{}}", vinyls);
+        return vinyls;
+    }
+
+    @Override
+    public List<Vinyl> getManyByUniqueVinylId(long id) {
+        List<Vinyl> vinyls = new ArrayList<>();
+        try (Connection connection = DBDataSource.getConnection();
+             PreparedStatement getVinylByIdStatement = connection.prepareStatement(SELECT_MANY_VINYLS_BY_UNIQUE_VINYL_ID)) {
+            getVinylByIdStatement.setLong(1, id);
+            logger.debug("Prepared statement {'preparedStatement':{}}.", getVinylByIdStatement);
+            try (ResultSet resultSet = getVinylByIdStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    Vinyl vinyl = vinylRowMapper.mapRow(resultSet);
+                    vinyls.add(vinyl);
+                }
+            }
+        } catch (SQLException e) {
+            logger.error("Error while getting vinyls from db by unique vinyl id {'vinyls':{}, 'uniqueVinylId':{}}", vinyls, id, e);
             throw new RuntimeException(e);
         }
         logger.debug("Resulting list of vinyls is {'vinyls':{}}", vinyls);

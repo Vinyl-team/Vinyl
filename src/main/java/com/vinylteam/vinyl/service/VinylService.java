@@ -17,12 +17,18 @@ public interface VinylService {
 
     List<Vinyl> getManyFilteredUnique(String matcher);
 
+    List<Vinyl> getManyUniqueByArtist(String artist);
+
     List<Vinyl> getAll();
+
+    List<Vinyl> getManyByUniqueVinylId(long id);
 
     Vinyl getUniqueById(long id);
 
     Vinyl getById(long id);
 
     Optional<Vinyl> getByRelease(String vinylsRelease);
+
+    List<Integer> getListOfShopIds(List<Vinyl> vinyls);
 
 }

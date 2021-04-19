@@ -17,7 +17,11 @@ public interface VinylDao {
 
     List<Vinyl> getManyFilteredUnique(String matcher);
 
+    List<Vinyl> getManyUniqueByArtist(String artist);
+
     List<Vinyl> getAll();
+
+    List<Vinyl> getManyByUniqueVinylId(long id);
 
     Vinyl getUniqueById(long id);
 

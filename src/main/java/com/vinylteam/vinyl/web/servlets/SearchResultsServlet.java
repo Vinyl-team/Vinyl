@@ -21,7 +21,6 @@ public class SearchResultsServlet extends HttpServlet {
         String matcher = request.getParameter("matcher");
         List<Vinyl> filteredUniqueVinyls = vinylService.getManyFilteredUnique(matcher);
 
-
-    }
+}
 
 }

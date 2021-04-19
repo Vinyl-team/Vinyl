@@ -73,7 +73,7 @@ public class Starter {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContextHandler.setErrorHandler(new DefaultErrorHandler());
         servletContextHandler.setBaseResource(resource);
-        servletContextHandler.addServlet(new ServletHolder(signInServlet),"/signUp");
+        servletContextHandler.addServlet(new ServletHolder(signInServlet), "/signUp");
         servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/signIn");
         servletContextHandler.addServlet(DefaultServlet.class, "/");
 
