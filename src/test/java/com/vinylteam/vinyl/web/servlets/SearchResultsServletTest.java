@@ -1,6 +1,5 @@
 package com.vinylteam.vinyl.web.servlets;
 
-import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.service.VinylService;
 import com.vinylteam.vinyl.service.impl.DefaultVinylService;
 import jakarta.servlet.http.HttpServletRequest;

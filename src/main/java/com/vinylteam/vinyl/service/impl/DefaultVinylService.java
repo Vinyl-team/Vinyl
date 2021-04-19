@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class DefaultVinylService implements VinylService {
 
@@ -124,11 +123,6 @@ public class DefaultVinylService implements VinylService {
         }
         logger.debug("Resulting vinyl is {'vinyl':{}}", gottenVinyl);
         return gottenVinyl;
-    }
-
-    @Override
-    public Optional<Vinyl> getByRelease(String vinylsRelease) {
-        return vinylDao.getByRelease(vinylsRelease);
     }
 
     @Override

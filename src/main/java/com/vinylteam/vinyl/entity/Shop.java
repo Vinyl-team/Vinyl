@@ -9,7 +9,7 @@ public class Shop {
     String imageLink;
     String name;
 
-public int getId() {
+    public int getId() {
         return id;
     }
 

@@ -40,7 +40,7 @@ public class JdbcShopDao implements ShopDao {
                 throw new RuntimeException(e);
             }
         }
-        logger.error("Resulting list of shops with ids from list of ids is {'shops':{}}", shops);
+        logger.debug("Resulting list of shops with ids from list of ids is {'shops':{}}", shops);
         return shops;
     }
 
@@ -52,6 +52,7 @@ public class JdbcShopDao implements ShopDao {
             }
             stringBuffer.insert(stringBuffer.lastIndexOf(")"), id);
         }
+        logger.debug("Resulting string from string buffer is {'string':{}}", stringBuffer);
         return stringBuffer.toString();
     }
 

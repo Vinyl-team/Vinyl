@@ -14,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class JdbcVinylDao implements VinylDao {
 
@@ -43,8 +42,6 @@ public class JdbcVinylDao implements VinylDao {
     private final String SELECT_VINYL_BY_ID = "SELECT id, release, artist, full_name, genre," +
             " price, currency, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id" +
             " FROM vinyls WHERE id=?";
-    private final String SELECT_VINYL_BY_RELEASE = "SELECT id, release, artist, full_name, link_to_image " +
-            "FROM unique_vinyls WHERE full_name ILIKE '%'||?||'%'";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UniqueVinylRowMapper uniqueVinylRowMapper = new UniqueVinylRowMapper();
@@ -279,23 +276,6 @@ public class JdbcVinylDao implements VinylDao {
         }
         logger.debug("Resulting vinyl is {'vinyl':{}}", vinyl);
         return vinyl;
-    }
-
-    @Override
-    public Optional<Vinyl> getByRelease(String vinylRelease) {
-        Vinyl vinyl = null;
-        try (Connection connection = DBDataSource.getConnection();
-             PreparedStatement getVinylByIdStatement = connection.prepareStatement(SELECT_VINYL_BY_RELEASE)) {
-            getVinylByIdStatement.setString(1, vinylRelease);
-            try (ResultSet resultSet = getVinylByIdStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    vinyl = uniqueVinylRowMapper.mapRow(resultSet);
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException("Exception while getting vinyl by release from unique vinyls table of DataBase!", e);
-        }
-        return Optional.ofNullable(vinyl);
     }
 
 }

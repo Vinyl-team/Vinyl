@@ -3,7 +3,6 @@ package com.vinylteam.vinyl.service;
 import com.vinylteam.vinyl.entity.Vinyl;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface VinylService {
 
@@ -26,8 +25,6 @@ public interface VinylService {
     Vinyl getUniqueById(long id);
 
     Vinyl getById(long id);
-
-    Optional<Vinyl> getByRelease(String vinylsRelease);
 
     List<Integer> getListOfShopIds(List<Vinyl> vinyls);
 
