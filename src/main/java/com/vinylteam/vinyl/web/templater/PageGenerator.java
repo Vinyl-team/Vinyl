@@ -7,7 +7,9 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PageGenerator {
     private static PageGenerator pageGenerator;
@@ -29,15 +31,25 @@ public class PageGenerator {
         templateEngine.setTemplateResolver(templateResolver);
     }
 
-    public void process(String fileName, List<Vinyl> list, Writer writer) {
-        Context context = getContext(list);
+    public void process(String fileName, List<Vinyl> list, Writer writer){
+        process(fileName, list, new HashMap<>(), writer);
+    }
+
+    public void process(String fileName, List<Vinyl> list, Map<String, String> attributes, Writer writer) {
+        Context context = getContext(list, attributes);
         templateEngine.process(fileName, context, writer);
     }
 
-    private Context getContext(List<Vinyl> list) {
+    private Context getContext(List<Vinyl> list, Map<String, String> attributes) {
         Context context = new Context();
         List<Vinyl> firstVinylRow = new ArrayList<>();
         List<Vinyl> otherVinylRow = new ArrayList<>();
+
+        String searchWord = attributes.get("searchWord");
+        if (searchWord!=null){
+            context.setVariable("matcher", searchWord);
+        }
+
         context.setVariable("vinylList", list);
         if (!list.isEmpty()) {
             context.setVariable("firstVinyl", list.get(0));
