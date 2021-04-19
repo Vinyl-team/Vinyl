@@ -8,7 +8,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SearchResultsServlet extends HttpServlet {
 
@@ -20,9 +22,11 @@ public class SearchResultsServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Map<String, String> attributes = new HashMap<>();
         String matcher = request.getParameter("matcher");
         List<Vinyl> filteredUniqueVinyls = vinylService.getManyFilteredUnique(matcher);
-        PageGenerator.getInstance().process("search", filteredUniqueVinyls, response.getWriter());
+        attributes.put("searchWord", matcher);
+        PageGenerator.getInstance().process("search", filteredUniqueVinyls, attributes, response.getWriter());
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
 
