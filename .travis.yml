@@ -13,12 +13,14 @@ notifications:
 services:
   - postgresql
 deploy:
-  skip_cleanup: true
   provider: heroku
-  strategy: api
-  edge: true
+  app: wax-deals
   on:
-    branches: develop
+    branch: develop
+  strategy: git
   api_key:
     secure: u68eGuIPSuV9OIVw2/wpWvq7MZUnxcx6SViz2iGu4Ss0b2yMYLRF8Ev6fGHhoiKOkBqnW503+CbA6dmOVBoKr5ETJCMqVdqamV0CJ2C2k3jq8v3UywhAq+7l7Z4IxRHfmm8nLFc5xUOQ6B6Fy3zZgJZN7MsjPr4UrfJ86qVdHbrhROWw/R5T8mLJf6pmvrYTiaqvGXiasYXo12zCv6+LCn9lmA4SDKR4pJZDWe5ifWQa3DQ19xQMnDN578d5uQiuS2jxKyWw9Iy9Qx4FRUR2DLOXDdNd8epqBMDcxPMsO9kCuL4F0Yjc+KZFIDB6bO0zp+xUyY86zKZGxvQe6SUdApORW9p8sFJA80Jx+8+4wpJSvc+bsyq/8DeYLwaJiNqVHs9MIB9m519Ko8dzU/w2UxPVlrKKro+CFxOQHEvZXpkRV/LtiNHFPvQ4IrIepnOpy9J10QdKqe/GqCIAKkniGxtRnZ4EtPAym8LVYu/bIf5MQfqNEbodvdmSfnCtmr9QXNent26xoN5v+LXOpjYmTlY8ea6d5QjnGrnn2WIupBq/QtErQN6vmGG5EJQs8E1PxPmIzAcrSm1SOnRod33OCYD2PSMjM2fsXB6xHf2/6er4/Qa3pfyyDJNQ80WQicJ4XuMYyqnqhFpqasBKrA6Qxgy+DengCIO+4f7IRm0/7Aw=
-    app: wax-deals
+
+
+
+
