@@ -25,8 +25,8 @@ class DefaultVinylServiceTest {
     private final VinylDao mockedVinylDao = mock(JdbcVinylDao.class);
     private final Vinyl vinyl = new Vinyl();
     private final Vinyl uniqueVinyl = new Vinyl();
-    private final List<Vinyl> uniqueVinyls = new ArrayList<>(List.of(uniqueVinyl));
-    private final List<Vinyl> vinyls = new ArrayList<>(List.of(vinyl));
+    private final List<Vinyl> uniqueVinyls = List.of(uniqueVinyl);
+    private final List<Vinyl> vinyls = List.of(vinyl);
     private final VinylService vinylService = new DefaultVinylService(mockedVinylDao);
 
     @BeforeAll
@@ -169,7 +169,7 @@ class DefaultVinylServiceTest {
         firstVinyl.setShopId(1);
         duplicateShopIdVinyl.setShopId(1);
         newShopIdVinyl.setShopId(2);
-        List<Vinyl> vinylsList = new ArrayList<>(List.of(firstVinyl, duplicateShopIdVinyl, newShopIdVinyl));
+        List<Vinyl> vinylsList = List.of(firstVinyl, duplicateShopIdVinyl, newShopIdVinyl);
 
         List<Integer> actualIds = vinylService.getListOfShopIds(vinylsList);
 

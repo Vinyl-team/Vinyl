@@ -4,10 +4,10 @@ import java.util.Objects;
 
 public class Shop {
 
-    int id;
-    String mainPageLink;
-    String imageLink;
-    String name;
+    private int id;
+    private String mainPageLink;
+    private String imageLink;
+    private String name;
 
     public int getId() {
         return id;

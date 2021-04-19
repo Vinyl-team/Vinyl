@@ -11,7 +11,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -25,7 +24,7 @@ class DefaultShopServiceTest {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ShopDao mockedShopDao = mock(JdbcShopDao.class);
     private final Shop mockedShop = mock(Shop.class);
-    private final List<Shop> shops = new ArrayList<>(List.of(mockedShop));
+    private final List<Shop> shops = List.of(mockedShop);
     private final ShopService shopService = new DefaultShopService(mockedShopDao);
 
     @BeforeAll
@@ -36,7 +35,7 @@ class DefaultShopServiceTest {
     @Test
     @DisplayName("Checks that when list of id-s isn't null ShopDao.getManyByListOfIds() is called, it's result is returned")
     void getManyByValidListOfIdsTest() {
-        List<Integer> ids = new ArrayList<>(List.of(1, 2, 3));
+        List<Integer> ids = List.of(1, 2, 3);
 
         List<Shop> actualShops = shopService.getManyByListOfIds(ids);
 

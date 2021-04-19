@@ -73,7 +73,7 @@ class JdbcShopDaoITest {
     @Test
     @DisplayName("Gets list of shops with id-s with list of id-s from db")
     void getManyByListOfIds() {
-        List<Integer> ids = new ArrayList<>(List.of(1, 2));
+        List<Integer> ids = List.of(1, 2);
 
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);
 
@@ -86,7 +86,7 @@ class JdbcShopDaoITest {
     @Test
     @DisplayName("Gets list of shops with id-s with list of id-s where some ids do not exist in db")
     void getManyByListOfIdsWithSomeNonExistentIds() {
-        List<Integer> ids = new ArrayList<>(List.of(1, 2, 4));
+        List<Integer> ids = List.of(1, 2, 4);
 
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);
 
@@ -112,7 +112,7 @@ class JdbcShopDaoITest {
         try (Statement truncateShops = connection.createStatement()) {
             truncateShops.executeUpdate(TRUNCATE_SHOPS);
         }
-        List<Integer> ids = new ArrayList<>(List.of(1, 2));
+        List<Integer> ids = List.of(1, 2);
 
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);
 
@@ -122,7 +122,7 @@ class JdbcShopDaoITest {
     @Test
     @DisplayName("Gets String filled with ids from filled list of ids")
     void fillSelectManyByIdsStatementWithFilledIdListTest() {
-        List<Integer> ids = new ArrayList<>(List.of(1, 2));
+        List<Integer> ids = List.of(1, 2);
         String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name " +
                 "FROM public.shops WHERE id IN (1, 2)";
 

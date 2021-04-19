@@ -20,6 +20,7 @@ class OneVinylOffersServletTest {
 
     @Test
     void doPostTest() {
+        //prepare
         HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
         HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
         VinylService mockedVinylService = mock(DefaultVinylService.class);
@@ -27,10 +28,9 @@ class OneVinylOffersServletTest {
         Vinyl mockedUniqueVinyl = mock(Vinyl.class);
         Vinyl mockedVinyl = mock(Vinyl.class);
         Shop mockedShop = mock(Shop.class);
-        List<Vinyl> vinylOffers = new ArrayList<>(List.of(mockedVinyl));
+        List<Vinyl> vinylOffers = List.of(mockedVinyl);
         List<Integer> shopsIds = new ArrayList<>();
-        List<Shop> shopsByIds = new ArrayList<>(List.of(mockedShop));
-        //prepare
+        List<Shop> shopsByIds = List.of(mockedShop);
         when(mockedRequest.getParameter("vinylId")).thenReturn("1");
         when(mockedVinylService.getUniqueById(1)).thenReturn(mockedUniqueVinyl);
 

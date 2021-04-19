@@ -19,14 +19,15 @@ class ShopRowMapperTest {
     @Test
     @DisplayName("Checks if shop created from resultSet has all fields right.")
     void mapFilledRowTest() throws SQLException {
+        //prepare
         ResultSet mockedFilledResultSet = mock(ResultSet.class);
         when(mockedFilledResultSet.getInt("id")).thenReturn(1);
         when(mockedFilledResultSet.getString("link_to_main_page")).thenReturn("shop1/main");
         when(mockedFilledResultSet.getString("link_to_image")).thenReturn("shop1/image.png");
         when(mockedFilledResultSet.getString("name")).thenReturn("shop1");
-
+        //when
         Shop actualShop = shopRowMapper.mapRow(mockedFilledResultSet);
-
+        //then
         assertEquals(1, actualShop.getId());
         assertEquals("shop1/main", actualShop.getMainPageLink());
         assertEquals("shop1/image.png", actualShop.getImageLink());
