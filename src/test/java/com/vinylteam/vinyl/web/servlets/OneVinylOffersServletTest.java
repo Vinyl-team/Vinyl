@@ -31,6 +31,7 @@ class OneVinylOffersServletTest {
         List<Vinyl> vinylOffers = List.of(mockedVinyl);
         List<Integer> shopsIds = new ArrayList<>();
         List<Shop> shopsByIds = List.of(mockedShop);
+
         when(mockedRequest.getParameter("vinylId")).thenReturn("1");
         when(mockedVinylService.getUniqueById(1)).thenReturn(mockedUniqueVinyl);
 
@@ -41,11 +42,11 @@ class OneVinylOffersServletTest {
 
         when(mockedUniqueVinyl.getArtist()).thenReturn("artist1");
         when(mockedVinylService.getManyUniqueByArtist("artist1")).thenReturn(vinylOffers);
+        InOrder inOrderVinylService = inOrder(mockedVinylService);
         //when
         OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(mockedVinylService, mockedShopService);
         oneVinylOffersServlet.doPost(mockedRequest, mockedResponse);
         //then
-        InOrder inOrderVinylService = inOrder(mockedVinylService);
         verify(mockedRequest).getParameter("vinylId");
         inOrderVinylService.verify(mockedVinylService).getUniqueById(1);
 
