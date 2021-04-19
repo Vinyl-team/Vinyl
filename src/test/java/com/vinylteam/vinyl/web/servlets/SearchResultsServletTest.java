@@ -29,7 +29,7 @@ class SearchResultsServletTest {
         when(mockedResponse.getWriter()).thenReturn(mockedPrintWriter);
 
         SearchResultsServlet searchResultsServlet = new SearchResultsServlet(mockedVinylService);
-        searchResultsServlet.doPost(mockedRequest, mockedResponse);
+        searchResultsServlet.doGet(mockedRequest, mockedResponse);
 
         verify(mockedRequest).getParameter("matcher");
         verify(mockedVinylService).getManyFilteredUnique("release1");
