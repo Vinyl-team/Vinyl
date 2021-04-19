@@ -19,8 +19,8 @@ class UniqueVinylRowMapperTest {
     @Test
     @DisplayName("Checks if user created from resultSet has all fields right.")
     void mapRowWithFilledResultSetTest() throws SQLException {
+        //prepare
         ResultSet mockedResultSet = mock(ResultSet.class);
-        //prepared
         when(mockedResultSet.getInt("id")).thenReturn(1);
         when(mockedResultSet.getString("release")).thenReturn("release1");
         when(mockedResultSet.getString("artist")).thenReturn("artist1");

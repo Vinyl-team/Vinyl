@@ -2,7 +2,7 @@ package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.service.VinylService;
-import com.vinylteam.vinyl.web.PageGenerator;
+import com.vinylteam.vinyl.web.templater.PageGenerator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,7 +25,6 @@ public class SearchResultsServlet extends HttpServlet {
         PageGenerator.getInstance().process("search", filteredUniqueVinyls, response.getWriter());
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-
     }
 
 }

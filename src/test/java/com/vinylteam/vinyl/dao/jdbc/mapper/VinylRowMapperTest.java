@@ -20,8 +20,8 @@ class VinylRowMapperTest {
     @Test
     @DisplayName("Checks if user created from resultSet has all fields right.")
     void mapRowFilledResultSetTest() throws SQLException {
-        ResultSet vinylResult = mock(ResultSet.class);
         //prepare
+        ResultSet vinylResult = mock(ResultSet.class);
         when(vinylResult.getInt("id")).thenReturn(1);
         when(vinylResult.getString("release")).thenReturn("release1");
         when(vinylResult.getString("artist")).thenReturn("artist1");

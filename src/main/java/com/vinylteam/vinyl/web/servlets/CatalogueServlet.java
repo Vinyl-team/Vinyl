@@ -2,7 +2,7 @@ package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.service.VinylService;
-import com.vinylteam.vinyl.web.PageGenerator;
+import com.vinylteam.vinyl.web.templater.PageGenerator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

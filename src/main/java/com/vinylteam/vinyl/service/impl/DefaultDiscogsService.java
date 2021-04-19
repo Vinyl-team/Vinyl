@@ -2,10 +2,10 @@ package com.vinylteam.vinyl.service.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.discogs4j.client.DiscogsClient;
 import com.vinylteam.vinyl.discogs4j.entity.DiscogsVinylInfo;
 import com.vinylteam.vinyl.discogs4j.entity.RawResponse;
+import com.vinylteam.vinyl.service.DiscogsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class DefaultDiscogsService implements DiscogsService {
             discogsClient.getRequestToken();
         } catch (ArrayIndexOutOfBoundsException e) {
             logger.error("Failed to connect to discogs user with {'consumeKey': {}, {'consumerSecret': {}, " +
-                 "{'userAgent': {}, {'callbackUrl': {}} ", CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL, e);
+                    "{'userAgent': {}, {'callbackUrl': {}} ", CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL, e);
             throw new RuntimeException(e);
         }
     }
