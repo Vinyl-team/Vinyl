@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class DefaultVinylService implements VinylService {
 
@@ -65,9 +64,36 @@ public class DefaultVinylService implements VinylService {
     }
 
     @Override
+    public List<Vinyl> getManyUniqueByArtist(String artist) {
+        List<Vinyl> gottenUniqueVinyls;
+        if (artist != null) {
+            gottenUniqueVinyls = vinylDao.getManyUniqueByArtist(artist);
+        } else {
+            logger.error("Artist is null, returning empty list.");
+            gottenUniqueVinyls = new ArrayList<>();
+        }
+        logger.debug("Resulting list of random unique vinyls is {'uniqueVinyls':{}}", gottenUniqueVinyls);
+        return gottenUniqueVinyls;
+    }
+
+    @Override
     public List<Vinyl> getAll() {
         List<Vinyl> gottenVinyls = vinylDao.getAll();
         logger.debug("Resulting list of all vinyls from db is {'vinyls':{}}", gottenVinyls);
+        return gottenVinyls;
+    }
+
+    @Override
+    public List<Vinyl> getManyByUniqueVinylId(long id) {
+        List<Vinyl> gottenVinyls;
+        if (id > 0) {
+            gottenVinyls = vinylDao.getManyByUniqueVinylId(id);
+        } else {
+            IllegalArgumentException e = new IllegalArgumentException();
+            logger.error("Id is 0 or less {'id':{}}", id, e);
+            throw new RuntimeException(e);
+        }
+        logger.debug("Resulting list of vinyls is {'vinyls':{}}", gottenVinyls);
         return gottenVinyls;
     }
 
@@ -100,8 +126,19 @@ public class DefaultVinylService implements VinylService {
     }
 
     @Override
-    public Optional<Vinyl> getByRelease(String vinylsRelease) {
-        return vinylDao.getByRelease(vinylsRelease);
+    public List<Integer> getListOfShopIds(List<Vinyl> vinyls) {
+        List<Integer> shopsIds = new ArrayList<>();
+        if (vinyls != null) {
+            for (Vinyl vinyl : vinyls) {
+                if (!shopsIds.contains(Integer.valueOf(vinyl.getShopId()))) {
+                    shopsIds.add(vinyl.getShopId());
+                }
+            }
+        } else {
+            logger.error("List of vinyls is null, returning empty list.");
+        }
+        logger.debug("Resulting list of shop id-s is {'shopIds':{}}", shopsIds);
+        return shopsIds;
     }
 
 }

@@ -18,20 +18,22 @@ class SignUpServletTest {
     private final UserService mockedUserService = mock(DefaultUserService.class);
     private final HttpServletRequest mockedHttpServletRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedHttpServletResponse = mock(HttpServletResponse.class);
+    private final SignUpServlet signUpServlet = new SignUpServlet(mockedUserService);
 
     @Test
     @DisplayName("Checks if all right methods are called and response has code set to 400 and redirected to /signUp " +
             "when email already existed in database before.")
     void doPostWithExistingUserTest() throws IOException {
+        //prepare
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("existinguser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
-        SignUpServlet signUpServlet = new SignUpServlet(mockedUserService);
         when(mockedUserService.add("existinguser@vinyl.com", "password")).thenReturn(false);
-
-        signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
 
         InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
         InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
+        //when
+        signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
+        //then
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
         verify(mockedUserService)
@@ -44,15 +46,16 @@ class SignUpServletTest {
     @DisplayName("Checks if all right methods are called and response has code set to 303 and redirected to /signIn " +
             "when email did not exist in database before.")
     void doPostWithNewUserTest() throws IOException {
+        //prepare
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("newuser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
-        SignUpServlet signUpServlet = new SignUpServlet(mockedUserService);
         when(mockedUserService.add("newuser@vinyl.com", "password")).thenReturn(true);
-
-        signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
 
         InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
         InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
+        //when
+        signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
+        //then
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
         verify(mockedUserService)

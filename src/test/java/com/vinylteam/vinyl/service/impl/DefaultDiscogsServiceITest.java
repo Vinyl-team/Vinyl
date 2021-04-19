@@ -1,8 +1,8 @@
 package com.vinylteam.vinyl.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vinylteam.vinyl.util.PropertiesReader;
 import com.vinylteam.vinyl.discogs4j.entity.DiscogsVinylInfo;
+import com.vinylteam.vinyl.util.PropertiesReader;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

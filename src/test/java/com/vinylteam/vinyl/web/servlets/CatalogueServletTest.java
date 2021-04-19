@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -21,6 +22,7 @@ class CatalogueServletTest {
     @Test
     @DisplayName("Checks if all right methods are called")
     void doGetTest() throws IOException {
+        //prepare
         HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
         HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
         VinylService mockedVinylService = mock(DefaultVinylService.class);
@@ -29,12 +31,15 @@ class CatalogueServletTest {
         when(mockedVinylService.getManyRandomUnique(50)).thenReturn(
                 new ArrayList<>(Collections.nCopies(50, new Vinyl())));
         when(mockedResponse.getWriter()).thenReturn(mockedPrintWriter);
-
+        InOrder inOrderResponse = inOrder(mockedResponse);
+        //when
         CatalogueServlet catalogueServlet = new CatalogueServlet(mockedVinylService);
         catalogueServlet.doGet(mockedRequest, mockedResponse);
-
+        //then
         verify(mockedVinylService).getManyRandomUnique(50);
-        verify(mockedResponse).getWriter();
+        inOrderResponse.verify(mockedResponse).getWriter();
+        inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
+        inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
     }
 
 }

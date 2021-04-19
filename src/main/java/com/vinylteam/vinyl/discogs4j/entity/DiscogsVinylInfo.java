@@ -34,6 +34,7 @@ public class DiscogsVinylInfo {
     public String getRelease() {
         return release;
     }
+
     public String getArtist() {
         return artist;
     }
