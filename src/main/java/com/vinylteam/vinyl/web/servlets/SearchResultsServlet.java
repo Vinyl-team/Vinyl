@@ -19,7 +19,7 @@ public class SearchResultsServlet extends HttpServlet {
     }
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String matcher = request.getParameter("matcher");
         List<Vinyl> filteredUniqueVinyls = vinylService.getManyFilteredUnique(matcher);
         PageGenerator.getInstance().process("search", filteredUniqueVinyls, response.getWriter());
