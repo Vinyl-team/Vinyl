@@ -19,6 +19,7 @@ class UserRowMapperTest {
     @Test
     @DisplayName("Checks if user created from resultSet has all fields right.")
     void mapFilledRowTest() throws SQLException {
+        //prepare
         ResultSet mockedFilledResultSet = mock(ResultSet.class);
         when(mockedFilledResultSet.getString("email")).thenReturn("testuser@vinyl.com");
         when(mockedFilledResultSet.getString("password")).thenReturn("HASH");
@@ -26,9 +27,9 @@ class UserRowMapperTest {
         when(mockedFilledResultSet.getInt("iterations")).thenReturn(1);
         when(mockedFilledResultSet.getString("role")).thenReturn("USER");
         when(mockedFilledResultSet.getBoolean("status")).thenReturn(true);
-
+        //when
         User actualUser = userRowMapper.mapRow(mockedFilledResultSet);
-
+        //then
         assertEquals("testuser@vinyl.com", actualUser.getEmail());
         assertEquals("HASH", actualUser.getPassword());
         assertEquals("salt", actualUser.getSalt());

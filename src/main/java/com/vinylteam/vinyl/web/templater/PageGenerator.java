@@ -1,4 +1,4 @@
-package com.vinylteam.vinyl.web;
+package com.vinylteam.vinyl.web.templater;
 
 import com.vinylteam.vinyl.entity.Vinyl;
 import org.thymeleaf.TemplateEngine;

@@ -4,7 +4,6 @@ import com.vinylteam.vinyl.dao.UserDao;
 import com.vinylteam.vinyl.dao.VinylDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcVinylDao;
-import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
 import com.vinylteam.vinyl.service.UserService;
@@ -12,10 +11,6 @@ import com.vinylteam.vinyl.service.VinylService;
 import com.vinylteam.vinyl.service.impl.DefaultUserService;
 import com.vinylteam.vinyl.service.impl.DefaultVinylService;
 import com.vinylteam.vinyl.util.PropertiesReader;
-import com.vinylteam.vinyl.util.ShopsParser;
-import com.vinylteam.vinyl.util.VinylParser;
-import com.vinylteam.vinyl.util.VinylSorter;
-import com.vinylteam.vinyl.util.impl.VinylUaParser;
 import com.vinylteam.vinyl.web.handler.DefaultErrorHandler;
 import com.vinylteam.vinyl.web.servlets.CatalogueServlet;
 import com.vinylteam.vinyl.web.servlets.SearchResultsServlet;
@@ -29,9 +24,6 @@ import org.eclipse.jetty.util.resource.JarFileResource;
 import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Map;
 
 public class Starter {
     private static final Logger logger = LoggerFactory.getLogger(Starter.class);
