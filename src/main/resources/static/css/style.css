@@ -69,6 +69,10 @@ body{
   cursor: default;
 }
 
+a{
+  color: #ffffff;
+}
+
 /* header */
 
 .header{
@@ -153,9 +157,9 @@ body{
   height: 2.42em;
   /*width: 100%;*/
   padding-left: 1.11em;
-  font-family: Roboto, serif;
-  font-style: normal;
-  font-weight: 500;
+  /*font-family: Roboto, serif;*/
+  /*font-style: normal;*/
+  /*font-weight: 500;*/
   font-size: 24px;
   /*line-height: 1.16;*/
   color: #C4C4C4;
@@ -167,7 +171,8 @@ body{
 
 .search__button{
   background-image: url("data:image/svg+xml,%3Csvg width='57' height='56' viewBox='0 0 57 56' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath opacity='0.701451' d='M0.323242 0H56.074V56H0.323242V0Z' fill='%23F7A325'/%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M25.6751 34.8108C20.5766 34.8108 16.4434 30.5999 16.4434 25.4054C16.4434 20.2109 20.5766 16 25.6751 16C30.7736 16 34.9067 20.2109 34.9067 25.4054C34.9067 27.6522 34.1335 29.715 32.8433 31.3326L39.7203 38.339C40.0932 38.719 40.0932 39.335 39.7203 39.715C39.3473 40.095 38.7427 40.095 38.3697 39.715L31.4927 32.7086C29.905 34.023 27.8803 34.8108 25.6751 34.8108ZM25.6744 32.8649C29.7181 32.8649 32.9961 29.5251 32.9961 25.4054C32.9961 21.2857 29.7181 17.9459 25.6744 17.9459C21.6308 17.9459 18.3528 21.2857 18.3528 25.4054C18.3528 29.5251 21.6308 32.8649 25.6744 32.8649Z' fill='white'/%3E%3C/svg%3E%0A");
-  cursor: 58px;
+  cursor: pointer;
+  height: 58px;
   width: 58px;
   /*background-color: #F7A325;*/
   /*display: flex;*/
@@ -184,22 +189,41 @@ body{
   flex: 1 1 auto;
 }
 
-/* main of home page */
-
-.content-home{
-  height: 26.5em;
+.content{
   display: flex;
   justify-content: center;
   align-items: flex-end;
 }
 
-.content-home__column{
-  height: 20.95em;
-  width: 52.55em;
+.content-column{
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+}
+
+h2{
+  font-size: 2em;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* main of home page */
+
+.content-home{
+  height: 26.5em;
+  /*display: flex;*/
+  /*justify-content: center;*/
+  /*align-items: flex-end;*/
+}
+
+.content-home__column{
+  height: 20.95em;
+  width: 52.55em;
+  /*display: flex;*/
+  /*flex-direction: column;*/
+  /*justify-content: space-between;*/
+  /*align-items: center;*/
 }
 
 .content-home__title h1{
@@ -207,12 +231,6 @@ body{
   line-height: 1.4;
   font-weight: 700;
   letter-spacing: 0.03em;
-  text-align: center;
-}
-
-.content-home__sub-title h2{
-  font-size: 2em;
-  line-height: 1.4;
   text-align: center;
 }
 
@@ -435,6 +453,128 @@ body{
   display: flex;
   justify-content: center;
   align-items: flex-start;
+}
+
+/* registration form */
+
+.registration{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  /*justify-content: space-between;*/
+  align-items: center;
+}
+
+.registration__fields-wrapper{
+  flex: 1 1 auto;
+  width: 100%;
+}
+
+.registration__fields{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.registration__label{
+  width: 100%;
+}
+
+.registration__submit-label{
+  height: 2.25em;
+}
+
+/* setting the color and transparent settings for the placeholder */
+.registration__input::-webkit-input-placeholder {color:#8D8989; opacity:1;}/* webkit */
+.registration__input::-moz-placeholder          {color:#8D8989; opacity:1;}/* Firefox 19+ */
+.registration__input:-moz-placeholder           {color:#8D8989; opacity:1;}/* Firefox 18- */
+.registration__input:-ms-input-placeholder      {color:#8D8989; opacity:1;}/* IE */
+.registration__input:focus::-webkit-input-placeholder {opacity:0;}/* webkit */
+.registration__input:focus::-moz-placeholder          {opacity:0;}/* Firefox 19+ */
+.registration__input:focus:-moz-placeholder           {opacity:0;}/* Firefox 18- */
+.registration__input:focus:-ms-input-placeholder      {opacity:0;}/* IE */
+
+.registration__input{
+  font-size: 14px;
+  line-height: 19px;
+  color: #8D8989;
+  height: 3.57em;
+  width: 100%;
+  padding-left: 1.07em;
+}
+
+.registration__submit-input{
+  font-weight: bold;
+  font-size: 18px;
+  line-height: 25px;
+  height: 2.22em;
+  width: 7.77em;
+  color: #fff;
+  background-color: #F6A325;
+  cursor: pointer;
+}
+
+.content-registration__title{
+  height: 5.28em;
+}
+
+/* main of new password page */
+
+.content-new-password{
+  height: 22.59em;
+}
+
+.content-new-password__column{
+  height: 18.64em;
+  width: 19.44em;
+}
+
+.new-password-registration{
+  height: 13.36em;
+}
+
+.new-password-registration__fields{
+  height: 7.22em;
+}
+
+/* main of recovery password page */
+
+.content-recovery-password{
+  height: 18.7em;
+}
+
+.content-recovery-password__column{
+  height: 14.75em;
+  width: 19.44em;
+}
+
+.recovery-registration{
+  height: 9.47em;
+}
+
+.recovery-registration__fields{
+  height: 2.78em;
+}
+
+/* main of sign in page */
+
+.content-sign-in{
+  height: 23.5em;
+}
+
+.content-sign-in__column{
+  height: 19.61em;
+  width: 19.44em;
+}
+
+.sign-in-registration{
+  height: 14.39em;
+}
+
+.sign-in-registration__fields{
+  height: 9em;
 }
 
 /* footer */

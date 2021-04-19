@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<div class="wrapper wrapper-home">
+<div class="wrapper">
 
   <!-- header -->
 
@@ -71,29 +71,34 @@
     <!-- content of main -->
 
     <div class="container">
-      <div class="content-home content">
+      <div class="content-sign-in content">
 
-        <div class="content-home__column content-column">
+        <div class="content-sign-in__column content-column">
 
-          <div class="content-home__title">
-            <h1>COMPARE PRICES of VINYL RECORDS</h1>
+          <div class="content-registration__title">
+            <h2>Login</h2>
           </div>
 
-          <form action="search" method="post">
-            <label class="search">
-              <input class="search__input" type="text" name="matcher" placeholder="Search by artist or title..."
-                     required>
-              <input type="submit" value="" class="search__button">
+          <form action="#" method="POST" class="registration sign-in-registration">
+            <div class="registration__fields-wrapper">
+              <div class="registration__fields sign-in-registration__fields">
+                <label class="registration__label">
+                  <input class="registration__input" type="email" name="email" placeholder="E-mail" required>
+                </label>
+                <label class="registration__label">
+                  <input class="registration__input" type="password" name="password" placeholder="Password"
+                         required>
+                </label>
+                <p>
+                  Forgot password?
+                </p>
+              </div>
+            </div>
+            <label class="registration__submit-label">
+              <input class="registration__submit-input" type="submit" value="SUBMIT">
             </label>
           </form>
 
-          <div class="content-home__sub-title">
-            <h2>
-              You can find here a huge number of records from<br>
-              trusted stores, so you can find the best price<br>
-              Welcome!
-            </h2>
-          </div>
         </div>
 
       </div>
