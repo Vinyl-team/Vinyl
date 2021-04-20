@@ -71,17 +71,24 @@
     <!-- content of main -->
 
     <div class="container">
-      <div class="content-new-password content">
+      <div class="content-edit-profile content">
 
-        <div class="content-new-password__column content-column">
+        <div class="content-edit-profile__column content-column">
 
           <div class="content-registration__title">
-            <h2>New password</h2>
+            <h2>Edit Profile</h2>
           </div>
 
-          <form action="#" method="POST" class="registration new-password-registration">
+          <form action="#" method="POST" class="registration edit-profile-registration">
             <div class="registration__fields-wrapper">
-              <div class="registration__fields new-password-registration__fields">
+              <div class="registration__fields edit-profile-registration__fields">
+                <label class="registration__label">
+                  <input class="registration__input" type="email" name="email" placeholder="E-mail" required>
+                </label>
+                <label class="registration__label">
+                  <input class="registration__input" type="password" name="oldPassword" placeholder="Old password"
+                         required>
+                </label>
                 <label class="registration__label">
                   <input class="registration__input" type="password" name="newPassword" placeholder="New password"
                          required
@@ -91,6 +98,9 @@
                 <label class="registration__label">
                   <input class="registration__input" type="password" name="confirmNewPassword"
                          placeholder="Confirm new password" required>
+                </label>
+                <label class="registration__label">
+                  <input class="registration__input" type="text" name="discogsUserName" placeholder="Discogs User Name">
                 </label>
               </div>
             </div>
