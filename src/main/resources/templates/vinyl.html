@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org ">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/fonts.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/vinyl.css">
+    <link rel="stylesheet" href="css/pagesWithVinyls.css">
     <title>Wax Deals - vinyl</title>
 </head>
 <body>
@@ -57,13 +58,14 @@
 
             <!-- header search -->
 
-            <form action="search" method="GET">
-                <label class="search">
-                    <input class="search__input" type="text" name="matcher" placeholder="Search by artist or title..."
-                           required>
-                    <input type="submit" value="" class="search__button">
-                </label>
-            </form>
+            <div class="header__search">
+                <form action="search" method="GET">
+                    <label class="search">
+                        <input class="search__input" type="text" name="matcher" th:value="${matcher}" placeholder="Search by artist or title..." required>
+                        <input type="submit" value="" class="search__button">
+                    </label>
+                </form>
+            </div>
 
         </div>
     </header>
@@ -73,11 +75,11 @@
         <!-- content of main -->
 
         <div class="container sub-container">
-            <div class="content-search">
+            <div class="vinyls-content">
 
                 <!-- first row of goods -->
 
-                <div class="content-search__row">
+                <div class="vinyls-content__row">
                     <div class="first-vinyls-row">
 
                         <div class="first-vinyl">
@@ -172,7 +174,7 @@
                     More by Modus
                 </p>
 
-                <div class="content-search__row">
+                <div class="vinyls-content__row">
                     <div class="other-vinyls">
                         <div class="other-vinyls__item vinyl">
                             <a class="other-vinyls__image" href="#">

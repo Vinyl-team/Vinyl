@@ -4,9 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/reset.css">
-  <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/pagesWithVinyls.css">
   <title>Wax Deals - search</title>
 </head>
 <body>
@@ -58,12 +57,14 @@
 
       <!-- header search -->
 
-      <form action="search" method="GET">
-        <label class="search">
-          <input class="search__input" type="text" name="matcher" th:value="${matcher}" placeholder="Search by artist or title..." required>
-          <input type="submit" value="" class="search__button">
-        </label>
-      </form>
+      <div class="header__search">
+        <form action="search" method="GET">
+          <label class="search">
+            <input class="search__input" type="text" name="matcher" th:value="${matcher}" placeholder="Search by artist or title..." required>
+            <input type="submit" value="" class="search__button">
+          </label>
+        </form>
+      </div>
 
     </div>
   </header>
@@ -73,11 +74,11 @@
     <!-- content of main -->
 
     <div class="container sub-container">
-      <div class="content-search">
+      <div class="vinyls-content">
 
         <!-- first row of goods -->
 
-        <div class="content-search__first-row">
+        <div class="vinyls-content__first-row">
           <div class="first-vinyls-row" th:if="${not #lists.isEmpty(firstVinylRow)}">
 
             <div class="first-vinyl">
@@ -105,12 +106,12 @@
           </div>
 
           <div th:if="${#lists.isEmpty(firstVinylRow)}">
-            <div class="content-search__no-result">Sorry, no results were found for your request!</div>
+            <div class="vinyls-content__no-result">Sorry, no results were found for your request!</div>
           </div>
 
         </div>
 
-        <div class="content-search__row">
+        <div class="vinyls-content__row">
           <div class="other-vinyls">
 
             <div th:each="vinylFromOtherRow : ${otherVinylRow}" class="other-vinyls__item vinyl">
