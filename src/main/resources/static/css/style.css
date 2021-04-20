@@ -457,7 +457,7 @@ h2{
 
 /* registration form */
 
-.registration{
+.user{
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -465,12 +465,12 @@ h2{
   align-items: center;
 }
 
-.registration__fields-wrapper{
+.user__fields-wrapper{
   flex: 1 1 auto;
   width: 100%;
 }
 
-.registration__fields{
+.user__fields{
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -478,25 +478,25 @@ h2{
   align-items: center;
 }
 
-.registration__label{
+.user__label{
   width: 100%;
 }
 
-.registration__submit-label{
+.user__submit-label{
   height: 2.25em;
 }
 
 /* setting the color and transparent settings for the placeholder */
-.registration__input::-webkit-input-placeholder {color:#8D8989; opacity:1;}/* webkit */
-.registration__input::-moz-placeholder          {color:#8D8989; opacity:1;}/* Firefox 19+ */
-.registration__input:-moz-placeholder           {color:#8D8989; opacity:1;}/* Firefox 18- */
-.registration__input:-ms-input-placeholder      {color:#8D8989; opacity:1;}/* IE */
-.registration__input:focus::-webkit-input-placeholder {opacity:0;}/* webkit */
-.registration__input:focus::-moz-placeholder          {opacity:0;}/* Firefox 19+ */
-.registration__input:focus:-moz-placeholder           {opacity:0;}/* Firefox 18- */
-.registration__input:focus:-ms-input-placeholder      {opacity:0;}/* IE */
+.user__input::-webkit-input-placeholder {color:#8D8989; opacity:1;}/* webkit */
+.user__input::-moz-placeholder          {color:#8D8989; opacity:1;}/* Firefox 19+ */
+.user__input:-moz-placeholder           {color:#8D8989; opacity:1;}/* Firefox 18- */
+.user__input:-ms-input-placeholder      {color:#8D8989; opacity:1;}/* IE */
+.user__input:focus::-webkit-input-placeholder {opacity:0;}/* webkit */
+.user__input:focus::-moz-placeholder          {opacity:0;}/* Firefox 19+ */
+.user__input:focus:-moz-placeholder           {opacity:0;}/* Firefox 18- */
+.user__input:focus:-ms-input-placeholder      {opacity:0;}/* IE */
 
-.registration__input{
+.user__input{
   font-size: 14px;
   line-height: 19px;
   color: #8D8989;
@@ -505,7 +505,7 @@ h2{
   padding-left: 1.07em;
 }
 
-.registration__submit-input{
+.user__submit-input{
   font-weight: bold;
   font-size: 18px;
   line-height: 25px;
@@ -516,7 +516,7 @@ h2{
   cursor: pointer;
 }
 
-.content-registration__title{
+.content-user__title{
   height: 5.28em;
 }
 
@@ -531,11 +531,11 @@ h2{
   width: 19.44em;
 }
 
-.new-password-registration{
+.new-password-user{
   height: 13.36em;
 }
 
-.new-password-registration__fields{
+.new-password-user__fields{
   height: 7.22em;
 }
 
@@ -550,11 +550,11 @@ h2{
   width: 19.44em;
 }
 
-.recovery-registration{
+.recovery-user{
   height: 9.47em;
 }
 
-.recovery-registration__fields{
+.recovery-user__fields{
   height: 2.78em;
 }
 
@@ -569,12 +569,69 @@ h2{
   width: 19.44em;
 }
 
-.sign-in-registration{
+.sign-in-user{
   height: 14.39em;
 }
 
-.sign-in-registration__fields{
+.sign-in-user__fields{
   height: 9em;
+}
+
+/* main of registration page */
+
+.content-registration-page{
+  height: 30.70em;
+}
+
+.content-registration-page__column{
+  height: 27.92em;
+  width: 19.44em;
+}
+
+.registration-page-user{
+  height: 22.67em;
+}
+
+.registration-page-user__fields{
+  height: 16.11em;
+}
+
+/* main of profile page */
+
+.content-profile{
+   height: 22.59em;
+}
+
+.content-profile__column{
+  height: 18.64em;
+  width: 19.44em;
+}
+
+.profile-user{
+  height: 13.36em;
+}
+
+.profile-user__fields{
+  height: 7.22em;
+}
+
+/* main of edit profile page */
+
+.content-edit-profile{
+  height: 35.14em;
+}
+
+.content-edit-profile__column{
+  height: 32.36em;
+  width: 19.44em;
+}
+
+.edit-profile-user{
+  height: 27.11em;
+}
+
+.edit-profile-user__fields{
+  height: 20.56em;
 }
 
 /* footer */
