@@ -75,37 +75,37 @@
 
         <div class="content-edit-profile__column content-column">
 
-          <div class="content-registration__title">
+          <div class="content-user__title">
             <h2>Edit Profile</h2>
           </div>
 
-          <form action="#" method="POST" class="registration edit-profile-registration">
-            <div class="registration__fields-wrapper">
-              <div class="registration__fields edit-profile-registration__fields">
-                <label class="registration__label">
-                  <input class="registration__input" type="email" name="email" placeholder="E-mail" required>
+          <form action="#" method="POST" class="user edit-profile-user">
+            <div class="user__fields-wrapper">
+              <div class="user__fields edit-profile-user__fields">
+                <label class="user__label">
+                  <input class="user__input" type="email" name="email" placeholder="E-mail" required>
                 </label>
-                <label class="registration__label">
-                  <input class="registration__input" type="password" name="oldPassword" placeholder="Old password"
+                <label class="user__label">
+                  <input class="user__input" type="password" name="oldPassword" placeholder="Old password"
                          required>
                 </label>
-                <label class="registration__label">
-                  <input class="registration__input" type="password" name="newPassword" placeholder="New password"
+                <label class="user__label">
+                  <input class="user__input" type="password" name="newPassword" placeholder="New password"
                          required
                          pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                          title="Password must contain at least 8 characters, including UPPER/lowercase and numbers">
                 </label>
-                <label class="registration__label">
-                  <input class="registration__input" type="password" name="confirmNewPassword"
+                <label class="user__label">
+                  <input class="user__input" type="password" name="confirmNewPassword"
                          placeholder="Confirm new password" required>
                 </label>
-                <label class="registration__label">
-                  <input class="registration__input" type="text" name="discogsUserName" placeholder="Discogs User Name">
+                <label class="user__label">
+                  <input class="user__input" type="text" name="discogsUserName" placeholder="Discogs User Name">
                 </label>
               </div>
             </div>
-            <label class="registration__submit-label">
-              <input class="registration__submit-input" type="submit" value="SUBMIT">
+            <label class="user__submit-label">
+              <input class="user__submit-input" type="submit" value="SUBMIT">
             </label>
           </form>
 
