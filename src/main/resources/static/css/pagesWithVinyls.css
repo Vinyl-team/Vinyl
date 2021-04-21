@@ -29,8 +29,6 @@
 
 .first-vinyl__image img{
   max-width: 100%;
-
-  /*stretch first image by height and width */
   height: 100%;
   width: 100%;
 }
@@ -38,10 +36,6 @@
 .first-vinyl__realise{
   font-size: 2em;
   line-height: 1.36;
-
-  /* hidden text into realise signature */
-  /*overflow: hidden;*/
-  /*text-overflow: ellipsis;*/
 }
 
 .first-vinyl__artist{
@@ -77,8 +71,6 @@
 
 .other-vinyls__image img{
   max-width: 100%;
-
-  /*stretch image by height and width */
   height: 100%;
   width: 100%;
 }
