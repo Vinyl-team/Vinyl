@@ -58,8 +58,8 @@ public class Starter {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContextHandler.setErrorHandler(new DefaultErrorHandler());
         servletContextHandler.setBaseResource(resource);
-        servletContextHandler.addServlet(new ServletHolder(signInServlet), "/signUp");
-        servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/signIn");
+        servletContextHandler.addServlet(new ServletHolder(signInServlet), "/signIn");
+        servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/signUp");
         servletContextHandler.addServlet(new ServletHolder(catalogueServlet), "/catalog");
         servletContextHandler.addServlet(new ServletHolder(searchResultsServlet), "/search");
         servletContextHandler.addServlet(DefaultServlet.class, "/");

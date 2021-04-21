@@ -257,6 +257,11 @@ h1 {
   align-items: flex-end;
 }
 
+.user__message{
+  height: 3.89em;
+  font-size: 1.4em;
+}
+
 .content-column{
   display: flex;
   flex-direction: column;
