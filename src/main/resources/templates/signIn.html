@@ -77,8 +77,7 @@
       <div class="content-sign-in">
 
         <div class="user__message">
-          <div th:if="${verified != null}" th:text="${verified}"></div>
-          <div th:if="${incorrectCredentials != null}" th:text="${incorrectCredentials}"></div>
+          <div th:if="${message != null}" th:text="${message}"></div>
         </div>
 
         <div class="content-sign-in__column content-column">

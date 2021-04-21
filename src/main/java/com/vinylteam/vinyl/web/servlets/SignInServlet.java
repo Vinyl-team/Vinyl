@@ -46,12 +46,12 @@ public class SignInServlet extends HttpServlet {
         } else if (checkResult == SignInCheckResult.OK_NOT_VERIFIED) {
             response.setStatus(HttpServletResponse.SC_SEE_OTHER);
             logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_SEE_OTHER);
-            attributes.put("verified", "Sorry, your email has not been verified. Please go to your mailbox and follow the link to confirm your registration.");
+            attributes.put("message", "Sorry, your email has not been verified. Please go to your mailbox and follow the link to confirm your registration.");
             PageGenerator.getInstance().process("signIn", attributes, response.getWriter());
         } else if (checkResult == SignInCheckResult.FAIL) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
-            attributes.put("incorrectCredentials", "Sorry, login or password is not correct, please check yours credentials and try again.");
+            attributes.put("message", "Sorry, login or password is not correct, please check yours credentials and try again.");
             PageGenerator.getInstance().process("signIn", attributes, response.getWriter());
         }
     }

@@ -58,14 +58,9 @@ public class PageGenerator {
             context.setVariable("matcher", searchWord);
         }
 
-        String verified = attributes.get("verified");
-        if (verified!=null){
-            context.setVariable("verified", verified);
-        }
-
-        String incorrectCredentials = attributes.get("incorrectCredentials");
-        if (incorrectCredentials!=null){
-            context.setVariable("incorrectCredentials", incorrectCredentials);
+        String message = attributes.get("message");
+        if (message!=null){
+            context.setVariable("message", message);
         }
 
         context.setVariable("vinylList", list);
