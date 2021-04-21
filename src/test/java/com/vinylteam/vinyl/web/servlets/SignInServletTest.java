@@ -31,6 +31,7 @@ class SignInServletTest {
         //when
         signInServlet.doGet(mockedHttpServletRequest, mockedHttpServletResponse);
         //then
+        verify(mockedHttpServletResponse).getWriter();
         verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_OK);
     }
 
@@ -79,6 +80,7 @@ class SignInServletTest {
         verify(mockedUserService)
                 .signInCheck("verifieduser@vinyl.com", "wrong password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        verify(mockedHttpServletResponse).getWriter();
     }
 
     @Test
@@ -102,6 +104,7 @@ class SignInServletTest {
         verify(mockedUserService)
                 .signInCheck("notverifieduser@vinyl.com", "right password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_SEE_OTHER);
+        verify(mockedHttpServletResponse).getWriter();
     }
 
 }
