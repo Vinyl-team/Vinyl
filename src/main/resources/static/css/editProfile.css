@@ -1,0 +1,18 @@
+/* main of edit profile page */
+
+.content-edit-profile{
+  height: 35.14em;
+}
+
+.content-edit-profile__column{
+  height: 32.36em;
+  width: 19.44em;
+}
+
+.edit-profile-user{
+  height: 27.11em;
+}
+
+.edit-profile-user__fields{
+  height: 20.56em;
+}
