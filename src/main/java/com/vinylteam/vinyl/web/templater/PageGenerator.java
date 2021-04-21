@@ -31,6 +31,14 @@ public class PageGenerator {
         templateEngine.setTemplateResolver(templateResolver);
     }
 
+    public void process(String fileName, Writer writer){
+        process(fileName, new ArrayList<>(), new HashMap<>(), writer);
+    }
+
+    public void process(String fileName, Map<String, String> attributes, Writer writer){
+        process(fileName, new ArrayList<>(), attributes, writer);
+    }
+
     public void process(String fileName, List<Vinyl> list, Writer writer){
         process(fileName, list, new HashMap<>(), writer);
     }
@@ -48,6 +56,11 @@ public class PageGenerator {
         String searchWord = attributes.get("searchWord");
         if (searchWord!=null){
             context.setVariable("matcher", searchWord);
+        }
+
+        String message = attributes.get("message");
+        if (message!=null){
+            context.setVariable("message", message);
         }
 
         context.setVariable("vinylList", list);
