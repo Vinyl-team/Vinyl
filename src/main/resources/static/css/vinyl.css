@@ -1,7 +1,6 @@
 /* main of vinyl page */
 
 .shops-list{
-  /* size of list of shops */
   width: 46.88em;
   height: 35.39em;
   display: flex;
@@ -63,12 +62,8 @@
 }
 
 .shop-list__title{
-  /*font-size: 1.33em;*/
-  /*line-height: 1.37;*/
   text-transform: capitalize;
   align-self: flex-start;
-  /* width first signature in shop list */
-  /*width: 5.55em;*/
 }
 
 .shop-list__column{
@@ -106,7 +101,6 @@
 }
 
 .shop-list__item-image{
-  /* size of image shop list - was 10.17em */
   flex: 0 0 10.83em;
   height: 2.78em;
 }
@@ -133,8 +127,6 @@
 }
 
 .shop-list__item-price{
-  /*font-size: 0.89em;*/
-  /*line-height: 1.38;*/
   font-weight: bold;
   text-transform: uppercase;
 }
