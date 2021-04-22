@@ -103,7 +103,7 @@ create table vinyls_browsing_history
 );
 
 insert into shops (link_to_main_page, link_to_image, name)
-values ('http://vinyl.ua/', 'http://vinyl.ua/img/logo/icon/55.png', 'VinylUa');
+values ('http://vinyl.ua/', 'https://cdn1.savepice.ru/uploads/2021/4/22/086dfd0833cf49a2798bc2f9c1b73004-full.png', 'VinylUa');
 
 insert into shops (link_to_main_page, link_to_image, name)
 values ('https://www.juno.co.uk/', 'https://www.logosvgpng.com/wp-content/uploads/2018/04/juno-records-logo-vector.png', 'JunoCoUk');
