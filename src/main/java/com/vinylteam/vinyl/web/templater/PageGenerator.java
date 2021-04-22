@@ -73,15 +73,15 @@ public class PageGenerator {
             context.setVariable("message", message);
         }
 
-        //for catalog page
+        /** for catalog page*/
         context.setVariable("vinylList", vinylList);
 
-        //for search & vinyl pages
+        /** for search & vinyl pages */
         if (!vinylList.isEmpty()) {
             context.setVariable("firstVinyl", vinylList.get(0));
         }
 
-        //for search page
+        /** for search page */
         if (vinylList.size() > 1) {
             if (vinylList.size() >= 5) {
                 for (int i = 1; i < 5; i++) {
@@ -101,7 +101,7 @@ public class PageGenerator {
             context.setVariable("otherVinylRow", otherVinylRow);
         }
 
-        //for vinyl page
+        /** for vinyl page */
         if (vinylList.size() > 1){
             for (int i = 1; i < vinylList.size(); i++) {
                 vinylsByArtist.add(vinylList.get(i));
