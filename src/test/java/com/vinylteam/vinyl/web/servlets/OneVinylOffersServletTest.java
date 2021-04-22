@@ -11,6 +11,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,12 +22,13 @@ import static org.mockito.Mockito.*;
 class OneVinylOffersServletTest {
 
     @Test
-    void doPostTest() {
+    void doGetTest() throws IOException {
         //prepare
         HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
         HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
         VinylService mockedVinylService = mock(DefaultVinylService.class);
         ShopService mockedShopService = mock(DefaultShopService.class);
+        PrintWriter printWriter = new PrintWriter(new StringWriter());
         Vinyl mockedUniqueVinyl = mock(Vinyl.class);
         Vinyl mockedVinyl = mock(Vinyl.class);
         Shop mockedShop = mock(Shop.class);
@@ -42,10 +46,11 @@ class OneVinylOffersServletTest {
 
         when(mockedUniqueVinyl.getArtist()).thenReturn("artist1");
         when(mockedVinylService.getManyUniqueByArtist("artist1")).thenReturn(vinylOffers);
+        when(mockedResponse.getWriter()).thenReturn(printWriter);
         InOrder inOrderVinylService = inOrder(mockedVinylService);
         //when
         OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(mockedVinylService, mockedShopService);
-        oneVinylOffersServlet.doPost(mockedRequest, mockedResponse);
+        oneVinylOffersServlet.doGet(mockedRequest, mockedResponse);
         //then
         verify(mockedRequest).getParameter("vinylId");
         inOrderVinylService.verify(mockedVinylService).getUniqueById(1);
@@ -54,8 +59,9 @@ class OneVinylOffersServletTest {
         inOrderVinylService.verify(mockedVinylService).getListOfShopIds(vinylOffers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
 
-        verify(mockedUniqueVinyl).getArtist();
+        verify(mockedUniqueVinyl, times(3)).getArtist();
         inOrderVinylService.verify(mockedVinylService).getManyUniqueByArtist("artist1");
+        verify(mockedResponse).getWriter();
     }
 
 }

@@ -1,21 +1,22 @@
 package com.vinylteam.vinyl;
 
+import com.vinylteam.vinyl.dao.ShopDao;
 import com.vinylteam.vinyl.dao.UserDao;
 import com.vinylteam.vinyl.dao.VinylDao;
+import com.vinylteam.vinyl.dao.jdbc.JdbcShopDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcVinylDao;
 import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
+import com.vinylteam.vinyl.service.ShopService;
 import com.vinylteam.vinyl.service.UserService;
 import com.vinylteam.vinyl.service.VinylService;
+import com.vinylteam.vinyl.service.impl.DefaultShopService;
 import com.vinylteam.vinyl.service.impl.DefaultUserService;
 import com.vinylteam.vinyl.service.impl.DefaultVinylService;
 import com.vinylteam.vinyl.util.PropertiesReader;
 import com.vinylteam.vinyl.web.handler.DefaultErrorHandler;
-import com.vinylteam.vinyl.web.servlets.CatalogueServlet;
-import com.vinylteam.vinyl.web.servlets.SearchResultsServlet;
-import com.vinylteam.vinyl.web.servlets.SignInServlet;
-import com.vinylteam.vinyl.web.servlets.SignUpServlet;
+import com.vinylteam.vinyl.web.servlets.*;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -34,10 +35,12 @@ public class Starter {
         /*DAO*/
         UserDao userDao = new JdbcUserDao();
         VinylDao vinylDao = new JdbcVinylDao();
+        ShopDao shopDao = new JdbcShopDao();
         /*SERVICE*/
         SecurityService securityService = new DefaultSecurityService();
         UserService userService = new DefaultUserService(userDao, securityService);
         VinylService vinylService = new DefaultVinylService(vinylDao);
+        ShopService shopService = new DefaultShopService(shopDao);
         /*UTIL, FILL IN DATABASE*/
 /*        ShopsParser shopsParser = new ShopsParser();
         VinylSorter vinylSorter = new VinylSorter();
@@ -54,6 +57,7 @@ public class Starter {
         SignUpServlet signUpServlet = new SignUpServlet(userService);
         CatalogueServlet catalogueServlet = new CatalogueServlet(vinylService);
         SearchResultsServlet searchResultsServlet = new SearchResultsServlet(vinylService);
+        OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(vinylService, shopService);
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContextHandler.setErrorHandler(new DefaultErrorHandler());
@@ -62,6 +66,7 @@ public class Starter {
         servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/signUp");
         servletContextHandler.addServlet(new ServletHolder(catalogueServlet), "/catalog");
         servletContextHandler.addServlet(new ServletHolder(searchResultsServlet), "/search");
+        servletContextHandler.addServlet(new ServletHolder(oneVinylOffersServlet), "/oneVinyl");
         servletContextHandler.addServlet(DefaultServlet.class, "/");
         Server server = new Server(Integer.parseInt(propertiesReader.getProperty("appPort")));
         server.setHandler(servletContextHandler);
