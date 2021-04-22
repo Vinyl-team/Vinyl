@@ -12,6 +12,9 @@
   display: flex;
   justify-content: space-between;
   height: 36.28em;
+}
+
+.first-vinyls-row-one-vinyl{
   border-bottom: thin solid rgba(255, 255, 255, 0.5);
 }
 
