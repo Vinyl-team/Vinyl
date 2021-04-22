@@ -1,8 +1,9 @@
 /* main of vinyl page */
 
 .shops-list{
-  width: 35em;
-  height: 28.86em;
+  /* size of list of shops */
+  width: 46.88em;
+  height: 35.39em;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -14,6 +15,7 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: thin solid rgba(255, 255, 255, 0.5);
+  width: 97%;
 }
 
 .shop-list__row:last-child{
@@ -28,21 +30,50 @@
   align-items: center;
 }
 
-.shop-list__item-title{
+.shop-list__first-item-title{
+  height: 1.42em;
+  width: 4.08em;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.discogs-link{
+  display: flex;
+  justify-content: center;
+  width: 6.65em;
+}
+
+.shop-list__second-item-title{
   height: 2.5em;
+  width: 10.17em;
+}
+
+.shop-list__row-first-title{
+  height: 2.11em;
+  display: flex;
+  text-align: center;
+  line-height: 1.1;
+  justify-content: flex-start;
+}
+
+.shop-list__row-second-title{
+  height: 2.56em;
+  text-align: center;
+  line-height: 2.56em;
 }
 
 .shop-list__title{
-  font-size: 1.33em;
-  line-height: 1.37;
+  /*font-size: 1.33em;*/
+  /*line-height: 1.37;*/
   text-transform: capitalize;
   align-self: flex-start;
-  width: 5.55em;
+  /* width first signature in shop list */
+  /*width: 5.55em;*/
 }
 
 .shop-list__column{
   width: 100%;
-  height: 88%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -54,15 +85,15 @@
 
 /* scrollbar */
 .shop-list__scrollbar::-webkit-scrollbar {
-  width: 24px;
-  background-color: rgba(151, 151, 151, 0.53);
-  border-radius: 9em;
+  width: 10px; /* width for vertical scrolling */
+  background-color: rgba(196, 196, 196, 0.5);
+  border-radius: 5px;
 }
 
 /* scrollbar slider */
 .shop-list__scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(247, 163, 37, 0.75);
-  border-radius: 9em;
+  background-color: #FFFFFF;
+  border-radius: 5px;
   box-shadow: inset 1px 1px 10px #f3faf7;
 }
 
@@ -71,15 +102,18 @@
 }
 
 .item-body{
-  height: 6.67em;
+  height: 4.44em;
 }
 
 .shop-list__item-image{
-  flex: 0 0 5.55em;
+  /* size of image shop list - was 10.17em */
+  flex: 0 0 10.83em;
+  height: 2.78em;
 }
 
 .shop-list__item-image img{
-  max-width: 100%;
+  width: 100%;
+  height: 100%;
 }
 
 .on-stock{
@@ -99,8 +133,8 @@
 }
 
 .shop-list__item-price{
-  font-size: 0.89em;
-  line-height: 1.38;
+  /*font-size: 0.89em;*/
+  /*line-height: 1.38;*/
   font-weight: bold;
   text-transform: uppercase;
 }
@@ -110,8 +144,8 @@
   font-size: 1.33em;
   line-height: 1.37;
   font-weight: bold;
-  height: 2.75em;
+  height: 5.72em;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
 }
