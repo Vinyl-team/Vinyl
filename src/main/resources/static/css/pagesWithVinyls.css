@@ -11,20 +11,25 @@
 .first-vinyls-row{
   display: flex;
   justify-content: space-between;
+  height: 36.28em;
+}
+
+.first-vinyls-row-one-vinyl{
+  border-bottom: thin solid rgba(255, 255, 255, 0.5);
 }
 
 .first-vinyl__wrapper{
-  width: 37.7em;
+  width: 33.06em;
   display: flex;
 }
 
 .first-vinyl__item{
   height: 37em;
-  flex: 0 0 34.24em;
+  flex: 0 0 30.45em;
 }
 
 .first-vinyl__image{
-  height: 28.84em;
+  height: 27.78em;
 }
 
 .first-vinyl__image img{
@@ -62,11 +67,11 @@
 
 .other-vinyls__item{
   height: 18.5em;
-  flex: 0 0 15.55em;
+  flex: 0 0 13.89em;
 }
 
 .other-vinyls__image{
-  height: 14.17em;
+  height: 13.89em;
 }
 
 .other-vinyls__image img{

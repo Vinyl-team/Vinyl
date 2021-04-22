@@ -83,8 +83,8 @@ public class PageGenerator {
 
         /** for search page */
         if (vinylList.size() > 1) {
-            if (vinylList.size() >= 5) {
-                for (int i = 1; i < 5; i++) {
+            if (vinylList.size() >= 7) {
+                for (int i = 1; i < 7; i++) {
                     firstVinylRow.add(vinylList.get(i));
                 }
             } else {
@@ -94,8 +94,8 @@ public class PageGenerator {
             }
             context.setVariable("firstVinylRow", firstVinylRow);
         }
-        if (vinylList.size() > 5) {
-            for (int i = 5; i < vinylList.size(); i++) {
+        if (vinylList.size() > 7) {
+            for (int i = 7; i < vinylList.size(); i++) {
                 otherVinylRow.add(vinylList.get(i));
             }
             context.setVariable("otherVinylRow", otherVinylRow);
