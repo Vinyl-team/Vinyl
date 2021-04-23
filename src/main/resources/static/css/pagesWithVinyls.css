@@ -11,20 +11,19 @@
 .first-vinyls-row{
   display: flex;
   justify-content: space-between;
-  height: 36.28em;
 }
 
 .first-vinyls-row-one-vinyl{
   border-bottom: thin solid rgba(255, 255, 255, 0.5);
+  padding-bottom: 20px;
 }
 
 .first-vinyl__wrapper{
-  width: 33.06em;
+  width: 33em;
   display: flex;
 }
 
 .first-vinyl__item{
-  height: 37em;
   flex: 0 0 30.45em;
 }
 
@@ -61,17 +60,19 @@
 .other-vinyls{
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  align-content: space-evenly;
+  margin: 0 -1.3em;
+  align-content: flex-start;
 }
 
 .other-vinyls__item{
+  padding: 0 1.3em;
   height: 18.5em;
-  flex: 0 0 13.89em;
+  flex: 0 0 20%;
 }
 
 .other-vinyls__image{
   height: 13.89em;
+  width: 13.89em;
 }
 
 .other-vinyls__image img{

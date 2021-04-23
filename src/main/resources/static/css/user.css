@@ -58,6 +58,15 @@
   cursor: pointer;
 }
 
+.user__submit-input:hover{
+  background-color: #D78D1E;
+}
+
+.user__submit-input:active{
+  background-color: #D78D1E;
+  border: 1px solid #FFFFFF;
+}
+
 .content-user__title{
   height: 5.28em;
 }
