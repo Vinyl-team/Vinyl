@@ -6,20 +6,12 @@ coverage:
   notify:
     slack:
       default:
-        url: "https://hooks.slack.com/services/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"
-        threshold: 1%
-        only_pulls: true
+        url: "https://hooks.slack.com/services/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"
         branches:
           - "develop"
-        flags:
-          - "unit"
-        paths:
-          - "src"
   precision: 2
   round: down
   range: "70...100"
-
-
 
 ignore:
   - "src/main/java/com/vinylteam/vinyl/discogs4j"
