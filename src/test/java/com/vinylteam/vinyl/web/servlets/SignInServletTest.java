@@ -4,7 +4,6 @@ import com.vinylteam.vinyl.entity.SignInCheckResult;
 import com.vinylteam.vinyl.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.eclipse.jetty.util.IO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -25,7 +24,7 @@ class SignInServletTest {
 
     @Test
     @DisplayName("Checks if the response code is 200 when loading the page /signIn")
-    void doGetTest() throws IOException{
+    void doGetTest() throws IOException {
         //prepare
         when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
         //when

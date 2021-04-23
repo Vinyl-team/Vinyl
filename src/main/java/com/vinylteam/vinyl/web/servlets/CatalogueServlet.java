@@ -21,9 +21,9 @@ public class CatalogueServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         List<Vinyl> randomUniqueVinyls = vinylService.getManyRandomUnique(50);
-        PageGenerator.getInstance().process("catalog", randomUniqueVinyls, response.getWriter());
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
+        PageGenerator.getInstance().process("catalog", randomUniqueVinyls, response.getWriter());
     }
 
 }

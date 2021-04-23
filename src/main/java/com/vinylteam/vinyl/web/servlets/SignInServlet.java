@@ -25,9 +25,9 @@ public class SignInServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        PageGenerator.getInstance().process("signIn", response.getWriter());
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
+        PageGenerator.getInstance().process("signIn", response.getWriter());
     }
 
     @Override

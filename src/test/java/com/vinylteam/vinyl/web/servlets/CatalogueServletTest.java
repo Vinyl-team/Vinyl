@@ -37,9 +37,9 @@ class CatalogueServletTest {
         catalogueServlet.doGet(mockedRequest, mockedResponse);
         //then
         verify(mockedVinylService).getManyRandomUnique(50);
-        inOrderResponse.verify(mockedResponse).getWriter();
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
+        inOrderResponse.verify(mockedResponse).getWriter();
     }
 
 }

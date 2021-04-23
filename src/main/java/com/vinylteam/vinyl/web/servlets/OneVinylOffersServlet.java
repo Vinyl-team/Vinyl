@@ -62,10 +62,9 @@ public class OneVinylOffersServlet extends HttpServlet {
                 }
             }
         }
-
-        PageGenerator.getInstance().process("vinyl", preparedListById, vinylOffersResponseList, response.getWriter());
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
+        PageGenerator.getInstance().process("vinyl", preparedListById, vinylOffersResponseList, response.getWriter());
     }
 
 }

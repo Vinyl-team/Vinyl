@@ -26,9 +26,9 @@ public class SearchResultsServlet extends HttpServlet {
         String matcher = request.getParameter("matcher");
         List<Vinyl> filteredUniqueVinyls = vinylService.getManyFilteredUnique(matcher);
         attributes.put("searchWord", matcher);
-        PageGenerator.getInstance().process("search", filteredUniqueVinyls, attributes, response.getWriter());
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
+        PageGenerator.getInstance().process("search", filteredUniqueVinyls, attributes, response.getWriter());
     }
 
 }

@@ -35,9 +35,9 @@ class SearchResultsServletTest {
         //then
         verify(mockedRequest).getParameter("matcher");
         verify(mockedVinylService).getManyFilteredUnique("release1");
-        inOrderResponse.verify(mockedResponse).getWriter();
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
+        inOrderResponse.verify(mockedResponse).getWriter();
     }
 
 }
