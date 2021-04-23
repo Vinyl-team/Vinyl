@@ -10,7 +10,6 @@
 
 .first-vinyls-row{
   display: flex;
-  justify-content: space-between;
 }
 
 .first-vinyls-row-one-vinyl{
@@ -45,6 +44,43 @@
 .first-vinyl__artist{
   font-size: 1.34em;
   line-height: 1.37;
+}
+
+.search-none{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.search-none__one{
+  font-weight: bold;
+  font-size: 28px;
+  line-height: 38px;
+  padding-bottom: 34px;
+}
+
+.search-none__two{
+  font-weight: bold;
+  font-size: 26px;
+  line-height: 35px;
+  padding-bottom: 10px;
+}
+
+.search-none__ul-search{
+  font-weight: bold;
+  font-size: 24px;
+  line-height: 33px;
+  padding-bottom: 23px;
+}
+
+.search-none__ul-search li{
+  list-style: disc;
+}
+
+.search-none__three{
+  font-weight: bold;
+  font-size: 26px;
+  line-height: 35px;
 }
 
 .vinyl{

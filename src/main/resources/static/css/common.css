@@ -190,6 +190,25 @@ h1 {
   align-items: center;
 }
 
+.head__login-buttons{
+  position: relative;
+}
+
+.head__login-buttons .tooltiptext {
+  visibility: hidden;
+  color: #fff;
+  font-size: 14px;
+  line-height: 19px;
+  position: absolute;
+  z-index: 1;
+  top:50px;
+  right: 0;
+}
+
+.head__login-buttons:hover .tooltiptext {
+  visibility: visible;
+}
+
 .header__search{
   height: 5.25em;
   display: flex;
