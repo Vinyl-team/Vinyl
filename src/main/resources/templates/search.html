@@ -104,9 +104,8 @@
                   <a class="first-vinyl__image" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">
                     <img th:src="${firstVinyl.imageLink}" alt="first vinyl">
                   </a>
-                  <a th:text="${firstVinyl.release}" class="first-vinyl__realise" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">No release</a>
-                  <a th:text="${firstVinyl.artist}" class="first-vinyl__artist" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">No artist</a>
-                  <div>Catalog No: MFO 42902</div>
+                  <a th:utext="${firstVinyl.artist}+'&lt;span class=&quot;tip-text&quot;&gt;'+${firstVinyl.artist}+'&lt;/span&gt;'" class="first-vinyl__artist" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">No artist</a>
+                  <a th:utext="${firstVinyl.release}+'&lt;span class=&quot;tip-text&quot;&gt;'+${firstVinyl.release}+'&lt;/span&gt;'" class="first-vinyl__release" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">No release</a>
                 </div>
               </div>
             </div>
@@ -116,8 +115,8 @@
                 <a class="other-vinyls__image" th:href="@{oneVinyl(vinylId=${vinylFromFirstRow.vinylId})}">
                   <img th:src="${vinylFromFirstRow.imageLink}" alt="vinyl image">
                 </a>
-                <a th:text="${vinylFromFirstRow.release}" th:href="@{oneVinyl(vinylId=${vinylFromFirstRow.vinylId})}" class="other-vinyls__realise">No release</a>
                 <a th:text="${vinylFromFirstRow.artist}" th:href="@{oneVinyl(vinylId=${vinylFromFirstRow.vinylId})}" class="other-vinyls__artist">No artist</a>
+                <a th:text="${vinylFromFirstRow.release}" th:href="@{oneVinyl(vinylId=${vinylFromFirstRow.vinylId})}" class="other-vinyls__release">No release</a>
               </div>
             </div>
             
@@ -132,8 +131,8 @@
               <a class="other-vinyls__image" th:href="@{oneVinyl(vinylId=${vinylFromOtherRow.vinylId})}">
                 <img th:src="${vinylFromOtherRow.imageLink}" alt="vinyl image">
               </a>
-              <a th:text="${vinylFromOtherRow.release}" th:href="@{oneVinyl(vinylId=${vinylFromOtherRow.vinylId})}" class="other-vinyls__realise">No release</a>
               <a th:text="${vinylFromOtherRow.artist}" th:href="@{oneVinyl(vinylId=${vinylFromOtherRow.vinylId})}" class="other-vinyls__artist">No artist</a>
+              <a th:text="${vinylFromOtherRow.release}" th:href="@{oneVinyl(vinylId=${vinylFromOtherRow.vinylId})}" class="other-vinyls__release">No release</a>
             </div>
 
           </div>

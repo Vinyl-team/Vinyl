@@ -24,10 +24,11 @@
 
 .first-vinyl__item{
   flex: 0 0 30.45em;
+  position: relative;
 }
 
 .first-vinyl__image{
-  height: 27.78em;
+  height: 30.45em;
 }
 
 .first-vinyl__image img{
@@ -36,14 +37,57 @@
   width: 100%;
 }
 
-.first-vinyl__realise{
-  font-size: 2em;
-  line-height: 1.36;
+.first-vinyl__release{
+  font-size: 1.34em;
+  line-height: 1.37;
+  width: 548px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tip-text {
+  visibility: hidden;
+  color: #fff;
+  font-size: 14px;
+  line-height: 19px;
+  white-space: pre-wrap;
+  position: absolute;
+  z-index: 1;
+  top:625px;
+  left: 0;
+}
+
+.vinyl-tip-text {
+  top:685px;
+}
+
+.first-vinyl__release:hover .tip-text {
+  visibility: visible;
 }
 
 .first-vinyl__artist{
-  font-size: 1.34em;
-  line-height: 1.37;
+  font-size: 2em;
+  line-height: 1.36;
+  width: 548px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.first-vinyl__artist:hover .tip-text {
+  visibility: visible;
+}
+
+.first-vinyl__catalog{
+  width: 548px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.first-vinyl__catalog:hover .tip-text {
+  visibility: visible;
 }
 
 .search-none{
@@ -89,6 +133,10 @@
 }
 
 .other-vinyls__artist{
+  font-weight: bold;
+}
+
+.other-vinyls__release{
   font-size: 0.89em;
   line-height: 1.38;
 }

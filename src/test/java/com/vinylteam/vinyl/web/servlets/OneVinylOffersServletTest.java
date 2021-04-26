@@ -59,7 +59,7 @@ class OneVinylOffersServletTest {
         inOrderVinylService.verify(mockedVinylService).getListOfShopIds(vinylOffers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
 
-        verify(mockedUniqueVinyl, times(3)).getArtist();
+        verify(mockedUniqueVinyl, times(4)).getArtist();
         inOrderVinylService.verify(mockedVinylService).getManyUniqueByArtist("artist1");
         verify(mockedResponse).getWriter();
     }
