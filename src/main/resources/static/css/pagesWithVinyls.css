@@ -24,6 +24,7 @@
 
 .first-vinyl__item{
   flex: 0 0 30.45em;
+  position: relative;
 }
 
 .first-vinyl__image{
@@ -45,6 +46,26 @@
   text-overflow: ellipsis;
 }
 
+.tip-text {
+  visibility: hidden;
+  color: #fff;
+  font-size: 14px;
+  line-height: 19px;
+  white-space: pre-wrap;
+  position: absolute;
+  z-index: 1;
+  top:625px;
+  left: 0;
+}
+
+.vinyl-tip-text {
+  top:685px;
+}
+
+.first-vinyl__realise:hover .tip-text {
+  visibility: visible;
+}
+
 .first-vinyl__artist{
   font-size: 2em;
   line-height: 1.36;
@@ -54,11 +75,19 @@
   text-overflow: ellipsis;
 }
 
+.first-vinyl__artist:hover .tip-text {
+  visibility: visible;
+}
+
 .first-vinyl__catalog{
   width: 548px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.first-vinyl__catalog:hover .tip-text {
+  visibility: visible;
 }
 
 .search-none{

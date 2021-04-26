@@ -104,8 +104,8 @@
                   <a class="first-vinyl__image" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">
                     <img th:src="${firstVinyl.imageLink}" alt="first vinyl">
                   </a>
-                  <a th:text="${firstVinyl.artist}" class="first-vinyl__artist" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">No artist</a>
-                  <a th:text="${firstVinyl.release}" class="first-vinyl__realise" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">No release</a>
+                  <a th:utext="${firstVinyl.artist}+'&lt;span class=&quot;tip-text&quot;&gt;'+${firstVinyl.artist}+'&lt;/span&gt;'" class="first-vinyl__artist" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">No artist</a>
+                  <a th:utext="${firstVinyl.release}+'&lt;span class=&quot;tip-text&quot;&gt;'+${firstVinyl.release}+'&lt;/span&gt;'" class="first-vinyl__realise" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">No release</a>
                 </div>
               </div>
             </div>
