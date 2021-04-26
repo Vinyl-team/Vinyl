@@ -27,7 +27,7 @@
 }
 
 .first-vinyl__image{
-  height: 27.78em;
+  height: 30.45em;
 }
 
 .first-vinyl__image img{
@@ -37,13 +37,28 @@
 }
 
 .first-vinyl__realise{
-  font-size: 2em;
-  line-height: 1.36;
+  font-size: 1.34em;
+  line-height: 1.37;
+  width: 548px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .first-vinyl__artist{
-  font-size: 1.34em;
-  line-height: 1.37;
+  font-size: 2em;
+  line-height: 1.36;
+  width: 548px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.first-vinyl__catalog{
+  width: 548px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .search-none{
@@ -89,6 +104,10 @@
 }
 
 .other-vinyls__artist{
+  font-weight: bold;
+}
+
+.other-vinyls__realise{
   font-size: 0.89em;
   line-height: 1.38;
 }
