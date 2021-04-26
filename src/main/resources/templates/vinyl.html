@@ -94,7 +94,7 @@
                                         <img th:src="${firstVinyl.imageLink}" alt="first vinyl">
                                     </div>
                                     <div class="first-vinyl__artist" th:utext="${firstVinyl.artist}+'&lt;span class=&quot;vinyl-tip-text tip-text&quot;&gt;'+${firstVinyl.artist}+'&lt;/span&gt;'">No artist</div>
-                                    <div class="first-vinyl__realise" th:utext="${firstVinyl.release}+'&lt;span class=&quot;vinyl-tip-text tip-text&quot;&gt;'+${firstVinyl.release}+'&lt;/span&gt;'">No release</div>
+                                    <div class="first-vinyl__release" th:utext="${firstVinyl.release}+'&lt;span class=&quot;vinyl-tip-text tip-text&quot;&gt;'+${firstVinyl.release}+'&lt;/span&gt;'">No release</div>
                                     <div class="first-vinyl__catalog">Catalog No: MFO 42902</div>
                                 </div>
                             </div>
@@ -162,7 +162,7 @@
                             <a th:href="@{oneVinyl(vinylId=${vinylByArtist.vinylId})}" th:text="${vinylByArtist.artist}"
                                class="other-vinyls__artist">No artist</a>
                             <a th:href="@{oneVinyl(vinylId=${vinylByArtist.vinylId})}"
-                               th:text="${vinylByArtist.release}" class="other-vinyls__realise">No realise</a>
+                               th:text="${vinylByArtist.release}" class="other-vinyls__release">No release</a>
                         </div>
                     </div>
 

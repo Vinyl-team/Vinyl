@@ -37,7 +37,7 @@
   width: 100%;
 }
 
-.first-vinyl__realise{
+.first-vinyl__release{
   font-size: 1.34em;
   line-height: 1.37;
   width: 548px;
@@ -62,7 +62,7 @@
   top:685px;
 }
 
-.first-vinyl__realise:hover .tip-text {
+.first-vinyl__release:hover .tip-text {
   visibility: visible;
 }
 
@@ -136,7 +136,7 @@
   font-weight: bold;
 }
 
-.other-vinyls__realise{
+.other-vinyls__release{
   font-size: 0.89em;
   line-height: 1.38;
 }
