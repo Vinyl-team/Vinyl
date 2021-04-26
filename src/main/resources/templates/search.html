@@ -82,8 +82,21 @@
 
         <!-- first row of goods -->
 
-        <div class="vinyls-content__first-row">
-          <div class="first-vinyls-row" th:if="${not #lists.isEmpty(firstVinylRow)}">
+        <div class="vinyls-content__first-row" th:switch="${firstVinyl}">
+
+          <div th:case="null">
+            <div class="search-none">
+              <p class="search-none__one">Sorry, we couldn't find any products matching your search term. Please try again.</p>
+              <p class="search-none__two">Useful tips:</p>
+              <ul class="search-none__ul-search">
+                <li>Check your spelling</li>
+                <li>Try again with less or different search terms</li>
+              </ul>
+              <p class="search-none__three">Thank you.</p>
+            </div>
+          </div>
+
+          <div class="first-vinyls-row" th:case="*">
 
             <div class="first-vinyl">
               <div class="first-vinyl__wrapper">
@@ -108,18 +121,6 @@
               </div>
             </div>
             
-          </div>
-
-          <div th:if="${#lists.isEmpty(firstVinylRow)}">
-            <div class="search-none">
-              <p class="search-none__one">Sorry, we couldn't find any products matching your search term. Please try again.</p>
-              <p class="search-none__two">Useful tips:</p>
-              <ul class="search-none__ul-search">
-                <li>Check your spelling</li>
-                <li>Try again with less or different search terms</li>
-              </ul>
-              <p class="search-none__three">Thank you.</p>
-            </div>
           </div>
 
         </div>
