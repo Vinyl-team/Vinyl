@@ -1,8 +1,6 @@
 <configuration>
+    <property resource="application.properties"/>
     <property name="LOGGING_PATTERN" value="%-5(%d{HH:mm:ss.SSS} [%thread]) %class{36} %-5level %logger{10} - %msg%n"/>
-    <property name="FILE_NAME" value="vinyl.log"/>
-    <property name="FILE_NAME_PATTERN" value="vinyl-%d{yyyy-MM-dd}.%i.log"/>
-    <property name="FILTER_LEVEL" value="info"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -15,7 +13,7 @@
     </appender>
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${FILE_NAME}</file>
+        <file>${PACKAGE_NAME}/${FILE_NAME}</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>${FILTER_LEVEL}</level>
         </filter>
