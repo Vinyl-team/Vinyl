@@ -22,7 +22,7 @@ class JdbcOfferDaoITest {
 
     private Connection connection;
     private final OfferDao offerDao = new JdbcOfferDao();
-    private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests(connection);
+    private DatabasePreparerForITests databasePreparer;
     private final List<Shop> shops = new ArrayList<>();
     private final List<UniqueVinyl> uniqueVinyls = new ArrayList<>();
     private final List<Offer> offers = new ArrayList<>();
@@ -31,6 +31,7 @@ class JdbcOfferDaoITest {
     @BeforeAll
     void beforeAll() throws SQLException {
         connection = DBDataSource.getConnection();
+        databasePreparer = new DatabasePreparerForITests(connection);
         listPreparer.fillShopsList(shops);
         listPreparer.fillUniqueVinylsList(uniqueVinyls);
         listPreparer.fillOffersList(offers);
