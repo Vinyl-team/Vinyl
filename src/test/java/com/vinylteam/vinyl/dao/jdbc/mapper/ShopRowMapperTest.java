@@ -1,5 +1,6 @@
 package com.vinylteam.vinyl.dao.jdbc.mapper;
 
+import com.vinylteam.vinyl.dao.RowMapper;
 import com.vinylteam.vinyl.entity.Shop;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 class ShopRowMapperTest {
 
-    private final ShopRowMapper shopRowMapper = new ShopRowMapper();
+    private final RowMapper<Shop> rowMapper = new ShopRowMapper();
 
     @Test
     @DisplayName("Checks if shop created from resultSet has all fields right.")
@@ -26,7 +27,7 @@ class ShopRowMapperTest {
         when(mockedFilledResultSet.getString("link_to_image")).thenReturn("shop1/image.png");
         when(mockedFilledResultSet.getString("name")).thenReturn("shop1");
         //when
-        Shop actualShop = shopRowMapper.mapRow(mockedFilledResultSet);
+        Shop actualShop = rowMapper.mapRow(mockedFilledResultSet);
         //then
         assertEquals(1, actualShop.getId());
         assertEquals("shop1/main", actualShop.getMainPageLink());
@@ -37,8 +38,6 @@ class ShopRowMapperTest {
     @Test
     @DisplayName("Checks if passing null ResultSet causes RuntimeException.")
     void mapNullRowTest() {
-        assertThrows(RuntimeException.class, () -> {
-            shopRowMapper.mapRow(null);
-        });
+        assertThrows(RuntimeException.class, () -> rowMapper.mapRow(null));
     }
 }

@@ -1,3 +1,4 @@
+/*
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.Shop;
@@ -35,3 +36,4 @@ public class OneVinylOffersServlet extends HttpServlet {
     }
 
 }
+*/

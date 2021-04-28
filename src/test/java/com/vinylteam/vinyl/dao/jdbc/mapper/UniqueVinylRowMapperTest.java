@@ -1,6 +1,7 @@
 package com.vinylteam.vinyl.dao.jdbc.mapper;
 
-import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.dao.RowMapper;
+import com.vinylteam.vinyl.entity.UniqueVinyl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 class UniqueVinylRowMapperTest {
 
-    private final UniqueVinylRowMapper uniqueVinylRowMapper = new UniqueVinylRowMapper();
+    private final RowMapper<UniqueVinyl> rowMapper = new UniqueVinylRowMapper();
 
     @Test
     @DisplayName("Checks if user created from resultSet has all fields right.")
@@ -27,21 +28,19 @@ class UniqueVinylRowMapperTest {
         when(mockedResultSet.getString("full_name")).thenReturn("release1 - artist1");
         when(mockedResultSet.getString("link_to_image")).thenReturn("https://imagestore.com/somewhere/image1.jpg");
         //when
-        Vinyl vinyl = uniqueVinylRowMapper.mapRow(mockedResultSet);
+        UniqueVinyl uniqueVinyl = rowMapper.mapRow(mockedResultSet);
         //then
-        assertEquals(1, vinyl.getVinylId());
-        assertEquals("release1", vinyl.getRelease());
-        assertEquals("artist1", vinyl.getArtist());
-        assertEquals("release1 - artist1", vinyl.getFullNameVinyl());
-        assertEquals("https://imagestore.com/somewhere/image1.jpg", vinyl.getImageLink());
+        assertEquals(1, uniqueVinyl.getId());
+        assertEquals("release1", uniqueVinyl.getRelease());
+        assertEquals("artist1", uniqueVinyl.getArtist());
+        assertEquals("release1 - artist1", uniqueVinyl.getFullName());
+        assertEquals("https://imagestore.com/somewhere/image1.jpg", uniqueVinyl.getImageLink());
     }
 
     @Test
     @DisplayName("Checks if passing null ResultSet causes RuntimeException.")
     void mapRowWithNullResultSetTest() {
-        assertThrows(RuntimeException.class, () -> {
-            uniqueVinylRowMapper.mapRow(null);
-        });
+        assertThrows(RuntimeException.class, () -> rowMapper.mapRow(null));
     }
 
 }

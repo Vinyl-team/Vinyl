@@ -1,15 +1,17 @@
 package com.vinylteam.vinyl.dao.jdbc.mapper;
 
+import com.vinylteam.vinyl.dao.RowMapper;
 import com.vinylteam.vinyl.entity.Shop;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 
-public class ShopRowMapper {
+public class ShopRowMapper implements RowMapper<Shop> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Override
     public Shop mapRow(ResultSet resultSet) {
         if (resultSet != null) {
             Shop shop = new Shop();

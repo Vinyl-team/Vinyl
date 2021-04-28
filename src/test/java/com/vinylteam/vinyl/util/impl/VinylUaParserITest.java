@@ -1,3 +1,4 @@
+/*
 package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.Vinyl;
@@ -48,4 +49,4 @@ class VinylUaParserITest {
         assertFalse(actualVinyls.isEmpty());
     }
 
-}
+}*/

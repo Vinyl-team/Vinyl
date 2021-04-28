@@ -1,3 +1,4 @@
+/*
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.Vinyl;
@@ -27,3 +28,4 @@ public class CatalogueServlet extends HttpServlet {
     }
 
 }
+*/

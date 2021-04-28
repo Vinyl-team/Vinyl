@@ -1,3 +1,4 @@
+/*
 package com.vinylteam.vinyl.dao.jdbc;
 
 import com.vinylteam.vinyl.dao.DBDataSource;
@@ -279,3 +280,4 @@ public class JdbcVinylDao implements VinylDao {
     }
 
 }
+*/

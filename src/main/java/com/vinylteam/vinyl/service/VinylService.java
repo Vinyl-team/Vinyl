@@ -1,3 +1,4 @@
+/*
 package com.vinylteam.vinyl.service;
 
 import com.vinylteam.vinyl.entity.Vinyl;
@@ -29,3 +30,4 @@ public interface VinylService {
     List<Integer> getListOfShopIds(List<Vinyl> vinyls);
 
 }
+*/

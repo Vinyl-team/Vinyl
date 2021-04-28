@@ -1,183 +1,370 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
 import com.vinylteam.vinyl.dao.DBDataSource;
-import com.vinylteam.vinyl.dao.VinylDao;
-import com.vinylteam.vinyl.entity.Currency;
+import com.vinylteam.vinyl.dao.UniqueVinylDao;
+import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.Shop;
-import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.entity.UniqueVinyl;
+import com.vinylteam.vinyl.util.DatabasePreparerForITests;
+import com.vinylteam.vinyl.util.ListPreparerForTests;
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class JdbcVinylDaoITest {
+class JdbcUniqueVinylDaoITest {
 
-    private final String TRUNCATE_SHOPS = "TRUNCATE shops RESTART IDENTITY CASCADE";
-    private final String TRUNCATE_UNIQUE_VINYLS = "TRUNCATE unique_vinyls RESTART IDENTITY CASCADE";
-    private final String TRUNCATE_VINYLS = "TRUNCATE vinyls RESTART IDENTITY";
-    private final String INSERT_SHOPS = "INSERT INTO shops(id, link_to_main_page, link_to_image, name)" +
-            "VALUES(?, ?, ?, ?), (?, ?, ?, ?)";
-    private final String INSERT_UNIQUE_VINYLS = "INSERT INTO unique_vinyls(id, release, artist, full_name, link_to_image)" +
-            "VALUES(?, ?, ?, ?, ?), (?, ?, ?, ?, ?)";
-    private final String INSERT_VINYLS = "INSERT INTO vinyls(release, artist, full_name, genre," +
-            " price, currency, link_to_vinyl, link_to_image, shop_id, unique_vinyl_id)" +
-            "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    private final VinylDao vinylDao = new JdbcVinylDao();
-
-    private List<Shop> shopList;
-    private List<Vinyl> vinylList;
     private Connection connection;
+    private final UniqueVinylDao uniqueVinylDao = new JdbcUniqueVinylDao();
+    private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests(connection);
+    private final List<Shop> shops = new ArrayList<>();
+    private final List<UniqueVinyl> uniqueVinyls = new ArrayList<>();
+    private final List<Offer> offers = new ArrayList<>();
+    private final ListPreparerForTests listPreparer = new ListPreparerForTests();
 
     @BeforeAll
     void beforeAll() throws SQLException {
         connection = DBDataSource.getConnection();
-        try (Statement truncateShops = connection.createStatement();
-             Statement truncateUniqueVinyls = connection.createStatement();
-             Statement truncateVinyls = connection.createStatement()) {
-            truncateShops.executeUpdate(TRUNCATE_SHOPS);
-            truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
-            truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
-        }
-        shopList = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            Shop shop = new Shop();
-            shop.setId(i + 1);
-            shop.setName("shop" + (i + 1));
-            shop.setMainPageLink(shop.getName() + "/main");
-            shop.setImageLink(shop.getName() + "/image.png");
-            shopList.add(shop);
-        }
+        listPreparer.fillShopsList(shops);
+        listPreparer.fillUniqueVinylsList(uniqueVinyls);
+        listPreparer.fillOffersList(offers);
+        databasePreparer.truncateAllVinylTables();
     }
 
     @AfterAll
     void afterAll() throws SQLException {
-        try (Statement truncateShops = connection.createStatement();
-             Statement truncateUniqueVinyls = connection.createStatement();
-             Statement truncateVinyls = connection.createStatement()) {
-            truncateShops.executeUpdate(TRUNCATE_SHOPS);
-            truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
-            truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
-        }
+        databasePreparer.truncateAllVinylTables();
         connection.close();
     }
 
     @BeforeEach
     void beforeEach() throws SQLException {
-        try (PreparedStatement insertShops = connection.prepareStatement(INSERT_SHOPS);
-             PreparedStatement insertUniqueVinyls = connection.prepareStatement(INSERT_UNIQUE_VINYLS);
-             PreparedStatement insertVinyls = connection.prepareStatement(INSERT_VINYLS)) {
-            for (int i = 0; i < 2; i++) {
-                insertShops.setInt(1 + i * 4, shopList.get(i).getId());
-                insertShops.setString(2 + i * 4, shopList.get(i).getMainPageLink());
-                insertShops.setString(3 + i * 4, shopList.get(i).getImageLink());
-                insertShops.setString(4 + i * 4, shopList.get(i).getName());
-            }
-            insertShops.executeUpdate();
-
-            insertUniqueVinyls.setLong(1, 1);
-            insertUniqueVinyls.setString(2, "release1");
-            insertUniqueVinyls.setString(3, "artist1");
-            insertUniqueVinyls.setString(4, "release1 - artist1");
-            insertUniqueVinyls.setString(5, "https://imagestore.com/somewhere/image1.jpg");
-            insertUniqueVinyls.setLong(6, 2);
-            insertUniqueVinyls.setString(7, "release2");
-            insertUniqueVinyls.setString(8, "artist2");
-            insertUniqueVinyls.setString(9, "release2 - artist2");
-            insertUniqueVinyls.setString(10, "https://imagestore.com/somewhere/image2.jpg");
-            insertUniqueVinyls.executeUpdate();
-
-            insertVinyls.setString(1, "release1");
-            insertVinyls.setString(2, "artist1");
-            insertVinyls.setString(3, "release1 - artist1");
-            insertVinyls.setString(4, "pop");
-            insertVinyls.setDouble(5, 55);
-            insertVinyls.setString(6, Currency.UAH.toString());
-            insertVinyls.setString(7, "https://vinylstore.com/somewhere/release1");
-            insertVinyls.setString(8, "https://imagestore.com/somewhere/image1.jpg");
-            insertVinyls.setInt(9, 1);
-            insertVinyls.setLong(10, 1);
-            insertVinyls.setString(11, "release1 (Vinyl)");
-            insertVinyls.setString(12, "artist1");
-            insertVinyls.setString(13, "release1 (Vinyl) - artist1");
-            insertVinyls.setString(14, "pop");
-            insertVinyls.setDouble(15, 200);
-            insertVinyls.setString(16, Currency.UAH.toString());
-            insertVinyls.setString(17, "https://vinylsite.com/there/release1vinyl");
-            insertVinyls.setString(18, "https://imagestore.com/there/image1vinyl.jpg");
-            insertVinyls.setInt(19, 2);
-            insertVinyls.setLong(20, 1);
-            insertVinyls.setString(21, "release2");
-            insertVinyls.setString(22, "artist2");
-            insertVinyls.setString(23, "release2 - artist2");
-            insertVinyls.setString(24, "rock");
-            insertVinyls.setDouble(25, 1500);
-            insertVinyls.setString(26, Currency.EUR.toString());
-            insertVinyls.setString(27, "https://bestvinyl.com/here/release2");
-            insertVinyls.setString(28, "https://imagestore.com/somewhere/image2.jpg");
-            insertVinyls.setInt(29, 1);
-            insertVinyls.setLong(30, 2);
-            insertVinyls.executeUpdate();
-        }
-        vinylList = new ArrayList<>();
-
-        Vinyl firstVinyl = new Vinyl();
-        firstVinyl.setVinylId(1);
-        firstVinyl.setRelease("release1");
-        firstVinyl.setArtist("artist1");
-        firstVinyl.setFullNameVinyl("release1 - artist1");
-        firstVinyl.setGenre("pop");
-        firstVinyl.setPrice(55.0);
-        firstVinyl.setCurrency(Optional.of(Currency.UAH));
-        firstVinyl.setVinylLink("https://vinylstore.com/somewhere/release1");
-        firstVinyl.setImageLink("https://imagestore.com/somewhere/image1.jpg");
-        firstVinyl.setShopId(1);
-        firstVinyl.setUniqueVinylId(1);
-        vinylList.add(firstVinyl);
-
-        Vinyl secondVinyl = new Vinyl();
-        secondVinyl.setVinylId(2);
-        secondVinyl.setRelease("release2");
-        secondVinyl.setArtist("artist2");
-        secondVinyl.setFullNameVinyl("release2 - artist2");
-        secondVinyl.setGenre("rock");
-        secondVinyl.setPrice(1500.0);
-        secondVinyl.setCurrency(Optional.of(Currency.EUR));
-        secondVinyl.setVinylLink("https://bestvinyl.com/here/release2");
-        secondVinyl.setImageLink("https://imagestore.com/somewhere/image2.jpg");
-        secondVinyl.setShopId(1);
-        secondVinyl.setUniqueVinylId(2);
-        vinylList.add(secondVinyl);
-
+        databasePreparer.insertShops(shops);
+        databasePreparer.insertUniqueVinyls(uniqueVinyls);
+        databasePreparer.insertOffers(offers);
     }
 
     @AfterEach
     void afterEach() throws SQLException {
-        try (Statement truncateShops = connection.createStatement();
-             Statement truncateUniqueVinyls = connection.createStatement();
-             Statement truncateVinyls = connection.createStatement()) {
-            truncateShops.executeUpdate(TRUNCATE_SHOPS);
-            truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
-            truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
-        }
+        databasePreparer.truncateAllVinylTables();
     }
 
     @Test
+    @DisplayName("Returns true after adding elements of valid filled list")
+    void addAllTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        //when
+        boolean actualIsAdded = uniqueVinylDao.addAll(uniqueVinyls);
+        //then
+        assertTrue(actualIsAdded);
+    }
+
+    @Test
+    @DisplayName("Returns false when empty list is passed")
+    void addAllEmptyListTest() {
+        //when
+        boolean actualIsAdded = uniqueVinylDao.addAll(new ArrayList<>());
+        //then
+        assertFalse(actualIsAdded);
+    }
+
+    @Test
+    @DisplayName("Throws RuntimeException when null is passed")
+    void addAllNullListTest() {
+        //when
+        assertThrows(RuntimeException.class, () -> uniqueVinylDao.addAll(null));
+    }
+
+    @Test
+    @DisplayName("Returns false when one of elements of passed list has id that exists in db")
+    void addAllExistingIdListTest() {
+        //prepare
+        List<UniqueVinyl> existingIdUniqueVinyls = new ArrayList<>(uniqueVinyls);
+        existingIdUniqueVinyls.get(1).setId(4);
+        existingIdUniqueVinyls.get(2).setId(5);
+        //when
+        boolean actualIsAdded = uniqueVinylDao.addAll(existingIdUniqueVinyls);
+        //then
+        assertFalse(actualIsAdded);
+    }
+
+    @Test
+    @DisplayName("Returns false when two elements of passed list have same id that doesn't exist in db")
+    void addAllDuplicateNewIdListTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        List<UniqueVinyl> duplicateIdsUniqueVinyls = new ArrayList<>(uniqueVinyls);
+        duplicateIdsUniqueVinyls.get(1).setId(1);
+        //when
+        boolean actualIsAdded = uniqueVinylDao.addAll(duplicateIdsUniqueVinyls);
+        //then
+        assertFalse(actualIsAdded);
+    }
+
+    @Test
+    @DisplayName("Returns false when one of elements of passed list has null release")
+    void addAllNullReleaseListTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        List<UniqueVinyl> nullReleaseUniqueVinyls = new ArrayList<>(uniqueVinyls);
+        nullReleaseUniqueVinyls.get(0).setRelease(null);
+        //when
+        boolean actualIsAdded = uniqueVinylDao.addAll(nullReleaseUniqueVinyls);
+        //then
+        assertFalse(actualIsAdded);
+    }
+
+    @Test
+    @DisplayName("Returns false when one of elements of passed list has null artist")
+    void addAllNullArtistListTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        List<UniqueVinyl> nullArtistUniqueVinyls = new ArrayList<>(uniqueVinyls);
+        nullArtistUniqueVinyls.get(0).setArtist(null);
+        //when
+        boolean actualIsAdded = uniqueVinylDao.addAll(nullArtistUniqueVinyls);
+        //then
+        assertFalse(actualIsAdded);
+    }
+
+    @Test
+    @DisplayName("Returns false when one of elements of passed list has null fullName")
+    void addAllNullFullNameListTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        List<UniqueVinyl> nullFullNameUniqueVinyls = new ArrayList<>(uniqueVinyls);
+        nullFullNameUniqueVinyls.get(0).setFullName(null);
+        //when
+        boolean actualIsAdded = uniqueVinylDao.addAll(nullFullNameUniqueVinyls);
+        //then
+        assertFalse(actualIsAdded);
+    }
+
+    @Test
+    @DisplayName("Returns false when one of elements of passed list has null imageLink")
+    void addAllNullImageLinkListTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        List<UniqueVinyl> nullImageLinkUniqueVinyls = new ArrayList<>(uniqueVinyls);
+        nullImageLinkUniqueVinyls.get(0).setImageLink(null);
+        //when
+        boolean actualIsAdded = uniqueVinylDao.addAll(nullImageLinkUniqueVinyls);
+        //then
+        assertFalse(actualIsAdded);
+    }
+
+    @Test
+    @DisplayName("Returns filled list with all unique vinyls from table that isn't empty")
+    void findAllTest() {
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findAll();
+        //then
+        assertEquals(uniqueVinyls, actualUniqueVinyls);
+    }
+
+    @Test
+    @DisplayName("Returns empty list from empty table")
+    void findAllEmptyTableTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findAll();
+        //then
+        assertTrue(actualUniqueVinyls.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Returns uniqueVinyl by id match from table")
+    void findByIdTest() {
+        //when
+        UniqueVinyl actualUniqueVinyl = uniqueVinylDao.findById(1);
+        //then
+        assertEquals(uniqueVinyls.get(0), actualUniqueVinyl);
+    }
+
+    @Test
+    @DisplayName("Throws RuntimeException when id has no matches")
+    void findByNoMatchIdTest() {
+        //when
+        assertThrows(RuntimeException.class, () -> uniqueVinylDao.findById(4));
+    }
+
+    @Test
+    @DisplayName("Throws RuntimeException when finding by id in empty table")
+    void findByIdEmptyTableTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        //when
+        assertThrows(RuntimeException.class, () -> uniqueVinylDao.findById(3));
+    }
+
+    @Test
+    @DisplayName("Returns filled list with exact amount of different unique vinyls selected randomly when requested amount is less than amount of rows in table")
+    void findManyRandomTest() {
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyRandom(2);
+        //then
+        assertEquals(2, actualUniqueVinyls.size());
+        assertNotEquals(actualUniqueVinyls.get(0), actualUniqueVinyls.get(1));
+    }
+
+    @Test
+    @DisplayName("Returns filled list with all unique vinyls from table selected randomly when requested amount is equal or bigger than amount of rows in table")
+    void findManyRandomAmountBiggerThanTableSizeTest() {
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyRandom(4);
+        //then
+        assertEquals(3, actualUniqueVinyls.size());
+        assertTrue(uniqueVinyls.containsAll(actualUniqueVinyls));
+        assertNotEquals(actualUniqueVinyls.get(0), actualUniqueVinyls.get(1));
+        assertNotEquals(actualUniqueVinyls.get(1), actualUniqueVinyls.get(2));
+        assertNotEquals(actualUniqueVinyls.get(2), actualUniqueVinyls.get(0));
+    }
+
+    @Test
+    @DisplayName("Returns empty list when requested valid amount from empty table")
+    void findManyRandomEmptyTableTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyRandom(3);
+        //then
+        assertTrue(actualUniqueVinyls.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Returns empty list when requested amount 0 from filled table")
+    void findManyRandomAmountZeroTest() {
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyRandom(0);
+        //then
+        assertTrue(actualUniqueVinyls.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Throws RuntimeException when amount is less then 0")
+    void findManyRandomNegativeAmountTest() {
+        //when
+        assertThrows(RuntimeException.class, () -> uniqueVinylDao.findManyRandom(-3));
+    }
+
+    @Test
+    @DisplayName("Returns filled list by full name substring matcher that has matches in table")
+    void findManyFilteredTest() {
+        //prepare
+        List<UniqueVinyl> expectedUniqueVinyls = new ArrayList<>(List.of(uniqueVinyls.get(0)));
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyFiltered("1");
+        //then
+        assertEquals(expectedUniqueVinyls, actualUniqueVinyls);
+    }
+
+    @Test
+    @DisplayName("Returns empty list by full name substring matcher that has no matches in table")
+    void findManyFilteredZeroMatchesTest() {
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyFiltered("4");
+        //then
+        assertTrue(actualUniqueVinyls.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Returns filled list of all rows when finding by full name substring matcher that is empty string")
+    void findManyFilteredEmptyMatcherTest() {
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyFiltered("");
+        //then
+        assertEquals(uniqueVinyls, actualUniqueVinyls);
+    }
+
+    @Test
+    @DisplayName("Throws RuntimeException when matcher is null")
+    void findManyFilteredNullMatcherTest() {
+        //when
+        assertThrows(RuntimeException.class, () -> uniqueVinylDao.findManyFiltered(null));
+    }
+
+    @Test
+    @DisplayName("Throws RuntimeException when matcher is null and table is empty")
+    void findManyFilteredNullMatcherEmptyTableTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        //when
+        assertThrows(RuntimeException.class, () -> uniqueVinylDao.findManyFiltered(null));
+    }
+
+    @Test
+    @DisplayName("Returns empty list when finding by matcher in empty table")
+    void findManyFilteredEmptyTableTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyFiltered("1");
+        //then
+        assertTrue(actualUniqueVinyls.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Returns filled list by artist that has matches in the table")
+    void findManyByArtistTest() {
+        //prepare
+        List<UniqueVinyl> expectedUniqueVinyls = new ArrayList<>(List.of(uniqueVinyls.get(0)));
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyByArtist("artist1");
+        //then
+        assertEquals(expectedUniqueVinyls, actualUniqueVinyls);
+    }
+
+    @Test
+    @DisplayName("Returns empty list by artist that has no matches in the table")
+    void findManyByArtistNoMatchesTest() {
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyByArtist("artist4");
+        //then
+        assertTrue(actualUniqueVinyls.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Throws RuntimeException when passed artist is null")
+    void findManyByNullArtistTest() {
+        //when
+        assertThrows(RuntimeException.class, () -> uniqueVinylDao.findManyByArtist(null));
+    }
+
+    @Test
+    @DisplayName("Throws RuntimeException when passed artist is null and table is empty")
+    void findManyByNullArtistEmptyTableTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        //when
+        assertThrows(RuntimeException.class, () -> uniqueVinylDao.findManyByArtist(null));
+    }
+
+    @Test
+    @DisplayName("Returns empty list when table is empty")
+    void findManyByArtistEmptyTableTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        //when
+        List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyByArtist("artist1");
+        //then
+        assertTrue(actualUniqueVinyls.isEmpty());
+    }
+
+   /* @Test
     @DisplayName("Tests if unique vinyls were added accurately to the table public.unique_vinyls.")
     void addAllUniqueTest() throws SQLException {
         try (Statement truncateUniqueVinyls = connection.createStatement()) {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
-            vinylDao.addAllUnique(vinylList);
+            uniqueVinylDao.addAllUnique(vinylList);
 
-            List<Vinyl> vinyls = vinylDao.getAllUnique();
+            List<Vinyl> vinyls = uniqueVinylDao.getAllUnique();
 
             assertEquals(1, vinyls.get(0).getVinylId());
             assertEquals("release1", vinyls.get(0).getRelease());
@@ -201,7 +388,7 @@ class JdbcVinylDaoITest {
             vinylList.get(1).setUniqueVinylId(1);
 
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.addAllUnique(vinylList);
+                uniqueVinylDao.addAllUnique(vinylList);
             });
         }
     }
@@ -214,7 +401,7 @@ class JdbcVinylDaoITest {
             vinylList.get(0).setRelease(null);
 
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.addAllUnique(vinylList);
+                uniqueVinylDao.addAllUnique(vinylList);
             });
         }
     }
@@ -227,7 +414,7 @@ class JdbcVinylDaoITest {
             vinylList.get(0).setArtist(null);
 
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.addAllUnique(vinylList);
+                uniqueVinylDao.addAllUnique(vinylList);
             });
         }
     }
@@ -240,7 +427,7 @@ class JdbcVinylDaoITest {
             vinylList.get(0).setImageLink(null);
 
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.addAllUnique(vinylList);
+                uniqueVinylDao.addAllUnique(vinylList);
             });
         }
     }
@@ -250,9 +437,9 @@ class JdbcVinylDaoITest {
     void addAllTest() throws SQLException {
         try (Statement truncateVinyls = connection.createStatement()) {
             truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
-            vinylDao.addAll(vinylList);
+            uniqueVinylDao.addAll(vinylList);
 
-            List<Vinyl> vinyls = vinylDao.getAll();
+            List<Vinyl> vinyls = uniqueVinylDao.getAll();
 
             assertEquals(1, vinyls.get(0).getVinylId());
             assertEquals("release1", vinyls.get(0).getRelease());
@@ -288,7 +475,7 @@ class JdbcVinylDaoITest {
             vinylList.get(0).setRelease(null);
 
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.addAll(vinylList);
+                uniqueVinylDao.addAll(vinylList);
             });
         }
     }
@@ -301,7 +488,7 @@ class JdbcVinylDaoITest {
             vinylList.get(0).setArtist(null);
 
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.addAll(vinylList);
+                uniqueVinylDao.addAll(vinylList);
             });
         }
     }
@@ -314,7 +501,7 @@ class JdbcVinylDaoITest {
             vinylList.get(0).setCurrency(Optional.ofNullable(null));
 
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.addAll(vinylList);
+                uniqueVinylDao.addAll(vinylList);
             });
         }
     }
@@ -327,7 +514,7 @@ class JdbcVinylDaoITest {
             vinylList.get(0).setVinylLink(null);
 
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.addAll(vinylList);
+                uniqueVinylDao.addAll(vinylList);
             });
         }
     }
@@ -340,7 +527,7 @@ class JdbcVinylDaoITest {
             vinylList.get(0).setImageLink(null);
 
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.addAll(vinylList);
+                uniqueVinylDao.addAll(vinylList);
             });
         }
     }
@@ -353,7 +540,7 @@ class JdbcVinylDaoITest {
             vinylList.get(0).setShopId(0);
 
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.addAll(vinylList);
+                uniqueVinylDao.addAll(vinylList);
             });
         }
     }
@@ -366,7 +553,7 @@ class JdbcVinylDaoITest {
             vinylList.get(0).setUniqueVinylId(0);
 
             assertThrows(RuntimeException.class, () -> {
-                vinylDao.addAll(vinylList);
+                uniqueVinylDao.addAll(vinylList);
             });
         }
     }
@@ -374,7 +561,7 @@ class JdbcVinylDaoITest {
     @Test
     @DisplayName("Gets all unique vinyls from db")
     void getAllUniqueTest() {
-        List<Vinyl> uniqueVinyls = vinylDao.getAllUnique();
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getAllUnique();
 
         assertEquals(1, uniqueVinyls.get(0).getVinylId());
         assertEquals("release1", uniqueVinyls.get(0).getRelease());
@@ -396,7 +583,7 @@ class JdbcVinylDaoITest {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
         }
 
-        List<Vinyl> uniqueVinyls = vinylDao.getAllUnique();
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getAllUnique();
 
         assertEquals(0, uniqueVinyls.size());
     }
@@ -418,7 +605,7 @@ class JdbcVinylDaoITest {
             insertUniqueVinyls.executeUpdate();
         }
 
-        List<Vinyl> uniqueVinyls = vinylDao.getManyRandomUnique(2);
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyRandomUnique(2);
 
         assertEquals(2, uniqueVinyls.size());
         assertNotEquals(uniqueVinyls.get(1).getVinylId(), uniqueVinyls.get(0).getVinylId());
@@ -431,7 +618,7 @@ class JdbcVinylDaoITest {
     @Test
     @DisplayName("Gets random unique vinyls from db by amount 0")
     void getManyRandomUniqueWithAmountZeroTest() {
-        List<Vinyl> uniqueVinyls = vinylDao.getManyRandomUnique(0);
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyRandomUnique(0);
 
         assertTrue(uniqueVinyls.isEmpty());
     }
@@ -439,7 +626,7 @@ class JdbcVinylDaoITest {
     @Test
     @DisplayName("Gets random unique vinyls from db by amount 1")
     void getManyRandomUniqueWithAmountOneTest() {
-        List<Vinyl> uniqueVinyls = vinylDao.getManyRandomUnique(1);
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyRandomUnique(1);
 
         assertEquals(1, uniqueVinyls.size());
     }
@@ -447,7 +634,7 @@ class JdbcVinylDaoITest {
     @Test
     @DisplayName("Gets random unique vinyls from db by amount larger than amount of rows in the table")
     void getManyRandomUniqueWithAmountBiggerThanCountTest() {
-        List<Vinyl> uniqueVinyls = vinylDao.getManyRandomUnique(10);
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyRandomUnique(10);
 
         assertEquals(2, uniqueVinyls.size());
         assertNotEquals(uniqueVinyls.get(1).getVinylId(), uniqueVinyls.get(0).getVinylId());
@@ -457,7 +644,7 @@ class JdbcVinylDaoITest {
     @DisplayName("Check that getting negative amount of random unique vinyls from db throws RuntimeException.")
     void getManyRandomUniqueWithAmountBelowZeroTest() {
         assertThrows(RuntimeException.class, () -> {
-            List<Vinyl> uniqueVinyls = vinylDao.getManyRandomUnique(-2);
+            List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyRandomUnique(-2);
         });
     }
 
@@ -468,7 +655,7 @@ class JdbcVinylDaoITest {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
         }
 
-        List<Vinyl> uniqueVinyls = vinylDao.getManyRandomUnique(1);
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyRandomUnique(1);
 
         assertEquals(0, uniqueVinyls.size());
     }
@@ -476,7 +663,7 @@ class JdbcVinylDaoITest {
     @Test
     @DisplayName("Gets random unique vinyls from db by amount 0")
     void getManyFilteredUniqueWithMatcherThatMatchesAllTest() {
-        List<Vinyl> uniqueVinyls = vinylDao.getManyFilteredUnique("release");
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyFilteredUnique("release");
 
         assertEquals(2, uniqueVinyls.size());
         assertNotEquals(uniqueVinyls.get(1), uniqueVinyls.get(0));
@@ -485,7 +672,7 @@ class JdbcVinylDaoITest {
     @Test
     @DisplayName("Gets random unique vinyls from db by amount 0")
     void getManyFilteredUniqueWithMatcherThatMatchesOneTest() {
-        List<Vinyl> uniqueVinyls = vinylDao.getManyFilteredUnique("release2");
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyFilteredUnique("release2");
 
         assertEquals(1, uniqueVinyls.size());
         assertEquals(2, uniqueVinyls.get(0).getVinylId());
@@ -498,7 +685,7 @@ class JdbcVinylDaoITest {
     @Test
     @DisplayName("Gets random unique vinyls from db by amount 1")
     void getManyFilteredUniqueWithMatcherThatMatchesZeroTest() {
-        List<Vinyl> uniqueVinyls = vinylDao.getManyFilteredUnique("release3");
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyFilteredUnique("release3");
 
         assertTrue(uniqueVinyls.isEmpty());
     }
@@ -510,7 +697,7 @@ class JdbcVinylDaoITest {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
         }
 
-        List<Vinyl> uniqueVinyls = vinylDao.getManyFilteredUnique("release");
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyFilteredUnique("release");
 
         assertEquals(0, uniqueVinyls.size());
     }
@@ -534,7 +721,7 @@ class JdbcVinylDaoITest {
         }
         String artist = "artist1";
 
-        List<Vinyl> uniqueVinyls = vinylDao.getManyUniqueByArtist(artist);
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyUniqueByArtist(artist);
 
         assertEquals(2, uniqueVinyls.size());
         assertEquals(uniqueVinyls.get(0).getArtist(), uniqueVinyls.get(1).getArtist());
@@ -544,7 +731,7 @@ class JdbcVinylDaoITest {
     @Test
     @DisplayName("Gets empty list of unique vinyls from db by nonexistent artist")
     void getManyUniqueByArtistWithNonExistentArtistTest() {
-        List<Vinyl> uniqueVinyls = vinylDao.getManyUniqueByArtist("artist3");
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyUniqueByArtist("artist3");
 
         assertTrue(uniqueVinyls.isEmpty());
     }
@@ -556,7 +743,7 @@ class JdbcVinylDaoITest {
             truncateVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS);
         }
 
-        List<Vinyl> uniqueVinyls = vinylDao.getManyUniqueByArtist("artist");
+        List<Vinyl> uniqueVinyls = uniqueVinylDao.getManyUniqueByArtist("artist");
 
         assertTrue(uniqueVinyls.isEmpty());
     }
@@ -564,7 +751,7 @@ class JdbcVinylDaoITest {
     @Test
     @DisplayName("Gets all vinyls from db")
     void getAllTest() {
-        List<Vinyl> allVinyls = vinylDao.getAll();
+        List<Vinyl> allVinyls = uniqueVinylDao.getAll();
 
         assertEquals(1, allVinyls.get(0).getVinylId());
         assertEquals("release1", allVinyls.get(0).getRelease());
@@ -610,7 +797,7 @@ class JdbcVinylDaoITest {
             truncateVinyls.executeUpdate(TRUNCATE_VINYLS);
         }
 
-        List<Vinyl> allVinyls = vinylDao.getAll();
+        List<Vinyl> allVinyls = uniqueVinylDao.getAll();
 
         assertEquals(0, allVinyls.size());
     }
@@ -619,7 +806,7 @@ class JdbcVinylDaoITest {
     @DisplayName("Gets a list of vinyls from db by uniqueVinylId")
     void getManyByUniqueVinylIdTest() {
         long uniqueVinylId = 1;
-        List<Vinyl> vinyls = vinylDao.getManyByUniqueVinylId(uniqueVinylId);
+        List<Vinyl> vinyls = uniqueVinylDao.getManyByUniqueVinylId(uniqueVinylId);
 
         assertEquals(2, vinyls.size());
         assertNotEquals(vinyls.get(0).getVinylId(), vinyls.get(1).getVinylId());
@@ -631,7 +818,7 @@ class JdbcVinylDaoITest {
     @DisplayName("Gets empty list of vinyls by nonexistent uniqueVinylId from db")
     void getManyByUniqueVinylIdWithNonExistentUniqueVinylIdTest() {
         long uniqueVinylId = 3;
-        List<Vinyl> vinyls = vinylDao.getManyByUniqueVinylId(uniqueVinylId);
+        List<Vinyl> vinyls = uniqueVinylDao.getManyByUniqueVinylId(uniqueVinylId);
 
         assertTrue(vinyls.isEmpty());
     }
@@ -643,7 +830,7 @@ class JdbcVinylDaoITest {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_VINYLS);
         }
         long uniqueVinylId = 1;
-        List<Vinyl> vinyls = vinylDao.getManyByUniqueVinylId(uniqueVinylId);
+        List<Vinyl> vinyls = uniqueVinylDao.getManyByUniqueVinylId(uniqueVinylId);
 
         assertTrue(vinyls.isEmpty());
     }
@@ -651,7 +838,7 @@ class JdbcVinylDaoITest {
     @Test
     @DisplayName("Gets unique vinyl from db by id.")
     void getUniqueByIdTest() {
-        Vinyl uniqueVinyl = vinylDao.getUniqueById(2);
+        Vinyl uniqueVinyl = uniqueVinylDao.getUniqueById(2);
 
         assertEquals(2, uniqueVinyl.getVinylId());
         assertEquals("release2", uniqueVinyl.getRelease());
@@ -664,14 +851,14 @@ class JdbcVinylDaoITest {
     @DisplayName("Tests that getting unique vinyl from db by non-existent id throws a RuntimeException.")
     void getUniqueByIdWithNonExistentIdTest() {
         assertThrows(RuntimeException.class, () -> {
-            vinylDao.getUniqueById(15);
+            uniqueVinylDao.getUniqueById(15);
         });
     }
 
     @Test
     @DisplayName("Gets vinyl from db by id.")
     void getByIdTest() {
-        Vinyl vinyl = vinylDao.getById(2);
+        Vinyl vinyl = uniqueVinylDao.getById(2);
 
         assertEquals(2, vinyl.getVinylId());
         assertEquals("release1 (Vinyl)", vinyl.getRelease());
@@ -690,8 +877,8 @@ class JdbcVinylDaoITest {
     @DisplayName("Tests that getting vinyl from db by non-existent id throws a RuntimeException.")
     void getByIdWithNonExistentIdTest() {
         assertThrows(RuntimeException.class, () -> {
-            vinylDao.getById(15);
+            uniqueVinylDao.getById(15);
         });
     }
-
+*/
 }

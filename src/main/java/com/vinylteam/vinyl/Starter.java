@@ -1,9 +1,8 @@
+/*
 package com.vinylteam.vinyl;
 
 import com.vinylteam.vinyl.dao.UserDao;
-import com.vinylteam.vinyl.dao.VinylDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
-import com.vinylteam.vinyl.dao.jdbc.JdbcVinylDao;
 import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
 import com.vinylteam.vinyl.service.UserService;
@@ -31,14 +30,21 @@ public class Starter {
     private static final String RESOURCE_PATH = propertiesReader.getProperty("resource.path");
 
     public static void main(String[] args) throws Exception {
-        /*DAO*/
+        */
+/*DAO*//*
+
         UserDao userDao = new JdbcUserDao();
         VinylDao vinylDao = new JdbcVinylDao();
-        /*SERVICE*/
+        */
+/*SERVICE*//*
+
         SecurityService securityService = new DefaultSecurityService();
         UserService userService = new DefaultUserService(userDao, securityService);
         VinylService vinylService = new DefaultVinylService(vinylDao);
-        /*UTIL, FILL IN DATABASE*/
+        */
+/*UTIL, FILL IN DATABASE*//*
+
+*/
 /*        ShopsParser shopsParser = new ShopsParser();
         VinylSorter vinylSorter = new VinylSorter();
         List<VinylParser> vinylParserList = List.of(new VinylUaParser());
@@ -47,9 +53,12 @@ public class Starter {
         Map<String, List<Vinyl>> mapWithAllAndUniqueLists = vinylSorter.getMapWithAllAndUniqueLists(allVinyls);
         vinylService.addAllUnique(mapWithAllAndUniqueLists.get("unique"));
         vinylService.addAll(mapWithAllAndUniqueLists.get("all"));
-        logger.info("Vinyls added to DB");*/
+        logger.info("Vinyls added to DB");*//*
 
-        /*WEB*/
+
+        */
+/*WEB*//*
+
         SignInServlet signInServlet = new SignInServlet(userService);
         SignUpServlet signUpServlet = new SignUpServlet(userService);
         CatalogueServlet catalogueServlet = new CatalogueServlet(vinylService);
@@ -87,3 +96,4 @@ public class Starter {
 
 
 
+*/

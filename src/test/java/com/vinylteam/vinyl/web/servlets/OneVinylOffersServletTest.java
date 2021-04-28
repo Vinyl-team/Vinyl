@@ -1,3 +1,4 @@
+/*
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.Shop;
@@ -58,4 +59,4 @@ class OneVinylOffersServletTest {
         inOrderVinylService.verify(mockedVinylService).getManyUniqueByArtist("artist1");
     }
 
-}
+}*/

@@ -86,7 +86,7 @@
                   <a class="first-vinyl__image" href="#">
                     <img th:src="${firstVinyl.imageLink}" alt="first vinyl">
                   </a>
-                  <a th:text="${firstVinyl.release}" class="first-vinyl__realise" href="#">No release</a>
+                  <a th:text="${firstVinyl.release}" class="first-vinyl__release" href="#">No release</a>
                   <a th:text="${firstVinyl.artist}" class="first-vinyl__artist" href="#">No artist</a>
                 </div>
               </div>
@@ -97,7 +97,7 @@
                 <a class="other-vinyls__image" href="#">
                   <img th:src="${vinylFromFirstRow.imageLink}" alt="vinyl image">
                 </a>
-                <a th:text="${vinylFromFirstRow.release}" href="#" class="other-vinyls__realise">No release</a>
+                <a th:text="${vinylFromFirstRow.release}" href="#" class="other-vinyls__release">No release</a>
                 <a th:text="${vinylFromFirstRow.artist}" href="#" class="other-vinyls__artist">No artist</a>
               </div>
             </div>
@@ -117,7 +117,7 @@
               <a class="other-vinyls__image" href="#">
                 <img th:src="${vinylFromOtherRow.imageLink}" alt="vinyl image">
               </a>
-              <a th:text="${vinylFromOtherRow.release}" href="#" class="other-vinyls__realise">No release</a>
+              <a th:text="${vinylFromOtherRow.release}" href="#" class="other-vinyls__release">No release</a>
               <a th:text="${vinylFromOtherRow.artist}" href="#" class="other-vinyls__artist">No artist</a>
             </div>
 

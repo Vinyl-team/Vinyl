@@ -1,5 +1,6 @@
 package com.vinylteam.vinyl.dao.jdbc.mapper;
 
+import com.vinylteam.vinyl.dao.RowMapper;
 import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
 import org.slf4j.Logger;
@@ -7,10 +8,11 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.ResultSet;
 
-public class UserRowMapper {
+public class UserRowMapper implements RowMapper<User> {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Override
     public User mapRow(ResultSet resultSet) {
         if (resultSet != null) {
             User user = new User();

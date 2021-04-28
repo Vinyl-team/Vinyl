@@ -35,7 +35,7 @@ public class DBDataSource {
     public static Connection getConnection() {
         try {
             Connection connection = dataSource.getConnection();
-            logger.debug("Got connection from data source {'dataSource':{}, 'connection':{}}", dataSource, connection);
+            logger.info("Got connection from data source {'dataSource':{}, 'connection':{}}", dataSource, connection);
             return connection;
         } catch (SQLException e) {
             logger.error("Error during getting connection from data source {'dataSource':{}}",

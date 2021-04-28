@@ -272,11 +272,11 @@ h2{
   width: 100%;
 }
 
-.first-vinyl__realise{
+.first-vinyl__release{
   font-size: 2em;
   line-height: 1.36;
 
-  /* hidden text into realise signature */
+  /* hidden text into release signature */
   /*overflow: hidden;*/
   /*text-overflow: ellipsis;*/
 }
