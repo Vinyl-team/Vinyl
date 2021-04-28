@@ -68,6 +68,11 @@ public class PageGenerator {
             context.setVariable("matcher", searchWord);
         }
 
+        String userRole = attributes.get("userRole");
+        if (userRole!=null){
+            context.setVariable("userRole", userRole);
+        }
+
         String message = attributes.get("message");
         if (message!=null){
             context.setVariable("message", message);

@@ -15,16 +15,21 @@ import com.vinylteam.vinyl.service.impl.DefaultShopService;
 import com.vinylteam.vinyl.service.impl.DefaultUserService;
 import com.vinylteam.vinyl.service.impl.DefaultVinylService;
 import com.vinylteam.vinyl.util.PropertiesReader;
+import com.vinylteam.vinyl.web.filter.SecurityFilter;
 import com.vinylteam.vinyl.web.handler.DefaultErrorHandler;
 import com.vinylteam.vinyl.web.servlets.*;
+import jakarta.servlet.DispatcherType;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.JarFileResource;
 import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.EnumSet;
 
 public class Starter {
     private static final Logger logger = LoggerFactory.getLogger(Starter.class);
@@ -53,11 +58,13 @@ public class Starter {
         logger.info("Vinyls added to DB");*/
 
         /*WEB*/
-        SignInServlet signInServlet = new SignInServlet(userService);
+        SignInServlet signInServlet = new SignInServlet(userService, securityService);
         SignUpServlet signUpServlet = new SignUpServlet(userService);
         CatalogueServlet catalogueServlet = new CatalogueServlet(vinylService);
         SearchResultsServlet searchResultsServlet = new SearchResultsServlet(vinylService);
         OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(vinylService, shopService);
+        ProfileServlet profileServlet = new ProfileServlet();
+        HomeServlet homeServlet = new HomeServlet(securityService);
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContextHandler.setErrorHandler(new DefaultErrorHandler());
@@ -67,7 +74,10 @@ public class Starter {
         servletContextHandler.addServlet(new ServletHolder(catalogueServlet), "/catalog");
         servletContextHandler.addServlet(new ServletHolder(searchResultsServlet), "/search");
         servletContextHandler.addServlet(new ServletHolder(oneVinylOffersServlet), "/oneVinyl");
-        servletContextHandler.addServlet(DefaultServlet.class, "/");
+        servletContextHandler.addServlet(new ServletHolder(profileServlet), "/profile");
+        servletContextHandler.addServlet(new ServletHolder(homeServlet), "/index");
+        servletContextHandler.addFilter(new FilterHolder(new SecurityFilter(securityService)), "/signUp", EnumSet.of(DispatcherType.REQUEST));
+        servletContextHandler.addServlet(DefaultServlet.class, "/*");
         Server server = new Server(Integer.parseInt(propertiesReader.getProperty("appPort")));
         server.setHandler(servletContextHandler);
         server.start();

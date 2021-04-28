@@ -1,17 +1,19 @@
 package com.vinylteam.vinyl.web.servlets;
 
+import com.vinylteam.vinyl.entity.Session;
 import com.vinylteam.vinyl.entity.SignInCheckResult;
+import com.vinylteam.vinyl.entity.User;
+import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.service.UserService;
 import com.vinylteam.vinyl.web.templater.PageGenerator;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class SignInServlet extends HttpServlet {
 
@@ -19,8 +21,11 @@ public class SignInServlet extends HttpServlet {
     private final UserService userService;
     private final String verifiedRedirect = "/";
 
-    public SignInServlet(UserService userService) {
+    private SecurityService securityService;
+
+    public SignInServlet(UserService userService, SecurityService securityService) {
         this.userService = userService;
+        this.securityService = securityService;
     }
 
     @Override
@@ -42,7 +47,24 @@ public class SignInServlet extends HttpServlet {
         if (checkResult == SignInCheckResult.OK_VERIFIED) {
             response.setStatus(HttpServletResponse.SC_OK);
             logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
-            response.sendRedirect(verifiedRedirect);
+            Optional<User> userOptional = userService.getByEmail(email);
+            if (userOptional.isPresent()) {
+                User user = userOptional.get();
+                Session session = securityService.addSession(user);
+                if (session != null) {
+                    Cookie cookie = new Cookie("user-token", session.getToken());
+                    cookie.setMaxAge(60 * 60 * 3);
+                    cookie.setHttpOnly(true);
+                    response.addCookie(cookie);
+                    attributes.put("userRole", String.valueOf(session.getUser().getRole()));
+                    HttpSession session1 = request.getSession();
+                    session1.setAttribute("userRole", String.valueOf(session.getUser().getRole()));
+                    PageGenerator.getInstance().process("index", attributes, response.getWriter());
+                    //PageGenerator.getInstance().process("signIn", attributes, response.getWriter());
+                    //response.sendRedirect("/index");
+                    //response.sendRedirect("/index?userRole="+session.getUser().getRole());
+                }
+            }
         } else if (checkResult == SignInCheckResult.OK_NOT_VERIFIED) {
             response.setStatus(HttpServletResponse.SC_SEE_OTHER);
             logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_SEE_OTHER);

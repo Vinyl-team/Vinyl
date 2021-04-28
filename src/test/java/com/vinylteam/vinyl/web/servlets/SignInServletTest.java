@@ -1,6 +1,7 @@
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.SignInCheckResult;
+import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,10 +18,11 @@ import static org.mockito.Mockito.*;
 class SignInServletTest {
 
     private final UserService mockedUserService = mock(UserService.class);
+    private final SecurityService mockedSecurityService = mock(SecurityService.class);
     private final HttpServletRequest mockedHttpServletRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedHttpServletResponse = mock(HttpServletResponse.class);
     private final PrintWriter printWriter = new PrintWriter(new StringWriter());
-    private final SignInServlet signInServlet = new SignInServlet(mockedUserService);
+    private final SignInServlet signInServlet = new SignInServlet(mockedUserService, mockedSecurityService);
 
     @Test
     @DisplayName("Checks if the response code is 200 when loading the page /signIn")

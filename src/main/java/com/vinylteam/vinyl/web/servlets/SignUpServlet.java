@@ -1,6 +1,7 @@
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.service.UserService;
+import com.vinylteam.vinyl.web.templater.PageGenerator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,12 +21,23 @@ public class SignUpServlet extends HttpServlet {
         this.userService = userService;
     }
 
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html;charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_OK);
+        logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
+        PageGenerator.getInstance().process("registration", response.getWriter());
+    }
+
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        boolean isAdded = userService.add(email, password);
-        logger.debug("Got result of adding user with " +
-                "passed email and password to db {'email':{}, 'isAdded':{}}", email, isAdded);
+        String confirmPassword = request.getParameter("confirmPassword");
+        boolean isAdded = false;
+        if (password.equals(confirmPassword)) {
+            isAdded = userService.add(email, password);
+            logger.debug("Got result of adding user with " +
+                    "passed email and password to db {'email':{}, 'isAdded':{}}", email, isAdded);
+        }
         if (isAdded) {
             response.setStatus(HttpServletResponse.SC_SEE_OTHER);
             logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_SEE_OTHER);

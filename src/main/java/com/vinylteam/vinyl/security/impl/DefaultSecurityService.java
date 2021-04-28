@@ -1,8 +1,12 @@
 package com.vinylteam.vinyl.security.impl;
 
 import com.vinylteam.vinyl.entity.Role;
+import com.vinylteam.vinyl.entity.Session;
+import com.vinylteam.vinyl.entity.SignInCheckResult;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.security.SecurityService;
+import com.vinylteam.vinyl.service.UserService;
+import jakarta.servlet.http.Cookie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,9 +16,8 @@ import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Random;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class DefaultSecurityService implements SecurityService {
 
@@ -23,6 +26,8 @@ public class DefaultSecurityService implements SecurityService {
     private final Random random = new SecureRandom();
     private final SecretKeyFactory secretKeyFactory;
     private final String algorithm = "PBKDF2WithHmacSHA512";
+
+    private List<Session> sessionList = new ArrayList<>();
 
     {
         logger.debug("Started initializer in DefaultSecurityService");
@@ -84,6 +89,61 @@ public class DefaultSecurityService implements SecurityService {
         }
         logger.debug("Result of comparing password against user's password is {'isSame': {}, 'user':{}}", isSame, user);
         return isSame;
+    }
+
+    @Override
+    public Session addSession(User user) {
+        Session session = new Session();
+        session.setToken(UUID.randomUUID().toString());
+        session.setUser(user);
+        session.setExpireDate(LocalDateTime.now().plusHours(3));
+        sessionList.add(session);
+        return session;
+    }
+
+    @Override
+    public void delSession(String token) {
+        for(Session session : sessionList){
+            if (session.getToken().equals(token)){
+                sessionList.remove(session);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public Session getSession(String token){
+        for(Session session : sessionList){
+            if (session.getToken().equals(token)){
+                //it doesn't check
+                if (session.getExpireDate().compareTo(LocalDateTime.now())<0){
+                    sessionList.remove(session);
+                    break;
+                }
+                return session;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String getRole(Cookie[] cookies){
+        String userRole = null;
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("user-token")) {
+                    String token = cookie.getValue();
+                    Session session = getSession(token);
+                    if (session != null) {
+                        Role role = session.getUser().getRole();
+                        userRole = String.valueOf(role);
+                    }
+                    break;
+                }
+            }
+        }
+        return userRole;
     }
 
 }

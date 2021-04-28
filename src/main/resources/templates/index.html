@@ -5,15 +5,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="css/common.css">
-  <link rel="stylesheet" href="css/user.css">
-  <link rel="stylesheet" href="css/signIn.css">
+  <link rel="stylesheet" href="css/index.css">
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <title>Wax Deals</title>
 </head>
 <body>
 
-<div class="wrapper">
+<div class="wrapper wrapper-home">
 
   <!-- header -->
 
@@ -92,36 +91,29 @@
     <!-- content of main -->
 
     <div class="container">
-      <div class="content-sign-in">
+      <div class="content-home content">
 
-        <div class="user__message">
-          <div th:if="${message != null}" th:text="${message}"></div>
-        </div>
+        <div class="content-home__column content-column">
 
-        <div class="content-sign-in__column content-column">
-
-          <div class="content-user__title">
-            <h2>Login</h2>
+          <div class="content-home__title">
+            <h1>COMPARE PRICES of VINYL RECORDS</h1>
           </div>
 
-          <form action="/signIn" method="POST" class="user sign-in-user">
-            <div class="user__fields-wrapper">
-              <div class="user__fields sign-in-user__fields">
-                <label class="user__label">
-                  <input class="user__input" type="email" name="email" placeholder="Email" required>
-                </label>
-                <label class="user__label">
-                  <input class="user__input" type="password" name="password" placeholder="Password"
-                         required>
-                </label>
-                <a href="#">Forgot password?</a>
-              </div>
-            </div>
-            <label class="user__submit-label">
-              <input class="user__submit-input" type="submit" value="OK">
+          <form action="search" method="GET">
+            <label class="search">
+              <input class="search__input" type="text" name="matcher" placeholder="Search by artist or title..."
+                     required>
+              <input type="submit" value="" class="search__button">
             </label>
           </form>
 
+          <div class="content-home__sub-title">
+            <h2>
+              You can find here a huge number of records from<br>
+              trusted stores, so you can find the best price<br>
+              Welcome!
+            </h2>
+          </div>
         </div>
 
       </div>
