@@ -24,7 +24,7 @@ public class SecurityFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         boolean isAuth = false;
-        String url = httpServletRequest.getRequestURL().toString();
+        String uri = httpServletRequest.getRequestURI().toString();
 
         Role userRole = (Role) httpServletRequest.getSession().getAttribute("userRole");
         if (EnumSet.of(Role.USER, Role.ADMIN).contains(userRole)){
