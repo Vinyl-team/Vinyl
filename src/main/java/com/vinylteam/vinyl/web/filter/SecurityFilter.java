@@ -24,20 +24,13 @@ public class SecurityFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         boolean isAuth = false;
+        String url = httpServletRequest.getRequestURL().toString();
 
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("user-token")) {
-                    String token = cookie.getValue();
-                    Session session = securityService.getSession(token);
-                    if (session != null && EnumSet.of(Role.USER, Role.ADMIN).contains(session.getUser().getRole())) {
-                        isAuth = true;
-                    }
-                    break;
-                }
-            }
+        Role userRole = (Role) httpServletRequest.getSession().getAttribute("userRole");
+        if (EnumSet.of(Role.USER, Role.ADMIN).contains(userRole)){
+            isAuth=true;
         }
+
         if (isAuth) {
             filterChain.doFilter(request, response);
         } else {

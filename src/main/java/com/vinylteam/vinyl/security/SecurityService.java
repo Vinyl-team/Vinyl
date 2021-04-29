@@ -14,11 +14,11 @@ public interface SecurityService {
 
     boolean checkPasswordAgainstUserPassword(User user, char[] password);
 
-    Session addSession(User user);
-
-    void delSession(String token);
-
-    Session getSession(String token);
-
-    String getRole(Cookie[] cookies);
+//    Session addSession(User user);
+//
+//    void delSession(String token);
+//
+//    Session getSession(String token);
+//
+//    String getRole(Cookie[] cookies);
 }

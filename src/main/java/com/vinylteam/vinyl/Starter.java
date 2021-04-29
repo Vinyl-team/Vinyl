@@ -58,25 +58,30 @@ public class Starter {
         logger.info("Vinyls added to DB");*/
 
         /*WEB*/
-        SignInServlet signInServlet = new SignInServlet(userService, securityService);
+        SignInServlet signInServlet = new SignInServlet(userService);
         SignUpServlet signUpServlet = new SignUpServlet(userService);
         CatalogueServlet catalogueServlet = new CatalogueServlet(vinylService);
         SearchResultsServlet searchResultsServlet = new SearchResultsServlet(vinylService);
         OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(vinylService, shopService);
         ProfileServlet profileServlet = new ProfileServlet();
         HomeServlet homeServlet = new HomeServlet(securityService);
+
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         servletContextHandler.setErrorHandler(new DefaultErrorHandler());
         servletContextHandler.setBaseResource(resource);
+
         servletContextHandler.addServlet(new ServletHolder(signInServlet), "/signIn");
         servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/signUp");
         servletContextHandler.addServlet(new ServletHolder(catalogueServlet), "/catalog");
         servletContextHandler.addServlet(new ServletHolder(searchResultsServlet), "/search");
         servletContextHandler.addServlet(new ServletHolder(oneVinylOffersServlet), "/oneVinyl");
         servletContextHandler.addServlet(new ServletHolder(profileServlet), "/profile");
-        servletContextHandler.addServlet(new ServletHolder(homeServlet), "/index");
-        servletContextHandler.addFilter(new FilterHolder(new SecurityFilter(securityService)), "/signUp", EnumSet.of(DispatcherType.REQUEST));
+        servletContextHandler.addServlet(new ServletHolder(homeServlet), "");
+
+        servletContextHandler.addFilter(new FilterHolder(new SecurityFilter(securityService)), "/profile",
+                EnumSet.of(DispatcherType.REQUEST));
+
         servletContextHandler.addServlet(DefaultServlet.class, "/*");
         Server server = new Server(Integer.parseInt(propertiesReader.getProperty("appPort")));
         server.setHandler(servletContextHandler);

@@ -1,6 +1,7 @@
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.Shop;
+import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.service.ShopService;
 import com.vinylteam.vinyl.service.VinylService;
@@ -11,8 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class OneVinylOffersServlet extends HttpServlet {
 
@@ -26,6 +26,12 @@ public class OneVinylOffersServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+        Map<String, String> attributes = new HashMap<>();
+        User user = (User) request.getSession().getAttribute("user");
+        if (user != null){
+            attributes.put("userRole", String.valueOf(user.getRole()));
+        }
 
         long uniqueVinylId = Long.parseLong(request.getParameter("vinylId"));
         Vinyl uniqueVinyl = vinylService.getUniqueById(uniqueVinylId);
@@ -64,7 +70,7 @@ public class OneVinylOffersServlet extends HttpServlet {
         }
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        PageGenerator.getInstance().process("vinyl", preparedListById, vinylOffersResponseList, response.getWriter());
+        PageGenerator.getInstance().process("vinyl", preparedListById, vinylOffersResponseList, attributes, response.getWriter());
     }
 
 }
