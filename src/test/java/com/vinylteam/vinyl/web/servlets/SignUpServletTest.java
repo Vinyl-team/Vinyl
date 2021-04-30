@@ -93,6 +93,7 @@ class SignUpServletTest {
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
         when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("password");
         when(mockedUserService.add("newuser@vinyl.com", "password")).thenReturn(true);
+        when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
         //when
         signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
         //then
@@ -103,7 +104,7 @@ class SignUpServletTest {
         verify(mockedUserService, times(1))
                 .add("newuser@vinyl.com", "password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_SEE_OTHER);
-        inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signIn");
+        verify(mockedHttpServletResponse).getWriter();
     }
 
 }
