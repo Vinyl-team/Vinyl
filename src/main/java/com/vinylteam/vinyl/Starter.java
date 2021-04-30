@@ -64,6 +64,7 @@ public class Starter {
         SearchResultsServlet searchResultsServlet = new SearchResultsServlet(vinylService);
         OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(vinylService, shopService);
         ProfileServlet profileServlet = new ProfileServlet();
+        SignOutServlet signOutServlet = new SignOutServlet();
         HomeServlet homeServlet = new HomeServlet();
 
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);
@@ -77,6 +78,7 @@ public class Starter {
         servletContextHandler.addServlet(new ServletHolder(searchResultsServlet), "/search");
         servletContextHandler.addServlet(new ServletHolder(oneVinylOffersServlet), "/oneVinyl");
         servletContextHandler.addServlet(new ServletHolder(profileServlet), "/profile");
+        servletContextHandler.addServlet(new ServletHolder(signOutServlet), "/signOut");
         servletContextHandler.addServlet(new ServletHolder(homeServlet), "");
 
         servletContextHandler.addFilter(new FilterHolder(new SecurityFilter()), "/profile",
