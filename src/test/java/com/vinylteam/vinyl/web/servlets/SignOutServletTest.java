@@ -13,8 +13,8 @@ import static org.mockito.Mockito.*;
 
 class SignOutServletTest {
     @Test
-    @DisplayName("Checks if all right methods are called")
-    void doGetTest() throws IOException {
+    @DisplayName("Checks if all right methods are called & exist session was delete")
+    void doGetWithExistSessionTest() throws IOException {
         //prepare
         HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
         HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
@@ -23,13 +23,35 @@ class SignOutServletTest {
         InOrder inOrderRequest = inOrder(mockedRequest);
         InOrder inOrderResponse = inOrder(mockedResponse);
 
-        when(mockedRequest.getSession()).thenReturn(mockedHttpSession);
+        when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         //when
         signOutServlet.doGet(mockedRequest, mockedResponse);
         //then
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
-        inOrderRequest.verify(mockedRequest).getSession();
+        inOrderRequest.verify(mockedRequest).getSession(false);
         verify(mockedHttpSession).invalidate();
+        inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
+        inOrderResponse.verify(mockedResponse).sendRedirect("/");
+    }
+
+    @Test
+    @DisplayName("Checks if all right methods are called & session doesn't exist")
+    void doGetWithNonExistSessionTest() throws IOException {
+        //prepare
+        HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
+        HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
+        HttpSession mockedHttpSession = mock(HttpSession.class);
+        SignOutServlet signOutServlet = new SignOutServlet();
+        InOrder inOrderRequest = inOrder(mockedRequest);
+        InOrder inOrderResponse = inOrder(mockedResponse);
+
+        when(mockedRequest.getSession(false)).thenReturn(null);
+        //when
+        signOutServlet.doGet(mockedRequest, mockedResponse);
+        //then
+        inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
+        inOrderRequest.verify(mockedRequest).getSession(false);
+        verify(mockedHttpSession, times(0)).invalidate();
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderResponse.verify(mockedResponse).sendRedirect("/");
     }
