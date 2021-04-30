@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DefaultSecurityServiceTest {
 
-    private final SecurityService securityService = new DefaultSecurityService();
+    private final DefaultSecurityService securityService = new DefaultSecurityService();
     private final String rightPassword = "existingUserRightPassword";
     private final String wrongPassword = "existingUserWrongPassword";
     private final String passwordToHash = "password";

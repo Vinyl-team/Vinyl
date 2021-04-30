@@ -3,7 +3,7 @@ package com.vinylteam.vinyl.service.impl;
 import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.dao.UserDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
-import com.vinylteam.vinyl.entity.SignInCheckResult;
+import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
@@ -15,8 +15,10 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DefaultUserServiceITest {
@@ -26,6 +28,11 @@ class DefaultUserServiceITest {
     private final UserDao userDao = new JdbcUserDao();
     private final UserService userService = new
             DefaultUserService(userDao, securityService);
+    private final UserDao mockedUserDao = mock(UserDao.class);
+    private final User mockedUser = mock(User.class);
+    private final SecurityService mockedSecurityService = mock(DefaultSecurityService.class);
+    private final UserService mockedUserService = new
+            DefaultUserService(mockedUserDao, mockedSecurityService);
 
     private User verifiedUser;
     private User notVerifiedUser;
@@ -69,60 +76,65 @@ class DefaultUserServiceITest {
     }
 
     @Test
-    @DisplayName("Checks if .signInCheck(...) with null email as an argument returns SignInCheckResult.FAIL.")
+    @DisplayName("Checks if .signInCheck(...) with null email as an argument returns Optional.empty().")
     void signInCheckNullEmailTest() {
-        assertEquals(SignInCheckResult.FAIL,
-                userService.signInCheck(null, "password"));
+        assertEquals(Optional.empty(),
+                mockedUserService.signInCheck(null, "password"));
     }
 
     @Test
-    @DisplayName("Checks if .signInCheck(...) with null password as an argument returns SignInCheckResult.FAIL.")
+    @DisplayName("Checks if .signInCheck(...) with null password as an argument returns Optional.empty().")
     void signInCheckNullPasswordTest() {
-        assertEquals(SignInCheckResult.FAIL,
-                userService.signInCheck("verifieduser@vinyl.com", null));
+        assertEquals(Optional.empty(),
+                mockedUserService.signInCheck("verifieduser@vinyl.com", null));
     }
 
     @Test
-    @DisplayName("Checks if .signInCheck(...) with non-existent user's email and password as arguments returns SignInCheckResult.FAIL.")
+    @DisplayName("Checks if .signInCheck(...) with non-existent user's email and password as arguments returns Optional.empty().")
     void signInCheckNonExistingUserTest() {
-        assertEquals(SignInCheckResult.FAIL,
-                userService.signInCheck("testuser3@vinyl.com", "password3"));
+//        prepare
+        when(mockedUserDao.getByEmail("testuser3@vinyl.com")).thenReturn(Optional.empty());
+        when(mockedSecurityService.checkPasswordAgainstUserPassword(Optional.of(mockedUser).get(), "password3".toCharArray())).thenReturn(false);
+//        when
+        mockedUserService.signInCheck("testuser3@vinyl.com", "password3");
+//        then
+        verify(mockedUserDao).getByEmail("testuser3@vinyl.com");
+        assertEquals(Optional.empty(),
+                mockedUserService.signInCheck("testuser3@vinyl.com", "password3"));
     }
 
     @Test
-    @DisplayName("Checks if .signInCheck(...) with verified user's email and wrong password as arguments" +
-            " returns SignInCheckResult.FAIL.")
+    @DisplayName("Checks if .signInCheck(...) with existent user's email and wrong password as arguments" +
+            " returns Optional.empty().")
     void signInCheckExistingVerifiedUserWrongPasswordTest() {
-        assertEquals(SignInCheckResult.FAIL,
-                userService.signInCheck("verifieduser@vinyl.com", "wrong password"));
+        //prepare
+        when(mockedUserDao.getByEmail("verifieduser@vinyl.com")).thenReturn(Optional.of(mockedUser));
+        when(mockedSecurityService.checkPasswordAgainstUserPassword(Optional.of(mockedUser).get(), "password3".toCharArray())).thenReturn(false);
+        //when
+        mockedUserService.signInCheck("verifieduser@vinyl.com", "password3");
+        //then
+        verify(mockedUserDao).getByEmail("verifieduser@vinyl.com");
+        assertEquals(Optional.empty(),
+                mockedUserService.signInCheck("verifieduser@vinyl.com", "wrong password"));
     }
 
     @Test
-    @DisplayName("Checks if .signInCheck(...) with not-verified user's email and wrong password as arguments" +
-            " returns SignInCheckResult.FAIL.")
-    void signInCheckExistingNotVerifiedUserWrongPasswordTest() {
-        assertEquals(SignInCheckResult.FAIL,
-                userService.signInCheck("notverifieduser@vinyl.com", "wrong password"));
-    }
-
-    @Test
-    @DisplayName("Checks if .signInCheck(...) with verified user's email and right password as arguments" +
-            " returns SignInCheckResult.OK_VERIFIED.")
+    @DisplayName("Checks if .signInCheck(...) with existent user's email and right password as arguments" +
+            " returns verified user.")
     void signInCheckExistingVerifiedUserRightPasswordTest() {
-        assertEquals(SignInCheckResult.OK_VERIFIED,
-                userService.signInCheck("verifieduser@vinyl.com", "password1"));
+        //prepare
+        when(mockedUserDao.getByEmail("verifieduser@vinyl.com")).thenReturn(Optional.of(mockedUser));
+        when(mockedSecurityService.checkPasswordAgainstUserPassword(Optional.of(mockedUser).get(), "password3".toCharArray())).thenReturn(true);
+        //when
+        mockedUserService.signInCheck("verifieduser@vinyl.com", "password3");
+        //then
+        verify(mockedUserDao, times(3)).getByEmail("verifieduser@vinyl.com");
+        assertEquals(Optional.of(mockedUser),
+                mockedUserService.signInCheck("verifieduser@vinyl.com", "password3"));
     }
 
     @Test
-    @DisplayName("Checks if .signInCheck(...) with not-verified user's email and right password as arguments" +
-            " returns SignInCheckResult.OK_NOT_VERIFIED.")
-    void signInCheckExistingNotVerifiedUserRightPasswordTest() {
-        assertEquals(SignInCheckResult.OK_NOT_VERIFIED,
-                userService.signInCheck("notverifieduser@vinyl.com", "password2"));
-    }
-
-    @Test
-    @DisplayName("Checks if .add(...) with null email as an argument returns falseL.")
+    @DisplayName("Checks if .add(...) with null email as an argument returns false.")
     void addWithNullEmailTest() {
         assertFalse(userService.add(null, "password"));
     }

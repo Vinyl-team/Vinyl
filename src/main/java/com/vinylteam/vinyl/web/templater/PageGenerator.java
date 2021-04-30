@@ -32,23 +32,23 @@ public class PageGenerator {
         templateEngine.setTemplateResolver(templateResolver);
     }
 
-    public void process(String fileName, Writer writer){
+    public void process(String fileName, Writer writer) {
         process(fileName, new ArrayList<>(), new ArrayList<>(), new HashMap<>(), writer);
     }
 
-    public void process(String fileName, Map<String, String> attributes, Writer writer){
+    public void process(String fileName, Map<String, String> attributes, Writer writer) {
         process(fileName, new ArrayList<>(), new ArrayList<>(), attributes, writer);
     }
 
-    public void process(String fileName, List<Vinyl> list, Writer writer){
+    public void process(String fileName, List<Vinyl> list, Writer writer) {
         process(fileName, list, new ArrayList<>(), new HashMap<>(), writer);
     }
 
-    public void process(String fileName, List<Vinyl> list, List<OneVinylOffersServletResponse> vinylOffersList, Writer writer){
+    public void process(String fileName, List<Vinyl> list, List<OneVinylOffersServletResponse> vinylOffersList, Writer writer) {
         process(fileName, list, vinylOffersList, new HashMap<>(), writer);
     }
 
-    public void process(String fileName, List<Vinyl> list, Map<String, String> attributes, Writer writer){
+    public void process(String fileName, List<Vinyl> list, Map<String, String> attributes, Writer writer) {
         process(fileName, list, new ArrayList<>(), attributes, writer);
     }
 
@@ -64,12 +64,17 @@ public class PageGenerator {
         List<Vinyl> vinylsByArtist = new ArrayList<>();
 
         String searchWord = attributes.get("searchWord");
-        if (searchWord!=null){
+        if (searchWord != null) {
             context.setVariable("matcher", searchWord);
         }
 
+        String userRole = attributes.get("userRole");
+        if (userRole != null) {
+            context.setVariable("userRole", userRole);
+        }
+
         String message = attributes.get("message");
-        if (message!=null){
+        if (message != null) {
             context.setVariable("message", message);
         }
 
@@ -102,7 +107,7 @@ public class PageGenerator {
         }
 
         /** for vinyl page */
-        if (vinylList.size() > 1){
+        if (vinylList.size() > 1) {
             for (int i = 1; i < vinylList.size(); i++) {
                 vinylsByArtist.add(vinylList.get(i));
             }

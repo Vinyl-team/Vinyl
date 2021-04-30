@@ -1,39 +1,29 @@
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.User;
-import com.vinylteam.vinyl.entity.Vinyl;
-import com.vinylteam.vinyl.service.VinylService;
 import com.vinylteam.vinyl.web.templater.PageGenerator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class SearchResultsServlet extends HttpServlet {
+public class HomeServlet extends HttpServlet {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final VinylService vinylService;
-
-    public SearchResultsServlet(VinylService vinylService) {
-        this.vinylService = vinylService;
-    }
-
-    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("text/html;charset=utf-8");
         Map<String, String> attributes = new HashMap<>();
-        String matcher = request.getParameter("matcher");
-        List<Vinyl> filteredUniqueVinyls = vinylService.getManyFilteredUnique(matcher);
-        attributes.put("searchWord", matcher);
         User user = (User) request.getSession().getAttribute("user");
         if (user != null) {
             attributes.put("userRole", String.valueOf(user.getRole()));
         }
-        response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        PageGenerator.getInstance().process("search", filteredUniqueVinyls, attributes, response.getWriter());
+        logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
+        PageGenerator.getInstance().process("index", attributes, response.getWriter());
     }
-
 }

@@ -192,7 +192,6 @@ h1 {
 
 .head__login-signs{
   height: 3.6em;
-  width: 2.8em;
   position: absolute;
   right: 0;
   display: flex;
@@ -317,8 +316,9 @@ h2{
 }
 
 .copyright{
+  font-size: 10px;
   position: absolute;
-  right: 2.67em;
+  right: 4.81em;
 }
 
 .footer__social-icon{

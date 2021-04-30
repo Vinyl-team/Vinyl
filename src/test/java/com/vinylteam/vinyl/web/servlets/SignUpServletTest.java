@@ -10,6 +10,8 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import static org.mockito.Mockito.*;
 
@@ -19,27 +21,67 @@ class SignUpServletTest {
     private final HttpServletRequest mockedHttpServletRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedHttpServletResponse = mock(HttpServletResponse.class);
     private final SignUpServlet signUpServlet = new SignUpServlet(mockedUserService);
+    private final PrintWriter printWriter = new PrintWriter(new StringWriter());
+    private final InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
+    private final InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
+
+    @Test
+    @DisplayName("Checks if all right methods are called")
+    void doGetTest() throws IOException {
+        //prepare
+        PrintWriter printWriter = new PrintWriter(new StringWriter());
+        when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
+        //when
+        signUpServlet.doGet(mockedHttpServletRequest, mockedHttpServletResponse);
+        //then
+        inOrderResponse.verify(mockedHttpServletResponse).setContentType("text/html;charset=utf-8");
+        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_OK);
+        verify(mockedHttpServletResponse).getWriter();
+    }
 
     @Test
     @DisplayName("Checks if all right methods are called and response has code set to 400 and redirected to /signUp " +
-            "when email already existed in database before.")
+            "when password is not correct.")
+    void doPostWithNotCorrectPasswordTest() throws IOException {
+        //prepare
+        when(mockedHttpServletRequest.getParameter("email")).thenReturn("existinguser@vinyl.com");
+        when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
+        when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("confirmPassword");
+        when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
+        //when
+        signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
+        //then
+        inOrderResponse.verify(mockedHttpServletResponse).setContentType("text/html;charset=utf-8");
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("confirmPassword");
+        verify(mockedUserService, times(0))
+                .add("existinguser@vinyl.com", "password");
+        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        verify(mockedHttpServletResponse).getWriter();
+    }
+
+    @Test
+    @DisplayName("Checks if all right methods are called and response has code set to 400 and redirected to /signUp " +
+            "when email already exist in db.")
     void doPostWithExistingUserTest() throws IOException {
         //prepare
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("existinguser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
+        when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("password");
         when(mockedUserService.add("existinguser@vinyl.com", "password")).thenReturn(false);
-
-        InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
-        InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
+        when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
         //when
         signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
         //then
+        inOrderResponse.verify(mockedHttpServletResponse).setContentType("text/html;charset=utf-8");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
-        verify(mockedUserService)
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("confirmPassword");
+        verify(mockedUserService, times(1))
                 .add("existinguser@vinyl.com", "password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signUp");
+        verify(mockedHttpServletResponse).getWriter();
     }
 
     @Test
@@ -49,16 +91,16 @@ class SignUpServletTest {
         //prepare
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("newuser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
+        when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("password");
         when(mockedUserService.add("newuser@vinyl.com", "password")).thenReturn(true);
-
-        InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
-        InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
         //when
         signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
         //then
+        inOrderResponse.verify(mockedHttpServletResponse).setContentType("text/html;charset=utf-8");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
-        verify(mockedUserService)
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("confirmPassword");
+        verify(mockedUserService, times(1))
                 .add("newuser@vinyl.com", "password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_SEE_OTHER);
         inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signIn");

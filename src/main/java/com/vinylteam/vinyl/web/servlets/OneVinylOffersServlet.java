@@ -1,6 +1,7 @@
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.Shop;
+import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.service.ShopService;
 import com.vinylteam.vinyl.service.VinylService;
@@ -12,7 +13,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OneVinylOffersServlet extends HttpServlet {
 
@@ -27,6 +30,12 @@ public class OneVinylOffersServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
+        Map<String, String> attributes = new HashMap<>();
+        User user = (User) request.getSession().getAttribute("user");
+        if (user != null) {
+            attributes.put("userRole", String.valueOf(user.getRole()));
+        }
+
         long uniqueVinylId = Long.parseLong(request.getParameter("vinylId"));
         Vinyl uniqueVinyl = vinylService.getUniqueById(uniqueVinylId);
 
@@ -35,9 +44,9 @@ public class OneVinylOffersServlet extends HttpServlet {
         List<Shop> shopsFromOffers = shopService.getManyByListOfIds(shopIds);
 
         List<OneVinylOffersServletResponse> vinylOffersResponseList = new ArrayList<>();
-        for(Vinyl vinyl : vinylOffers){
-            for (Shop shop : shopsFromOffers){
-                if (vinyl.getShopId() == shop.getId()){
+        for (Vinyl vinyl : vinylOffers) {
+            for (Shop shop : shopsFromOffers) {
+                if (vinyl.getShopId() == shop.getId()) {
                     OneVinylOffersServletResponse vinylOffersResponse = new OneVinylOffersServletResponse();
                     vinylOffersResponse.setPrice(vinyl.getPrice());
                     vinylOffersResponse.setVinylLink(vinyl.getVinylLink());
@@ -47,7 +56,7 @@ public class OneVinylOffersServlet extends HttpServlet {
             }
         }
 
-        vinylOffersResponseList.sort((vinyl1, vinyl2)-> (int) (vinyl1.getPrice()-vinyl2.getPrice()));
+        vinylOffersResponseList.sort((vinyl1, vinyl2) -> (int) (vinyl1.getPrice() - vinyl2.getPrice()));
 
         String artist = uniqueVinyl.getArtist();
         List<Vinyl> uniqueVinylsByArtist = vinylService.getManyUniqueByArtist(artist);
@@ -64,7 +73,7 @@ public class OneVinylOffersServlet extends HttpServlet {
         }
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        PageGenerator.getInstance().process("vinyl", preparedListById, vinylOffersResponseList, response.getWriter());
+        PageGenerator.getInstance().process("vinyl", preparedListById, vinylOffersResponseList, attributes, response.getWriter());
     }
 
 }
