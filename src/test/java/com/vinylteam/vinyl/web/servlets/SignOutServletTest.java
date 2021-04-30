@@ -12,17 +12,16 @@ import java.io.IOException;
 import static org.mockito.Mockito.*;
 
 class SignOutServletTest {
+    HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
+    HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
+    HttpSession mockedHttpSession = mock(HttpSession.class);
+    SignOutServlet signOutServlet = new SignOutServlet();
+    InOrder inOrderRequest = inOrder(mockedRequest);
+    InOrder inOrderResponse = inOrder(mockedResponse);
     @Test
     @DisplayName("Checks if all right methods are called & exist session was delete")
     void doGetWithExistSessionTest() throws IOException {
         //prepare
-        HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
-        HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
-        HttpSession mockedHttpSession = mock(HttpSession.class);
-        SignOutServlet signOutServlet = new SignOutServlet();
-        InOrder inOrderRequest = inOrder(mockedRequest);
-        InOrder inOrderResponse = inOrder(mockedResponse);
-
         when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         //when
         signOutServlet.doGet(mockedRequest, mockedResponse);
@@ -38,13 +37,6 @@ class SignOutServletTest {
     @DisplayName("Checks if all right methods are called & session doesn't exist")
     void doGetWithNonExistSessionTest() throws IOException {
         //prepare
-        HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
-        HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
-        HttpSession mockedHttpSession = mock(HttpSession.class);
-        SignOutServlet signOutServlet = new SignOutServlet();
-        InOrder inOrderRequest = inOrder(mockedRequest);
-        InOrder inOrderResponse = inOrder(mockedResponse);
-
         when(mockedRequest.getSession(false)).thenReturn(null);
         //when
         signOutServlet.doGet(mockedRequest, mockedResponse);
