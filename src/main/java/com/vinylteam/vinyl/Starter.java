@@ -64,7 +64,7 @@ public class Starter {
         SearchResultsServlet searchResultsServlet = new SearchResultsServlet(vinylService);
         OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(vinylService, shopService);
         ProfileServlet profileServlet = new ProfileServlet();
-        HomeServlet homeServlet = new HomeServlet(securityService);
+        HomeServlet homeServlet = new HomeServlet();
 
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -79,7 +79,7 @@ public class Starter {
         servletContextHandler.addServlet(new ServletHolder(profileServlet), "/profile");
         servletContextHandler.addServlet(new ServletHolder(homeServlet), "");
 
-        servletContextHandler.addFilter(new FilterHolder(new SecurityFilter(securityService)), "/profile",
+        servletContextHandler.addFilter(new FilterHolder(new SecurityFilter()), "/profile",
                 EnumSet.of(DispatcherType.REQUEST));
 
         servletContextHandler.addServlet(DefaultServlet.class, "/*");

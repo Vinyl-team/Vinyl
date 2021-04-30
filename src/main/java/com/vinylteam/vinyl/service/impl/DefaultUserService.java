@@ -12,7 +12,7 @@ import java.util.Optional;
 public class DefaultUserService implements UserService {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final UserDao userDao;
+    private UserDao userDao;
     private final SecurityService securityService;
 
     public DefaultUserService(UserDao userDao, SecurityService securityService) {
