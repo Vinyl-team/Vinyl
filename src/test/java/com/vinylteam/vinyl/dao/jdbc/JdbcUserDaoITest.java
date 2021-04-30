@@ -1,6 +1,5 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
-import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.util.DatabasePreparerForITests;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,24 +19,20 @@ import static org.junit.jupiter.api.Assertions.*;
 class JdbcUserDaoITest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private Connection connection;
-    private final JdbcUserDao jdbcUserDao = new JdbcUserDao();
-    private DatabasePreparerForITests databasePreparer;
+    private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
+    private final JdbcUserDao jdbcUserDao = new JdbcUserDao(databasePreparer.getDataSource());
     private final List<User> users = new ArrayList<>();
     private final ListPreparerForTests listPreparer = new ListPreparerForTests();
 
     @BeforeAll
     void beforeAll() throws SQLException {
-        logger.info("BeforeAll");
-        connection = DBDataSource.getConnection();
-        databasePreparer = new DatabasePreparerForITests(connection);
         databasePreparer.truncateCascadeUsers();
         listPreparer.fillUsersList(users);
     }
 
     @AfterAll
     void afterAll() throws SQLException {
-        connection.close();
+        databasePreparer.truncateCascadeUsers();
     }
 
     @BeforeEach

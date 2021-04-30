@@ -25,7 +25,8 @@ create table unique_vinyls
     release       varchar(200)  not null,
     artist        varchar(200)  not null,
     full_name     varchar(400)  not null,
-    link_to_image varchar(1000) not null
+    link_to_image varchar(1000) not null,
+    has_offers    boolean       not null
 );
 
 create table shops
@@ -85,10 +86,10 @@ create table offers
     link_to_offer   varchar(1000) not null
 );
 
-create table vinyls_browsing_history
+create table unique_vinyls_browsing_history
 (
     id              serial  not null
-        constraint vinyls_browsing_history_pkey
+        constraint unique_vinyls_browsing_history_pkey
             primary key,
     user_id         integer not null
         constraint user_id_fk

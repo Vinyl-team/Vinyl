@@ -1,12 +1,10 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
-import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.util.DatabasePreparerForITests;
 import com.vinylteam.vinyl.util.ListPreparerForTests;
 import org.junit.jupiter.api.*;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JdbcShopDaoITest {
 
-    private Connection connection;
-    private final JdbcShopDao jdbcShopDao = new JdbcShopDao();
-    private DatabasePreparerForITests databasePreparer;
+    private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
+    private final JdbcShopDao jdbcShopDao = new JdbcShopDao(databasePreparer.getDataSource());
     private final List<Shop> shops = new ArrayList<>();
     private final ListPreparerForTests listPreparer = new ListPreparerForTests();
 
     @BeforeAll
     void beforeAll() throws SQLException {
-        connection = DBDataSource.getConnection();
-        databasePreparer = new DatabasePreparerForITests(connection);
         databasePreparer.truncateCascadeShops();
         listPreparer.fillShopsList(shops);
     }
@@ -34,7 +29,6 @@ class JdbcShopDaoITest {
     @AfterAll
     void afterAll() throws SQLException {
         databasePreparer.truncateCascadeShops();
-        connection.close();
     }
 
     @BeforeEach
@@ -51,22 +45,24 @@ class JdbcShopDaoITest {
     @DisplayName("Gets list of shops with id-s with list of id-s from db")
     void getManyByListOfIds() {
         List<Integer> ids = List.of(1, 2);
+        List<Shop>  expectedShops = new ArrayList(List.of(shops.get(0), shops.get(1)));
 
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);
 
         assertEquals(2, actualShops.size());
-        assertEquals(shops, actualShops);
+        assertEquals(expectedShops, actualShops);
     }
 
     @Test
     @DisplayName("Gets list of shops with id-s with list of id-s where some ids do not exist in db")
     void getManyByListOfIdsWithSomeNonExistentIds() {
         List<Integer> ids = List.of(1, 2, 4);
+        List<Shop>  expectedShops = new ArrayList(List.of(shops.get(0), shops.get(1)));
 
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);
 
         assertEquals(2, actualShops.size());
-        assertEquals(shops, actualShops);
+        assertEquals(expectedShops, actualShops);
     }
 
     @Test

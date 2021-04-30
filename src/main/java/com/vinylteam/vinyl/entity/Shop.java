@@ -59,7 +59,7 @@ public class Shop {
 
     @Override
     public String toString() {
-        return "Shop{" +
+        return "\nShop{" +
                 "id=" + id +
                 ", mainPageLink='" + mainPageLink + '\'' +
                 ", imageLink='" + imageLink + '\'' +

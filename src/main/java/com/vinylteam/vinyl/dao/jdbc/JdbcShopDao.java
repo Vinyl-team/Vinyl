@@ -1,9 +1,9 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
-import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.dao.ShopDao;
 import com.vinylteam.vinyl.dao.jdbc.mapper.ShopRowMapper;
 import com.vinylteam.vinyl.entity.Shop;
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,13 +20,18 @@ public class JdbcShopDao implements ShopDao {
     private final ShopRowMapper shopRowMapper = new ShopRowMapper();
     final String SELECT_MANY_SHOPS_BY_IDS = "SELECT id, link_to_main_page, link_to_image, name " +
             "FROM public.shops WHERE id IN ()";
+    private final HikariDataSource dataSource;
+
+    public JdbcShopDao(HikariDataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @Override
     public List<Shop> getManyByListOfIds(List<Integer> ids) {
         List<Shop> shops = new ArrayList<>();
         if (!ids.isEmpty()) {
             String queryToExecute = fillSelectManyByIdsStatement(ids);
-            try (Connection connection = DBDataSource.getConnection();
+            try (Connection connection = dataSource.getConnection();
                  Statement getManyByListOfIdsStatement = connection.createStatement();
                  ResultSet resultSet = getManyByListOfIdsStatement.executeQuery(queryToExecute)) {
                 logger.debug("Executed statement {'statement':{}}", getManyByListOfIdsStatement);

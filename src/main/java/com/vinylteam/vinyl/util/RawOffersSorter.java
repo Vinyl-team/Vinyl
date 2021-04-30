@@ -60,6 +60,7 @@ public class RawOffersSorter {
                     offer.setGenre(rawOffer.getGenre());
                     offer.setOfferLink(rawOffer.getOfferLink());
                     offers.add(offer);
+                    uniqueVinyl.setHasOffers(true);
                     logger.debug("Added new offer {'offer':{}}", offer);
                     rawOfferIterator.remove();
                 }

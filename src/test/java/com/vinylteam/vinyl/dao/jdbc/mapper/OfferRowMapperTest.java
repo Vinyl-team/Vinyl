@@ -1,18 +1,17 @@
 package com.vinylteam.vinyl.dao.jdbc.mapper;
 
         import com.vinylteam.vinyl.dao.RowMapper;
-        import com.vinylteam.vinyl.entity.Currency;
-        import com.vinylteam.vinyl.entity.Offer;
-        import org.junit.jupiter.api.DisplayName;
-        import org.junit.jupiter.api.Test;
+import com.vinylteam.vinyl.entity.Currency;
+import com.vinylteam.vinyl.entity.Offer;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-        import java.sql.ResultSet;
-        import java.sql.SQLException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-        import static org.junit.jupiter.api.Assertions.assertEquals;
-        import static org.junit.jupiter.api.Assertions.assertThrows;
-        import static org.mockito.Mockito.mock;
-        import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class OfferRowMapperTest {
 
@@ -24,7 +23,7 @@ class OfferRowMapperTest {
         //prepare
         ResultSet vinylResult = mock(ResultSet.class);
         when(vinylResult.getInt("id")).thenReturn(1);
-        when(vinylResult.getLong("vinyl_id")).thenReturn((long) 1);
+        when(vinylResult.getLong("unique_vinyl_id")).thenReturn((long) 1);
         when(vinylResult.getInt("shop_id")).thenReturn(2);
         when(vinylResult.getDouble("price")).thenReturn(1000.0);
         when(vinylResult.getString("currency")).thenReturn("EUR");
@@ -40,12 +39,6 @@ class OfferRowMapperTest {
         assertEquals(Currency.EUR, offer.getCurrency().get());
         assertEquals("rock", offer.getGenre());
         assertEquals("https://vinylsite.com/there/release1", offer.getOfferLink());
-    }
-
-    @Test
-    @DisplayName("Checks if passing null ResultSet causes RuntimeException.")
-    void mapRowWithNullResultSetTest() {
-        assertThrows(RuntimeException.class, () -> rowMapper.mapRow(null));
     }
 
 }

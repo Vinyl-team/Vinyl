@@ -1,3 +1,4 @@
+/*
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.SignInCheckResult;
@@ -45,3 +46,4 @@ public class SignInServlet extends HttpServlet {
     }
 
 }
+*/

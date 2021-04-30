@@ -1,10 +1,10 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
-import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.dao.OfferDao;
 import com.vinylteam.vinyl.dao.RowMapper;
 import com.vinylteam.vinyl.dao.jdbc.mapper.OfferRowMapper;
 import com.vinylteam.vinyl.entity.Offer;
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,22 +27,27 @@ public class JdbcOfferDao extends AbstractJdbcUniqueVinylAndOfferDao<Offer> impl
     private final String NO_DEFINED_CURRENCY_ERROR_MESSAGE = "No defined currency in offer {'currency':{}, 'offer':{}}";
     private final RowMapper<Offer> rowMapper = new OfferRowMapper();
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final HikariDataSource dataSource;
+
+    public JdbcOfferDao(HikariDataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @Override
     public List<Offer> findManyByUniqueVinylId(long uniqueVinylId) {
         List<Offer> offers = new ArrayList<>();
-        try (Connection connection = DBDataSource.getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement findVinylByIdStatement = connection.prepareStatement(SELECT_MANY_BY_UNIQUE_VINYL_ID)) {
             findVinylByIdStatement.setLong(1, uniqueVinylId);
             logger.debug(PREPARED_STATEMENT_MESSAGE, findVinylByIdStatement);
             try (ResultSet resultSet = findVinylByIdStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    resultSet.previous();
-                    while (resultSet.next()) {
-                        Offer offer = rowMapper.mapRow(resultSet);
-                        offers.add(offer);
-                    }
-                } else {
+                boolean isResultSetEmpty = true;
+                while (resultSet.next()) {
+                    isResultSetEmpty = false;
+                    Offer offer = rowMapper.mapRow(resultSet);
+                    offers.add(offer);
+                }
+                if (isResultSetEmpty) {
                     RuntimeException e = new RuntimeException();
                     logger.error(NO_ROW_BY_ERROR_MESSAGE, OBJECT_NAME, "uniqueVinylId", "uniqueVinylId", uniqueVinylId, e);
                     throw e;
@@ -56,22 +61,4 @@ public class JdbcOfferDao extends AbstractJdbcUniqueVinylAndOfferDao<Offer> impl
         return offers;
     }
 
-    @Override
-    protected void setAddAllStatementParameters(PreparedStatement preparedStatement, List<Offer> offers) throws SQLException {
-        for (Offer offer : offers) {
-            preparedStatement.setLong(1, offer.getUniqueVinylId());
-            preparedStatement.setInt(2, offer.getShopId());
-            preparedStatement.setDouble(3, offer.getPrice());
-            if (offer.getCurrency().isPresent()) {
-                preparedStatement.setString(4, offer.getCurrency().get().toString());
-            } else {
-                RuntimeException e = new RuntimeException();
-                logger.error(NO_DEFINED_CURRENCY_ERROR_MESSAGE, offer.getCurrency(), offer, e);
-                throw e;
-            }
-            preparedStatement.setString(5, offer.getGenre());
-            preparedStatement.setString(6, offer.getOfferLink());
-            preparedStatement.addBatch();
-        }
-    }
 }

@@ -19,22 +19,24 @@ public class ListPreparerForTests {
     }
 
     public void fillUniqueVinylsList(List<UniqueVinyl> uniqueVinyls) {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 4; i++) {
             UniqueVinyl uniqueVinyl = new UniqueVinyl();
             uniqueVinyl.setId(i + 1);
             uniqueVinyl.setRelease("release" + (i + 1));
             uniqueVinyl.setArtist("artist" + (i + 1));
             uniqueVinyl.setFullName(uniqueVinyl.getRelease() + " - " + uniqueVinyl.getArtist());
             uniqueVinyl.setImageLink("/image" + (i + 1));
+            uniqueVinyl.setHasOffers(true);
             uniqueVinyls.add(uniqueVinyl);
-
         }
+        uniqueVinyls.get(3).setHasOffers(false);
     }
 
     public void fillOffersList(List<Offer> offers) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 2; j++) {
                 Offer offer = new Offer();
+                offer.setId(i + j + 1);
                 offer.setUniqueVinylId(i + 1);
                 offer.setShopId(j + 1);
                 offer.setPrice((i + 1) * 10. + j + 1);
@@ -88,6 +90,7 @@ public class ListPreparerForTests {
             uniqueVinyl.setArtist(rawOffers.get(i * 2).getArtist());
             uniqueVinyl.setFullName(uniqueVinyl.getRelease() + " - " + uniqueVinyl.getArtist());
             uniqueVinyl.setImageLink("/image" + (i + 1));
+            uniqueVinyl.setHasOffers(true);
             uniqueVinyls.add(uniqueVinyl);
         }
     }

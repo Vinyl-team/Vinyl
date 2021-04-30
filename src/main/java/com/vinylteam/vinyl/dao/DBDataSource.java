@@ -19,7 +19,6 @@ public class DBDataSource {
     static {
         logger.debug("Started static initializer in DBDataSource");
         PropertiesReader propertiesReader = new PropertiesReader();
-        logger.info("Properties reader read properties");
         config.setJdbcUrl(propertiesReader.getProperty("jdbc.url"));
         config.setUsername(propertiesReader.getProperty("jdbc.user"));
         config.setPassword(propertiesReader.getProperty("jdbc.password"));

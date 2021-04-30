@@ -1,6 +1,6 @@
+/*
 package com.vinylteam.vinyl.web.templater;
 
-import com.vinylteam.vinyl.entity.Vinyl;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
@@ -74,4 +74,4 @@ public class PageGenerator {
         }
         return context;
     }
-}
+}*/

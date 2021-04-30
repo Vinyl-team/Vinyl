@@ -1,3 +1,4 @@
+/*
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.service.UserService;
@@ -38,3 +39,4 @@ public class SignUpServlet extends HttpServlet {
     }
 
 }
+*/

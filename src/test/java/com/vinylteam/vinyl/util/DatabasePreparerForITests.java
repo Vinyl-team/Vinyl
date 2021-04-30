@@ -4,8 +4,10 @@ import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.entity.User;
-import org.junit.platform.commons.logging.Logger;
-import org.junit.platform.commons.logging.LoggerFactory;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,49 +17,66 @@ import java.util.List;
 
 public class DatabasePreparerForITests {
 
-    private final Connection connection;
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final String TRUNCATE_SHOPS_CASCADE = "TRUNCATE public.shops RESTART IDENTITY CASCADE";
     private final String TRUNCATE_UNIQUE_VINYLS_CASCADE = "TRUNCATE public.unique_vinyls RESTART IDENTITY CASCADE";
     private final String TRUNCATE_OFFERS = "TRUNCATE public.offers RESTART IDENTITY";
     private final String TRUNCATE_USERS_CASCADE = "TRUNCATE public.users RESTART IDENTITY CASCADE";
     private final String INSERT_IN_SHOPS = "INSERT INTO public.shops(id, link_to_main_page, link_to_image, name) VALUES(?, ?, ?, ?)";
-    private final String INSERT_IN_UNIQUE_VINYLS = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image) VALUES(?, ?, ?, ?, ?)";
+    private final String INSERT_IN_UNIQUE_VINYLS = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image, has_offers) VALUES(?, ?, ?, ?, ?, ?)";
     private final String INSERT_IN_OFFERS = "INSERT INTO public.offers(unique_vinyl_id, shop_id, price, currency, genre, link_to_offer) " +
             "VALUES(?, ?, ?, ?, ?, ?)";
     private final String INSERT_IN_USERS = "INSERT INTO public.users (email, password, salt, iterations, role, status) VALUES (?, ?, ?, ?, ?, ?)";
+    private final HikariDataSource dataSource;
+    private final HikariConfig config = new HikariConfig();
 
 
-    public DatabasePreparerForITests(Connection connection) {
-        this.connection = connection;
+
+    public DatabasePreparerForITests() {
+        config.setJdbcUrl(PropertiesReader.getProperty("jdbc.url"));
+        config.setUsername(PropertiesReader.getProperty("jdbc.user"));
+        config.setPassword(PropertiesReader.getProperty("jdbc.password"));
+        config.setDriverClassName(PropertiesReader.getProperty("jdbc.driver"));
+        config.setMaximumPoolSize(Integer.parseInt(PropertiesReader.getProperty("jdbc.maximum.pool.size")));
+        dataSource = new HikariDataSource(config);
+        logger.info("Configured and created HikariDataSource object {'dataSource':{}}", dataSource);
+    }
+
+    public HikariDataSource getDataSource() {
+        return dataSource;
     }
 
     public void truncateCascadeShops() throws SQLException {
-        try (Statement truncateShops = connection.createStatement()) {
+        try (Connection connection = dataSource.getConnection();
+             Statement truncateShops = connection.createStatement()) {
             truncateShops.executeUpdate(TRUNCATE_SHOPS_CASCADE);
         }
     }
 
     public void truncateCascadeUniqueVinyls() throws SQLException {
-        try (Statement truncateUniqueVinyls = connection.createStatement()) {
+        try (Connection connection = dataSource.getConnection();
+             Statement truncateUniqueVinyls = connection.createStatement()) {
             truncateUniqueVinyls.executeUpdate(TRUNCATE_UNIQUE_VINYLS_CASCADE);
         }
     }
 
     public void truncateOffers() throws SQLException {
-        try (Statement truncateOffers = connection.createStatement()) {
+        try (Connection connection = dataSource.getConnection();
+             Statement truncateOffers = connection.createStatement()) {
             truncateOffers.executeUpdate(TRUNCATE_OFFERS);
         }
     }
 
     public void truncateCascadeUsers() throws SQLException {
-        try (Statement truncateUsers = connection.createStatement()) {
+        try (Connection connection = dataSource.getConnection();
+             Statement truncateUsers = connection.createStatement()) {
             truncateUsers.executeUpdate(TRUNCATE_USERS_CASCADE);
         }
     }
 
     public void truncateAllVinylTables() throws SQLException {
-        try (Statement truncateShops = connection.createStatement();
+        try (Connection connection = dataSource.getConnection();
+             Statement truncateShops = connection.createStatement();
              Statement truncateUniqueVinyls = connection.createStatement();
              Statement truncateOffers = connection.createStatement()) {
             truncateShops.executeUpdate(TRUNCATE_SHOPS_CASCADE);
@@ -67,7 +86,8 @@ public class DatabasePreparerForITests {
     }
 
     public void insertShops(List<Shop> shops) throws SQLException {
-        try (PreparedStatement insertShops = connection.prepareStatement(INSERT_IN_SHOPS)) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement insertShops = connection.prepareStatement(INSERT_IN_SHOPS)) {
             connection.setAutoCommit(false);
             for (Shop shop : shops) {
                 insertShops.setInt(1, shop.getId());
@@ -82,7 +102,8 @@ public class DatabasePreparerForITests {
     }
 
     public void insertUniqueVinyls(List<UniqueVinyl> uniqueVinyls) throws SQLException {
-        try (PreparedStatement insertUniqueVinyls = connection.prepareStatement(INSERT_IN_UNIQUE_VINYLS)) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement insertUniqueVinyls = connection.prepareStatement(INSERT_IN_UNIQUE_VINYLS)) {
             connection.setAutoCommit(false);
             for (UniqueVinyl uniqueVinyl : uniqueVinyls) {
                 insertUniqueVinyls.setLong(1, uniqueVinyl.getId());
@@ -90,6 +111,7 @@ public class DatabasePreparerForITests {
                 insertUniqueVinyls.setString(3, uniqueVinyl.getArtist());
                 insertUniqueVinyls.setString(4, uniqueVinyl.getFullName());
                 insertUniqueVinyls.setString(5, uniqueVinyl.getImageLink());
+                insertUniqueVinyls.setBoolean(6, uniqueVinyl.getHasOffers());
                 insertUniqueVinyls.addBatch();
             }
             insertUniqueVinyls.executeBatch();
@@ -98,7 +120,8 @@ public class DatabasePreparerForITests {
     }
 
     public void insertOffers(List<Offer> offers) throws SQLException {
-        try (PreparedStatement insertOffers = connection.prepareStatement(INSERT_IN_OFFERS)) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement insertOffers = connection.prepareStatement(INSERT_IN_OFFERS)) {
             connection.setAutoCommit(false);
             for (Offer offer : offers) {
                 insertOffers.setLong(1, offer.getUniqueVinylId());
@@ -115,7 +138,8 @@ public class DatabasePreparerForITests {
     }
 
     public void insertUsers(List<User> users) throws SQLException {
-        try (PreparedStatement insertUsers = connection.prepareStatement(INSERT_IN_USERS)) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement insertUsers = connection.prepareStatement(INSERT_IN_USERS)) {
             connection.setAutoCommit(false);
             for (User user : users) {
                 insertUsers.setString(1, user.getEmail());

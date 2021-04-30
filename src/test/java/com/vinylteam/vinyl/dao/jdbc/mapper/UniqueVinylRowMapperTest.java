@@ -9,7 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,12 +34,6 @@ class UniqueVinylRowMapperTest {
         assertEquals("artist1", uniqueVinyl.getArtist());
         assertEquals("release1 - artist1", uniqueVinyl.getFullName());
         assertEquals("https://imagestore.com/somewhere/image1.jpg", uniqueVinyl.getImageLink());
-    }
-
-    @Test
-    @DisplayName("Checks if passing null ResultSet causes RuntimeException.")
-    void mapRowWithNullResultSetTest() {
-        assertThrows(RuntimeException.class, () -> rowMapper.mapRow(null));
     }
 
 }

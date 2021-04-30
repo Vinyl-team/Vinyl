@@ -14,24 +14,18 @@ public class UniqueVinylRowMapper implements RowMapper<UniqueVinyl> {
 
     @Override
     public UniqueVinyl mapRow(ResultSet resultSet) {
-        if (resultSet != null) {
-            UniqueVinyl uniqueVinyl = new UniqueVinyl();
-            try {
-                uniqueVinyl.setId(resultSet.getInt("id"));
-                uniqueVinyl.setRelease(resultSet.getString("release"));
-                uniqueVinyl.setArtist(resultSet.getString("artist"));
-                uniqueVinyl.setFullName(resultSet.getString("full_name"));
-                uniqueVinyl.setImageLink(resultSet.getString("link_to_image"));
-                logger.debug("Resulting UniqueVinyl object {'uniqueVinyl':{}}", uniqueVinyl);
-                return uniqueVinyl;
-            } catch (SQLException e) {
-                logger.error("Error while getting data from result set into UniqueVinyl object {'uniqueVinyl':{}}", uniqueVinyl, e);
-                throw new RuntimeException(e);
-            }
-        } else {
-            RuntimeException e = new RuntimeException();
-            logger.error("ResultSet passed to UniqueVinylRowMapper is null", e);
-            throw e;
+        UniqueVinyl uniqueVinyl = new UniqueVinyl();
+        try {
+            uniqueVinyl.setId(resultSet.getInt("id"));
+            uniqueVinyl.setRelease(resultSet.getString("release"));
+            uniqueVinyl.setArtist(resultSet.getString("artist"));
+            uniqueVinyl.setFullName(resultSet.getString("full_name"));
+            uniqueVinyl.setImageLink(resultSet.getString("link_to_image"));
+            logger.debug("Resulting UniqueVinyl object {'uniqueVinyl':{}}", uniqueVinyl);
+            return uniqueVinyl;
+        } catch (SQLException e) {
+            logger.error("Error while getting data from result set into UniqueVinyl object {'uniqueVinyl':{}}", uniqueVinyl, e);
+            throw new RuntimeException(e);
         }
     }
 

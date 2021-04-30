@@ -9,6 +9,7 @@ public class UniqueVinyl {
     private String artist;
     private String fullName;
     private String imageLink;
+    private boolean hasOffers;
 
     public long getId() {
         return id;
@@ -50,6 +51,14 @@ public class UniqueVinyl {
         this.imageLink = imageLink;
     }
 
+    public boolean getHasOffers() {
+        return this.hasOffers;
+    }
+
+    public void setHasOffers(boolean hasOffers) {
+        this.hasOffers = hasOffers;
+    }
+
     @Override
     public String toString() {
         return "\nUniqueVinyl{" +
@@ -58,6 +67,7 @@ public class UniqueVinyl {
                 ", artist='" + artist + '\'' +
                 ", fullName='" + fullName + '\'' +
                 ", imageLink='" + imageLink + '\'' +
+                ", hasOffers='" + hasOffers + '\'' +
                 '}';
     }
 
@@ -70,12 +80,13 @@ public class UniqueVinyl {
                 Objects.equals(release, uniqueVinyl.release) &&
                 Objects.equals(artist, uniqueVinyl.artist) &&
                 Objects.equals(fullName, uniqueVinyl.fullName) &&
-                Objects.equals(imageLink, uniqueVinyl.imageLink);
+                Objects.equals(imageLink, uniqueVinyl.imageLink) &&
+                hasOffers == uniqueVinyl.hasOffers;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, release, artist, fullName, imageLink);
+        return Objects.hash(id, release, artist, fullName, imageLink, hasOffers);
     }
 
 }

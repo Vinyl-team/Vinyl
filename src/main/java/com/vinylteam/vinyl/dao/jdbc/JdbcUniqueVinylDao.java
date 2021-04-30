@@ -1,10 +1,10 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
-import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.dao.RowMapper;
 import com.vinylteam.vinyl.dao.UniqueVinylDao;
 import com.vinylteam.vinyl.dao.jdbc.mapper.UniqueVinylRowMapper;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
+import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,17 +24,64 @@ public class JdbcUniqueVinylDao extends AbstractJdbcUniqueVinylAndOfferDao<Uniqu
     private final String INSERT = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image) VALUES(?, ?, ?, ?, ?)";
     private final String SELECT_ALL = "SELECT id, release, artist, full_name, link_to_image FROM public.unique_vinyls";
     private final String SELECT_BY_ID = SELECT_ALL + " WHERE id=?";
-    private final String SELECT_MANY_RANDOM = SELECT_ALL + " TABLESAMPLE SYSTEM_ROWS(?) LIMIT ?";
-    private final String SELECT_MANY_BY_FULL_NAME_MATCH = SELECT_ALL + " WHERE full_name ILIKE ?";
-    private final String SELECT_BY_ARTIST = SELECT_ALL + " WHERE artist=?";
+    private final String SELECT_MANY_RANDOM = SELECT_ALL + " WHERE id IN(SELECT * FROM random_valid_unique_ids(?)) LIMIT ?";
+    private final String SELECT_MANY_BY_FULL_NAME_MATCH = SELECT_ALL + " WHERE full_name ILIKE ? AND has_offers";
+    private final String SELECT_BY_ARTIST = SELECT_ALL + " WHERE artist=? AND has_offers";
     private final String FINDING_AMOUNT_OF_RANDOM_ERROR_MESSAGE = "Error while finding that amount of random {} from db {'amount':{}, '{}':{}}";
     private final String FINDING_FILTERED_BY_FULL_NAME_SUBSTRING_ERROR_MESSAGE = "Error while finding {} by fullName matcher from db {'amount':{}, '{}':{}}";
+    private final HikariDataSource dataSource;
 
+    public JdbcUniqueVinylDao(HikariDataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Override
+    public List<UniqueVinyl> findAll() {
+        List<UniqueVinyl> uniqueVinyls = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement findAllStatement = connection.prepareStatement(SELECT_ALL);
+             ResultSet resultSet = findAllStatement.executeQuery()) {
+            logger.debug(EXECUTED_STATEMENT_MESSAGE, findAllStatement);
+            while (resultSet.next()) {
+                UniqueVinyl object = rowMapper.mapRow(resultSet);
+                uniqueVinyls.add(object);
+            }
+        } catch (SQLException e) {
+            logger.error(FINDING_ALL_ERROR_MESSAGE, LIST_NAME, LIST_NAME, uniqueVinyls, e);
+            throw new RuntimeException(e);
+        }
+        logger.debug(RESULT_IS_MESSAGE, LIST_NAME, LIST_NAME, uniqueVinyls);
+        return uniqueVinyls;
+    }
+
+    @Override
+    public UniqueVinyl findById(long id) {
+        UniqueVinyl uniqueVinyl;
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement findByIdStatement = connection.prepareStatement(SELECT_BY_ID)) {
+            findByIdStatement.setLong(1, id);
+            logger.debug(PREPARED_STATEMENT_MESSAGE, findByIdStatement);
+            try (ResultSet resultSet = findByIdStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    uniqueVinyl = rowMapper.mapRow(resultSet);
+                } else {
+                    RuntimeException e = new RuntimeException();
+                    logger.error(NO_ROW_BY_ERROR_MESSAGE, OBJECT_NAME, "id", "id", id, e);
+                    throw e;
+                }
+            }
+        } catch (SQLException e) {
+            logger.error(FINDING_BY_ERROR_MESSAGE, OBJECT_NAME, "id", "id", id);
+            throw new RuntimeException(e);
+        }
+        logger.debug(RESULT_IS_MESSAGE, OBJECT_NAME, OBJECT_NAME, uniqueVinyl);
+        return uniqueVinyl;
+    }
 
     @Override
     public List<UniqueVinyl> findManyRandom(int amount) {
         List<UniqueVinyl> randomUniqueVinyls = new ArrayList<>();
-        try(Connection connection = DBDataSource.getConnection();
+        try(Connection connection = dataSource.getConnection();
             PreparedStatement findAmountOfRandom = connection.prepareStatement(SELECT_MANY_RANDOM)) {
             findAmountOfRandom.setInt(1, amount * 2);
             findAmountOfRandom.setInt(2, amount);
@@ -46,7 +93,8 @@ public class JdbcUniqueVinylDao extends AbstractJdbcUniqueVinylAndOfferDao<Uniqu
                 }
             }
         } catch (SQLException e) {
-            logger.error(FINDING_AMOUNT_OF_RANDOM_ERROR_MESSAGE, LIST_NAME, amount, LIST_NAME, randomUniqueVinyls);
+            logger.error(FINDING_AMOUNT_OF_RANDOM_ERROR_MESSAGE, LIST_NAME, amount, LIST_NAME, randomUniqueVinyls, e);
+            throw new RuntimeException("Error while finding " + amount + " of random unique vinyls from the db", e);
         }
         logger.debug(RESULT_IS_MESSAGE, LIST_NAME, LIST_NAME, randomUniqueVinyls);
         return randomUniqueVinyls;
@@ -60,7 +108,7 @@ public class JdbcUniqueVinylDao extends AbstractJdbcUniqueVinylAndOfferDao<Uniqu
             throw e;
         }
         List<UniqueVinyl> filteredUniqueVinyls = new ArrayList<>();
-        try(Connection connection = DBDataSource.getConnection();
+        try(Connection connection = dataSource.getConnection();
             PreparedStatement findFilteredByFullNameSubstring = connection.prepareStatement(SELECT_MANY_BY_FULL_NAME_MATCH)) {
             findFilteredByFullNameSubstring.setString(1, '%' + matcher + '%');
             logger.debug(PREPARED_STATEMENT_MESSAGE, findFilteredByFullNameSubstring);
@@ -85,7 +133,7 @@ public class JdbcUniqueVinylDao extends AbstractJdbcUniqueVinylAndOfferDao<Uniqu
             throw e;
         }
         List<UniqueVinyl> uniqueVinyls = new ArrayList<>();
-        try(Connection connection = DBDataSource.getConnection();
+        try(Connection connection = dataSource.getConnection();
             PreparedStatement findByArtist = connection.prepareStatement(SELECT_BY_ARTIST)) {
             findByArtist.setString(1, artist);
             logger.debug(PREPARED_STATEMENT_MESSAGE, findByArtist);
@@ -102,15 +150,4 @@ public class JdbcUniqueVinylDao extends AbstractJdbcUniqueVinylAndOfferDao<Uniqu
         return uniqueVinyls;
     }
 
-    @Override
-    protected void setAddAllStatementParameters(PreparedStatement preparedStatement, List<UniqueVinyl> uniqueVinyls) throws SQLException {
-        for (UniqueVinyl uniqueVinyl : uniqueVinyls) {
-            preparedStatement.setLong(1, uniqueVinyl.getId());
-            preparedStatement.setString(2, uniqueVinyl.getRelease());
-            preparedStatement.setString(3, uniqueVinyl.getArtist());
-            preparedStatement.setString(4, uniqueVinyl.getFullName());
-            preparedStatement.setString(5, uniqueVinyl.getImageLink());
-            preparedStatement.addBatch();
-        }
-    }
 }

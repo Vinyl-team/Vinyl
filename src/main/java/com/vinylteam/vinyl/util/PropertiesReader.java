@@ -11,14 +11,14 @@ import java.util.Properties;
 
 public class PropertiesReader {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final Properties properties = new Properties();
-    private final String independentPropertiesFile = "application.properties";
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesReader.class);
+    private static final Properties properties = new Properties();
+    private static final String independentPropertiesFile = "application.properties";
 
-    public PropertiesReader() {
+    static {
         String beginningOfErrorMessage = "Error during loading properties from";
 
-        try (InputStream inputStream = getClass().getClassLoader()
+        try (InputStream inputStream = PropertiesReader.class.getClassLoader()
                 .getResourceAsStream(independentPropertiesFile)) {
             logger.debug("Created input stream from file {'inputStream':{}, 'fileName':{}}",
                     inputStream, independentPropertiesFile);
@@ -38,7 +38,7 @@ public class PropertiesReader {
         if (env == null) {
             dependentOnEnvPropertiesFile = "dev.application.properties";
 
-            try (InputStream inputStream = getClass().getClassLoader()
+            try (InputStream inputStream = PropertiesReader.class.getClassLoader()
                     .getResourceAsStream(dependentOnEnvPropertiesFile)) {
                 logger.debug("Created input stream from file {'inputStream':{}, 'fileName':{}}",
                         inputStream, dependentOnEnvPropertiesFile);
@@ -76,7 +76,7 @@ public class PropertiesReader {
                     "{'properties':{}, 'databaseUri':{}, 'PORT':{}}", properties, databaseUri, portVariable);
         } else if (env.equals("DEV")) {
             dependentOnEnvPropertiesFile = "travis.application.properties";
-            try (InputStream inputStream = getClass().getClassLoader()
+            try (InputStream inputStream = PropertiesReader.class.getClassLoader()
                     .getResourceAsStream(dependentOnEnvPropertiesFile)) {
                 logger.debug("Created input stream from file {'inputStream':{}, 'fileName':{}}",
                         inputStream, dependentOnEnvPropertiesFile);
@@ -89,16 +89,16 @@ public class PropertiesReader {
                 throw new RuntimeException(e);
             }
         }
-        logger.info("Loaded properties in {}", getClass());
+        logger.info("Loaded properties in {}", PropertiesReader.class);
     }
 
-    public String getProperty(String propertyName) {
+    public static String getProperty(String propertyName) {
         return properties.getProperty(propertyName);
     }
 
-    private void validateInputStream(InputStream inputStream) {
+    private static void validateInputStream(InputStream inputStream) {
         if (inputStream == null) {
-            RuntimeException e = new RuntimeException();
+            RuntimeException e = new RuntimeException(".properties file not found, input stream is null");
             logger.error(".properties file not found, input stream is null", e);
             throw e;
         }

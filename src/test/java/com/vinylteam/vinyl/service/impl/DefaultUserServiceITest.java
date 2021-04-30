@@ -1,3 +1,4 @@
+/*
 package com.vinylteam.vinyl.service.impl;
 
 import com.vinylteam.vinyl.dao.DBDataSource;
@@ -145,4 +146,4 @@ class DefaultUserServiceITest {
         assertTrue(userService.add("newuser@vinyl.com", "password3"));
     }
 
-}
+}*/

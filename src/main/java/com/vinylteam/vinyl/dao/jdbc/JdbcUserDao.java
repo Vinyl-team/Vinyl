@@ -1,9 +1,9 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
-import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.dao.UserDao;
 import com.vinylteam.vinyl.dao.jdbc.mapper.UserRowMapper;
 import com.vinylteam.vinyl.entity.User;
+import com.zaxxer.hikari.HikariDataSource;
 import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,8 @@ import java.util.Optional;
 
 public class JdbcUserDao implements UserDao {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final UserRowMapper userRowMapper = new UserRowMapper();
     private final String COUNT_ALL = "SELECT COUNT(*) FROM public.users";
     private final String FIND_BY_EMAIL = "SELECT email, password, salt, iterations, role, status" +
             " FROM public.users" +
@@ -20,13 +22,15 @@ public class JdbcUserDao implements UserDao {
     private final String INSERT = "INSERT INTO public.users" +
             " (email, password, salt, iterations, role, status)" +
             " VALUES (?, ?, ?, ?, ?, ?)";
+    private final HikariDataSource dataSource;
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final UserRowMapper userRowMapper = new UserRowMapper();
+    public JdbcUserDao(HikariDataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     public boolean add(User user) {
         boolean isAdded;
-        try (Connection connection = DBDataSource.getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement insertStatement = connection.prepareStatement(INSERT)) {
             insertStatement.setString(1, user.getEmail());
             insertStatement.setString(2, user.getPassword());
@@ -54,7 +58,7 @@ public class JdbcUserDao implements UserDao {
 
     public Optional<User> getByEmail(String email) {
         User user = null;
-        try (Connection connection = DBDataSource.getConnection();
+        try (Connection connection = dataSource.getConnection();
              PreparedStatement findByEmailStatement = connection.prepareStatement(FIND_BY_EMAIL)) {
             findByEmailStatement.setString(1, email);
             logger.debug("Prepared statement {'preparedStatement':{}}.", findByEmailStatement);
@@ -78,7 +82,7 @@ public class JdbcUserDao implements UserDao {
 
     int countAll() {
         int count = -1;
-        try (Connection connection = DBDataSource.getConnection();
+        try (Connection connection = dataSource.getConnection();
              Statement countStatement = connection.createStatement();
              ResultSet resultSet = countStatement.executeQuery(COUNT_ALL)) {
             logger.debug("Executed statement {'statement':{}}", countStatement);
