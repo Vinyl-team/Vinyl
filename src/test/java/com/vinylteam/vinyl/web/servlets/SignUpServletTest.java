@@ -10,6 +10,8 @@ import org.mockito.InOrder;
 import org.mockito.Mockito;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import static org.mockito.Mockito.*;
 
@@ -19,6 +21,22 @@ class SignUpServletTest {
     private final HttpServletRequest mockedHttpServletRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedHttpServletResponse = mock(HttpServletResponse.class);
     private final SignUpServlet signUpServlet = new SignUpServlet(mockedUserService);
+    private final InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
+    private final InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
+
+    @Test
+    @DisplayName("Checks if all right methods are called")
+    void doGetTest() throws IOException {
+        //prepare
+        PrintWriter printWriter = new PrintWriter(new StringWriter());
+        when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
+        //when
+        signUpServlet.doGet(mockedHttpServletRequest, mockedHttpServletResponse);
+        //then
+        inOrderResponse.verify(mockedHttpServletResponse).setContentType("text/html;charset=utf-8");
+        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_OK);
+        verify(mockedHttpServletResponse).getWriter();
+    }
 
     @Test
     @DisplayName("Checks if all right methods are called and response has code set to 400 and redirected to /signUp " +
@@ -28,9 +46,6 @@ class SignUpServletTest {
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("existinguser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
         when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("confirmPassword");
-
-        InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
-        InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
         //when
         signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
         //then
@@ -53,9 +68,6 @@ class SignUpServletTest {
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
         when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("password");
         when(mockedUserService.add("existinguser@vinyl.com", "password")).thenReturn(false);
-
-        InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
-        InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
         //when
         signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
         //then
@@ -78,9 +90,6 @@ class SignUpServletTest {
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
         when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("password");
         when(mockedUserService.add("newuser@vinyl.com", "password")).thenReturn(true);
-
-        InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
-        InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
         //when
         signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
         //then

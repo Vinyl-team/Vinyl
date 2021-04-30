@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class ProfileServlet extends HttpServlet {
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -22,7 +21,7 @@ public class ProfileServlet extends HttpServlet {
         logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
         Map<String, String> attributes = new HashMap<>();
         User user = (User) request.getSession().getAttribute("user");
-        if (user != null){
+        if (user != null) {
             attributes.put("userRole", String.valueOf(user.getRole()));
         }
         PageGenerator.getInstance().process("profile", attributes, response.getWriter());

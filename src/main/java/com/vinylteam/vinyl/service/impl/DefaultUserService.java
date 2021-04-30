@@ -55,17 +55,9 @@ public class DefaultUserService implements UserService {
                     logger.debug("Hashed password passed as argument matches hashed password " +
                             "of user by passed email {'email':{}}", email);
                     optionalUser = optionalUserFromDataBase;
-//                    if (optionalUser.get().getStatus()) {
-//                        logger.debug("User's status is {'status':{}}", optionalUser.get().getStatus());
-//                        checkResult = SignInCheckResult.OK_VERIFIED;
-//                    } else {
-//                        logger.debug("User's status is {'status':{}}", optionalUser.get().getStatus());
-//                        checkResult = SignInCheckResult.OK_NOT_VERIFIED;
-//                    }
                 }
             }
         }
-//        logger.debug("Result of checking is {'checkResult':{}}", checkResult);
         return optionalUser;
     }
 

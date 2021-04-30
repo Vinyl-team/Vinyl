@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class SearchResultsServlet extends HttpServlet {
 
@@ -29,7 +28,7 @@ public class SearchResultsServlet extends HttpServlet {
         List<Vinyl> filteredUniqueVinyls = vinylService.getManyFilteredUnique(matcher);
         attributes.put("searchWord", matcher);
         User user = (User) request.getSession().getAttribute("user");
-        if (user != null){
+        if (user != null) {
             attributes.put("userRole", String.valueOf(user.getRole()));
         }
         response.setContentType("text/html;charset=utf-8");

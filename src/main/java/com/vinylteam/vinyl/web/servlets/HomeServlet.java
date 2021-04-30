@@ -22,9 +22,6 @@ public class HomeServlet extends HttpServlet {
         if (user != null) {
             attributes.put("userRole", String.valueOf(user.getRole()));
         }
-        //String userRole = (String) request.getSession().getAttribute("userRole");
-
-//        attributes.put("userRole", userRole);
         response.setStatus(HttpServletResponse.SC_OK);
         logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
         PageGenerator.getInstance().process("index", attributes, response.getWriter());

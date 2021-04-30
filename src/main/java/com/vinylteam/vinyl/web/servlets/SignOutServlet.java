@@ -16,6 +16,8 @@ public class SignOutServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         HttpSession session = request.getSession();
         session.invalidate();
+        response.setStatus(HttpServletResponse.SC_OK);
+        logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
         response.sendRedirect("/");
     }
 }

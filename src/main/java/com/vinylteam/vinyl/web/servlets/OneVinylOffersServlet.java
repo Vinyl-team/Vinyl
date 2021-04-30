@@ -12,7 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class OneVinylOffersServlet extends HttpServlet {
 
@@ -29,7 +32,7 @@ public class OneVinylOffersServlet extends HttpServlet {
 
         Map<String, String> attributes = new HashMap<>();
         User user = (User) request.getSession().getAttribute("user");
-        if (user != null){
+        if (user != null) {
             attributes.put("userRole", String.valueOf(user.getRole()));
         }
 
@@ -41,9 +44,9 @@ public class OneVinylOffersServlet extends HttpServlet {
         List<Shop> shopsFromOffers = shopService.getManyByListOfIds(shopIds);
 
         List<OneVinylOffersServletResponse> vinylOffersResponseList = new ArrayList<>();
-        for(Vinyl vinyl : vinylOffers){
-            for (Shop shop : shopsFromOffers){
-                if (vinyl.getShopId() == shop.getId()){
+        for (Vinyl vinyl : vinylOffers) {
+            for (Shop shop : shopsFromOffers) {
+                if (vinyl.getShopId() == shop.getId()) {
                     OneVinylOffersServletResponse vinylOffersResponse = new OneVinylOffersServletResponse();
                     vinylOffersResponse.setPrice(vinyl.getPrice());
                     vinylOffersResponse.setVinylLink(vinyl.getVinylLink());
@@ -53,7 +56,7 @@ public class OneVinylOffersServlet extends HttpServlet {
             }
         }
 
-        vinylOffersResponseList.sort((vinyl1, vinyl2)-> (int) (vinyl1.getPrice()-vinyl2.getPrice()));
+        vinylOffersResponseList.sort((vinyl1, vinyl2) -> (int) (vinyl1.getPrice() - vinyl2.getPrice()));
 
         String artist = uniqueVinyl.getArtist();
         List<Vinyl> uniqueVinylsByArtist = vinylService.getManyUniqueByArtist(artist);
