@@ -21,6 +21,7 @@ class SignUpServletTest {
     private final HttpServletRequest mockedHttpServletRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedHttpServletResponse = mock(HttpServletResponse.class);
     private final SignUpServlet signUpServlet = new SignUpServlet(mockedUserService);
+    private final PrintWriter printWriter = new PrintWriter(new StringWriter());
     private final InOrder inOrderRequest = Mockito.inOrder(mockedHttpServletRequest);
     private final InOrder inOrderResponse = Mockito.inOrder(mockedHttpServletResponse);
 
@@ -46,6 +47,7 @@ class SignUpServletTest {
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("existinguser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
         when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("confirmPassword");
+        when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
         //when
         signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
         //then
@@ -56,7 +58,7 @@ class SignUpServletTest {
         verify(mockedUserService, times(0))
                 .add("existinguser@vinyl.com", "password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signUp");
+        verify(mockedHttpServletResponse).getWriter();
     }
 
     @Test
@@ -68,6 +70,7 @@ class SignUpServletTest {
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
         when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("password");
         when(mockedUserService.add("existinguser@vinyl.com", "password")).thenReturn(false);
+        when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
         //when
         signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
         //then
@@ -78,7 +81,7 @@ class SignUpServletTest {
         verify(mockedUserService, times(1))
                 .add("existinguser@vinyl.com", "password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/signUp");
+        verify(mockedHttpServletResponse).getWriter();
     }
 
     @Test

@@ -2,6 +2,10 @@
 
 .content-registration-page{
   height: 30.70em;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .content-registration-page__column{

@@ -89,7 +89,7 @@ public class VinylUaParser implements VinylParser {
                         .getElementsByClass(classContainingVinylLinks).attr("style").split("'");
                 String imageLink = imageLinks[1];
                 if (!imageLink.contains("amazonaws.com")) {
-                    imageLink = "https://cdn1.savepice.ru/uploads/2021/4/22/fec4212f54c1d61c6c6d2e4eaac68a80-full.jpg";
+                    imageLink = "img/goods/no_image.jpg";
                 }
                 String[] linkComponents = pageLink.split("[/?]");
                 String genre = linkComponents[4];

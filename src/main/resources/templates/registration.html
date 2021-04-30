@@ -93,6 +93,10 @@
     <div class="container">
       <div class="content-registration-page content">
 
+        <div class="user__message">
+          <div th:if="${message != null}" th:text="${message}"></div>
+        </div>
+
         <div class="content-registration-page__column content-column">
 
           <div class="content-user__title">

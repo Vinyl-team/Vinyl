@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignUpServlet extends HttpServlet {
 
@@ -29,6 +31,7 @@ public class SignUpServlet extends HttpServlet {
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Map<String, String> attributes = new HashMap<>();
         response.setContentType("text/html;charset=utf-8");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
@@ -46,7 +49,9 @@ public class SignUpServlet extends HttpServlet {
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
-            response.sendRedirect(failRedirect);
+            //response.sendRedirect(failRedirect);
+            attributes.put("message", "Sorry, but user with this email already exist!");
+            PageGenerator.getInstance().process("registration", attributes, response.getWriter());
         }
     }
 
