@@ -12,6 +12,7 @@ import java.io.IOException;
 public class SignOutServlet extends HttpServlet {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=utf-8");
         HttpSession session = request.getSession(false);
