@@ -19,8 +19,8 @@ class SignOutServletTest {
     InOrder inOrderRequest = inOrder(mockedRequest);
     InOrder inOrderResponse = inOrder(mockedResponse);
     @Test
-    @DisplayName("Checks if all right methods are called & exist session was delete")
-    void doGetWithExistSessionTest() throws IOException {
+    @DisplayName("Checks if all right methods are called & existing session was deleted")
+    void doGetWithExistingSessionTest() throws IOException {
         //prepare
         when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         //when
@@ -35,7 +35,7 @@ class SignOutServletTest {
 
     @Test
     @DisplayName("Checks if all right methods are called & session doesn't exist")
-    void doGetWithNonExistSessionTest() throws IOException {
+    void doGetWithNotExistingSessionTest() throws IOException {
         //prepare
         when(mockedRequest.getSession(false)).thenReturn(null);
         //when
