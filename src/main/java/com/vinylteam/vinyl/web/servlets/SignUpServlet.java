@@ -35,19 +35,25 @@ public class SignUpServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        boolean isAdded = userService.add(email, password);
-        logger.debug("Got result of adding user with " +
-                "passed email and password to db {'email':{}, 'isAdded':{}}", email, isAdded);
-        if (isAdded) {
-            response.setStatus(HttpServletResponse.SC_SEE_OTHER);
-            logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_SEE_OTHER);
-            attributes.put("message", "Please confirm your registration. To do this, follow the link that we sent you by email.");
-            PageGenerator.getInstance().process("registration", attributes, response.getWriter());
-        } else {
+        String confirmPassword = request.getParameter("confirmPassword");
+        if (!password.equals(confirmPassword)) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
-            attributes.put("message", "Sorry, but the email couldn't be registered. Check email and password!");
-            PageGenerator.getInstance().process("registration", attributes, response.getWriter());
+            attributes.put("message", "Sorry, the passwords don't match!");
+        } else {
+            boolean isAdded = userService.add(email, password);
+            logger.debug("Got result of adding user with " +
+                    "passed email and password to db {'email':{}, 'isAdded':{}}", email, isAdded);
+            if (isAdded) {
+                response.setStatus(HttpServletResponse.SC_SEE_OTHER);
+                logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_SEE_OTHER);
+                attributes.put("message", "Please confirm your registration. To do this, follow the link that we sent you by email.");
+            } else {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
+                attributes.put("message", "Sorry, but the email couldn't be registered. Check email and password!");
+            }
         }
+        PageGenerator.getInstance().process("registration", attributes, response.getWriter());
     }
 }

@@ -41,11 +41,34 @@ class SignUpServletTest {
 
     @Test
     @DisplayName("Checks if all right methods are called and response has code set to 400 and redirected to /signUp " +
+            "when password is not correct.")
+    void doPostWithNotCorrectPasswordTest() throws IOException {
+        //prepare
+        when(mockedHttpServletRequest.getParameter("email")).thenReturn("existinguser@vinyl.com");
+        when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
+        when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("confirmPassword");
+        when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
+        //when
+        signUpServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
+        //then
+        inOrderResponse.verify(mockedHttpServletResponse).setContentType("text/html;charset=utf-8");
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("confirmPassword");
+        verify(mockedUserService, times(0))
+                .add("existinguser@vinyl.com", "password");
+        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        verify(mockedHttpServletResponse).getWriter();
+    }
+
+    @Test
+    @DisplayName("Checks if all right methods are called and response has code set to 400 and redirected to /signUp " +
             "when email already exist in db.")
     void doPostWithExistingUserTest() throws IOException {
         //prepare
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("existinguser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
+        when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("password");
         when(mockedUserService.add("existinguser@vinyl.com", "password")).thenReturn(false);
         when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
         //when
@@ -54,6 +77,7 @@ class SignUpServletTest {
         inOrderResponse.verify(mockedHttpServletResponse).setContentType("text/html;charset=utf-8");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("confirmPassword");
         verify(mockedUserService, times(1))
                 .add("existinguser@vinyl.com", "password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -67,6 +91,7 @@ class SignUpServletTest {
         //prepare
         when(mockedHttpServletRequest.getParameter("email")).thenReturn("newuser@vinyl.com");
         when(mockedHttpServletRequest.getParameter("password")).thenReturn("password");
+        when(mockedHttpServletRequest.getParameter("confirmPassword")).thenReturn("password");
         when(mockedUserService.add("newuser@vinyl.com", "password")).thenReturn(true);
         when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
         //when
@@ -75,6 +100,7 @@ class SignUpServletTest {
         inOrderResponse.verify(mockedHttpServletResponse).setContentType("text/html;charset=utf-8");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("email");
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
+        inOrderRequest.verify(mockedHttpServletRequest).getParameter("confirmPassword");
         verify(mockedUserService, times(1))
                 .add("newuser@vinyl.com", "password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_SEE_OTHER);
