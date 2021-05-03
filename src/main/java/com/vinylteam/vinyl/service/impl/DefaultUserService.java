@@ -36,6 +36,19 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
+    public boolean edit(String oldEmail, String newEmail, String newPassword){
+        boolean isEdit = false;
+        if (newEmail != null && newPassword != null){
+            User userToEdit = securityService
+                    .createUserWithHashedPassword(newEmail, newPassword.toCharArray());
+            isEdit = userDao.edit(oldEmail, userToEdit);
+            logger.debug("Attempt to update user with known email address in database with boolean result" +
+                            "{'isEdit':{}, 'oldEmail':{}}", isEdit, oldEmail);
+        }
+        return isEdit;
+    }
+
+    @Override
     public Optional<User> getByEmail(String email) {
         Optional<User> resultingOptional = userDao.getByEmail(email);
         logger.debug("Resulting optional is {'optional':{}}", resultingOptional);

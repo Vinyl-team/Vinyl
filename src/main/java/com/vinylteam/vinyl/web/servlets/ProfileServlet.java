@@ -23,7 +23,8 @@ public class ProfileServlet extends HttpServlet {
         Map<String, String> attributes = new HashMap<>();
         User user = (User) request.getSession().getAttribute("user");
         if (user != null) {
-            attributes.put("userRole", String.valueOf(user.getRole()));
+            attributes.put("userRole", user.getRole().toString());
+            attributes.put("email", user.getEmail());
         }
         PageGenerator.getInstance().process("profile", attributes, response.getWriter());
     }

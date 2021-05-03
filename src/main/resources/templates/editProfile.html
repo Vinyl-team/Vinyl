@@ -93,32 +93,78 @@
     <div class="container">
       <div class="content-edit-profile content">
 
+        <div class="user__message">
+          <div id="user_message">
+            <div th:if="${message != null}" th:text="${message}"></div>
+          </div>
+        </div>
+
         <div class="content-edit-profile__column content-column">
 
           <div class="content-user__title">
             <h2>Edit Profile</h2>
           </div>
 
-          <form action="#" method="POST" class="user edit-profile-user">
+          <form action="/editProfile" method="POST" class="user edit-profile-user" name="form_edit" OnSubmit="return matchPassword();">
             <div class="user__fields-wrapper">
               <div class="user__fields edit-profile-user__fields">
                 <label class="user__label">
-                  <input class="user__input" type="email" name="email" placeholder="Email" required>
+                  <input class="user__input" type="email" name="email" id="email" placeholder="Email" onblur="checkEmail(this)" th:value="${email}" required>
                 </label>
+                <script language='javascript'>
+                  function checkEmail(emailInput) {
+                    var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+                    if(emailInput.value.match(mailformat))
+                    {
+                      document.getElementById('user_message').innerHTML=" ";
+                      return true;
+                    }
+                    else
+                    {
+                      document.getElementById('user_message').innerHTML="You have entered an invalid email address!";
+                      document.form_edit.email.focus();
+                      return false;
+                    }
+                  }
+                </script>
                 <label class="user__label">
                   <input class="user__input" type="password" name="oldPassword" placeholder="Old password"
                          required>
                 </label>
                 <label class="user__label">
                   <input class="user__input" type="password" name="newPassword" placeholder="New password"
-                         required
-                         pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                         title="Password must contain at least 8 characters, including UPPER/lowercase and numbers">
+                         id="newPassword" onblur="checkRegex(this)" required>
                 </label>
+                <script language='javascript'>
+                  function checkRegex(passwordInput) {
+                    var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
+                    if(passwordInput.value.match(strongRegex))
+                    {
+                      document.getElementById('user_message').innerHTML=" ";
+                      return true;
+                    }
+                    else
+                    {
+                      document.getElementById('user_message').innerHTML="Password must be at least 8 characters long and contain numbers, lowercase and uppercase letters!";
+                      document.form_edit.newPassword.focus();
+                      return false;
+                    }
+                  }
+                </script>
                 <label class="user__label">
-                  <input class="user__input" type="password" name="confirmNewPassword"
+                  <input class="user__input" type="password" name="confirmNewPassword" id="confirmNewPassword"
                          placeholder="Confirm new password" required>
                 </label>
+                <script language='javascript'>
+                  function matchPassword() {
+                    if(document.form_edit.newPassword.value != document.form_edit.confirmNewPassword.value) {
+                      document.getElementById('user_message').innerHTML="Sorry, the passwords don't match!";
+                      document.form_edit.confirmNewPassword.focus();
+                      return false;
+                    }
+                    document.form_edit.submit();
+                  }
+                </script>
                 <label class="user__label">
                   <input class="user__input" type="text" name="discogsUserName" placeholder="Discogs Username">
                 </label>

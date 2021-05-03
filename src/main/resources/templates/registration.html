@@ -129,12 +129,12 @@
                                 </script>
                                 <label class="user__label">
                                     <input class="user__input" type="password" name="password" placeholder="Password"
-                                           required id="password" onblur="checkRegex(this)">
+                                           id="password" onblur="checkRegex(this)" required>
                                 </label>
                                 <script language='javascript'>
                                     function checkRegex(passwordInput) {
-                                    var varRegex = new RegExp("(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}");
-                                        if(passwordInput.value.match(varRegex))
+                                    var strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
+                                        if(passwordInput.value.match(strongRegex))
                                         {
                                             document.getElementById('user_message').innerHTML=" ";
                                             return true;

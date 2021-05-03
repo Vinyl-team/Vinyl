@@ -73,6 +73,11 @@ public class PageGenerator {
             context.setVariable("userRole", userRole);
         }
 
+        String email = attributes.get("email");
+        if (email != null) {
+            context.setVariable("email", email);
+        }
+
         String message = attributes.get("message");
         if (message != null) {
             context.setVariable("message", message);

@@ -16,9 +16,12 @@ public class SecurityFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        String signIn = "/signIn";
+        String recoveryPassword = "/recoveryPassword";
         String signUp = "/signUp";
         String profile = "/profile";
-        String signIn = "/signIn";
+        String editProfile = "/editProfile";
+        String signOut = "/signOut";
 
         String uri = httpServletRequest.getRequestURI();
         boolean isAuth = false;
@@ -33,9 +36,9 @@ public class SecurityFilter implements Filter {
                 }
             }
         }
-        if (isAuth && uri.equals(signUp)) {
+        if (isAuth && (uri.equals(signIn) || uri.equals(recoveryPassword) || uri.equals(signUp))) {
             httpServletResponse.sendRedirect(profile);
-        } else if (!isAuth && uri.equals(profile)){
+        } else if (!isAuth && (uri.equals(profile) || uri.equals(editProfile) || uri.equals(signOut))){
             httpServletResponse.sendRedirect(signIn);
         } else {
             filterChain.doFilter(request, response);
