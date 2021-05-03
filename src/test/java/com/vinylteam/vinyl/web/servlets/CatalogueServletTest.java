@@ -9,6 +9,7 @@ import com.vinylteam.vinyl.service.impl.DefaultVinylService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -23,15 +24,25 @@ import static org.mockito.Mockito.*;
 
 class CatalogueServletTest {
 
-    private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
-    private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
     private final VinylService mockedVinylService = mock(DefaultVinylService.class);
     private final CatalogueServlet catalogueServlet = new CatalogueServlet(mockedVinylService);
-    private final HttpSession mockedHttpSession = mock(HttpSession.class);
-    private final User mockedUser = mock(User.class);
-    private final PrintWriter mockedPrintWriter = mock(PrintWriter.class);
-    private final InOrder inOrderResponse = inOrder(mockedResponse);
-    private final InOrder inOrderRequest = inOrder(mockedRequest);
+
+    private HttpServletRequest mockedRequest;
+    private HttpServletResponse mockedResponse;
+    private InOrder inOrderResponse;
+    private HttpSession mockedHttpSession;
+    private User mockedUser;
+    private PrintWriter mockedPrintWriter;
+
+    @BeforeEach
+    void beforeEach() {
+        mockedRequest = mock(HttpServletRequest.class);
+        mockedResponse = mock(HttpServletResponse.class);
+        inOrderResponse = inOrder(mockedResponse);
+        mockedHttpSession = mock(HttpSession.class);
+        mockedUser = mock(User.class);
+        mockedPrintWriter = mock(PrintWriter.class);
+    }
 
     @Test
     @DisplayName("Checks if all right methods are called & user is authed")

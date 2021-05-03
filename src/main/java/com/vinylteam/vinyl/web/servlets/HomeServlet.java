@@ -15,6 +15,7 @@ import java.util.Map;
 public class HomeServlet extends HttpServlet {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=utf-8");
         Map<String, String> attributes = new HashMap<>();
