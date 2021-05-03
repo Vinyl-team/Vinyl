@@ -51,7 +51,7 @@ public class SignUpServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
-                attributes.put("message", "Sorry, but the email couldn't be registered. Check email and password!");
+                attributes.put("message", "Sorry, but the user couldn't be registered. Check email and password!");
             }
         }
         PageGenerator.getInstance().process("registration", attributes, response.getWriter());

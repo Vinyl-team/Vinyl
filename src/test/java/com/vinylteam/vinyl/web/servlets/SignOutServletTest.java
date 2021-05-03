@@ -3,6 +3,7 @@ package com.vinylteam.vinyl.web.servlets;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
@@ -12,12 +13,23 @@ import java.io.IOException;
 import static org.mockito.Mockito.*;
 
 class SignOutServletTest {
-    HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
-    HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
-    HttpSession mockedHttpSession = mock(HttpSession.class);
-    SignOutServlet signOutServlet = new SignOutServlet();
-    InOrder inOrderRequest = inOrder(mockedRequest);
-    InOrder inOrderResponse = inOrder(mockedResponse);
+    private final SignOutServlet signOutServlet = new SignOutServlet();
+
+    private HttpServletRequest mockedRequest;
+    private HttpServletResponse mockedResponse;
+    private HttpSession mockedHttpSession;
+    private InOrder inOrderRequest;
+    private InOrder inOrderResponse;
+
+    @BeforeEach
+    void beforeEach() {
+        mockedRequest = mock(HttpServletRequest.class);
+        mockedResponse = mock(HttpServletResponse.class);
+        mockedHttpSession = mock(HttpSession.class);
+        inOrderRequest = inOrder(mockedRequest);
+        inOrderResponse = inOrder(mockedResponse);
+    }
+
     @Test
     @DisplayName("Checks if all right methods are called & existing session was deleted")
     void doGetWithExistingSessionTest() throws IOException {
