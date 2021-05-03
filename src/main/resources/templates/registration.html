@@ -109,8 +109,24 @@
                         <div class="user__fields-wrapper">
                             <div class="user__fields registration-page-user__fields">
                                 <label class="user__label">
-                                    <input class="user__input" type="email" name="email" placeholder="Email" required>
+                                    <input class="user__input" type="email" name="email" id="email" placeholder="Email" onblur="checkEmail(this)" required>
                                 </label>
+                                <script language='javascript'>
+                                    function checkEmail(emailInput) {
+                                    var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+                                        if(emailInput.value.match(mailformat))
+                                        {
+                                            document.getElementById('user_message').innerHTML=" ";
+                                            return true;
+                                        }
+                                        else
+                                        {
+                                            document.getElementById('user_message').innerHTML="You have entered an invalid email address!";
+                                            document.form_reg.email.focus();
+                                            return false;
+                                        }
+                                    }
+                                </script>
                                 <label class="user__label">
                                     <input class="user__input" type="password" name="password" placeholder="Password"
                                            required id="password" onblur="checkRegex(this)">
