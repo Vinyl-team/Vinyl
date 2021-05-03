@@ -65,12 +65,14 @@ public class Starter {
         logger.info("Vinyls added to DB");*/
 
         /*WEB*/
+        SecurityFilter securityFilter = new SecurityFilter();
         SignInServlet signInServlet = new SignInServlet(userService);
         SignUpServlet signUpServlet = new SignUpServlet(userService);
         CatalogueServlet catalogueServlet = new CatalogueServlet(vinylService);
         SearchResultsServlet searchResultsServlet = new SearchResultsServlet(vinylService);
         OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(vinylService, shopService);
         SignOutServlet signOutServlet = new SignOutServlet();
+        ProfileServlet profileServlet = new ProfileServlet();
         HomeServlet homeServlet = new HomeServlet();
 
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);
@@ -78,12 +80,16 @@ public class Starter {
         servletContextHandler.setErrorHandler(new DefaultErrorHandler());
         servletContextHandler.setBaseResource(resource);
 
+        servletContextHandler.addFilter(new FilterHolder(securityFilter),
+                "/*",
+                EnumSet.of(DispatcherType.REQUEST));
         servletContextHandler.addServlet(new ServletHolder(signInServlet), "/signIn");
         servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/signUp");
         servletContextHandler.addServlet(new ServletHolder(catalogueServlet), "/catalog");
         servletContextHandler.addServlet(new ServletHolder(searchResultsServlet), "/search");
         servletContextHandler.addServlet(new ServletHolder(oneVinylOffersServlet), "/oneVinyl");
         servletContextHandler.addServlet(new ServletHolder(signOutServlet), "/signOut");
+        servletContextHandler.addServlet(new ServletHolder(profileServlet), "/profile");
         servletContextHandler.addServlet(new ServletHolder(homeServlet), "");
 
         servletContextHandler.addServlet(DefaultServlet.class, "/*");
