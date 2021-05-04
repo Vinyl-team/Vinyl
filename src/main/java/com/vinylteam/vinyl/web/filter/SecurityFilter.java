@@ -9,40 +9,40 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.List;
 
 public class SecurityFilter implements Filter {
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        String signIn = "/signIn";
-        String recoveryPassword = "/recoveryPassword";
-        String signUp = "/signUp";
-        String profile = "/profile";
-        String editProfile = "/editProfile";
-        String signOut = "/signOut";
+
+        List<String> allowedUrls = List.of("/", "/catalog", "/search", "/oneVinyl", "/signIn", "/signUp",
+                "/recoveryPassword");
 
         String uri = httpServletRequest.getRequestURI();
-        boolean isAuth = false;
 
-        HttpSession httpSession = httpServletRequest.getSession(false);
-        if (httpSession != null){
-            User user = (User) httpServletRequest.getSession().getAttribute("user");
-            if (user != null){
-                Role userRole = user.getRole();
-                if (EnumSet.of(Role.USER, Role.ADMIN).contains(userRole)) {
-                    isAuth = true;
+        if (allowedUrls.contains(uri) || uri.startsWith("/css") || uri.startsWith("/img") || uri.startsWith("/fonts")){
+            filterChain.doFilter(request, response);
+        } else {
+            HttpSession httpSession = httpServletRequest.getSession(false);
+            if (httpSession != null) {
+                User user = (User) httpSession.getAttribute("user");
+                if (user != null) {
+                    Role userRole = user.getRole();
+                    if (EnumSet.of(Role.USER, Role.ADMIN).contains(userRole)) {
+                        filterChain.doFilter(request, response);
+                    } else {
+                        httpServletResponse.sendRedirect("/signIn");
+                    }
+                } else {
+                    httpServletResponse.sendRedirect("/signIn");
                 }
+            } else {
+                httpServletResponse.sendRedirect("/signIn");
             }
         }
-        if (isAuth && (uri.equals(signIn) || uri.equals(recoveryPassword) || uri.equals(signUp))) {
-            httpServletResponse.sendRedirect(profile);
-        } else if (!isAuth && (uri.equals(profile) || uri.equals(editProfile) || uri.equals(signOut))){
-            httpServletResponse.sendRedirect(signIn);
-        } else {
-            filterChain.doFilter(request, response);
-        }
-
     }
 }

@@ -31,10 +31,13 @@ public class EditProfileServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
         logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
         Map<String, String> attributes = new HashMap<>();
-        User user = (User) request.getSession().getAttribute("user");
-        if (user != null) {
-            attributes.put("userRole", user.getRole().toString());
-            attributes.put("email", user.getEmail());
+        HttpSession session = request.getSession(false);
+        if (session != null){
+            User user = (User) session.getAttribute("user");
+            if (user != null) {
+                attributes.put("userRole", user.getRole().toString());
+                attributes.put("email", user.getEmail());
+            }
         }
         PageGenerator.getInstance().process("editProfile", attributes, response.getWriter());
     }
@@ -56,7 +59,7 @@ public class EditProfileServlet extends HttpServlet {
                 if (!newPassword.equals(confirmNewPassword)) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
-                    attributes.put("message", "Sorry, the passwords don't match!");
+                    attributes.put("message", "Sorry, passwords don't match!");
                 } else {
                     boolean checkOldPassword = securityService.checkPasswordAgainstUserPassword(user, oldPassword.toCharArray());
                     if (checkOldPassword) {
@@ -80,18 +83,18 @@ public class EditProfileServlet extends HttpServlet {
                     } else {
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                         logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
-                        attributes.put("message", "Sorry, the old password isn't correct!");
+                        attributes.put("message", "Sorry, old password isn't correct!");
                     }
 
                 }
                 attributes.put("email", email);
                 PageGenerator.getInstance().process("editProfile", attributes, response.getWriter());
             } else {
-                response.sendRedirect("/");
+                response.sendRedirect("/signIn");
             }
 
         } else {
-            response.sendRedirect("/");
+            response.sendRedirect("/signIn");
         }
 
     }

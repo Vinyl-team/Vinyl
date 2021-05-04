@@ -1,10 +1,12 @@
 package com.vinylteam.vinyl.web.servlets;
 
+import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.service.UserService;
 import com.vinylteam.vinyl.web.templater.PageGenerator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +28,15 @@ public class SignUpServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
-        PageGenerator.getInstance().process("registration", response.getWriter());
+        Map<String, String> attributes = new HashMap<>();
+        HttpSession session = request.getSession(false);
+        if (session != null){
+            User user = (User) session.getAttribute("user");
+            if (user != null) {
+                attributes.put("userRole", user.getRole().toString());
+            }
+        }
+        PageGenerator.getInstance().process("registration", attributes, response.getWriter());
     }
 
     @Override

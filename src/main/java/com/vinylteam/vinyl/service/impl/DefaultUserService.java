@@ -38,7 +38,7 @@ public class DefaultUserService implements UserService {
     @Override
     public boolean edit(String oldEmail, String newEmail, String newPassword){
         boolean isEdit = false;
-        if (newEmail != null && newPassword != null){
+        if (newEmail != null && newPassword != null && oldEmail != null){
             User userToEdit = securityService
                     .createUserWithHashedPassword(newEmail, newPassword.toCharArray());
             isEdit = userDao.edit(oldEmail, userToEdit);
