@@ -1,4 +1,3 @@
-/*
 package com.vinylteam.vinyl.service.impl;
 
 import com.vinylteam.vinyl.dao.UserDao;
@@ -71,4 +70,3 @@ public class DefaultUserService implements UserService {
     }
 
 }
-*/

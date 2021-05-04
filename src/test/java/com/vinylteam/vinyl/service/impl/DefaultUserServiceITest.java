@@ -1,4 +1,3 @@
-/*
 package com.vinylteam.vinyl.service.impl;
 
 import com.vinylteam.vinyl.dao.DBDataSource;
@@ -9,25 +8,27 @@ import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
 import com.vinylteam.vinyl.service.UserService;
+import com.vinylteam.vinyl.util.ListPreparerForTests;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.Security;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DefaultUserServiceITest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final SecurityService securityService = new DefaultSecurityService();
-    private final UserDao userDao = new JdbcUserDao();
-    private final UserService userService = new
-            DefaultUserService(userDao, securityService);
-
+    private final SecurityService mockedSecurityService = mock(SecurityService.class);
+    private final UserDao mockedUserDao = mock(UserDao.class);
+    private final UserService userService = new DefaultUserService(mockedUserDao, mockedSecurityService);
+    private final ListPreparerForTests listPreparer = new ListPreparerForTests();
     private User verifiedUser;
     private User notVerifiedUser;
 
@@ -146,4 +147,4 @@ class DefaultUserServiceITest {
         assertTrue(userService.add("newuser@vinyl.com", "password3"));
     }
 
-}*/
+}

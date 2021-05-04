@@ -2,12 +2,14 @@ package com.vinylteam.vinyl.util;
 
 import com.vinylteam.vinyl.entity.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class ListPreparerForTests {
 
-    public void fillShopsList(List<Shop> shops) {
+    public List<Shop> getShopsList() {
+        List<Shop> shops = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             Shop shop = new Shop();
             shop.setId(i + 1);
@@ -16,9 +18,11 @@ public class ListPreparerForTests {
             shop.setImageLink(shop.getName() + "/image.png");
             shops.add(shop);
         }
+        return shops;
     }
 
-    public void fillUniqueVinylsList(List<UniqueVinyl> uniqueVinyls) {
+    public List<UniqueVinyl> getUniqueVinylsList() {
+        List<UniqueVinyl> uniqueVinyls = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             UniqueVinyl uniqueVinyl = new UniqueVinyl();
             uniqueVinyl.setId(i + 1);
@@ -30,26 +34,30 @@ public class ListPreparerForTests {
             uniqueVinyls.add(uniqueVinyl);
         }
         uniqueVinyls.get(3).setHasOffers(false);
+        return uniqueVinyls;
     }
 
-    public void fillOffersList(List<Offer> offers) {
+    public List<Offer> getOffersList() {
+        List<Offer> offers = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 2; j++) {
                 Offer offer = new Offer();
-                offer.setId(i + j + 1);
+                offer.setId(i * 2 + j + 1);
                 offer.setUniqueVinylId(i + 1);
                 offer.setShopId(j + 1);
                 offer.setPrice((i + 1) * 10. + j + 1);
                 offer.setCurrency(Optional.of(Currency.UAH));
-                offer.setGenre("genre" + i);
+                offer.setGenre("genre" + (i + 1));
                 offer.setOfferLink("shop" + offer.getShopId() + "/release" + (i + 1));
                 offers.add(offer);
             }
         }
+        return offers;
     }
 
-    public void fillUsersList(List<User> users) {
-        for(int i = 0; i < 2; i++) {
+    public List<User> getUsersList() {
+        List<User> users = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
             User user = new User();
             user.setEmail("user" + (i + 1) + "@waxdeals.com");
             user.setPassword("hash" + (i + 1));
@@ -59,6 +67,7 @@ public class ListPreparerForTests {
             user.setStatus(true);
             users.add(user);
         }
+        return users;
     }
 
     public void fillListsForRawOffersSorterTest(List<RawOffer> rawOffers, List<UniqueVinyl> uniqueVinyls, List<Offer> offers) {

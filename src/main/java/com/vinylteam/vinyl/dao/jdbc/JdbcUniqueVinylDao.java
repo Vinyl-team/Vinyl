@@ -21,10 +21,9 @@ public class JdbcUniqueVinylDao extends AbstractJdbcUniqueVinylAndOfferDao<Uniqu
     private final RowMapper<UniqueVinyl> rowMapper = new UniqueVinylRowMapper();
     private final String OBJECT_NAME = "uniqueVinyl";
     private final String LIST_NAME = "uniqueVinyls";
-    private final String INSERT = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image) VALUES(?, ?, ?, ?, ?)";
     private final String SELECT_ALL = "SELECT id, release, artist, full_name, link_to_image FROM public.unique_vinyls";
     private final String SELECT_BY_ID = SELECT_ALL + " WHERE id=?";
-    private final String SELECT_MANY_RANDOM = SELECT_ALL + " WHERE id IN(SELECT * FROM random_valid_unique_ids(?)) LIMIT ?";
+    private final String SELECT_MANY_RANDOM = SELECT_ALL + " WHERE has_offers ORDER BY random() LIMIT ?";
     private final String SELECT_MANY_BY_FULL_NAME_MATCH = SELECT_ALL + " WHERE full_name ILIKE ? AND has_offers";
     private final String SELECT_BY_ARTIST = SELECT_ALL + " WHERE artist=? AND has_offers";
     private final String FINDING_AMOUNT_OF_RANDOM_ERROR_MESSAGE = "Error while finding that amount of random {} from db {'amount':{}, '{}':{}}";
@@ -43,8 +42,8 @@ public class JdbcUniqueVinylDao extends AbstractJdbcUniqueVinylAndOfferDao<Uniqu
              ResultSet resultSet = findAllStatement.executeQuery()) {
             logger.debug(EXECUTED_STATEMENT_MESSAGE, findAllStatement);
             while (resultSet.next()) {
-                UniqueVinyl object = rowMapper.mapRow(resultSet);
-                uniqueVinyls.add(object);
+                UniqueVinyl uniqueVinyl = rowMapper.mapRow(resultSet);
+                uniqueVinyls.add(uniqueVinyl);
             }
         } catch (SQLException e) {
             logger.error(FINDING_ALL_ERROR_MESSAGE, LIST_NAME, LIST_NAME, uniqueVinyls, e);
@@ -83,8 +82,7 @@ public class JdbcUniqueVinylDao extends AbstractJdbcUniqueVinylAndOfferDao<Uniqu
         List<UniqueVinyl> randomUniqueVinyls = new ArrayList<>();
         try(Connection connection = dataSource.getConnection();
             PreparedStatement findAmountOfRandom = connection.prepareStatement(SELECT_MANY_RANDOM)) {
-            findAmountOfRandom.setInt(1, amount * 2);
-            findAmountOfRandom.setInt(2, amount);
+            findAmountOfRandom.setInt(1, amount);
             logger.debug(PREPARED_STATEMENT_MESSAGE, findAmountOfRandom);
             try(ResultSet resultSet = findAmountOfRandom.executeQuery()) {
                 while (resultSet.next()) {

@@ -11,9 +11,19 @@ public class Offer {
     private double price;
     private Optional<Currency> currency;
     private String genre;
-    private String OfferLink;
+    private String offerLink;
 
     public Offer() {}
+
+    public Offer(Offer offer) {
+        this.id = offer.id;
+        this.uniqueVinylId = offer.uniqueVinylId;
+        this.shopId = offer.shopId;
+        this.price = offer.price;
+        this.currency = offer.currency;
+        this.genre = offer.genre;
+        this.offerLink = offer.offerLink;
+    }
 
     public long getId() {
         return id;
@@ -64,11 +74,11 @@ public class Offer {
     }
 
     public String getOfferLink() {
-        return OfferLink;
+        return offerLink;
     }
 
     public void setOfferLink(String offerLink) {
-        OfferLink = offerLink;
+        this.offerLink = offerLink;
     }
 
     @Override
@@ -82,12 +92,12 @@ public class Offer {
                 Double.compare(offer.price, price) == 0 &&
                 Objects.equals(currency, offer.currency) &&
                 Objects.equals(genre, offer.genre) &&
-                Objects.equals(OfferLink, offer.OfferLink);
+                Objects.equals(offerLink, offer.offerLink);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, uniqueVinylId, shopId, price, currency, genre, OfferLink);
+        return Objects.hash(id, uniqueVinylId, shopId, price, currency, genre, offerLink);
     }
 
     @Override
@@ -99,7 +109,7 @@ public class Offer {
                 ", price=" + price +
                 ", currency=" + currency +
                 ", genre='" + genre + '\'' +
-                ", OfferLink='" + OfferLink + '\'' +
+                ", offerLink='" + offerLink + '\'' +
                 '}';
     }
 

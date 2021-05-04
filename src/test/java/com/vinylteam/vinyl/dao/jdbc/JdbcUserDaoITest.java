@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,13 +20,12 @@ class JdbcUserDaoITest {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
     private final JdbcUserDao jdbcUserDao = new JdbcUserDao(databasePreparer.getDataSource());
-    private final List<User> users = new ArrayList<>();
     private final ListPreparerForTests listPreparer = new ListPreparerForTests();
+    private final List<User> users = listPreparer.getUsersList();
 
     @BeforeAll
     void beforeAll() throws SQLException {
         databasePreparer.truncateCascadeUsers();
-        listPreparer.fillUsersList(users);
     }
 
     @AfterAll
@@ -54,27 +52,31 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Checks the number of rows when table is empty")
     void countAllEmptyTest() throws SQLException {
+        //prepare
         databasePreparer.truncateCascadeUsers();
-
+        //when
         assertEquals(0, jdbcUserDao.countAll());
     }
 
     @Test
     @DisplayName("Gets an existing user from db")
     void getByExistingEmailTest() {
+        //prepare
         Optional<User> optionalUserGottenByExistingEmail;
-
+        User expectedUser = new User(users.get(0));
+        //when
         optionalUserGottenByExistingEmail = jdbcUserDao.getByEmail("user1@waxdeals.com");
-
+        //then
         assertFalse(optionalUserGottenByExistingEmail.isEmpty());
-        assertEquals(users.get(0), optionalUserGottenByExistingEmail.get());
+        assertEquals(expectedUser, optionalUserGottenByExistingEmail.get());
     }
 
     @Test
     @DisplayName("Gets not existing user from db")
     void getByNotExistingEmailTest() {
+        //when
         Optional<User> optionalUserGottenByNonexistentEmail = jdbcUserDao.getByEmail("user3@waxdeals.com");
-
+        //then
         assertFalse(optionalUserGottenByNonexistentEmail.isPresent());
         assertEquals(2, jdbcUserDao.countAll());
     }
@@ -82,6 +84,7 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Adds user to db")
     void addNewTest() {
+        //prepare
         User expectedUser = new User();
         expectedUser.setEmail("user3@waxdeals.com");
         expectedUser.setPassword("hash3");
@@ -89,9 +92,9 @@ class JdbcUserDaoITest {
         expectedUser.setIterations(3);
         expectedUser.setRole(Role.USER);
         expectedUser.setStatus(true);
-
+        //when
         assertTrue(jdbcUserDao.add(expectedUser));
-
+        //then
         assertEquals(3, jdbcUserDao.countAll());
         Optional<User> optionalAddedUser = jdbcUserDao.getByEmail("user3@waxdeals.com");
         assertFalse(optionalAddedUser.isEmpty());
@@ -101,19 +104,21 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Adds existing user with the same password")
     void addExistingWithSamePasswordTest() {
+        //when
         assertFalse(jdbcUserDao.add(users.get(0)));
-
+        //then
         assertEquals(2, jdbcUserDao.countAll());
     }
 
     @Test
     @DisplayName("Adds existing user with new password")
     void addExistingWithNewPasswordTest() {
-        User user = List.copyOf(users).get(0);
-        user.setPassword("hash3");
-
+        //prepare
+        User user = new User(users.get(0));
+        System.out.println(users.get(0).getPassword());
+        //when
         assertFalse(jdbcUserDao.add(user));
-
+        //then
         assertEquals(2, jdbcUserDao.countAll());
     }
 

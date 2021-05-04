@@ -17,13 +17,12 @@ class JdbcShopDaoITest {
 
     private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
     private final JdbcShopDao jdbcShopDao = new JdbcShopDao(databasePreparer.getDataSource());
-    private final List<Shop> shops = new ArrayList<>();
     private final ListPreparerForTests listPreparer = new ListPreparerForTests();
+    private final List<Shop> shops = listPreparer.getShopsList();
 
     @BeforeAll
     void beforeAll() throws SQLException {
         databasePreparer.truncateCascadeShops();
-        listPreparer.fillShopsList(shops);
     }
 
     @AfterAll
@@ -44,11 +43,13 @@ class JdbcShopDaoITest {
     @Test
     @DisplayName("Gets list of shops with id-s with list of id-s from db")
     void getManyByListOfIds() {
+        //prepare
         List<Integer> ids = List.of(1, 2);
-        List<Shop>  expectedShops = new ArrayList(List.of(shops.get(0), shops.get(1)));
-
+        List<Shop> expectedShops = listPreparer.getShopsList();
+        expectedShops.remove(2);
+        //when
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);
-
+        //then
         assertEquals(2, actualShops.size());
         assertEquals(expectedShops, actualShops);
     }
@@ -56,11 +57,13 @@ class JdbcShopDaoITest {
     @Test
     @DisplayName("Gets list of shops with id-s with list of id-s where some ids do not exist in db")
     void getManyByListOfIdsWithSomeNonExistentIds() {
+        //prepare
         List<Integer> ids = List.of(1, 2, 4);
-        List<Shop>  expectedShops = new ArrayList(List.of(shops.get(0), shops.get(1)));
-
+        List<Shop> expectedShops = listPreparer.getShopsList();
+        expectedShops.remove(2);
+        //when
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);
-
+        //then
         assertEquals(2, actualShops.size());
         assertEquals(expectedShops, actualShops);
     }
@@ -68,45 +71,49 @@ class JdbcShopDaoITest {
     @Test
     @DisplayName("Gets empty list of shops with empty list of id-s from db")
     void getManyByListOfIdsEmptyList() {
+        //prepare
         List<Integer> ids = new ArrayList<>();
-
+        //when
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);
-
+        //then
         assertTrue(actualShops.isEmpty());
     }
 
     @Test
     @DisplayName("Gets empty list of shops with list id-s from empty table")
     void getManyByListOfIdsFromEmptyTable() throws SQLException {
+        //prepare
         databasePreparer.truncateCascadeShops();
         List<Integer> ids = List.of(1, 2);
-
+        //when
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);
-
+        //then
         assertTrue(actualShops.isEmpty());
     }
 
     @Test
     @DisplayName("Gets String filled with ids from filled list of ids")
     void fillSelectManyByIdsStatementWithFilledIdListTest() {
+        //prepare
         List<Integer> ids = List.of(1, 2);
         String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name " +
                 "FROM public.shops WHERE id IN (1, 2)";
-
+        //when
         String actualStatement = jdbcShopDao.fillSelectManyByIdsStatement(ids);
-
+        //then
         assertEquals(expectedStatement, actualStatement);
     }
 
     @Test
     @DisplayName("Gets String not filled with ids from empty list of ids")
     void fillSelectManyByIdsStatementWithEmptyIdListTest() {
+        //prepare
         List<Integer> ids = new ArrayList<>();
         String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name " +
                 "FROM public.shops WHERE id IN ()";
-
+        //when
         String actualStatement = jdbcShopDao.fillSelectManyByIdsStatement(ids);
-
+        //then
         assertEquals(expectedStatement, actualStatement);
     }
 

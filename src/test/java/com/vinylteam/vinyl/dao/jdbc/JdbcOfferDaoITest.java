@@ -4,6 +4,7 @@ import com.vinylteam.vinyl.dao.OfferDao;
 import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
+import com.vinylteam.vinyl.util.DataFinderFromDBForITests;
 import com.vinylteam.vinyl.util.DatabasePreparerForITests;
 import com.vinylteam.vinyl.util.ListPreparerForTests;
 import org.junit.jupiter.api.*;
@@ -12,24 +13,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JdbcOfferDaoITest {
 
     private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
-    private final OfferDao offerDao = new JdbcOfferDao(databasePreparer.getDataSource());
-    private final List<Shop> shops = new ArrayList<>();
-    private final List<UniqueVinyl> uniqueVinyls = new ArrayList<>();
-    private final List<Offer> offers = new ArrayList<>();
+    private final DataFinderFromDBForITests dataFinder = new DataFinderFromDBForITests(databasePreparer.getDataSource());
     private final ListPreparerForTests listPreparer = new ListPreparerForTests();
+    private final OfferDao offerDao = new JdbcOfferDao(databasePreparer.getDataSource());
+    private final List<Shop> shops = listPreparer.getShopsList();
+    private final List<UniqueVinyl> uniqueVinyls = listPreparer.getUniqueVinylsList();
+    private final List<Offer> offers = listPreparer.getOffersList();
 
     @BeforeAll
     void beforeAll() throws SQLException {
-        listPreparer.fillShopsList(shops);
-        listPreparer.fillUniqueVinylsList(uniqueVinyls);
-        listPreparer.fillOffersList(offers);
         databasePreparer.truncateAllVinylTables();
     }
 
@@ -54,7 +52,8 @@ class JdbcOfferDaoITest {
     @DisplayName("Returns list of offers with uniqueVinylId-s matching passed uniqueVinylId")
     void findManyByUniqueVinylIdTest() {
         //prepare
-        List<Offer> expectedOffers = new ArrayList<>(List.of(offers.get(0), offers.get(1)));
+        List<Offer> expectedOffers = listPreparer.getOffersList();
+        expectedOffers.subList(2, 6).clear();
         //when
         List<Offer> actualOffers = offerDao.findManyByUniqueVinylId(1);
         //then
@@ -75,6 +74,195 @@ class JdbcOfferDaoITest {
         databasePreparer.truncateOffers();
         //when
         assertThrows(RuntimeException.class, () -> offerDao.findManyByUniqueVinylId(1));
+    }
+
+    @Test
+    @DisplayName("Throws Runtime Exception when null uniqueVinyls is passed")
+    void updateUniqueVinylsRewriteAllNullUniqueVinylsTest() {
+        //when
+        assertThrows(RuntimeException.class, () -> offerDao.updateUniqueVinylsRewriteAll(null, offers));
+    }
+
+    @Test
+    @DisplayName("Throws Runtime Exception when null offers is passed")
+    void updateUniqueVinylsRewriteAllNullOffersTest() {
+        //when
+        assertThrows(RuntimeException.class, () -> offerDao.updateUniqueVinylsRewriteAll(uniqueVinyls, null));
+    }
+
+    @Test
+    @DisplayName("Throws Runtime Exception when empty uniqueVinyls is passed")
+    void updateUniqueVinylsRewriteAllEmptyUniqueVinylsTest() {
+        //when
+        assertThrows(RuntimeException.class, () -> offerDao.updateUniqueVinylsRewriteAll(new ArrayList<>(), offers));
+    }
+
+    @Test
+    @DisplayName("Throws Runtime Exception when empty offers is passed")
+    void updateUniqueVinylsRewriteAllEmptyOffersTest() {
+        //when
+        assertThrows(RuntimeException.class, () -> offerDao.updateUniqueVinylsRewriteAll(uniqueVinyls, new ArrayList<>()));
+    }
+
+    @Test
+    @DisplayName("Returns empty list of unadded offers on updating filled db with two unique vinyls now without offers (has_offers==false or false vinyls) and without four offers that were referencing them")
+    void updateUniqueVinylsRewriteAllRemovedOffersForTwoUniqueVinylsTest() {
+        //prepare
+        List<UniqueVinyl> expectedUpdatedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        expectedUpdatedUniqueVinyls.get(1).setHasOffers(false);
+        expectedUpdatedUniqueVinyls.get(2).setHasOffers(false);
+        List<Offer> expectedUpdatedOffers = listPreparer.getOffersList();
+        expectedUpdatedOffers.subList(2, 6).clear();
+        //when
+        List<Offer> actualUnaddedOffers = offerDao.updateUniqueVinylsRewriteAll(expectedUpdatedUniqueVinyls, expectedUpdatedOffers);
+        //then
+        assertTrue(actualUnaddedOffers.isEmpty());
+        List<UniqueVinyl> actualUpdatedUniqueVinyls = dataFinder.findAllUniqueVinyls();
+        List<Offer> actualUpdatedOffers = dataFinder.findAllOffers();
+        assertEquals(expectedUpdatedUniqueVinyls, actualUpdatedUniqueVinyls);
+        assertEquals(expectedUpdatedOffers, actualUpdatedOffers);
+    }
+
+    @Test
+    @DisplayName("Returns empty list of unadded offers on updating filled db with one vinyl turned true and one new offer referencing it")
+    void updateUniqueVinylsRewriteAllNewOfferToPreviouslyFalseUniqueVinylTest() {
+        //prepare
+        List<UniqueVinyl> expectedUpdatedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        expectedUpdatedUniqueVinyls.get(3).setHasOffers(true);
+        List<Offer> expectedUpdatedOffers = listPreparer.getOffersList();
+        Offer newOffer = new Offer(expectedUpdatedOffers.get(0));
+        newOffer.setId(7);
+        newOffer.setUniqueVinylId(4);
+        newOffer.setPrice(41.);
+        newOffer.setGenre("genre4");
+        newOffer.setOfferLink("shop1/release4");
+        expectedUpdatedOffers.add(newOffer);
+        //when
+        List<Offer> actualUnaddedOffers = offerDao.updateUniqueVinylsRewriteAll(expectedUpdatedUniqueVinyls, expectedUpdatedOffers);
+        //then
+        assertTrue(actualUnaddedOffers.isEmpty());
+        List<UniqueVinyl> actualUpdatedUniqueVinyls = dataFinder.findAllUniqueVinyls();
+        List<Offer> actualUpdatedOffers = dataFinder.findAllOffers();
+        assertEquals(expectedUpdatedUniqueVinyls, actualUpdatedUniqueVinyls);
+        assertEquals(expectedUpdatedOffers, actualUpdatedOffers);
+    }
+
+    @Test
+    @DisplayName("Returns empty list of unadded offers when database is initially filled, and on update there's one new unique vinyl and one new offer for it are added")
+    void updateUniqueVinylsRewriteAllNewUniqueVinylNewOfferTest() {
+        //prepare
+        List<UniqueVinyl> expectedUpdatedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        List<Offer> expectedUpdatedOffers = listPreparer.getOffersList();
+        UniqueVinyl newUniqueVinyl = new UniqueVinyl(expectedUpdatedUniqueVinyls.get(0));
+        newUniqueVinyl.setId(5);
+        newUniqueVinyl.setRelease("release5");
+        newUniqueVinyl.setArtist("artist5");
+        newUniqueVinyl.setFullName(newUniqueVinyl.getRelease() + " - " + newUniqueVinyl.getArtist());
+        newUniqueVinyl.setImageLink("/image5");
+        newUniqueVinyl.setHasOffers(true);
+        expectedUpdatedUniqueVinyls.add(newUniqueVinyl);
+        Offer newOffer = new Offer(expectedUpdatedOffers.get(0));
+        newOffer.setId(7);
+        newOffer.setUniqueVinylId(5);
+        newOffer.setPrice(51.);
+        newOffer.setGenre("genre5");
+        newOffer.setOfferLink("shop1/release5");
+        expectedUpdatedOffers.add(newOffer);
+        //when
+        List<Offer> actualUnaddedOffers = offerDao.updateUniqueVinylsRewriteAll(expectedUpdatedUniqueVinyls, expectedUpdatedOffers);
+        //then
+        assertTrue(actualUnaddedOffers.isEmpty());
+        List<UniqueVinyl> actualUpdatedUniqueVinyls = dataFinder.findAllUniqueVinyls();
+        List<Offer> actualUpdatedOffers = dataFinder.findAllOffers();
+        assertEquals(expectedUpdatedUniqueVinyls, actualUpdatedUniqueVinyls);
+        assertEquals(expectedUpdatedOffers, actualUpdatedOffers);
+    }
+
+    @Test
+    @DisplayName("Returns list of unadded offers with all offers on updating filled db with all false vinyls with offers referencing them")
+    void updateUniqueVinylsRewriteAllUniqueVinylsAllFalseWithOffersReferencingTest() {
+        //prepare
+        List<UniqueVinyl> expectedUpdatedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        for (UniqueVinyl expectedUpdatedUniqueVinyl : expectedUpdatedUniqueVinyls) {
+            expectedUpdatedUniqueVinyl.setHasOffers(false);
+        }
+        List<Offer> expectedUnaddedOffers = listPreparer.getOffersList();
+        //when
+        List<Offer> actualUnaddedOffers = offerDao.updateUniqueVinylsRewriteAll(expectedUpdatedUniqueVinyls, listPreparer.getOffersList());
+        //then
+        assertEquals(expectedUnaddedOffers, actualUnaddedOffers);
+        List<UniqueVinyl> actualUpdatedUniqueVinyls = dataFinder.findAllUniqueVinyls();
+        List<Offer> actualUpdatedOffers = dataFinder.findAllOffers();
+        assertEquals(expectedUpdatedUniqueVinyls, actualUpdatedUniqueVinyls);
+        assertTrue(actualUpdatedOffers.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Returns list of unadded offers with one offer on updating filled db with one of the offers referencing false vinyl")
+    void updateUniqueVinylsRewriteAllSomeOffersReferencingFalseUniqueVinylTest() {
+        //prepare
+        List<UniqueVinyl> expectedUpdatedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        List<Offer> expectedUpdatedOffers = listPreparer.getOffersList();
+        List<Offer> updatedOffersFalseUniqueVinylId = listPreparer.getOffersList();
+        Offer newOfferFalseUniqueVinylId = new Offer(expectedUpdatedOffers.get(0));
+        newOfferFalseUniqueVinylId.setId(7);
+        newOfferFalseUniqueVinylId.setUniqueVinylId(4);
+        newOfferFalseUniqueVinylId.setPrice(41.);
+        newOfferFalseUniqueVinylId.setGenre("genre4");
+        newOfferFalseUniqueVinylId.setOfferLink("shop1/release4");
+        updatedOffersFalseUniqueVinylId.add(newOfferFalseUniqueVinylId);
+        List<Offer> expectedUnaddedOffers = updatedOffersFalseUniqueVinylId.subList(6, 7);
+        //when
+        List<Offer> actualUnaddedOffers = offerDao.updateUniqueVinylsRewriteAll(expectedUpdatedUniqueVinyls, updatedOffersFalseUniqueVinylId);
+        //then
+        assertEquals(expectedUnaddedOffers, actualUnaddedOffers);
+        List<UniqueVinyl> actualUpdatedUniqueVinyls = dataFinder.findAllUniqueVinyls();
+        List<Offer> actualUpdatedOffers = dataFinder.findAllOffers();
+        assertEquals(expectedUpdatedUniqueVinyls, actualUpdatedUniqueVinyls);
+        assertEquals(expectedUpdatedOffers, actualUpdatedOffers);
+    }
+
+    @Test
+    @DisplayName("Returns list of unadded offers with offer with nonexistent uniqueVinylIds when database is initially filled, and one of the offers has uniqueVinylId that does not exist")
+    void updateUniqueVinylsRewriteAllUniqueVinylsSomeOffersFalseUniqueVinylIdTest() {
+        //prepare
+        List<UniqueVinyl> expectedUpdatedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        List<Offer> expectedUpdatedOffers = listPreparer.getOffersList();
+        List<Offer> updatedOffersNonExistentUniqueVinylId = listPreparer.getOffersList();
+        Offer offerNonExistentUniqueVinylId = new Offer(expectedUpdatedOffers.get(0));
+        offerNonExistentUniqueVinylId.setId(7);
+        offerNonExistentUniqueVinylId.setUniqueVinylId(5);
+        offerNonExistentUniqueVinylId.setPrice(51.);
+        offerNonExistentUniqueVinylId.setGenre("genre5");
+        offerNonExistentUniqueVinylId.setOfferLink("shop1/release5");
+        updatedOffersNonExistentUniqueVinylId.add(offerNonExistentUniqueVinylId);
+        List<Offer> expectedUnaddedOffers = updatedOffersNonExistentUniqueVinylId.subList(6, 7);
+        //when
+        List<Offer> actualUnaddedOffers = offerDao.updateUniqueVinylsRewriteAll(expectedUpdatedUniqueVinyls, updatedOffersNonExistentUniqueVinylId);
+        //then
+        assertEquals(expectedUnaddedOffers, actualUnaddedOffers);
+        List<UniqueVinyl> actualUpdatedUniqueVinyls = dataFinder.findAllUniqueVinyls();
+        List<Offer> actualUpdatedOffers = dataFinder.findAllOffers();
+        assertEquals(expectedUpdatedUniqueVinyls, actualUpdatedUniqueVinyls);
+        assertEquals(expectedUpdatedOffers, actualUpdatedOffers);
+    }
+
+    @Test
+    @DisplayName("Returns empty list of unadded offers on updating empty db with unique vinyls and valid offers")
+    void updateUniqueVinylsRewriteAllEmptyTableTest() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeUniqueVinyls();
+        databasePreparer.truncateOffers();
+        List<UniqueVinyl> expectedUpdatedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        List<Offer> expectedUpdatedOffers = listPreparer.getOffersList();
+        //when
+        List<Offer> actualUnaddedOffers = offerDao.updateUniqueVinylsRewriteAll(expectedUpdatedUniqueVinyls, expectedUpdatedOffers);
+        //then
+        assertTrue(actualUnaddedOffers.isEmpty());
+        List<UniqueVinyl> actualUpdatedUniqueVinyls = dataFinder.findAllUniqueVinyls();
+        List<Offer> actualUpdatedOffers = dataFinder.findAllOffers();
+        assertEquals(expectedUpdatedUniqueVinyls, actualUpdatedUniqueVinyls);
+        assertEquals(expectedUpdatedOffers, actualUpdatedOffers);
     }
 
 }

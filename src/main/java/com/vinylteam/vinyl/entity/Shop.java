@@ -9,6 +9,15 @@ public class Shop {
     private String imageLink;
     private String name;
 
+    public Shop() {}
+
+    public Shop(Shop shop) {
+        this.id = shop.id;
+        this.mainPageLink = shop.mainPageLink;
+        this.imageLink = shop.imageLink;
+        this.name = shop.name;
+    }
+
     public int getId() {
         return id;
     }

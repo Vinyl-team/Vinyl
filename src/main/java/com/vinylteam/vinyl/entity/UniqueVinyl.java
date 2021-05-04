@@ -11,6 +11,17 @@ public class UniqueVinyl {
     private String imageLink;
     private boolean hasOffers;
 
+    public UniqueVinyl() {}
+
+    public UniqueVinyl(UniqueVinyl uniqueVinyl) {
+        this.id = uniqueVinyl.id;
+        this.release = uniqueVinyl.release;
+        this.artist = uniqueVinyl.artist;
+        this.fullName = uniqueVinyl.fullName;
+        this.imageLink = uniqueVinyl.imageLink;
+        this.hasOffers = uniqueVinyl.hasOffers;
+    }
+
     public long getId() {
         return id;
     }

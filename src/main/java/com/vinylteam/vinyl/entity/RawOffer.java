@@ -14,6 +14,18 @@ public class RawOffer {
     private String offerLink;
     private String imageLink;
 
+    public RawOffer() {}
+
+    public RawOffer(RawOffer rawOffer) {
+        this.shopId = rawOffer.shopId;
+        this.release = rawOffer.release;
+        this.artist = rawOffer.artist;
+        this.price = rawOffer.price;
+        this.currency = rawOffer.currency;
+        this.genre = rawOffer.genre;
+        this.offerLink = rawOffer.offerLink;
+        this.imageLink = rawOffer.imageLink;
+    }
 
     public int getShopId() {
         return shopId;
