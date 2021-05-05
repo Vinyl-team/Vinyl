@@ -12,7 +12,9 @@ import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Random;
 
 public class DefaultSecurityService implements SecurityService {
 
@@ -22,7 +24,7 @@ public class DefaultSecurityService implements SecurityService {
     private final SecretKeyFactory secretKeyFactory;
     private final String algorithm = "PBKDF2WithHmacSHA512";
 
-    public DefaultSecurityService(){
+    public DefaultSecurityService() {
         logger.debug("Started initializer in DefaultSecurityService");
         try {
             secretKeyFactory = SecretKeyFactory.getInstance(algorithm);

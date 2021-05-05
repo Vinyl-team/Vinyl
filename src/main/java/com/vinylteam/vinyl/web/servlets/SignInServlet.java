@@ -30,9 +30,12 @@ public class SignInServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         Map<String, String> attributes = new HashMap<>();
-        User user = (User) request.getSession().getAttribute("user");
-        if (user != null) {
-            attributes.put("userRole", String.valueOf(user.getRole()));
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user != null) {
+                attributes.put("userRole", user.getRole().toString());
+            }
         }
         PageGenerator.getInstance().process("signIn", attributes, response.getWriter());
     }
@@ -43,6 +46,7 @@ public class SignInServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         Map<String, String> attributes = new HashMap<>();
+        attributes.put("email", email);
 
         Optional<User> optionalUser = userService.signInCheck(email, password);
         logger.debug("Received a optional with User with password verification by the passed " +
@@ -53,7 +57,7 @@ public class SignInServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_OK);
                 logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
                 User user = optionalUser.get();
-                HttpSession session = request.getSession();
+                HttpSession session = request.getSession(true);
                 session.setMaxInactiveInterval(60 * 60 * 5);
                 session.setAttribute("user", user);
                 response.sendRedirect("/");

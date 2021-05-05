@@ -27,21 +27,41 @@ class CatalogueServletTest {
     private final VinylService mockedVinylService = mock(DefaultVinylService.class);
     private final CatalogueServlet catalogueServlet = new CatalogueServlet(mockedVinylService);
 
-    private HttpServletRequest mockedRequest;
-    private HttpServletResponse mockedResponse;
-    private InOrder inOrderResponse;
-    private HttpSession mockedHttpSession;
-    private User mockedUser;
-    private PrintWriter mockedPrintWriter;
+    private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
+    private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
+    private final InOrder inOrderResponse = inOrder(mockedResponse);
+    private final InOrder inOrderRequest = inOrder(mockedRequest);
+    private final HttpSession mockedHttpSession = mock(HttpSession.class);
+    private final User mockedUser = mock(User.class);
+    private final PrintWriter mockedPrintWriter = mock(PrintWriter.class);
 
     @BeforeEach
     void beforeEach() {
-        mockedRequest = mock(HttpServletRequest.class);
-        mockedResponse = mock(HttpServletResponse.class);
-        inOrderResponse = inOrder(mockedResponse);
-        mockedHttpSession = mock(HttpSession.class);
-        mockedUser = mock(User.class);
-        mockedPrintWriter = mock(PrintWriter.class);
+        reset(mockedRequest);
+        reset(mockedResponse);
+        reset(mockedHttpSession);
+        reset(mockedUser);
+        reset(mockedPrintWriter);
+    }
+
+    @Test
+    @DisplayName("Checks if all right methods are called & session doesn't exist")
+    void doGetNoSessionTest() throws IOException {
+        //prepare
+        when(mockedVinylService.getManyRandomUnique(50)).thenReturn(
+                new ArrayList<>(Collections.nCopies(50, new Vinyl())));
+        when(mockedRequest.getSession(false)).thenReturn(null);
+        when(mockedResponse.getWriter()).thenReturn(mockedPrintWriter);
+        //when
+        catalogueServlet.doGet(mockedRequest, mockedResponse);
+        //then
+        verify(mockedVinylService).getManyRandomUnique(50);
+        inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
+        inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
+        inOrderRequest.verify(mockedRequest).getSession(false);
+        verify(mockedHttpSession, times(0)).getAttribute("user");
+        verify(mockedUser, times(0)).getRole();
+        inOrderResponse.verify(mockedResponse).getWriter();
     }
 
     @Test
@@ -50,7 +70,7 @@ class CatalogueServletTest {
         //prepare
         when(mockedVinylService.getManyRandomUnique(50)).thenReturn(
                 new ArrayList<>(Collections.nCopies(50, new Vinyl())));
-        when(mockedRequest.getSession()).thenReturn(mockedHttpSession);
+        when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
         when(mockedUser.getRole()).thenReturn(Role.USER);
         when(mockedResponse.getWriter()).thenReturn(mockedPrintWriter);
@@ -60,6 +80,8 @@ class CatalogueServletTest {
         verify(mockedVinylService).getManyRandomUnique(50);
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
+        inOrderRequest.verify(mockedRequest).getSession(false);
+        verify(mockedHttpSession).getAttribute("user");
         verify(mockedUser, times(1)).getRole();
         assertEquals(Role.USER, mockedUser.getRole());
         inOrderResponse.verify(mockedResponse).getWriter();
@@ -71,7 +93,7 @@ class CatalogueServletTest {
         //prepare
         when(mockedVinylService.getManyRandomUnique(50)).thenReturn(
                 new ArrayList<>(Collections.nCopies(50, new Vinyl())));
-        when(mockedRequest.getSession()).thenReturn(mockedHttpSession);
+        when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(null);
         when(mockedResponse.getWriter()).thenReturn(mockedPrintWriter);
         //when
@@ -80,6 +102,8 @@ class CatalogueServletTest {
         verify(mockedVinylService).getManyRandomUnique(50);
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
+        inOrderRequest.verify(mockedRequest).getSession(false);
+        verify(mockedHttpSession).getAttribute("user");
         verify(mockedUser, times(0)).getRole();
         inOrderResponse.verify(mockedResponse).getWriter();
     }

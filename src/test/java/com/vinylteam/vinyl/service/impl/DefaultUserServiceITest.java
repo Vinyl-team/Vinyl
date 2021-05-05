@@ -3,7 +3,6 @@ package com.vinylteam.vinyl.service.impl;
 import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.dao.UserDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
-import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
@@ -147,14 +146,51 @@ class DefaultUserServiceITest {
 
     @Test
     @DisplayName("Checks if .add(...) with already existing in database user's email and password as arguments returns false.")
-    void addWithExistingEmail() {
+    void addWithExistingEmailTest() {
         assertFalse(userService.add("verifieduser@vinyl.com", "password1"));
     }
 
     @Test
     @DisplayName("Checks if .add(...) with not existing in database user's email and password as arguments returns true.")
-    void addWithNewEmail() {
+    void addWithNewEmailTest() {
         assertTrue(userService.add("newuser@vinyl.com", "password3"));
+    }
+
+    @Test
+    @DisplayName("Checks if edit(...) with null old email as an argument")
+    void editWhenOldEmailIsNullTest() {
+        assertFalse(userService.edit(null, "newVerifieduser@vinyl.com", "newPassword"));
+    }
+
+    @Test
+    @DisplayName("Checks if edit(...) with null newEmail as an argument")
+    void editWhenEmailIsNullTest() {
+        assertFalse(userService.edit("verifieduser@vinyl.com", null, "newPassword"));
+    }
+
+    @Test
+    @DisplayName("Checks if edit(...) with null newPassword as an argument")
+    void editWhenNewPasswordIsNullTest() {
+        assertFalse(userService.edit("verifieduser@vinyl.com", "newVerifieduser@vinyl.com", null));
+    }
+
+    @Test
+    @DisplayName("Checks edit(...) with a non-existent user")
+    void editWhenUserIsNotExistTest() {
+        assertFalse(userService.edit("non-existent-user@vinyl.com", "newVerifieduser@vinyl.com", "newPassword"));
+    }
+
+    @Test
+    @DisplayName("Checks edit(...) with an existing user")
+    void editWhenUserIsExistTest() {
+        assertTrue(userService.edit("verifieduser@vinyl.com", "newVerifieduser@vinyl.com", "newPassword"));
+    }
+
+    @Test
+    @DisplayName("Checks edit(...) when only password was changed")
+    void editWhenOnlyPasswordWasChangedTest() {
+        assertTrue(userService.edit("verifieduser@vinyl.com", "verifieduser@vinyl.com", "newPassword"));
+        assertTrue(userDao.getByEmail("verifieduser@vinyl.com").orElse(new User()).getStatus());
     }
 
 }

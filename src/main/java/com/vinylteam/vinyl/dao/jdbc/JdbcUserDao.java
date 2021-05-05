@@ -20,12 +20,16 @@ public class JdbcUserDao implements UserDao {
     private final String INSERT = "INSERT INTO public.users" +
             " (email, password, salt, iterations, role, status)" +
             " VALUES (?, ?, ?, ?, ?, ?)";
+    private final String UPDATE = "UPDATE public.users" +
+            " SET email = ?, password = ?, salt = ?, iterations = ?, role = ?, status = ?" +
+            " WHERE email = ?";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserRowMapper userRowMapper = new UserRowMapper();
 
+    @Override
     public boolean add(User user) {
-        boolean isAdded;
+        boolean isAdded = false;
         try (Connection connection = DBDataSource.getConnection();
              PreparedStatement insertStatement = connection.prepareStatement(INSERT)) {
             insertStatement.setString(1, user.getEmail());
@@ -35,8 +39,10 @@ public class JdbcUserDao implements UserDao {
             insertStatement.setString(5, user.getRole().toString());
             insertStatement.setBoolean(6, user.getStatus());
             logger.debug("Prepared statement {'preparedStatement':{}}.", insertStatement);
-            insertStatement.executeUpdate();
-            isAdded = true;
+            int result = insertStatement.executeUpdate();
+            if (result > 0) {
+                isAdded = true;
+            }
         } catch (PSQLException e) {
             logger.debug("Database error while adding user to public.users", e);
             isAdded = false;
@@ -52,6 +58,39 @@ public class JdbcUserDao implements UserDao {
         return isAdded;
     }
 
+    @Override
+    public boolean edit(String email, User user) {
+        boolean isEdit = false;
+        try (Connection connection = DBDataSource.getConnection();
+             PreparedStatement updateStatement = connection.prepareStatement(UPDATE)) {
+            updateStatement.setString(1, user.getEmail());
+            updateStatement.setString(2, user.getPassword());
+            updateStatement.setString(3, user.getSalt());
+            updateStatement.setInt(4, user.getIterations());
+            updateStatement.setString(5, user.getRole().toString());
+            updateStatement.setBoolean(6, user.getStatus());
+            updateStatement.setString(7, email);
+            logger.debug("Prepared statement {'preparedStatement':{}}.", updateStatement);
+            int result = updateStatement.executeUpdate();
+            if (result > 0) {
+                isEdit = true;
+            }
+        } catch (PSQLException e) {
+            logger.debug("Database error while edit user to public.users", e);
+            isEdit = false;
+        } catch (SQLException e) {
+            logger.error("Error while edit user to public.users", e);
+            throw new RuntimeException(e);
+        }
+        if (isEdit) {
+            logger.info("User was edit to the database {'user':{}}.", user);
+        } else {
+            logger.info("Failed to edit user to the database {'user':{}}.", user);
+        }
+        return isEdit;
+    }
+
+    @Override
     public Optional<User> getByEmail(String email) {
         User user = null;
         try (Connection connection = DBDataSource.getConnection();

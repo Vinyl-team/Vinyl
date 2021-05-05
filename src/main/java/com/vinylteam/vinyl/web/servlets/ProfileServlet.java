@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeServlet extends HttpServlet {
+public class ProfileServlet extends HttpServlet {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
@@ -27,8 +27,9 @@ public class HomeServlet extends HttpServlet {
             User user = (User) session.getAttribute("user");
             if (user != null) {
                 attributes.put("userRole", user.getRole().toString());
+                attributes.put("email", user.getEmail());
             }
         }
-        PageGenerator.getInstance().process("index", attributes, response.getWriter());
+        PageGenerator.getInstance().process("profile", attributes, response.getWriter());
     }
 }
