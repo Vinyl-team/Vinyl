@@ -36,17 +36,17 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public boolean edit(String oldEmail, String newEmail, String newPassword){
+    public boolean edit(String oldEmail, String newEmail, String newPassword) {
         boolean isEdit = false;
-        if (newEmail != null && newPassword != null && oldEmail != null){
+        if (newEmail != null && newPassword != null && oldEmail != null) {
             User userToEdit = securityService
                     .createUserWithHashedPassword(newEmail, newPassword.toCharArray());
-            if (oldEmail.equals(newEmail)){
+            if (oldEmail.equals(newEmail)) {
                 userToEdit.setStatus(true);
             }
             isEdit = userDao.edit(oldEmail, userToEdit);
             logger.debug("Attempt to update user with known email address in database with boolean result " +
-                            "{'isEdit':{}, 'oldEmail':{}}", isEdit, oldEmail);
+                    "{'isEdit':{}, 'oldEmail':{}}", isEdit, oldEmail);
         }
         return isEdit;
     }

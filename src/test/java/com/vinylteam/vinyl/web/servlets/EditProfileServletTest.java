@@ -3,7 +3,6 @@ package com.vinylteam.vinyl.web.servlets;
 import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.security.SecurityService;
-import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
 import com.vinylteam.vinyl.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,13 +12,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.mockito.Mockito;
-import java.util.Optional;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class EditProfileServletTest {
@@ -37,7 +37,7 @@ class EditProfileServletTest {
     private InOrder inOrderResponse;
 
     @BeforeEach
-    void beforeEach(){
+    void beforeEach() {
         mockedRequest = mock(HttpServletRequest.class);
         mockedResponse = mock(HttpServletResponse.class);
         mockedHttpSession = mock(HttpSession.class);

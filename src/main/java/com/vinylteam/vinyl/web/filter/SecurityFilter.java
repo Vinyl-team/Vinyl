@@ -24,7 +24,7 @@ public class SecurityFilter implements Filter {
 
         String uri = httpServletRequest.getRequestURI();
 
-        if (allowedUrls.contains(uri) || uri.startsWith("/css") || uri.startsWith("/img") || uri.startsWith("/fonts")){
+        if (allowedUrls.contains(uri) || uri.startsWith("/css") || uri.startsWith("/img") || uri.startsWith("/fonts")) {
             filterChain.doFilter(request, response);
         } else {
             HttpSession httpSession = httpServletRequest.getSession(false);

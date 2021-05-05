@@ -4,8 +4,6 @@ import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -15,10 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class SecurityFilterTest {
@@ -35,7 +30,7 @@ class SecurityFilterTest {
     private Role mockedRole;
 
     @BeforeEach
-    void beforeEach(){
+    void beforeEach() {
         mockedHttpServletRequest = mock(HttpServletRequest.class);
         mockedHttpServletResponse = mock(HttpServletResponse.class);
         mockedHttpSession = mock(HttpSession.class);

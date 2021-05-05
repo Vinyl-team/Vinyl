@@ -171,7 +171,7 @@ class JdbcUserDaoITest {
 
     @Test
     @DisplayName("Edit non-existent user in db")
-    void editNonExistentUserInDbTest(){
+    void editNonExistentUserInDbTest() {
         logger.info("editNonExistentUserInDbTest()");
         String oldEmail = "non-existent-user@vinyl.com";
         User user = new User();
@@ -187,7 +187,7 @@ class JdbcUserDaoITest {
 
     @Test
     @DisplayName("Edit non-existent user in db")
-    void editWithAnExistingUserInDbTest(){
+    void editWithAnExistingUserInDbTest() {
         logger.info("editNonExistentUserInDbTest()");
         String oldEmail = "testuser1@vinyl.com";
         User user = new User();

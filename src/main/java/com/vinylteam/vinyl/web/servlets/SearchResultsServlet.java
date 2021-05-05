@@ -29,7 +29,7 @@ public class SearchResultsServlet extends HttpServlet {
         List<Vinyl> filteredUniqueVinyls = vinylService.getManyFilteredUnique(matcher);
         attributes.put("searchWord", matcher);
         HttpSession session = request.getSession(false);
-        if (session != null){
+        if (session != null) {
             User user = (User) session.getAttribute("user");
             if (user != null) {
                 attributes.put("userRole", user.getRole().toString());

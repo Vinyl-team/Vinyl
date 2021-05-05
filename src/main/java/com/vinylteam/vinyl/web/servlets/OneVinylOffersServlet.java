@@ -33,7 +33,7 @@ public class OneVinylOffersServlet extends HttpServlet {
 
         Map<String, String> attributes = new HashMap<>();
         HttpSession session = request.getSession(false);
-        if (session != null){
+        if (session != null) {
             User user = (User) session.getAttribute("user");
             if (user != null) {
                 attributes.put("userRole", user.getRole().toString());
