@@ -37,6 +37,7 @@ public class EditProfileServlet extends HttpServlet {
             if (user != null) {
                 attributes.put("userRole", user.getRole().toString());
                 attributes.put("email", user.getEmail());
+                attributes.put("discogsUserName", user.getDiscogsUserName());
             }
         }
         PageGenerator.getInstance().process("editProfile", attributes, response.getWriter());
@@ -50,12 +51,14 @@ public class EditProfileServlet extends HttpServlet {
         String oldPassword = request.getParameter("oldPassword");
         String newPassword = request.getParameter("newPassword");
         String confirmNewPassword = request.getParameter("confirmNewPassword");
+        String newDiscogsUserName = request.getParameter("discogsUserName");
         HttpSession httpSession = request.getSession(false);
         if (httpSession != null) {
             User user = (User) httpSession.getAttribute("user");
             if (user != null) {
                 attributes.put("userRole", user.getRole().toString());
                 String email = user.getEmail();
+                String discogsUserName = user.getDiscogsUserName();
                 if (!newPassword.equals(confirmNewPassword)) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
@@ -63,7 +66,7 @@ public class EditProfileServlet extends HttpServlet {
                 } else {
                     boolean checkOldPassword = securityService.checkPasswordAgainstUserPassword(user, oldPassword.toCharArray());
                     if (checkOldPassword) {
-                        boolean isEdit = userService.edit(email, newEmail, newPassword);
+                        boolean isEdit = userService.edit(email, newEmail, newPassword, newDiscogsUserName);
                         logger.debug("Got result of edit user by email with " +
                                 "passed email and password to db {'newEmail':{}, 'isEdit':{}}", newEmail, isEdit);
                         if (isEdit) {
@@ -72,6 +75,7 @@ public class EditProfileServlet extends HttpServlet {
                             attributes.put("message", "Your profile is successfully changed.");
                             httpSession.invalidate();
                             email = newEmail;
+                            discogsUserName = newDiscogsUserName;
                             HttpSession newSession = request.getSession(true);
                             newSession.setMaxInactiveInterval(60 * 60 * 5);
                             newSession.setAttribute("user", userService.getByEmail(email).orElse(user));
@@ -86,6 +90,7 @@ public class EditProfileServlet extends HttpServlet {
                         attributes.put("message", "Sorry, old password isn't correct!");
                     }
                 }
+                attributes.put("discogsUserName", discogsUserName);
                 attributes.put("email", email);
                 PageGenerator.getInstance().process("editProfile", attributes, response.getWriter());
             } else {

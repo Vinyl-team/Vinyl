@@ -14,14 +14,14 @@ import java.util.Optional;
 public class JdbcUserDao implements UserDao {
 
     private final String COUNT_ALL = "SELECT COUNT(*) FROM public.users";
-    private final String FIND_BY_EMAIL = "SELECT email, password, salt, iterations, role, status" +
+    private final String FIND_BY_EMAIL = "SELECT email, password, salt, iterations, role, status, discogs_user_name" +
             " FROM public.users" +
             " WHERE email=?";
     private final String INSERT = "INSERT INTO public.users" +
-            " (email, password, salt, iterations, role, status)" +
-            " VALUES (?, ?, ?, ?, ?, ?)";
+            " (email, password, salt, iterations, role, status, discogs_user_name)" +
+            " VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final String UPDATE = "UPDATE public.users" +
-            " SET email = ?, password = ?, salt = ?, iterations = ?, role = ?, status = ?" +
+            " SET email = ?, password = ?, salt = ?, iterations = ?, role = ?, status = ?, discogs_user_name = ?" +
             " WHERE email = ?";
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -38,6 +38,7 @@ public class JdbcUserDao implements UserDao {
             insertStatement.setInt(4, user.getIterations());
             insertStatement.setString(5, user.getRole().toString());
             insertStatement.setBoolean(6, user.getStatus());
+            insertStatement.setString(7, user.getDiscogsUserName());
             logger.debug("Prepared statement {'preparedStatement':{}}.", insertStatement);
             int result = insertStatement.executeUpdate();
             if (result > 0) {
@@ -69,7 +70,8 @@ public class JdbcUserDao implements UserDao {
             updateStatement.setInt(4, user.getIterations());
             updateStatement.setString(5, user.getRole().toString());
             updateStatement.setBoolean(6, user.getStatus());
-            updateStatement.setString(7, email);
+            updateStatement.setString(7, user.getDiscogsUserName());
+            updateStatement.setString(8, email);
             logger.debug("Prepared statement {'preparedStatement':{}}.", updateStatement);
             int result = updateStatement.executeUpdate();
             if (result > 0) {

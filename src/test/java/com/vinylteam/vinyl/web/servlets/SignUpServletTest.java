@@ -107,6 +107,7 @@ class SignUpServletTest {
         when(mockedRequest.getParameter("email")).thenReturn("existinguser@vinyl.com");
         when(mockedRequest.getParameter("password")).thenReturn("password");
         when(mockedRequest.getParameter("confirmPassword")).thenReturn("confirmPassword");
+        when(mockedRequest.getParameter("discogsUserName")).thenReturn("discogsUserName");
         when(mockedResponse.getWriter()).thenReturn(printWriter);
         //when
         signUpServlet.doPost(mockedRequest, mockedResponse);
@@ -115,8 +116,9 @@ class SignUpServletTest {
         inOrderRequest.verify(mockedRequest).getParameter("email");
         inOrderRequest.verify(mockedRequest).getParameter("password");
         inOrderRequest.verify(mockedRequest).getParameter("confirmPassword");
+        inOrderRequest.verify(mockedRequest).getParameter("discogsUserName");
         verify(mockedUserService, times(0))
-                .add("existinguser@vinyl.com", "password");
+                .add("existinguser@vinyl.com", "password", "discogsUserName");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
         verify(mockedResponse).getWriter();
     }
@@ -129,7 +131,8 @@ class SignUpServletTest {
         when(mockedRequest.getParameter("email")).thenReturn("existinguser@vinyl.com");
         when(mockedRequest.getParameter("password")).thenReturn("password");
         when(mockedRequest.getParameter("confirmPassword")).thenReturn("password");
-        when(mockedUserService.add("existinguser@vinyl.com", "password")).thenReturn(false);
+        when(mockedRequest.getParameter("discogsUserName")).thenReturn("discogsUserName");
+        when(mockedUserService.add("existinguser@vinyl.com", "password", "discogsUserName")).thenReturn(false);
         when(mockedResponse.getWriter()).thenReturn(printWriter);
         //when
         signUpServlet.doPost(mockedRequest, mockedResponse);
@@ -138,8 +141,9 @@ class SignUpServletTest {
         inOrderRequest.verify(mockedRequest).getParameter("email");
         inOrderRequest.verify(mockedRequest).getParameter("password");
         inOrderRequest.verify(mockedRequest).getParameter("confirmPassword");
+        inOrderRequest.verify(mockedRequest).getParameter("discogsUserName");
         verify(mockedUserService, times(1))
-                .add("existinguser@vinyl.com", "password");
+                .add("existinguser@vinyl.com", "password", "discogsUserName");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
         verify(mockedResponse).getWriter();
     }
@@ -152,7 +156,8 @@ class SignUpServletTest {
         when(mockedRequest.getParameter("email")).thenReturn("newuser@vinyl.com");
         when(mockedRequest.getParameter("password")).thenReturn("password");
         when(mockedRequest.getParameter("confirmPassword")).thenReturn("password");
-        when(mockedUserService.add("newuser@vinyl.com", "password")).thenReturn(true);
+        when(mockedRequest.getParameter("discogsUserName")).thenReturn("discogsUserName");
+        when(mockedUserService.add("newuser@vinyl.com", "password", "discogsUserName")).thenReturn(true);
         when(mockedResponse.getWriter()).thenReturn(printWriter);
         //when
         signUpServlet.doPost(mockedRequest, mockedResponse);
@@ -161,8 +166,9 @@ class SignUpServletTest {
         inOrderRequest.verify(mockedRequest).getParameter("email");
         inOrderRequest.verify(mockedRequest).getParameter("password");
         inOrderRequest.verify(mockedRequest).getParameter("confirmPassword");
+        inOrderRequest.verify(mockedRequest).getParameter("discogsUserName");
         verify(mockedUserService, times(1))
-                .add("newuser@vinyl.com", "password");
+                .add("newuser@vinyl.com", "password", "discogsUserName");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_SEE_OTHER);
         verify(mockedResponse).getWriter();
     }

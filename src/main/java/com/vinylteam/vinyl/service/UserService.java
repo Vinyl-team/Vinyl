@@ -6,9 +6,9 @@ import java.util.Optional;
 
 public interface UserService {
 
-    boolean add(String email, String password);
+    boolean add(String email, String password, String discogsUserName);
 
-    boolean edit(String oldEmail, String newEmail, String newPassword);
+    boolean edit(String oldEmail, String newEmail, String newPassword, String discogsUserName);
 
     Optional<User> getByEmail(String email);
 

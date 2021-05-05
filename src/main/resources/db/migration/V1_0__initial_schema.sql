@@ -14,7 +14,10 @@ create table users
     status     boolean       not null,
     role       varchar(50)   not null
         constraint either_of_two_roles
-            check (((role)::text = 'USER'::text) OR ((role)::text = 'ADMIN'::text))
+            check (((role)::text = 'USER'::text) OR ((role)::text = 'ADMIN'::text)),
+    discogs_user_name      varchar(500)
+        constraint unique_discogs_user_name
+            unique
 );
 
 create table unique_vinyls

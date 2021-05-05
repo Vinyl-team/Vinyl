@@ -47,10 +47,10 @@ class DefaultUserServiceITest {
             logger.info("Truncated table before all tests.");
         }
         verifiedUser = securityService
-                .createUserWithHashedPassword("verifieduser@vinyl.com", "password1".toCharArray());
+                .createUserWithHashedPassword("verifieduser@vinyl.com", "password1".toCharArray(), "discogsUserName");
         verifiedUser.setStatus(true);
         notVerifiedUser = securityService
-                .createUserWithHashedPassword("notverifieduser@vinyl.com", "password2".toCharArray());
+                .createUserWithHashedPassword("notverifieduser@vinyl.com", "password2".toCharArray(), "discogsUserName");
     }
 
     @AfterAll
@@ -135,61 +135,61 @@ class DefaultUserServiceITest {
     @Test
     @DisplayName("Checks if .add(...) with null email as an argument returns false.")
     void addWithNullEmailTest() {
-        assertFalse(userService.add(null, "password"));
+        assertFalse(userService.add(null, "password", "discogsUserName"));
     }
 
     @Test
     @DisplayName("Checks if .add(...) with null password as an argument returns false.")
     void addWithNullPasswordTest() {
-        assertFalse(userService.add("email@vinyl.com", null));
+        assertFalse(userService.add("email@vinyl.com", null, "discogsUserName"));
     }
 
     @Test
     @DisplayName("Checks if .add(...) with already existing in database user's email and password as arguments returns false.")
     void addWithExistingEmailTest() {
-        assertFalse(userService.add("verifieduser@vinyl.com", "password1"));
+        assertFalse(userService.add("verifieduser@vinyl.com", "password1", "discogsUserName"));
     }
 
     @Test
     @DisplayName("Checks if .add(...) with not existing in database user's email and password as arguments returns true.")
     void addWithNewEmailTest() {
-        assertTrue(userService.add("newuser@vinyl.com", "password3"));
+        assertTrue(userService.add("newuser@vinyl.com", "password3", "discogsUserName"));
     }
 
     @Test
     @DisplayName("Checks if edit(...) with null old email as an argument")
     void editWhenOldEmailIsNullTest() {
-        assertFalse(userService.edit(null, "newVerifieduser@vinyl.com", "newPassword"));
+        assertFalse(userService.edit(null, "newVerifieduser@vinyl.com", "newPassword", "discogsUserName"));
     }
 
     @Test
     @DisplayName("Checks if edit(...) with null newEmail as an argument")
     void editWhenEmailIsNullTest() {
-        assertFalse(userService.edit("verifieduser@vinyl.com", null, "newPassword"));
+        assertFalse(userService.edit("verifieduser@vinyl.com", null, "newPassword", "discogsUserName"));
     }
 
     @Test
     @DisplayName("Checks if edit(...) with null newPassword as an argument")
     void editWhenNewPasswordIsNullTest() {
-        assertFalse(userService.edit("verifieduser@vinyl.com", "newVerifieduser@vinyl.com", null));
+        assertFalse(userService.edit("verifieduser@vinyl.com", "newVerifieduser@vinyl.com", null, "discogsUserName"));
     }
 
     @Test
     @DisplayName("Checks edit(...) with a non-existent user")
     void editWhenUserIsNotExistTest() {
-        assertFalse(userService.edit("non-existent-user@vinyl.com", "newVerifieduser@vinyl.com", "newPassword"));
+        assertFalse(userService.edit("non-existent-user@vinyl.com", "newVerifieduser@vinyl.com", "newPassword", "discogsUserName"));
     }
 
     @Test
     @DisplayName("Checks edit(...) with an existing user")
     void editWhenUserIsExistTest() {
-        assertTrue(userService.edit("verifieduser@vinyl.com", "newVerifieduser@vinyl.com", "newPassword"));
+        assertTrue(userService.edit("verifieduser@vinyl.com", "newVerifieduser@vinyl.com", "newPassword", "discogsUserName"));
     }
 
     @Test
     @DisplayName("Checks edit(...) when only password was changed")
     void editWhenOnlyPasswordWasChangedTest() {
-        assertTrue(userService.edit("verifieduser@vinyl.com", "verifieduser@vinyl.com", "newPassword"));
+        assertTrue(userService.edit("verifieduser@vinyl.com", "verifieduser@vinyl.com", "newPassword", "discogsUserName"));
         assertTrue(userDao.getByEmail("verifieduser@vinyl.com").orElse(new User()).getStatus());
     }
 

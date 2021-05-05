@@ -17,6 +17,7 @@ public class UserRowMapper {
             try {
                 user.setEmail(resultSet.getString("email"));
                 user.setPassword(resultSet.getString("password"));
+                user.setDiscogsUserName(resultSet.getString("discogs_user_name"));
                 user.setSalt(resultSet.getString("salt"));
                 user.setIterations(resultSet.getInt("iterations"));
                 user.setRole(Role.valueOf(resultSet.getString("role")));

@@ -28,6 +28,7 @@ public class ProfileServlet extends HttpServlet {
             if (user != null) {
                 attributes.put("userRole", user.getRole().toString());
                 attributes.put("email", user.getEmail());
+                attributes.put("discogsUserName", user.getDiscogsUserName());
             }
         }
         PageGenerator.getInstance().process("profile", attributes, response.getWriter());
