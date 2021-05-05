@@ -29,7 +29,7 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public boolean add(User user) {
-        boolean isAdded;
+        boolean isAdded = false;
         try (Connection connection = DBDataSource.getConnection();
              PreparedStatement insertStatement = connection.prepareStatement(INSERT)) {
             insertStatement.setString(1, user.getEmail());
@@ -39,8 +39,10 @@ public class JdbcUserDao implements UserDao {
             insertStatement.setString(5, user.getRole().toString());
             insertStatement.setBoolean(6, user.getStatus());
             logger.debug("Prepared statement {'preparedStatement':{}}.", insertStatement);
-            insertStatement.executeUpdate();
-            isAdded = true;
+            int result = insertStatement.executeUpdate();
+            if (result > 0) {
+                isAdded = true;
+            }
         } catch (PSQLException e) {
             logger.debug("Database error while adding user to public.users", e);
             isAdded = false;
@@ -58,7 +60,7 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public boolean edit(String email, User user) {
-        boolean isEdit;
+        boolean isEdit = false;
         try (Connection connection = DBDataSource.getConnection();
              PreparedStatement updateStatement = connection.prepareStatement(UPDATE)) {
             updateStatement.setString(1, user.getEmail());
@@ -69,8 +71,10 @@ public class JdbcUserDao implements UserDao {
             updateStatement.setBoolean(6, user.getStatus());
             updateStatement.setString(7, email);
             logger.debug("Prepared statement {'preparedStatement':{}}.", updateStatement);
-            updateStatement.executeUpdate();
-            isEdit = true;
+            int result = updateStatement.executeUpdate();
+            if (result > 0) {
+                isEdit = true;
+            }
         } catch (PSQLException e) {
             logger.debug("Database error while edit user to public.users", e);
             isEdit = false;
