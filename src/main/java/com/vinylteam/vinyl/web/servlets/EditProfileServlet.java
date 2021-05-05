@@ -69,7 +69,7 @@ public class EditProfileServlet extends HttpServlet {
                         if (isEdit) {
                             response.setStatus(HttpServletResponse.SC_SEE_OTHER);
                             logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_SEE_OTHER);
-                            attributes.put("message", "Your profile is edit successful.");
+                            attributes.put("message", "Your profile is successfully changed.");
                             httpSession.invalidate();
                             email = newEmail;
                             HttpSession newSession = request.getSession(true);

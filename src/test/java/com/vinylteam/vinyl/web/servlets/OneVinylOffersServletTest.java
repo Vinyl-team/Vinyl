@@ -31,31 +31,26 @@ class OneVinylOffersServletTest {
     private final ShopService mockedShopService = mock(DefaultShopService.class);
     private final OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(mockedVinylService, mockedShopService);
 
-    private HttpServletRequest mockedRequest;
-    private HttpServletResponse mockedResponse;
-    private HttpSession mockedHttpSession;
-    private User mockedUser;
-    private PrintWriter printWriter;
-    private Vinyl mockedUniqueVinyl;
-    private Vinyl mockedVinyl;
-    private Shop mockedShop;
-    private List<Vinyl> vinylOffers;
-    private List<Integer> shopsIds;
-    private List<Shop> shopsByIds;
+    private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
+    private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
+    private final HttpSession mockedHttpSession = mock(HttpSession.class);
+    private final User mockedUser = mock(User.class);
+    private final PrintWriter printWriter = new PrintWriter(new StringWriter());
+    private final Vinyl mockedUniqueVinyl = mock(Vinyl.class);
+    private final Vinyl mockedVinyl = mock(Vinyl.class);
+    private final Shop mockedShop = mock(Shop.class);
+    private final List<Vinyl> vinylOffers = List.of(mockedVinyl);
+    private final List<Integer> shopsIds = new ArrayList<>();
+    private final List<Shop> shopsByIds = List.of(mockedShop);
 
     @BeforeEach
     void beforeEach() {
-        mockedRequest = mock(HttpServletRequest.class);
-        mockedResponse = mock(HttpServletResponse.class);
-        mockedHttpSession = mock(HttpSession.class);
-        mockedUser = mock(User.class);
-        printWriter = new PrintWriter(new StringWriter());
-        mockedUniqueVinyl = mock(Vinyl.class);
-        mockedVinyl = mock(Vinyl.class);
-        mockedShop = mock(Shop.class);
-        vinylOffers = List.of(mockedVinyl);
-        shopsIds = new ArrayList<>();
-        shopsByIds = List.of(mockedShop);
+        reset(mockedRequest);
+        reset(mockedResponse);
+        reset(mockedHttpSession);
+        reset(mockedUser);
+        reset(mockedUniqueVinyl);
+        reset(mockedShop);
     }
 
     @Test

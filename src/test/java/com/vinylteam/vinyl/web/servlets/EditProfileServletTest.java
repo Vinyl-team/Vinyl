@@ -27,25 +27,22 @@ class EditProfileServletTest {
     private final UserService mockedUserService = mock(UserService.class);
     private final EditProfileServlet editProfileServlet = new EditProfileServlet(mockedSecurityService, mockedUserService);
 
-    private HttpServletRequest mockedRequest;
-    private HttpServletResponse mockedResponse;
-    private HttpSession mockedHttpSession;
-    private HttpSession newMockedHttpSession;
-    private User mockedUser;
-    private PrintWriter printWriter;
-    private InOrder inOrderRequest;
-    private InOrder inOrderResponse;
+    private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
+    private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
+    private final HttpSession mockedHttpSession = mock(HttpSession.class);
+    private final HttpSession newMockedHttpSession = mock(HttpSession.class);
+    private final User mockedUser = mock(User.class);
+    private final PrintWriter printWriter = new PrintWriter(new StringWriter());
+    private final InOrder inOrderRequest = Mockito.inOrder(mockedRequest);
+    private final InOrder inOrderResponse = Mockito.inOrder(mockedResponse);
 
     @BeforeEach
     void beforeEach() {
-        mockedRequest = mock(HttpServletRequest.class);
-        mockedResponse = mock(HttpServletResponse.class);
-        mockedHttpSession = mock(HttpSession.class);
-        newMockedHttpSession = mock(HttpSession.class);
-        mockedUser = mock(User.class);
-        printWriter = new PrintWriter(new StringWriter());
-        inOrderRequest = Mockito.inOrder(mockedRequest);
-        inOrderResponse = Mockito.inOrder(mockedResponse);
+        reset(mockedRequest);
+        reset(mockedResponse);
+        reset(mockedHttpSession);
+        reset(newMockedHttpSession);
+        reset(mockedUser);
     }
 
     @Test

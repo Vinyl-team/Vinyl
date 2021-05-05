@@ -25,23 +25,20 @@ class SearchResultsServletTest {
     private final VinylService mockedVinylService = mock(DefaultVinylService.class);
     private final SearchResultsServlet searchResultsServlet = new SearchResultsServlet(mockedVinylService);
 
-    private HttpServletRequest mockedRequest;
-    private HttpServletResponse mockedResponse;
-    private HttpSession mockedHttpSession;
-    private User mockedUser;
-    private PrintWriter mockedPrintWriter;
-    private InOrder inOrderResponse;
-    private InOrder inOrderRequest;
+    private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
+    private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
+    private final HttpSession mockedHttpSession = mock(HttpSession.class);
+    private final User mockedUser = mock(User.class);
+    private final PrintWriter mockedPrintWriter = mock(PrintWriter.class);
+    private final InOrder inOrderResponse = inOrder(mockedResponse);
+    private final InOrder inOrderRequest = inOrder(mockedRequest);
 
     @BeforeEach
     void beforeEach() {
-        mockedRequest = mock(HttpServletRequest.class);
-        mockedResponse = mock(HttpServletResponse.class);
-        mockedHttpSession = mock(HttpSession.class);
-        mockedUser = mock(User.class);
-        mockedPrintWriter = mock(PrintWriter.class);
-        inOrderResponse = inOrder(mockedResponse);
-        inOrderRequest = inOrder(mockedRequest);
+        reset(mockedRequest);
+        reset(mockedResponse);
+        reset(mockedHttpSession);
+        reset(mockedUser);
     }
 
     @Test

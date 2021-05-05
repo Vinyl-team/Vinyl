@@ -25,23 +25,20 @@ class SignInServletTest {
     private final UserService mockedUserService = mock(UserService.class);
     private final SignInServlet signInServlet = new SignInServlet(mockedUserService);
 
-    private HttpServletRequest mockedHttpServletRequest;
-    private HttpServletResponse mockedHttpServletResponse;
-    private HttpSession mockedHttpSession;
-    private User mockedUser;
-    private PrintWriter printWriter;
-    private InOrder inOrderResponse;
-    private InOrder inOrderRequest;
+    private final HttpServletRequest mockedHttpServletRequest = mock(HttpServletRequest.class);
+    private final HttpServletResponse mockedHttpServletResponse = mock(HttpServletResponse.class);
+    private final HttpSession mockedHttpSession = mock(HttpSession.class);
+    private final User mockedUser = mock(User.class);
+    private final PrintWriter printWriter = new PrintWriter(new StringWriter());
+    private final InOrder inOrderResponse = inOrder(mockedHttpServletResponse);
+    private final InOrder inOrderRequest = inOrder(mockedHttpServletRequest);
 
     @BeforeEach
     void beforeEach() {
-        mockedHttpServletRequest = mock(HttpServletRequest.class);
-        mockedHttpServletResponse = mock(HttpServletResponse.class);
-        mockedHttpSession = mock(HttpSession.class);
-        mockedUser = mock(User.class);
-        printWriter = new PrintWriter(new StringWriter());
-        inOrderResponse = inOrder(mockedHttpServletResponse);
-        inOrderRequest = inOrder(mockedHttpServletRequest);
+        reset(mockedHttpServletRequest);
+        reset(mockedHttpServletResponse);
+        reset(mockedHttpSession);
+        reset(mockedUser);
     }
 
     @Test
