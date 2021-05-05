@@ -41,8 +41,11 @@ public class DefaultUserService implements UserService {
         if (newEmail != null && newPassword != null && oldEmail != null){
             User userToEdit = securityService
                     .createUserWithHashedPassword(newEmail, newPassword.toCharArray());
+            if (oldEmail.equals(newEmail)){
+                userToEdit.setStatus(true);
+            }
             isEdit = userDao.edit(oldEmail, userToEdit);
-            logger.debug("Attempt to update user with known email address in database with boolean result" +
+            logger.debug("Attempt to update user with known email address in database with boolean result " +
                             "{'isEdit':{}, 'oldEmail':{}}", isEdit, oldEmail);
         }
         return isEdit;

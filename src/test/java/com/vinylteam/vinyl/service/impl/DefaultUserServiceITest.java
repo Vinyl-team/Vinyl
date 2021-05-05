@@ -177,14 +177,21 @@ class DefaultUserServiceITest {
 
     @Test
     @DisplayName("Checks edit(...) with a non-existent user")
-    void editWhenUserIsNotExistNullTest(){
+    void editWhenUserIsNotExistTest(){
         assertFalse(userService.edit("non-existent-user@vinyl.com", "newVerifieduser@vinyl.com", "newPassword"));
     }
 
     @Test
     @DisplayName("Checks edit(...) with an existing user")
-    void editWhenUserIsExistNullTest(){
+    void editWhenUserIsExistTest(){
         assertTrue(userService.edit("verifieduser@vinyl.com", "newVerifieduser@vinyl.com", "newPassword"));
+    }
+
+    @Test
+    @DisplayName("Checks edit(...) when only password was changed")
+    void editWhenOnlyPasswordWasChangedTest(){
+        assertTrue(userService.edit("verifieduser@vinyl.com", "verifieduser@vinyl.com", "newPassword"));
+        assertTrue(userDao.getByEmail("verifieduser@vinyl.com").orElse(new User()).getStatus());
     }
 
 }

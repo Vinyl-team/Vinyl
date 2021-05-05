@@ -46,6 +46,7 @@ public class SignInServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         Map<String, String> attributes = new HashMap<>();
+        attributes.put("email", email);
 
         Optional<User> optionalUser = userService.signInCheck(email, password);
         logger.debug("Received a optional with User with password verification by the passed " +

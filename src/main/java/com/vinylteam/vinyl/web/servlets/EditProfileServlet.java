@@ -85,17 +85,14 @@ public class EditProfileServlet extends HttpServlet {
                         logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
                         attributes.put("message", "Sorry, old password isn't correct!");
                     }
-
                 }
                 attributes.put("email", email);
                 PageGenerator.getInstance().process("editProfile", attributes, response.getWriter());
             } else {
                 response.sendRedirect("/signIn");
             }
-
         } else {
             response.sendRedirect("/signIn");
         }
-
     }
 }
