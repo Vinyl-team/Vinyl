@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface VinylParser {
 
-    List<RawOffer> getRawVinylDataList();
+    List<RawOffer> getRawOffersList();
 
 }

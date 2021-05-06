@@ -20,12 +20,15 @@ import com.vinylteam.vinyl.service.impl.DefaultUniqueVinylService;
 import com.vinylteam.vinyl.service.impl.DefaultUserService;
 import com.vinylteam.vinyl.util.*;
 import com.vinylteam.vinyl.util.impl.VinylUaParser;
+import com.vinylteam.vinyl.web.filter.SecurityFilter;
 import com.vinylteam.vinyl.web.handler.DefaultErrorHandler;
 import com.vinylteam.vinyl.web.servlets.*;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import jakarta.servlet.DispatcherType;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.JarFileResource;
@@ -33,6 +36,7 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -83,15 +87,18 @@ public class Starter {
 
         Timer updateTimer = new Timer("Update Timer");
         long updatePeriod = Long.parseLong(propertiesReader.getProperty("updatePeriod"));
-        //updateTimer.scheduleAtFixedRate(updateTask, 0, updatePeriod);
+        updateTimer.scheduleAtFixedRate(updateTask, 0, updatePeriod);
 //WEB
 
+        SecurityFilter securityFilter = new SecurityFilter();
         SignInServlet signInServlet = new SignInServlet(userService);
         SignUpServlet signUpServlet = new SignUpServlet(userService);
         CatalogueServlet catalogueServlet = new CatalogueServlet(uniqueVinylService);
         SearchResultsServlet searchResultsServlet = new SearchResultsServlet(uniqueVinylService);
         OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(uniqueVinylService, offerService, shopService);
         SignOutServlet signOutServlet = new SignOutServlet();
+        ProfileServlet profileServlet = new ProfileServlet();
+        EditProfileServlet editProfileServlet = new EditProfileServlet(securityService, userService);
         HomeServlet homeServlet = new HomeServlet();
 
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);
@@ -99,15 +106,20 @@ public class Starter {
         servletContextHandler.setErrorHandler(new DefaultErrorHandler());
         servletContextHandler.setBaseResource(resource);
 
+        servletContextHandler.addFilter(new FilterHolder(securityFilter),"/*",
+                EnumSet.of(DispatcherType.REQUEST));
         servletContextHandler.addServlet(new ServletHolder(signInServlet), "/signIn");
         servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/signUp");
         servletContextHandler.addServlet(new ServletHolder(catalogueServlet), "/catalog");
         servletContextHandler.addServlet(new ServletHolder(searchResultsServlet), "/search");
         servletContextHandler.addServlet(new ServletHolder(oneVinylOffersServlet), "/oneVinyl");
         servletContextHandler.addServlet(new ServletHolder(signOutServlet), "/signOut");
+        servletContextHandler.addServlet(new ServletHolder(profileServlet), "/profile");
+        servletContextHandler.addServlet(new ServletHolder(editProfileServlet), "/editProfile");
         servletContextHandler.addServlet(new ServletHolder(homeServlet), "");
 
         servletContextHandler.addServlet(DefaultServlet.class, "/*");
+
         Server server = new Server(Integer.parseInt(propertiesReader.getProperty("appPort")));
         server.setHandler(servletContextHandler);
         server.start();

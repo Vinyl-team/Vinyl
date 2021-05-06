@@ -58,14 +58,49 @@ class OneVinylOffersServletTest {
     }
 
     @Test
+    @DisplayName("Checks if all right methods are called & session isn't exist")
+    void doGetWithNotExistedSessionTest() throws IOException {
+        //prepare
+        when(mockedRequest.getSession(false)).thenReturn(null);
+
+        when(mockedRequest.getParameter("id")).thenReturn("1");
+        when(mockedUniqueVinylService.findById(1)).thenReturn(mockedUniqueVinyl);
+
+        when(mockedUniqueVinyl.getId()).thenReturn(1L);
+        when(mockedOfferService.findManyByUniqueVinylId(1)).thenReturn(offers);
+        when(mockedOfferService.getListOfShopIds(offers)).thenReturn(shopsIds);
+        when(mockedShopService.getManyByListOfIds(shopsIds)).thenReturn(shopsByIds);
+
+        when(mockedUniqueVinyl.getArtist()).thenReturn("artist1");
+        when(mockedUniqueVinylService.findManyByArtist("artist1")).thenReturn(uniqueVinyls);
+        when(mockedResponse.getWriter()).thenReturn(printWriter);
+        //when
+        oneVinylOffersServlet.doGet(mockedRequest, mockedResponse);
+        //then
+        verify(mockedRequest).getSession(false);
+        verify(mockedHttpSession, times(0)).getAttribute("user");
+        verify(mockedUser, times(0)).getRole();
+        verify(mockedRequest).getParameter("id");
+        inOrderUniqueVinylService.verify(mockedUniqueVinylService).findById(1);
+
+        inOrderOfferService.verify(mockedOfferService).findManyByUniqueVinylId(1);
+        inOrderOfferService.verify(mockedOfferService).getListOfShopIds(offers);
+        verify(mockedShopService).getManyByListOfIds(shopsIds);
+
+        verify(mockedUniqueVinyl, times(3)).getArtist();
+        inOrderUniqueVinylService.verify(mockedUniqueVinylService).findManyByArtist("artist1");
+        verify(mockedResponse).getWriter();
+    }
+
+    @Test
     @DisplayName("Checks if all right methods are called & user is authed")
     void doGetWithAuthedUserTest() throws IOException {
         //prepare
-        when(mockedRequest.getSession()).thenReturn(mockedHttpSession);
+        when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
         when(mockedUser.getRole()).thenReturn(Role.USER);
 
-        when(mockedRequest.getParameter("vinylId")).thenReturn("1");
+        when(mockedRequest.getParameter("id")).thenReturn("1");
         when(mockedUniqueVinylService.findById(1)).thenReturn(mockedUniqueVinyl);
 
         when(mockedUniqueVinyl.getId()).thenReturn(1L);
@@ -79,11 +114,12 @@ class OneVinylOffersServletTest {
         //when
         oneVinylOffersServlet.doGet(mockedRequest, mockedResponse);
         //then
+        verify(mockedRequest).getSession(false);
         verify(mockedHttpSession).getAttribute("user");
         assertEquals(mockedUser, mockedHttpSession.getAttribute("user"));
         verify(mockedUser, times(1)).getRole();
         assertEquals(Role.USER, mockedUser.getRole());
-        verify(mockedRequest).getParameter("vinylId");
+        verify(mockedRequest).getParameter("id");
         inOrderUniqueVinylService.verify(mockedUniqueVinylService).findById(1);
 
         inOrderOfferService.verify(mockedOfferService).findManyByUniqueVinylId(1L);
@@ -99,10 +135,10 @@ class OneVinylOffersServletTest {
     @DisplayName("Checks if all right methods are called & user is not authed")
     void doGetWithNotAuthedUserTest() throws IOException {
         //prepare
-        when(mockedRequest.getSession()).thenReturn(mockedHttpSession);
+        when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(null);
 
-        when(mockedRequest.getParameter("vinylId")).thenReturn("1");
+        when(mockedRequest.getParameter("id")).thenReturn("1");
         when(mockedUniqueVinylService.findById(1)).thenReturn(mockedUniqueVinyl);
 
         when(mockedUniqueVinyl.getId()).thenReturn(1L);
@@ -116,10 +152,11 @@ class OneVinylOffersServletTest {
         //when
         oneVinylOffersServlet.doGet(mockedRequest, mockedResponse);
         //then
+        verify(mockedRequest).getSession(false);
         verify(mockedHttpSession).getAttribute("user");
         assertNull(mockedHttpSession.getAttribute("user"));
         verify(mockedUser, never()).getRole();
-        verify(mockedRequest).getParameter("vinylId");
+        verify(mockedRequest).getParameter("id");
         inOrderUniqueVinylService.verify(mockedUniqueVinylService).findById(1);
 
         inOrderOfferService.verify(mockedOfferService).findManyByUniqueVinylId(1L);

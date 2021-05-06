@@ -73,6 +73,11 @@ public class PageGenerator {
             context.setVariable("userRole", userRole);
         }
 
+        String email = attributes.get("email");
+        if (email != null) {
+            context.setVariable("email", email);
+        }
+
         String message = attributes.get("message");
         if (message != null) {
             context.setVariable("message", message);
@@ -100,13 +105,13 @@ public class PageGenerator {
                     firstUniqueVinylRow.add(vinylList.get(i));
                 }
             }
-            context.setVariable("firstUniqueVinylRow", firstUniqueVinylRow);
+            context.setVariable("firstVinylRow", firstUniqueVinylRow);
         }
         if (vinylList.size() > 7) {
             for (int i = 7; i < vinylList.size(); i++) {
                 otherUniqueVinylRow.add(vinylList.get(i));
             }
-            context.setVariable("otherUniqueVinylRow", otherUniqueVinylRow);
+            context.setVariable("otherVinylRow", otherUniqueVinylRow);
         }
 
 // for vinyl page
@@ -115,7 +120,7 @@ public class PageGenerator {
             for (int i = 1; i < vinylList.size(); i++) {
                 uniqueVinylsByArtist.add(vinylList.get(i));
             }
-            context.setVariable("uniqueVinylsByArtist", uniqueVinylsByArtist);
+            context.setVariable("vinylsByArtist", uniqueVinylsByArtist);
         }
 
         context.setVariable("vinylOffersList", vinylOffersList);

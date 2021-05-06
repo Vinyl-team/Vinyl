@@ -39,13 +39,13 @@ class UpdaterTest {
     void updateUniqueVinylsRewriteOffersTest() {
         //prepare
         when(mockedUniqueVinylService.findAll()).thenReturn(uniqueVinyls);
-        when(mockedShopsParser.getRawVinylDataFromAll(vinylParsers)).thenReturn(rawOffers);
+        when(mockedShopsParser.getRawOffersFromAll(vinylParsers)).thenReturn(rawOffers);
         when(mockedRawOffersSorter.getOffersUpdateUniqueVinyls(rawOffers, uniqueVinyls)).thenReturn(offers);
         //when
         updater.updateUniqueVinylsRewriteOffers();
         //then
         verify(mockedUniqueVinylService).findAll();
-        verify(mockedShopsParser).getRawVinylDataFromAll(vinylParsers);
+        verify(mockedShopsParser).getRawOffersFromAll(vinylParsers);
         verify(mockedRawOffersSorter).getOffersUpdateUniqueVinyls(rawOffers, uniqueVinyls);
         verify(mockedOfferService).updateUniqueVinylsRewriteAll(uniqueVinyls, offers);
     }

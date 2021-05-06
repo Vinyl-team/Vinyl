@@ -11,10 +11,10 @@ public class ShopsParser {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public List<RawOffer> getRawVinylDataFromAll(List<VinylParser> vinylParserList) {
+    public List<RawOffer> getRawOffersFromAll(List<VinylParser> vinylParserList) {
         List<RawOffer> allRawOffers = new ArrayList<>();
         for (VinylParser vinylParser : vinylParserList) {
-            allRawOffers.addAll(vinylParser.getRawVinylDataList());
+            allRawOffers.addAll(vinylParser.getRawOffersList());
             logger.debug("Added all vinyls from vinyl parser to list of all vinyls {'vinylParser':{}}", vinylParser);
             logger.info("got all raw offers from {}", vinylParser.getClass());
         }

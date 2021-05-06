@@ -12,6 +12,7 @@ import com.vinylteam.vinyl.web.templater.PageGenerator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,9 +35,12 @@ public class OneVinylOffersServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, String> attributes = new HashMap<>();
-        User user = (User) request.getSession().getAttribute("user");
-        if (user != null) {
-            attributes.put("userRole", String.valueOf(user.getRole()));
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            User user = (User) session.getAttribute("user");
+            if (user != null) {
+                attributes.put("userRole", user.getRole().toString());
+            }
         }
 
         long uniqueVinylId = Long.parseLong(request.getParameter("id"));

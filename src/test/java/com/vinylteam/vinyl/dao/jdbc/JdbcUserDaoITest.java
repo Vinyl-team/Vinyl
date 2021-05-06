@@ -122,4 +122,35 @@ class JdbcUserDaoITest {
         assertEquals(2, jdbcUserDao.countAll());
     }
 
+    @Test
+    @DisplayName("Edit non-existent user in db")
+    void editNonExistentUserInDbTest() {
+        String oldNonExistentEmail = "user4@waxdeals.com";
+        User user = new User();
+        user.setEmail("user5@waxdeals.com");
+        user.setPassword("HASH4");
+        user.setSalt("");
+        user.setIterations(0);
+        user.setRole(Role.USER);
+        user.setStatus(true);
+
+        assertFalse(jdbcUserDao.edit(oldNonExistentEmail, user));
+    }
+
+    @Test
+    @DisplayName("Edit existing user in db")
+    void editWithAnExistingUserInDbTest() {
+        String oldExistingEmail = "user2@waxdeals.com";
+        User user = new User();
+        user.setEmail("user3@waxdeals.com");
+        user.setPassword("HASH2");
+        user.setSalt("");
+        user.setIterations(0);
+        user.setRole(Role.USER);
+        user.setStatus(true);
+
+        assertTrue(jdbcUserDao.edit(oldExistingEmail, user));
+        assertEquals("user3@waxdeals.com", jdbcUserDao.getByEmail("user3@waxdeals.com").orElse(new User()).getEmail());
+    }
+
 }

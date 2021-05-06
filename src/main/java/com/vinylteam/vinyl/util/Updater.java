@@ -5,9 +5,7 @@ import com.vinylteam.vinyl.entity.RawOffer;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.service.OfferService;
 import com.vinylteam.vinyl.service.UniqueVinylService;
-import com.vinylteam.vinyl.util.impl.VinylUaParser;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Updater {
@@ -25,10 +23,10 @@ public class Updater {
         this.vinylParsers = vinylParsers;
         this.sorter = sorter;
     }
-//TODO: List of parsers.
+
     public void updateUniqueVinylsRewriteOffers() {
         List<UniqueVinyl> uniqueVinyls = uniqueVinylService.findAll();
-        List<RawOffer> rawOffers = shopsParser.getRawVinylDataFromAll(new ArrayList<>(List.of(new VinylUaParser())));
+        List<RawOffer> rawOffers = shopsParser.getRawOffersFromAll(vinylParsers);
         List<Offer> newOffers = sorter.getOffersUpdateUniqueVinyls(rawOffers, uniqueVinyls);
         offerService.updateUniqueVinylsRewriteAll(uniqueVinyls, newOffers);
     }

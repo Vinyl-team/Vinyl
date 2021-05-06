@@ -15,19 +15,17 @@ import static org.mockito.Mockito.*;
 class SignOutServletTest {
     private final SignOutServlet signOutServlet = new SignOutServlet();
 
-    private HttpServletRequest mockedRequest;
-    private HttpServletResponse mockedResponse;
-    private HttpSession mockedHttpSession;
-    private InOrder inOrderRequest;
-    private InOrder inOrderResponse;
+    private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
+    private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
+    private final HttpSession mockedHttpSession = mock(HttpSession.class);
+    private final InOrder inOrderRequest = inOrder(mockedRequest);
+    private final InOrder inOrderResponse = inOrder(mockedResponse);
 
     @BeforeEach
     void beforeEach() {
-        mockedRequest = mock(HttpServletRequest.class);
-        mockedResponse = mock(HttpServletResponse.class);
-        mockedHttpSession = mock(HttpSession.class);
-        inOrderRequest = inOrder(mockedRequest);
-        inOrderResponse = inOrder(mockedResponse);
+        reset(mockedRequest);
+        reset(mockedResponse);
+        reset(mockedHttpSession);
     }
 
     @Test

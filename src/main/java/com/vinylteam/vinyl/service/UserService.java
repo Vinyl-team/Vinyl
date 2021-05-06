@@ -8,6 +8,8 @@ public interface UserService {
 
     boolean add(String email, String password);
 
+    boolean edit(String oldEmail, String newEmail, String newPassword);
+
     Optional<User> getByEmail(String email);
 
     Optional<User> signInCheck(String email, String password);

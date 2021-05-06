@@ -206,6 +206,7 @@ h1 {
 .head__login-buttons .tooltiptext {
   visibility: hidden;
   color: #fff;
+  white-space: nowrap;
   font-size: 14px;
   line-height: 19px;
   position: absolute;

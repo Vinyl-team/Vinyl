@@ -25,30 +25,44 @@ class SignInServletTest {
     private final UserService mockedUserService = mock(UserService.class);
     private final SignInServlet signInServlet = new SignInServlet(mockedUserService);
 
-    private HttpServletRequest mockedHttpServletRequest;
-    private HttpServletResponse mockedHttpServletResponse;
-    private HttpSession mockedHttpSession;
-    private User mockedUser;
-    private PrintWriter printWriter;
-    private InOrder inOrderResponse;
-    private InOrder inOrderRequest;
+    private final HttpServletRequest mockedHttpServletRequest = mock(HttpServletRequest.class);
+    private final HttpServletResponse mockedHttpServletResponse = mock(HttpServletResponse.class);
+    private final HttpSession mockedHttpSession = mock(HttpSession.class);
+    private final User mockedUser = mock(User.class);
+    private final PrintWriter printWriter = new PrintWriter(new StringWriter());
+    private final InOrder inOrderResponse = inOrder(mockedHttpServletResponse);
+    private final InOrder inOrderRequest = inOrder(mockedHttpServletRequest);
 
     @BeforeEach
     void beforeEach() {
-        mockedHttpServletRequest = mock(HttpServletRequest.class);
-        mockedHttpServletResponse = mock(HttpServletResponse.class);
-        mockedHttpSession = mock(HttpSession.class);
-        mockedUser = mock(User.class);
-        printWriter = new PrintWriter(new StringWriter());
-        inOrderResponse = inOrder(mockedHttpServletResponse);
-        inOrderRequest = inOrder(mockedHttpServletRequest);
+        reset(mockedHttpServletRequest);
+        reset(mockedHttpServletResponse);
+        reset(mockedHttpSession);
+        reset(mockedUser);
+    }
+
+    @Test
+    @DisplayName("Checks if all right methods are called & session isn't exist")
+    void doGetWithNoSessionTest() throws IOException {
+        //prepare
+        when(mockedHttpServletRequest.getSession(false)).thenReturn(null);
+        when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
+        //when
+        signInServlet.doGet(mockedHttpServletRequest, mockedHttpServletResponse);
+        //then
+        inOrderResponse.verify(mockedHttpServletResponse).setContentType("text/html;charset=utf-8");
+        inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_OK);
+        inOrderRequest.verify(mockedHttpServletRequest).getSession(false);
+        verify(mockedHttpSession, times(0)).getAttribute("user");
+        verify(mockedUser, times(0)).getRole();
+        verify(mockedHttpServletResponse).getWriter();
     }
 
     @Test
     @DisplayName("Checks if all right methods are called & user is not authed")
     void doGetWithNotAuthedUserTest() throws IOException {
         //prepare
-        when(mockedHttpServletRequest.getSession()).thenReturn(mockedHttpSession);
+        when(mockedHttpServletRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(null);
         when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
         //when
@@ -56,7 +70,7 @@ class SignInServletTest {
         //then
         inOrderResponse.verify(mockedHttpServletResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_OK);
-        inOrderRequest.verify(mockedHttpServletRequest).getSession();
+        inOrderRequest.verify(mockedHttpServletRequest).getSession(false);
         assertNull(mockedHttpSession.getAttribute("user"));
         verify(mockedUser, times(0)).getRole();
         inOrderResponse.verify(mockedHttpServletResponse).getWriter();
@@ -66,7 +80,7 @@ class SignInServletTest {
     @DisplayName("Checks if all right methods are called & user is authed")
     void doGetWithAuthedUserTest() throws IOException {
         //prepare
-        when(mockedHttpServletRequest.getSession()).thenReturn(mockedHttpSession);
+        when(mockedHttpServletRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
         when(mockedUser.getRole()).thenReturn(Role.USER);
         when(mockedHttpServletResponse.getWriter()).thenReturn(printWriter);
@@ -75,7 +89,7 @@ class SignInServletTest {
         //then
         inOrderResponse.verify(mockedHttpServletResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_OK);
-        inOrderRequest.verify(mockedHttpServletRequest).getSession();
+        inOrderRequest.verify(mockedHttpServletRequest).getSession(false);
         verify(mockedHttpSession).getAttribute("user");
         assertEquals(mockedUser, mockedHttpSession.getAttribute("user"));
         verify(mockedUser, times(1)).getRole();
@@ -93,7 +107,7 @@ class SignInServletTest {
         when(mockedUserService.signInCheck("verifieduser@vinyl.com", "right password"))
                 .thenReturn(Optional.of(mockedUser));
         when(Optional.of(mockedUser).get().getStatus()).thenReturn(true);
-        when(mockedHttpServletRequest.getSession()).thenReturn(mockedHttpSession);
+        when(mockedHttpServletRequest.getSession(true)).thenReturn(mockedHttpSession);
         //when
         signInServlet.doPost(mockedHttpServletRequest, mockedHttpServletResponse);
         //then
@@ -102,7 +116,7 @@ class SignInServletTest {
         inOrderRequest.verify(mockedHttpServletRequest).getParameter("password");
         verify(mockedUserService).signInCheck("verifieduser@vinyl.com", "right password");
         inOrderResponse.verify(mockedHttpServletResponse).setStatus(HttpServletResponse.SC_OK);
-        inOrderRequest.verify(mockedHttpServletRequest).getSession();
+        inOrderRequest.verify(mockedHttpServletRequest).getSession(true);
         verify(mockedHttpSession).setMaxInactiveInterval(60 * 60 * 5);
         verify(mockedHttpSession).setAttribute("user", mockedUser);
         inOrderResponse.verify(mockedHttpServletResponse).sendRedirect("/");
