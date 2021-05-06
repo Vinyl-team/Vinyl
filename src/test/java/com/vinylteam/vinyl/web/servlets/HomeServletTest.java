@@ -1,4 +1,3 @@
-/*
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.Role;
@@ -80,4 +79,4 @@ class HomeServletTest {
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         verify(mockedResponse).getWriter();
     }
-}*/
+}

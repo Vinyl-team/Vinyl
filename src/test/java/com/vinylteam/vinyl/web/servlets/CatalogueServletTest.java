@@ -1,12 +1,11 @@
-/*
 package com.vinylteam.vinyl.web.servlets;
 
 
 import com.vinylteam.vinyl.entity.Role;
+import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.entity.User;
-import com.vinylteam.vinyl.entity.Vinyl;
-import com.vinylteam.vinyl.service.VinylService;
-import com.vinylteam.vinyl.service.impl.DefaultVinylService;
+import com.vinylteam.vinyl.service.UniqueVinylService;
+import com.vinylteam.vinyl.service.impl.DefaultUniqueVinylService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -25,32 +24,30 @@ import static org.mockito.Mockito.*;
 
 class CatalogueServletTest {
 
-    private final VinylService mockedVinylService = mock(DefaultVinylService.class);
-    private final CatalogueServlet catalogueServlet = new CatalogueServlet(mockedVinylService);
-
-    private HttpServletRequest mockedRequest;
-    private HttpServletResponse mockedResponse;
-    private InOrder inOrderResponse;
-    private HttpSession mockedHttpSession;
-    private User mockedUser;
-    private PrintWriter mockedPrintWriter;
+    private final UniqueVinylService mockedUniqueVinylService = mock(DefaultUniqueVinylService.class);
+    private final CatalogueServlet catalogueServlet = new CatalogueServlet(mockedUniqueVinylService);
+    private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
+    private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
+    private final InOrder inOrderResponse = inOrder(mockedResponse);
+    private final HttpSession mockedHttpSession = mock(HttpSession.class);
+    private final User mockedUser = mock(User.class);
+    private final PrintWriter mockedPrintWriter = mock(PrintWriter.class);
 
     @BeforeEach
     void beforeEach() {
-        mockedRequest = mock(HttpServletRequest.class);
-        mockedResponse = mock(HttpServletResponse.class);
-        inOrderResponse = inOrder(mockedResponse);
-        mockedHttpSession = mock(HttpSession.class);
-        mockedUser = mock(User.class);
-        mockedPrintWriter = mock(PrintWriter.class);
+        reset(mockedRequest);
+        reset(mockedResponse);
+        reset(mockedHttpSession);
+        reset(mockedUser);
+        reset(mockedPrintWriter);
     }
 
     @Test
     @DisplayName("Checks if all right methods are called & user is authed")
     void doGetWithAuthedUserTest() throws IOException {
         //prepare
-        when(mockedVinylService.getManyRandomUnique(50)).thenReturn(
-                new ArrayList<>(Collections.nCopies(50, new Vinyl())));
+        when(mockedUniqueVinylService.findManyRandom(50)).thenReturn(
+                new ArrayList<>(Collections.nCopies(50, new UniqueVinyl())));
         when(mockedRequest.getSession()).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
         when(mockedUser.getRole()).thenReturn(Role.USER);
@@ -58,7 +55,7 @@ class CatalogueServletTest {
         //when
         catalogueServlet.doGet(mockedRequest, mockedResponse);
         //then
-        verify(mockedVinylService).getManyRandomUnique(50);
+        verify(mockedUniqueVinylService).findManyRandom(50);
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         verify(mockedUser, times(1)).getRole();
@@ -70,19 +67,19 @@ class CatalogueServletTest {
     @DisplayName("Checks if all right methods are called & user is not authed")
     void doGetWithNotAuthedUserTest() throws IOException {
         //prepare
-        when(mockedVinylService.getManyRandomUnique(50)).thenReturn(
-                new ArrayList<>(Collections.nCopies(50, new Vinyl())));
+        when(mockedUniqueVinylService.findManyRandom(50)).thenReturn(
+                new ArrayList<>(Collections.nCopies(50, new UniqueVinyl())));
         when(mockedRequest.getSession()).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(null);
         when(mockedResponse.getWriter()).thenReturn(mockedPrintWriter);
         //when
         catalogueServlet.doGet(mockedRequest, mockedResponse);
         //then
-        verify(mockedVinylService).getManyRandomUnique(50);
+        verify(mockedUniqueVinylService).findManyRandom(50);
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         verify(mockedUser, times(0)).getRole();
         inOrderResponse.verify(mockedResponse).getWriter();
     }
 
-}*/
+}

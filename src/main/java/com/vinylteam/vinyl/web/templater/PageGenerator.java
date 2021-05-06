@@ -44,24 +44,24 @@ public class PageGenerator {
         process(fileName, list, new ArrayList<>(), new HashMap<>(), writer);
     }
 
-    public void process(String fileName, List<Vinyl> list, List<OneVinylOffersServletResponse> vinylOffersList, Writer writer) {
+    public void process(String fileName, List<UniqueVinyl> list, List<OneVinylOffersServletResponse> vinylOffersList, Writer writer) {
         process(fileName, list, vinylOffersList, new HashMap<>(), writer);
     }
 
-    public void process(String fileName, List<Vinyl> list, Map<String, String> attributes, Writer writer) {
+    public void process(String fileName, List<UniqueVinyl> list, Map<String, String> attributes, Writer writer) {
         process(fileName, list, new ArrayList<>(), attributes, writer);
     }
 
-    public void process(String fileName, List<Vinyl> vinylList, List<OneVinylOffersServletResponse> vinylOffersList, Map<String, String> attributes, Writer writer) {
+    public void process(String fileName, List<UniqueVinyl> vinylList, List<OneVinylOffersServletResponse> vinylOffersList, Map<String, String> attributes, Writer writer) {
         Context context = getContext(vinylList, vinylOffersList, attributes);
         templateEngine.process(fileName, context, writer);
     }
 
-    private Context getContext(List<Vinyl> vinylList, List<OneVinylOffersServletResponse> vinylOffersList, Map<String, String> attributes) {
+    private Context getContext(List<UniqueVinyl> vinylList, List<OneVinylOffersServletResponse> vinylOffersList, Map<String, String> attributes) {
         Context context = new Context();
-        List<Vinyl> firstVinylRow = new ArrayList<>();
-        List<Vinyl> otherVinylRow = new ArrayList<>();
-        List<Vinyl> vinylsByArtist = new ArrayList<>();
+        List<UniqueVinyl> firstUniqueVinylRow = new ArrayList<>();
+        List<UniqueVinyl> otherUniqueVinylRow = new ArrayList<>();
+        List<UniqueVinyl> uniqueVinylsByArtist = new ArrayList<>();
 
         String searchWord = attributes.get("searchWord");
         if (searchWord != null) {
@@ -78,44 +78,44 @@ public class PageGenerator {
             context.setVariable("message", message);
         }
 
-* for catalog page
+// for catalog page
 
         context.setVariable("vinylList", vinylList);
 
-* for search & vinyl pages
+// for search & vinyl pages
 
         if (!vinylList.isEmpty()) {
             context.setVariable("firstVinyl", vinylList.get(0));
         }
 
-* for search page
+// for search page
 
         if (vinylList.size() > 1) {
             if (vinylList.size() >= 7) {
                 for (int i = 1; i < 7; i++) {
-                    firstVinylRow.add(vinylList.get(i));
+                    firstUniqueVinylRow.add(vinylList.get(i));
                 }
             } else {
                 for (int i = 1; i < vinylList.size(); i++) {
-                    firstVinylRow.add(vinylList.get(i));
+                    firstUniqueVinylRow.add(vinylList.get(i));
                 }
             }
-            context.setVariable("firstVinylRow", firstVinylRow);
+            context.setVariable("firstUniqueVinylRow", firstUniqueVinylRow);
         }
         if (vinylList.size() > 7) {
             for (int i = 7; i < vinylList.size(); i++) {
-                otherVinylRow.add(vinylList.get(i));
+                otherUniqueVinylRow.add(vinylList.get(i));
             }
-            context.setVariable("otherVinylRow", otherVinylRow);
+            context.setVariable("otherUniqueVinylRow", otherUniqueVinylRow);
         }
 
-* for vinyl page
+// for vinyl page
 
         if (vinylList.size() > 1) {
             for (int i = 1; i < vinylList.size(); i++) {
-                vinylsByArtist.add(vinylList.get(i));
+                uniqueVinylsByArtist.add(vinylList.get(i));
             }
-            context.setVariable("vinylsByArtist", vinylsByArtist);
+            context.setVariable("uniqueVinylsByArtist", uniqueVinylsByArtist);
         }
 
         context.setVariable("vinylOffersList", vinylOffersList);

@@ -1,10 +1,8 @@
-/*
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
-import com.vinylteam.vinyl.service.VinylService;
-import com.vinylteam.vinyl.service.impl.DefaultVinylService;
+import com.vinylteam.vinyl.service.UniqueVinylService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -23,8 +21,8 @@ import static org.mockito.Mockito.*;
 
 class SearchResultsServletTest {
 
-    private final VinylService mockedVinylService = mock(DefaultVinylService.class);
-    private final SearchResultsServlet searchResultsServlet = new SearchResultsServlet(mockedVinylService);
+    private final UniqueVinylService mockedUniqueVinylService = mock(UniqueVinylService.class);
+    private final SearchResultsServlet searchResultsServlet = new SearchResultsServlet(mockedUniqueVinylService);
 
     private HttpServletRequest mockedRequest;
     private HttpServletResponse mockedResponse;
@@ -50,7 +48,7 @@ class SearchResultsServletTest {
     void doGetWithAuthedUserTest() throws IOException {
         //prepare
         when(mockedRequest.getParameter("matcher")).thenReturn("release1");
-        when(mockedVinylService.getManyFilteredUnique("release1")).thenReturn(new ArrayList<>());
+        when(mockedUniqueVinylService.findManyFiltered("release1")).thenReturn(new ArrayList<>());
         when(mockedRequest.getSession()).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
         when(mockedUser.getRole()).thenReturn(Role.USER);
@@ -59,7 +57,7 @@ class SearchResultsServletTest {
         searchResultsServlet.doGet(mockedRequest, mockedResponse);
         //then
         inOrderRequest.verify(mockedRequest).getParameter("matcher");
-        verify(mockedVinylService).getManyFilteredUnique("release1");
+        verify(mockedUniqueVinylService).findManyFiltered("release1");
         inOrderRequest.verify(mockedRequest).getSession();
         verify(mockedHttpSession).getAttribute("user");
         assertEquals(mockedUser, mockedHttpSession.getAttribute("user"));
@@ -75,7 +73,7 @@ class SearchResultsServletTest {
     void doGetWithNotAuthedUserTest() throws IOException {
         //prepare
         when(mockedRequest.getParameter("matcher")).thenReturn("release1");
-        when(mockedVinylService.getManyFilteredUnique("release1")).thenReturn(new ArrayList<>());
+        when(mockedUniqueVinylService.findManyFiltered("release1")).thenReturn(new ArrayList<>());
         when(mockedRequest.getSession()).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(null);
         when(mockedResponse.getWriter()).thenReturn(mockedPrintWriter);
@@ -83,7 +81,7 @@ class SearchResultsServletTest {
         searchResultsServlet.doGet(mockedRequest, mockedResponse);
         //then
         inOrderRequest.verify(mockedRequest).getParameter("matcher");
-        verify(mockedVinylService).getManyFilteredUnique("release1");
+        verify(mockedUniqueVinylService).findManyFiltered("release1");
         inOrderRequest.verify(mockedRequest).getSession();
         verify(mockedHttpSession).getAttribute("user");
         assertNull(mockedHttpSession.getAttribute("user"));
@@ -93,4 +91,4 @@ class SearchResultsServletTest {
         inOrderResponse.verify(mockedResponse).getWriter();
     }
 
-}*/
+}

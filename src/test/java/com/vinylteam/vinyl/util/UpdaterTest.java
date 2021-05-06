@@ -13,13 +13,13 @@ import org.junit.jupiter.api.TestInstance;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UpdaterTest {
 
     private final ListPreparerForTests listPreparer = new ListPreparerForTests();
+    private final List<VinylParser> vinylParsers = new ArrayList<>();
     private final List<RawOffer> rawOffers = new ArrayList<>();
     private final List<UniqueVinyl> uniqueVinyls = new ArrayList<>();
     private final List<Offer> offers = new ArrayList<>();
@@ -27,7 +27,7 @@ class UpdaterTest {
     private final OfferService mockedOfferService = mock(OfferService.class);
     private final ShopsParser mockedShopsParser = mock(ShopsParser.class);
     private final RawOffersSorter mockedRawOffersSorter = mock(RawOffersSorter.class);
-    private final Updater updater = new Updater(mockedUniqueVinylService, mockedOfferService, mockedShopsParser, mockedRawOffersSorter);
+    private final Updater updater = new Updater(mockedUniqueVinylService, mockedOfferService, mockedShopsParser, vinylParsers, mockedRawOffersSorter);
 
     @BeforeAll
     void beforeAll() {
@@ -39,13 +39,13 @@ class UpdaterTest {
     void updateUniqueVinylsRewriteOffersTest() {
         //prepare
         when(mockedUniqueVinylService.findAll()).thenReturn(uniqueVinyls);
-        when(mockedShopsParser.getRawVinylDataFromAll(anyList())).thenReturn(rawOffers);
+        when(mockedShopsParser.getRawVinylDataFromAll(vinylParsers)).thenReturn(rawOffers);
         when(mockedRawOffersSorter.getOffersUpdateUniqueVinyls(rawOffers, uniqueVinyls)).thenReturn(offers);
         //when
         updater.updateUniqueVinylsRewriteOffers();
         //then
         verify(mockedUniqueVinylService).findAll();
-        verify(mockedShopsParser).getRawVinylDataFromAll(anyList());
+        verify(mockedShopsParser).getRawVinylDataFromAll(vinylParsers);
         verify(mockedRawOffersSorter).getOffersUpdateUniqueVinyls(rawOffers, uniqueVinyls);
         verify(mockedOfferService).updateUniqueVinylsRewriteAll(uniqueVinyls, offers);
     }

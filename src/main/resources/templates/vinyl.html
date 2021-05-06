@@ -172,12 +172,12 @@
 
                     <div class="other-vinyls">
                         <div class="other-vinyls__item vinyl" th:each="vinylByArtist : ${vinylsByArtist}">
-                            <a class="other-vinyls__image" th:href="@{oneVinyl(vinylId=${vinylByArtist.vinylId})}">
+                            <a class="other-vinyls__image" th:href="@{oneVinyl(id=${vinylByArtist.id})}">
                                 <img th:src="${vinylByArtist.imageLink}" alt="vinyl image">
                             </a>
-                            <a th:href="@{oneVinyl(vinylId=${vinylByArtist.vinylId})}" th:text="${vinylByArtist.artist}"
+                            <a th:href="@{oneVinyl(id=${vinylByArtist.id})}" th:text="${vinylByArtist.artist}"
                                class="other-vinyls__artist">No artist</a>
-                            <a th:href="@{oneVinyl(vinylId=${vinylByArtist.vinylId})}"
+                            <a th:href="@{oneVinyl(id=${vinylByArtist.id})}"
                                th:text="${vinylByArtist.release}" class="other-vinyls__release">No release</a>
                         </div>
                     </div>

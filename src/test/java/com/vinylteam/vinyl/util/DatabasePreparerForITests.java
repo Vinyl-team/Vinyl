@@ -27,17 +27,18 @@ public class DatabasePreparerForITests {
     private final String INSERT_IN_OFFERS = "INSERT INTO public.offers(unique_vinyl_id, shop_id, price, currency, genre, link_to_offer) " +
             "VALUES(?, ?, ?, ?, ?, ?)";
     private final String INSERT_IN_USERS = "INSERT INTO public.users (email, password, salt, iterations, role, status) VALUES (?, ?, ?, ?, ?, ?)";
+    private final PropertiesReader propertiesReader = new PropertiesReader();
     private final HikariDataSource dataSource;
     private final HikariConfig config = new HikariConfig();
 
 
 
     public DatabasePreparerForITests() {
-        config.setJdbcUrl(PropertiesReader.getProperty("jdbc.url"));
-        config.setUsername(PropertiesReader.getProperty("jdbc.user"));
-        config.setPassword(PropertiesReader.getProperty("jdbc.password"));
-        config.setDriverClassName(PropertiesReader.getProperty("jdbc.driver"));
-        config.setMaximumPoolSize(Integer.parseInt(PropertiesReader.getProperty("jdbc.maximum.pool.size")));
+        config.setJdbcUrl(propertiesReader.getProperty("jdbc.url"));
+        config.setUsername(propertiesReader.getProperty("jdbc.user"));
+        config.setPassword(propertiesReader.getProperty("jdbc.password"));
+        config.setDriverClassName(propertiesReader.getProperty("jdbc.driver"));
+        config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getProperty("jdbc.maximum.pool.size")));
         dataSource = new HikariDataSource(config);
         logger.info("Configured and created HikariDataSource object {'dataSource':{}}", dataSource);
     }

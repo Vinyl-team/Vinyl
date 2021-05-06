@@ -11,11 +11,11 @@ import java.util.Properties;
 
 public class PropertiesReader {
 
-    private static final Logger logger = LoggerFactory.getLogger(PropertiesReader.class);
-    private static final Properties properties = new Properties();
-    private static final String independentPropertiesFile = "application.properties";
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Properties properties = new Properties();
+    private final String independentPropertiesFile = "application.properties";
 
-    static {
+    public PropertiesReader() {
         String beginningOfErrorMessage = "Error during loading properties from";
 
         try (InputStream inputStream = PropertiesReader.class.getClassLoader()
@@ -92,11 +92,11 @@ public class PropertiesReader {
         logger.info("Loaded properties in {}", PropertiesReader.class);
     }
 
-    public static String getProperty(String propertyName) {
+    public String getProperty(String propertyName) {
         return properties.getProperty(propertyName);
     }
 
-    private static void validateInputStream(InputStream inputStream) {
+    private void validateInputStream(InputStream inputStream) {
         if (inputStream == null) {
             RuntimeException e = new RuntimeException(".properties file not found, input stream is null");
             logger.error(".properties file not found, input stream is null", e);

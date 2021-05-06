@@ -1,8 +1,8 @@
 package com.vinylteam.vinyl.web.servlets;
 
+import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.entity.User;
-import com.vinylteam.vinyl.entity.Vinyl;
-import com.vinylteam.vinyl.service.VinylService;
+import com.vinylteam.vinyl.service.UniqueVinylService;
 import com.vinylteam.vinyl.web.templater.PageGenerator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,9 +15,9 @@ import java.util.Map;
 
 public class SearchResultsServlet extends HttpServlet {
 
-    private final VinylService vinylService;
+    private final UniqueVinylService vinylService;
 
-    public SearchResultsServlet(VinylService vinylService) {
+    public SearchResultsServlet(UniqueVinylService vinylService) {
         this.vinylService = vinylService;
     }
 
@@ -25,7 +25,7 @@ public class SearchResultsServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Map<String, String> attributes = new HashMap<>();
         String matcher = request.getParameter("matcher");
-        List<Vinyl> filteredUniqueVinyls = vinylService.getManyFilteredUnique(matcher);
+        List<UniqueVinyl> filteredUniqueVinyls = vinylService.findManyFiltered(matcher);
         attributes.put("searchWord", matcher);
         User user = (User) request.getSession().getAttribute("user");
         if (user != null) {

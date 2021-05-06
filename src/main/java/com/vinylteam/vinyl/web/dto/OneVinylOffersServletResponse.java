@@ -1,5 +1,6 @@
 package com.vinylteam.vinyl.web.dto;
-
+//TODO: Rename.
+//TODO: fix imageLink if needed
 public class OneVinylOffersServletResponse {
     private Double price;
     private String vinylLink;

@@ -1,4 +1,3 @@
-/*
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.service.UserService;
@@ -119,4 +118,4 @@ class SignUpServletTest {
         verify(mockedHttpServletResponse).getWriter();
     }
 
-}*/
+}

@@ -15,12 +15,14 @@ public class Updater {
     private final UniqueVinylService uniqueVinylService;
     private final OfferService offerService;
     private final ShopsParser shopsParser;
+    private final List<VinylParser> vinylParsers;
     private final RawOffersSorter sorter;
 
-    public Updater(UniqueVinylService uniqueVinylService, OfferService offerService, ShopsParser shopsParser, RawOffersSorter sorter) {
+    public Updater(UniqueVinylService uniqueVinylService, OfferService offerService, ShopsParser shopsParser, List<VinylParser> vinylParsers, RawOffersSorter sorter) {
         this.uniqueVinylService = uniqueVinylService;
         this.offerService = offerService;
         this.shopsParser = shopsParser;
+        this.vinylParsers = vinylParsers;
         this.sorter = sorter;
     }
 //TODO: List of parsers.
