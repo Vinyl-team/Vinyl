@@ -1,6 +1,6 @@
-/*
 package com.vinylteam.vinyl.web.servlets;
 
+import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.service.VinylService;
 import com.vinylteam.vinyl.web.templater.PageGenerator;
@@ -27,10 +27,13 @@ public class SearchResultsServlet extends HttpServlet {
         String matcher = request.getParameter("matcher");
         List<Vinyl> filteredUniqueVinyls = vinylService.getManyFilteredUnique(matcher);
         attributes.put("searchWord", matcher);
-        PageGenerator.getInstance().process("search", filteredUniqueVinyls, attributes, response.getWriter());
+        User user = (User) request.getSession().getAttribute("user");
+        if (user != null) {
+            attributes.put("userRole", String.valueOf(user.getRole()));
+        }
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
+        PageGenerator.getInstance().process("search", filteredUniqueVinyls, attributes, response.getWriter());
     }
 
 }
-*/

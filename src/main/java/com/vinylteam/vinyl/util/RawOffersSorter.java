@@ -14,6 +14,7 @@ public class RawOffersSorter {
 
     public List<Offer> getOffersUpdateUniqueVinyls(List<RawOffer> rawOffers, List<UniqueVinyl> uniqueVinyls) {
         if (rawOffers != null && uniqueVinyls != null) {
+            logger.info("Received {} rawOffers from parser", rawOffers.size());
             List<Offer> offers = new ArrayList<>();
             if (!rawOffers.isEmpty()) {
                 ListIterator<UniqueVinyl> vinylIterator = uniqueVinyls.listIterator();
@@ -35,6 +36,7 @@ public class RawOffersSorter {
             } else {
                 logger.warn("Passed to RawOfferSorter.getOffersUpdateUniqueVinyls() list of raw offers is empty");
             }
+            logger.info("Sorting complete, {} unique vinyls, {} offers", uniqueVinyls.size(), offers.size());
             logger.debug("Resulting list of offers and updated list of uniqueVinyls are {'offers':{}, 'uniqueVinyls':{}}", offers, uniqueVinyls);
             return offers;
         } else {

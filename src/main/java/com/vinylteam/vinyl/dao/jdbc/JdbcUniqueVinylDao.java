@@ -49,6 +49,7 @@ public class JdbcUniqueVinylDao extends AbstractJdbcUniqueVinylAndOfferDao<Uniqu
             logger.error(FINDING_ALL_ERROR_MESSAGE, LIST_NAME, LIST_NAME, uniqueVinyls, e);
             throw new RuntimeException(e);
         }
+        logger.info("Found all uniqueVinyls from db.");
         logger.debug(RESULT_IS_MESSAGE, LIST_NAME, LIST_NAME, uniqueVinyls);
         return uniqueVinyls;
     }

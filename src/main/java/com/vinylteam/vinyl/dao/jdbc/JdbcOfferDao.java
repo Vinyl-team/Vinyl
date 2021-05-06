@@ -131,6 +131,7 @@ public class JdbcOfferDao extends AbstractJdbcUniqueVinylAndOfferDao<Offer> impl
                     uniqueVinyls, offers, e);
             throw new RuntimeException("Error while updating database with uniqueVinyls and refilling database with offers", e);
         }
+        logger.info("Database updated, couldn't add {} offers", notAddedOffers.size());
         return notAddedOffers;
     }
 

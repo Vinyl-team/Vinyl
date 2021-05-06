@@ -1,4 +1,3 @@
-/*
 package com.vinylteam.vinyl.service.impl;
 
 import com.vinylteam.vinyl.dao.ShopDao;
@@ -32,4 +31,3 @@ public class DefaultShopService implements ShopService {
     }
 
 }
-*/

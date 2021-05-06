@@ -1,7 +1,6 @@
 package com.vinylteam.vinyl.service.impl;
 
 import com.vinylteam.vinyl.dao.UserDao;
-import com.vinylteam.vinyl.entity.SignInCheckResult;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.service.UserService;
@@ -25,48 +24,45 @@ public class DefaultUserService implements UserService {
     public boolean add(String email, String password) {
         boolean isAdded = false;
         if (email != null && password != null) {
-            User userToAdd = securityService
-                    .createUserWithHashedPassword(email, password.toCharArray());
+            User userToAdd = securityService.createUserWithHashedPassword(email, password.toCharArray());
             isAdded = userDao.add(userToAdd);
-            logger.debug("Attempted to add created user to db with boolean result {'isAdded':{}}",
-                    isAdded);
+            logger.debug("Attempted to add created user to db with boolean result {'isAdded':{}}", isAdded);
         }
-        logger.debug("Result of attempting to add user, created from passed email and password" +
-                " if both are not null is {'isAdded': {}, 'email':{}}", isAdded, email);
+        logger.debug("Result of attempting to add user, created from passed email and password if both are not null is {'isAdded': {}, 'email':{}}",
+                isAdded, email);
         return isAdded;
     }
 
     @Override
     public Optional<User> getByEmail(String email) {
-        Optional<User> resultingOptional = userDao.getByEmail(email);
-        logger.debug("Resulting optional is {'optional':{}}", resultingOptional);
-        return resultingOptional;
+        Optional<User> optionalUser = Optional.empty();
+        if (email != null) {
+            optionalUser = userDao.getByEmail(email);
+            logger.debug("Attempted to get optional with user found by email from db {'email':{}, 'optional':{}}", email, optionalUser);
+        } else {
+            logger.error("Passed email is null, returning empty optional");
+        }
+        logger.debug("Resulting optional is {'optional':{}}", optionalUser);
+        return optionalUser;
     }
 
     @Override
-    public SignInCheckResult signInCheck(String email, String password) {
-        SignInCheckResult checkResult = SignInCheckResult.FAIL;
+    public Optional<User> signInCheck(String email, String password) {
+        Optional<User> optionalUser = Optional.empty();
         if (email != null && password != null) {
-            Optional<User> optionalUser = userDao.getByEmail(email);
+            Optional<User> optionalUserFromDataBase = userDao.getByEmail(email);
             logger.debug("Got optional with user from db by email {'email':{}, 'optionalUser':{}}",
-                    email, optionalUser);
-            if (optionalUser.isPresent()) {
+                    email, optionalUserFromDataBase);
+            if (optionalUserFromDataBase.isPresent()) {
                 if (securityService.checkPasswordAgainstUserPassword(
-                        optionalUser.get(), password.toCharArray())) {
+                        optionalUserFromDataBase.get(), password.toCharArray())) {
                     logger.debug("Hashed password passed as argument matches hashed password " +
                             "of user by passed email {'email':{}}", email);
-                    if (optionalUser.get().getStatus()) {
-                        logger.debug("User's status is {'status':{}}", optionalUser.get().getStatus());
-                        checkResult = SignInCheckResult.OK_VERIFIED;
-                    } else {
-                        logger.debug("User's status is {'status':{}}", optionalUser.get().getStatus());
-                        checkResult = SignInCheckResult.OK_NOT_VERIFIED;
-                    }
+                    optionalUser = optionalUserFromDataBase;
                 }
             }
         }
-        logger.debug("Result of checking is {'checkResult':{}}", checkResult);
-        return checkResult;
+        return optionalUser;
     }
 
 }
