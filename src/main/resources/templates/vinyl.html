@@ -145,14 +145,14 @@
                             <div class="shop-list__column shop-list__scrollbar">
                                 <div class="shop-list__row" th:each="vinylOffer : ${vinylOffersList}">
                                     <div class="shop-list__item item-body shop-list__item-image">
-                                        <img th:src="${vinylOffer.imageLink}" alt="shop icon">
+                                        <img th:src="${vinylOffer.shopImageLink}" alt="shop icon">
                                     </div>
                                     <div class="shop-list__item item-body on-stock"></div>
                                     <div class="shop-list__item item-body shop-list__item-price"
                                          th:text="${vinylOffer.price}">No price
                                     </div>
                                     <div class="shop-list__item item-body">
-                                        <a th:href="${vinylOffer.vinylLink}" class="button on-stock-button"
+                                        <a th:href="${vinylOffer.offerLink}" class="button on-stock-button"
                                            target="_blank">GO TO SHOP</a>
                                     </div>
                                 </div>

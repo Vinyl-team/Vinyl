@@ -77,7 +77,7 @@ public class VinylUaParser implements VinylParser {
         return pageLinks;
     }
 
-    HashSet<RawOffer> readVinylsDataFromAllPages(HashSet<String> pageLinks) {
+    HashSet<RawOffer> readRawOffersFromAllPages(HashSet<String> pageLinks) {
         HashSet<RawOffer> rawOfferSet = new HashSet<>();
         for (String pageLink : pageLinks) {
             Document document = null;
@@ -135,7 +135,7 @@ public class VinylUaParser implements VinylParser {
         logger.info("got genre links {'genreLinks':{}}", genresLinks);
         HashSet<String> pageLinks = getPageLinks(genresLinks);
         logger.info("got page links {'pageLinks':{}}", pageLinks);
-        HashSet<RawOffer> rawOfferSet = readVinylsDataFromAllPages(pageLinks);
+        HashSet<RawOffer> rawOfferSet = readRawOffersFromAllPages(pageLinks);
         logger.info("read {} rawOffers from all pages", rawOfferSet.size());
         List<RawOffer> rawOffers = new ArrayList<>(rawOfferSet);
         logger.debug("Resulting list of rawVinylData from vinyl.ua is {'rawOffers':{}}", rawOffers);

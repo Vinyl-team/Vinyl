@@ -28,7 +28,7 @@ class RawOffersSorterTest {
     }
 
     @Test
-    @DisplayName("Passing filled rawOffers and filled uniqueVinyls that match some but not all raw offers " +
+    @DisplayName("Passing filled rawOffers and filled uniqueVinyls that match all raw offers " +
             "leaves uniqueVinyls the same, gets right offers, and leaves rawOffers empty.")
     void getOffersUpdateAllMatchesVinylsTest() {
         //prepare
@@ -119,6 +119,61 @@ class RawOffersSorterTest {
     void updateNullVinylsAndOffersTest() {
         //when
         assertThrows(NullPointerException.class, () -> sorter.getOffersUpdateUniqueVinyls(new ArrayList<>(), null));
+    }
+
+    @Test
+    @DisplayName("Passing empty rawOffers doesn't change uniqueVinyl and offers")
+    void addOffersSortingByVinylEmptyRawOffersTest() {
+        //prepare
+        UniqueVinyl actualUniqueVinyl = new UniqueVinyl(uniqueVinyls.get(2));
+        actualUniqueVinyl.setHasOffers(false);
+        UniqueVinyl expectedUniqueVinyl = new UniqueVinyl(actualUniqueVinyl);
+        List<Offer> actualOffers = new ArrayList<>(offers.subList(0, 4));
+        List<Offer> expectedOffers = new ArrayList<>(actualOffers);
+        //when
+        sorter.addOffersSortingByVinyl(new ArrayList<>(), actualUniqueVinyl, actualOffers);
+        //then
+        assertEquals(expectedUniqueVinyl, actualUniqueVinyl);
+        assertEquals(expectedOffers, actualOffers);
+    }
+
+    @Test
+    @DisplayName("Passing filled rawOffers that have a match for uniqueVinyl changes uniqueVinyl.hasOffers to true," +
+            " adds offers for that vinyl to list of offers, and reduces size of rawOffers")
+    void addOffersSortingByVinylRawOffersSomeMatchesTest() {
+        //prepare
+        List<RawOffer> actualRawOffers = new ArrayList<>(rawOffers.subList(4, 6));
+        UniqueVinyl actualUniqueVinyl = new UniqueVinyl(uniqueVinyls.get(2));
+        actualUniqueVinyl.setHasOffers(false);
+        UniqueVinyl expectedUniqueVinyl = new UniqueVinyl(uniqueVinyls.get(2));
+        List<Offer> actualOffers = new ArrayList<>(offers.subList(0, 4));
+        List<Offer> expectedOffers = new ArrayList<>(offers);
+        //when
+        sorter.addOffersSortingByVinyl(actualRawOffers, actualUniqueVinyl, actualOffers);
+        //then
+        assertTrue(actualRawOffers.isEmpty());
+        assertEquals(expectedUniqueVinyl, actualUniqueVinyl);
+        assertEquals(expectedOffers, actualOffers);
+    }
+
+    @Test
+    @DisplayName("Passing filled rawOffers that don't have a match for uniqueVinyl leaves uniqueVinyl.hasOffers==false," +
+            " doesn't change sizes of lists of offers and rawOffers")
+    void addOffersSortingByVinylRawOffersZeroMatchesTest() {
+        //prepare
+        List<RawOffer> actualRawOffers = new ArrayList<>(rawOffers.subList(0, 4));
+        List<RawOffer> expectedRawOffers = new ArrayList<>(actualRawOffers);
+        UniqueVinyl actualUniqueVinyl = new UniqueVinyl(uniqueVinyls.get(2));
+        actualUniqueVinyl.setHasOffers(false);
+        UniqueVinyl expectedUniqueVinyl = new UniqueVinyl(actualUniqueVinyl);
+        List<Offer> actualOffers = new ArrayList<>(offers.subList(0, 4));
+        List<Offer> expectedOffers = new ArrayList<>(actualOffers);
+        //when
+        sorter.addOffersSortingByVinyl(actualRawOffers, actualUniqueVinyl, actualOffers);
+        //then
+        assertEquals(expectedRawOffers, actualRawOffers);
+        assertEquals(expectedUniqueVinyl, actualUniqueVinyl);
+        assertEquals(expectedOffers, actualOffers);
     }
 
 }

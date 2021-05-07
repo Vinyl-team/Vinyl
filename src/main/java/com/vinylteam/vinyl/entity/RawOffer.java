@@ -14,7 +14,8 @@ public class RawOffer {
     private String offerLink;
     private String imageLink;
 
-    public RawOffer() {}
+    public RawOffer() {
+    }
 
     public RawOffer(RawOffer rawOffer) {
         this.shopId = rawOffer.shopId;

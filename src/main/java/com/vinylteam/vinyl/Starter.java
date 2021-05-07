@@ -106,7 +106,7 @@ public class Starter {
         servletContextHandler.setErrorHandler(new DefaultErrorHandler());
         servletContextHandler.setBaseResource(resource);
 
-        servletContextHandler.addFilter(new FilterHolder(securityFilter),"/*",
+        servletContextHandler.addFilter(new FilterHolder(securityFilter), "/*",
                 EnumSet.of(DispatcherType.REQUEST));
         servletContextHandler.addServlet(new ServletHolder(signInServlet), "/signIn");
         servletContextHandler.addServlet(new ServletHolder(signUpServlet), "/signUp");

@@ -47,7 +47,7 @@ public class RawOffersSorter {
         }
     }
 
-    private void addOffersSortingByVinyl(List<RawOffer> rawOffers, UniqueVinyl uniqueVinyl, List<Offer> offers) {
+    void addOffersSortingByVinyl(List<RawOffer> rawOffers, UniqueVinyl uniqueVinyl, List<Offer> offers) {
         if (rawOffers != null && uniqueVinyl != null && offers != null) {
             Iterator<RawOffer> rawOfferIterator = rawOffers.iterator();
             while (rawOfferIterator.hasNext()) {

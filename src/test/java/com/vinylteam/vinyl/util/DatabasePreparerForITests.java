@@ -30,9 +30,7 @@ public class DatabasePreparerForITests {
     private final PropertiesReader propertiesReader = new PropertiesReader();
     private final HikariDataSource dataSource;
     private final HikariConfig config = new HikariConfig();
-
-
-
+    
     public DatabasePreparerForITests() {
         config.setJdbcUrl(propertiesReader.getProperty("jdbc.url"));
         config.setUsername(propertiesReader.getProperty("jdbc.user"));

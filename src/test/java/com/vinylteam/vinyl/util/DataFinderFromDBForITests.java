@@ -11,7 +11,10 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +30,7 @@ public class DataFinderFromDBForITests {
     private final String SELECT_ALL_OFFERS = "SELECT id, unique_vinyl_id, shop_id, price, currency, genre, link_to_offer FROM offers ORDER BY id";
 
     public DataFinderFromDBForITests(HikariDataSource dataSource) {
-    this.dataSource = dataSource;
+        this.dataSource = dataSource;
     }
 
     public List<UniqueVinyl> findAllUniqueVinyls() {
@@ -65,10 +68,10 @@ public class DataFinderFromDBForITests {
 
     public List<Offer> findAllOffers() {
         List<Offer> offers = new ArrayList<>();
-        try(Connection connection = dataSource.getConnection();
-            Statement findAllStatement = connection.createStatement();
-            ResultSet resultSet = findAllStatement.executeQuery(SELECT_ALL_OFFERS)) {
-            while(resultSet.next()) {
+        try (Connection connection = dataSource.getConnection();
+             Statement findAllStatement = connection.createStatement();
+             ResultSet resultSet = findAllStatement.executeQuery(SELECT_ALL_OFFERS)) {
+            while (resultSet.next()) {
                 Offer offer = offerRowMapper.mapRow(resultSet);
                 offers.add(offer);
             }

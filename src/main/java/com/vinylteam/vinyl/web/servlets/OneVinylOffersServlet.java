@@ -56,8 +56,8 @@ public class OneVinylOffersServlet extends HttpServlet {
                 if (offer.getShopId() == shop.getId()) {
                     OneVinylOffersServletResponse offersResponse = new OneVinylOffersServletResponse();
                     offersResponse.setPrice(offer.getPrice());
-                    offersResponse.setVinylLink(offer.getOfferLink());
-                    offersResponse.setImageLink(shop.getImageLink());
+                    offersResponse.setOfferLink(offer.getOfferLink());
+                    offersResponse.setShopImageLink(shop.getImageLink());
                     offersResponseList.add(offersResponse);
                 }
             }

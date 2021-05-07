@@ -1,6 +1,6 @@
 package com.vinylteam.vinyl.dao.jdbc.mapper;
 
-        import com.vinylteam.vinyl.dao.RowMapper;
+import com.vinylteam.vinyl.dao.RowMapper;
 import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.Offer;
 import org.junit.jupiter.api.DisplayName;

@@ -9,7 +9,8 @@ public class Shop {
     private String imageLink;
     private String name;
 
-    public Shop() {}
+    public Shop() {
+    }
 
     public Shop(Shop shop) {
         this.id = shop.id;

@@ -11,7 +11,8 @@ public class UniqueVinyl {
     private String imageLink;
     private boolean hasOffers;
 
-    public UniqueVinyl() {}
+    public UniqueVinyl() {
+    }
 
     public UniqueVinyl(UniqueVinyl uniqueVinyl) {
         this.id = uniqueVinyl.id;

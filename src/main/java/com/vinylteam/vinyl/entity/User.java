@@ -11,11 +11,12 @@ public class User {
     private Role role;
     private boolean status;
 
-    public User() {}
+    public User() {
+    }
 
     public User(User user) {
         this.email = user.email;
-        this.password =  user.password;
+        this.password = user.password;
         this.salt = user.salt;
         this.iterations = user.iterations;
         this.role = user.role;

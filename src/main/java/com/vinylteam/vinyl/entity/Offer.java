@@ -13,7 +13,8 @@ public class Offer {
     private String genre;
     private String offerLink;
 
-    public Offer() {}
+    public Offer() {
+    }
 
     public Offer(Offer offer) {
         this.id = offer.id;

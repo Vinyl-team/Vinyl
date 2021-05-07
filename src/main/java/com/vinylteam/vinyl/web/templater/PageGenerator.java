@@ -87,7 +87,7 @@ public class PageGenerator {
 
         context.setVariable("vinylList", vinylList);
 
-// for search & vinyl pages
+// for search & one vinyl with offers pages
 
         if (!vinylList.isEmpty()) {
             context.setVariable("firstVinyl", vinylList.get(0));
@@ -114,7 +114,7 @@ public class PageGenerator {
             context.setVariable("otherVinylRow", otherUniqueVinylRow);
         }
 
-// for vinyl page
+// for one vinyl with offers page
 
         if (vinylList.size() > 1) {
             for (int i = 1; i < vinylList.size(); i++) {
