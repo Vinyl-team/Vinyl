@@ -25,7 +25,8 @@ create table unique_vinyls
     release       varchar(200)  not null,
     artist        varchar(200)  not null,
     full_name     varchar(400)  not null,
-    link_to_image varchar(1000) not null
+    link_to_image varchar(1000) not null,
+    has_offers    boolean       not null
 );
 
 create table shops
@@ -64,35 +65,31 @@ create table confirmation_links
     date_and_time timestamp without time zone not null
 );
 
-create table vinyls
+create table offers
 (
-    id              serial        not null
-        constraint vinyls_pkey
+    id              bigserial        not null
+        constraint offers_pkey
             primary key,
-    release         varchar(200)  not null,
-    artist          varchar(200)  not null,
-    full_name       varchar(400)  not null,
-    genre           varchar(100),
-    price           double precision not null,
-    currency        character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    link_to_vinyl   varchar(1000) not null,
-    link_to_image   varchar(1000) not null,
+    unique_vinyl_id integer       not null
+        constraint unique_vinyl_id_fk
+            references unique_vinyls (id),
     shop_id         integer       not null
         constraint shop_id_fk
             references shops
         constraint chk_shop_id
             check (shop_id > 0),
-    unique_vinyl_id integer       not null
-        constraint unique_vinyl_id_fk
-            references unique_vinyls (id)
-        constraint chk_unique_vinyl_id
-            check (unique_vinyl_id > 0)
+    price           double precision not null,
+    currency        character varying(50) COLLATE pg_catalog."default" NOT NULL
+        constraint either_of_four_currencies
+            check (((currency)::text = 'UAH'::text) OR ((currency)::text = 'USD'::text) OR ((currency)::text = 'GBP'::text) OR ((currency)::text = 'EUR'::text)),
+    genre           varchar(100),
+    link_to_offer   varchar(1000) not null
 );
 
-create table vinyls_browsing_history
+create table unique_vinyls_browsing_history
 (
     id              serial  not null
-        constraint vinyls_browsing_history_pkey
+        constraint unique_vinyls_browsing_history_pkey
             primary key,
     user_id         integer not null
         constraint user_id_fk
@@ -107,15 +104,6 @@ values ('http://vinyl.ua/', 'img/shops/Vinyl_ua_logo.png', 'VinylUa');
 
 insert into shops (link_to_main_page, link_to_image, name)
 values ('https://www.juno.co.uk/', 'https://www.logosvgpng.com/wp-content/uploads/2018/04/juno-records-logo-vector.png', 'JunoCoUk');
-
-CREATE OR REPLACE FUNCTION public.system_rows(
-    internal)
-    RETURNS tsm_handler
-    LANGUAGE 'c'
-    COST 1
-    VOLATILE STRICT
-AS '$libdir/tsm_system_rows', 'tsm_system_rows_handler'
-;
 
 
 

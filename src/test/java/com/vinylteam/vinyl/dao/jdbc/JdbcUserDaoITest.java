@@ -1,16 +1,15 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
-import com.vinylteam.vinyl.dao.DBDataSource;
 import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
+import com.vinylteam.vinyl.util.DatabasePreparerForITests;
+import com.vinylteam.vinyl.util.ListPreparerForTests;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,95 +18,65 @@ import static org.junit.jupiter.api.Assertions.*;
 class JdbcUserDaoITest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final JdbcUserDao jdbcUserDao = new JdbcUserDao();
-
-    private final String INSERT_INTO_TABLE = "INSERT INTO public.users " +
-            "(email, password, salt, iterations, role, status) " +
-            "VALUES (?, ?, ?, ?, ?, ?), (?, ?, ?, ?, ?, ?)";
-    private final String TRUNCATE_TABLE_RESTART_IDENTITY = "TRUNCATE public.users RESTART IDENTITY CASCADE";
-    private Connection connection;
+    private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
+    private final JdbcUserDao jdbcUserDao = new JdbcUserDao(databasePreparer.getDataSource());
+    private final ListPreparerForTests listPreparer = new ListPreparerForTests();
+    private final List<User> users = listPreparer.getUsersList();
 
     @BeforeAll
     void beforeAll() throws SQLException {
-        connection = DBDataSource.getConnection();
-        try (Statement truncateStatement = connection.createStatement()) {
-            truncateStatement.executeUpdate(TRUNCATE_TABLE_RESTART_IDENTITY);
-            logger.info("Truncated table before all tests.");
-        }
+        databasePreparer.truncateCascadeUsers();
     }
 
     @AfterAll
     void afterAll() throws SQLException {
-        connection.close();
+        databasePreparer.truncateCascadeUsers();
     }
 
     @BeforeEach
     void beforeEach() throws SQLException {
-        try (PreparedStatement insertStatement = connection
-                .prepareStatement(INSERT_INTO_TABLE)) {
-            logger.info("Adding two rows to table users before the method!");
-            insertStatement.setString(1, "testuser1@vinyl.com");
-            insertStatement.setString(2, "HASH1");
-            insertStatement.setString(3, "");
-            insertStatement.setInt(4, 0);
-            insertStatement.setString(5, Role.USER.toString());
-            insertStatement.setBoolean(6, true);
-            insertStatement.setString(7, "testuser2@vinyl.com");
-            insertStatement.setString(8, "HASH2");
-            insertStatement.setString(9, "");
-            insertStatement.setInt(10, 0);
-            insertStatement.setString(11, Role.USER.toString());
-            insertStatement.setBoolean(12, true);
-            insertStatement.executeUpdate();
-        }
+        databasePreparer.insertUsers(users);
     }
 
     @AfterEach
     void afterEach() throws SQLException {
-        try (Statement truncateStatement = connection.createStatement()) {
-            truncateStatement.executeUpdate(TRUNCATE_TABLE_RESTART_IDENTITY);
-            logger.info("Truncated table users after the method!");
-        }
+        databasePreparer.truncateCascadeUsers();
     }
 
     @Test
     @DisplayName("Checks the number of rows")
     void countAllFilledTest() {
-        logger.info("countAllFilledTest()");
         assertEquals(2, jdbcUserDao.countAll());
     }
 
     @Test
     @DisplayName("Checks the number of rows when table is empty")
     void countAllEmptyTest() throws SQLException {
-        logger.info("countAllEmptyTest()");
-        try (Statement truncateStatement = connection.createStatement()) {
-            truncateStatement.executeUpdate(TRUNCATE_TABLE_RESTART_IDENTITY);
-        }
+        //prepare
+        databasePreparer.truncateCascadeUsers();
+        //when
         assertEquals(0, jdbcUserDao.countAll());
     }
 
     @Test
     @DisplayName("Gets an existing user from db")
-    void getByExistingEmail() {
-        logger.info("countAllEmptyTest()");
+    void getByExistingEmailTest() {
+        //prepare
         Optional<User> optionalUserGottenByExistingEmail;
-        optionalUserGottenByExistingEmail = jdbcUserDao.getByEmail("testuser1@vinyl.com");
-
+        User expectedUser = new User(users.get(0));
+        //when
+        optionalUserGottenByExistingEmail = jdbcUserDao.getByEmail("user1@waxdeals.com");
+        //then
         assertFalse(optionalUserGottenByExistingEmail.isEmpty());
-        assertEquals("testuser1@vinyl.com", optionalUserGottenByExistingEmail.get().getEmail());
-        assertEquals("HASH1", optionalUserGottenByExistingEmail.get().getPassword());
-        assertEquals("", optionalUserGottenByExistingEmail.get().getSalt());
-        assertEquals(0, optionalUserGottenByExistingEmail.get().getIterations());
-        assertEquals(Role.USER, optionalUserGottenByExistingEmail.get().getRole());
-        assertEquals(2, jdbcUserDao.countAll());
+        assertEquals(expectedUser, optionalUserGottenByExistingEmail.get());
     }
 
     @Test
     @DisplayName("Gets not existing user from db")
-    void getByNotExistingEmail() {
-        logger.info("getByNotExistingEmail()");
-        Optional<User> optionalUserGottenByNonexistentEmail = jdbcUserDao.getByEmail("testuser3@vinyluserGottenByExistingEmail.com");
+    void getByNotExistingEmailTest() {
+        //when
+        Optional<User> optionalUserGottenByNonexistentEmail = jdbcUserDao.getByEmail("user3@waxdeals.com");
+        //then
         assertFalse(optionalUserGottenByNonexistentEmail.isPresent());
         assertEquals(2, jdbcUserDao.countAll());
     }
@@ -115,91 +84,73 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Adds user to db")
     void addNewTest() {
-        logger.info("addNewTest()");
-        User user = new User();
-        user.setEmail("testuser3@vinyl.com");
-        user.setPassword("HASH3");
-        user.setSalt("");
-        user.setIterations(0);
-        user.setRole(Role.USER);
-        user.setStatus(true);
-
-        assertTrue(jdbcUserDao.add(user));
-
+        //prepare
+        User expectedUser = new User();
+        expectedUser.setEmail("user3@waxdeals.com");
+        expectedUser.setPassword("hash3");
+        expectedUser.setSalt("salt3");
+        expectedUser.setIterations(3);
+        expectedUser.setRole(Role.USER);
+        expectedUser.setStatus(true);
+        //when
+        assertTrue(jdbcUserDao.add(expectedUser));
+        //then
         assertEquals(3, jdbcUserDao.countAll());
-        Optional<User> optionalAddedUser = jdbcUserDao.getByEmail("testuser3@vinyl.com");
-
+        Optional<User> optionalAddedUser = jdbcUserDao.getByEmail("user3@waxdeals.com");
         assertFalse(optionalAddedUser.isEmpty());
-        assertEquals("testuser3@vinyl.com", optionalAddedUser.get().getEmail());
-        assertEquals("HASH3", optionalAddedUser.get().getPassword());
-        assertEquals("", optionalAddedUser.get().getSalt());
-        assertEquals(0, optionalAddedUser.get().getIterations());
-        assertEquals(Role.USER, optionalAddedUser.get().getRole());
-        assertTrue(optionalAddedUser.get().getStatus());
+        assertEquals(expectedUser, optionalAddedUser.get());
     }
 
     @Test
     @DisplayName("Adds existing user with the same password")
     void addExistingWithSamePasswordTest() {
-        logger.info("addExistingWithSamePasswordTest()");
-        User user = new User();
-        user.setEmail("testuser2@vinyl.com");
-        user.setPassword("HASH2");
-        user.setSalt("");
-        user.setIterations(0);
-        user.setRole(Role.USER);
-        user.setStatus(true);
-        assertFalse(jdbcUserDao.add(user));
+        //when
+        assertFalse(jdbcUserDao.add(users.get(0)));
+        //then
         assertEquals(2, jdbcUserDao.countAll());
     }
 
     @Test
     @DisplayName("Adds existing user with new password")
     void addExistingWithNewPasswordTest() {
-        logger.info("addExistingWithNewPasswordTest()");
-        User user = new User();
-        user.setEmail("testuser2@vinyl.com");
-        user.setPassword("HASH3");
-        user.setSalt("");
-        user.setIterations(0);
-        user.setRole(Role.USER);
-        user.setStatus(true);
-
+        //prepare
+        User user = new User(users.get(0));
+        System.out.println(users.get(0).getPassword());
+        //when
         assertFalse(jdbcUserDao.add(user));
+        //then
         assertEquals(2, jdbcUserDao.countAll());
     }
 
     @Test
     @DisplayName("Edit non-existent user in db")
     void editNonExistentUserInDbTest() {
-        logger.info("editNonExistentUserInDbTest()");
-        String oldEmail = "non-existent-user@vinyl.com";
+        String oldNonExistentEmail = "user4@waxdeals.com";
         User user = new User();
-        user.setEmail("someNewEmail@vinyl.com");
+        user.setEmail("user5@waxdeals.com");
         user.setPassword("HASH4");
         user.setSalt("");
         user.setIterations(0);
         user.setRole(Role.USER);
         user.setStatus(true);
 
-        assertFalse(jdbcUserDao.edit(oldEmail, user));
+        assertFalse(jdbcUserDao.edit(oldNonExistentEmail, user));
     }
 
     @Test
-    @DisplayName("Edit non-existent user in db")
+    @DisplayName("Edit existing user in db")
     void editWithAnExistingUserInDbTest() {
-        logger.info("editNonExistentUserInDbTest()");
-        String oldEmail = "testuser1@vinyl.com";
+        String oldExistingEmail = "user2@waxdeals.com";
         User user = new User();
-        user.setEmail("someNewEmail@vinyl.com");
-        user.setPassword("HASH5");
+        user.setEmail("user3@waxdeals.com");
+        user.setPassword("HASH2");
         user.setSalt("");
         user.setIterations(0);
         user.setRole(Role.USER);
         user.setStatus(true);
 
-        assertTrue(jdbcUserDao.edit(oldEmail, user));
-        assertEquals("someNewEmail@vinyl.com", jdbcUserDao.getByEmail("someNewEmail@vinyl.com").orElse(new User()).getEmail());
+        assertTrue(jdbcUserDao.edit(oldExistingEmail, user));
+        assertEquals("user3@waxdeals.com", jdbcUserDao.getByEmail("user3@waxdeals.com").orElse(new User()).getEmail());
     }
 
 }

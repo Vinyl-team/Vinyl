@@ -117,22 +117,22 @@
             <div class="first-vinyl">
               <div class="first-vinyl__wrapper">
                 <div class="first-vinyl__item vinyl">
-                  <a class="first-vinyl__image" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">
+                  <a class="first-vinyl__image" th:href="@{oneVinyl(id=${firstVinyl.id})}">
                     <img th:src="${firstVinyl.imageLink}" alt="first vinyl">
                   </a>
-                  <a th:utext="${firstVinyl.artist}+'&lt;span class=&quot;tip-text&quot;&gt;'+${firstVinyl.artist}+'&lt;/span&gt;'" class="first-vinyl__artist" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">No artist</a>
-                  <a th:utext="${firstVinyl.release}+'&lt;span class=&quot;tip-text&quot;&gt;'+${firstVinyl.release}+'&lt;/span&gt;'" class="first-vinyl__release" th:href="@{oneVinyl(vinylId=${firstVinyl.vinylId})}">No release</a>
+                  <a th:utext="${firstVinyl.artist}+'&lt;span class=&quot;tip-text&quot;&gt;'+${firstVinyl.artist}+'&lt;/span&gt;'" class="first-vinyl__artist" th:href="@{oneVinyl(id=${firstVinyl.id})}">No artist</a>
+                  <a th:utext="${firstVinyl.release}+'&lt;span class=&quot;tip-text&quot;&gt;'+${firstVinyl.release}+'&lt;/span&gt;'" class="first-vinyl__release" th:href="@{oneVinyl(id=${firstVinyl.id})}">No release</a>
                 </div>
               </div>
             </div>
 
             <div class="other-vinyls">
               <div th:each="vinylFromFirstRow : ${firstVinylRow}" class="other-vinyls__item vinyl">
-                <a class="other-vinyls__image" th:href="@{oneVinyl(vinylId=${vinylFromFirstRow.vinylId})}">
+                <a class="other-vinyls__image" th:href="@{oneVinyl(id=${vinylFromFirstRow.id})}">
                   <img th:src="${vinylFromFirstRow.imageLink}" alt="vinyl image">
                 </a>
-                <a th:text="${vinylFromFirstRow.artist}" th:href="@{oneVinyl(vinylId=${vinylFromFirstRow.vinylId})}" class="other-vinyls__artist">No artist</a>
-                <a th:text="${vinylFromFirstRow.release}" th:href="@{oneVinyl(vinylId=${vinylFromFirstRow.vinylId})}" class="other-vinyls__release">No release</a>
+                <a th:text="${vinylFromFirstRow.artist}" th:href="@{oneVinyl(id=${vinylFromFirstRow.id})}" class="other-vinyls__artist">No artist</a>
+                <a th:text="${vinylFromFirstRow.release}" th:href="@{oneVinyl(id=${vinylFromFirstRow.id})}" class="other-vinyls__release">No release</a>
               </div>
             </div>
             
@@ -144,11 +144,11 @@
           <div class="other-vinyls">
 
             <div th:each="vinylFromOtherRow : ${otherVinylRow}" class="other-vinyls__item vinyl">
-              <a class="other-vinyls__image" th:href="@{oneVinyl(vinylId=${vinylFromOtherRow.vinylId})}">
+              <a class="other-vinyls__image" th:href="@{oneVinyl(id=${vinylFromOtherRow.id})}">
                 <img th:src="${vinylFromOtherRow.imageLink}" alt="vinyl image">
               </a>
-              <a th:text="${vinylFromOtherRow.artist}" th:href="@{oneVinyl(vinylId=${vinylFromOtherRow.vinylId})}" class="other-vinyls__artist">No artist</a>
-              <a th:text="${vinylFromOtherRow.release}" th:href="@{oneVinyl(vinylId=${vinylFromOtherRow.vinylId})}" class="other-vinyls__release">No release</a>
+              <a th:text="${vinylFromOtherRow.artist}" th:href="@{oneVinyl(id=${vinylFromOtherRow.id})}" class="other-vinyls__artist">No artist</a>
+              <a th:text="${vinylFromOtherRow.release}" th:href="@{oneVinyl(id=${vinylFromOtherRow.id})}" class="other-vinyls__release">No release</a>
             </div>
 
           </div>

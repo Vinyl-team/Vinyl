@@ -145,14 +145,14 @@
                             <div class="shop-list__column shop-list__scrollbar">
                                 <div class="shop-list__row" th:each="vinylOffer : ${vinylOffersList}">
                                     <div class="shop-list__item item-body shop-list__item-image">
-                                        <img th:src="${vinylOffer.imageLink}" alt="shop icon">
+                                        <img th:src="${vinylOffer.shopImageLink}" alt="shop icon">
                                     </div>
                                     <div class="shop-list__item item-body on-stock"></div>
                                     <div class="shop-list__item item-body shop-list__item-price"
                                          th:text="${vinylOffer.price}">No price
                                     </div>
                                     <div class="shop-list__item item-body">
-                                        <a th:href="${vinylOffer.vinylLink}" class="button on-stock-button"
+                                        <a th:href="${vinylOffer.offerLink}" class="button on-stock-button"
                                            target="_blank">GO TO SHOP</a>
                                     </div>
                                 </div>
@@ -172,12 +172,12 @@
 
                     <div class="other-vinyls">
                         <div class="other-vinyls__item vinyl" th:each="vinylByArtist : ${vinylsByArtist}">
-                            <a class="other-vinyls__image" th:href="@{oneVinyl(vinylId=${vinylByArtist.vinylId})}">
+                            <a class="other-vinyls__image" th:href="@{oneVinyl(id=${vinylByArtist.id})}">
                                 <img th:src="${vinylByArtist.imageLink}" alt="vinyl image">
                             </a>
-                            <a th:href="@{oneVinyl(vinylId=${vinylByArtist.vinylId})}" th:text="${vinylByArtist.artist}"
+                            <a th:href="@{oneVinyl(id=${vinylByArtist.id})}" th:text="${vinylByArtist.artist}"
                                class="other-vinyls__artist">No artist</a>
-                            <a th:href="@{oneVinyl(vinylId=${vinylByArtist.vinylId})}"
+                            <a th:href="@{oneVinyl(id=${vinylByArtist.id})}"
                                th:text="${vinylByArtist.release}" class="other-vinyls__release">No release</a>
                         </div>
                     </div>

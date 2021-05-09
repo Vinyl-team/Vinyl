@@ -1,5 +1,6 @@
 package com.vinylteam.vinyl.dao.jdbc.mapper;
 
+import com.vinylteam.vinyl.dao.RowMapper;
 import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
 import org.junit.jupiter.api.DisplayName;
@@ -8,13 +9,14 @@ import org.junit.jupiter.api.Test;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class UserRowMapperTest {
 
-    private final UserRowMapper userRowMapper = new UserRowMapper();
+    private final RowMapper<User> rowMapper = new UserRowMapper();
 
     @Test
     @DisplayName("Checks if user created from resultSet has all fields right.")
@@ -28,7 +30,7 @@ class UserRowMapperTest {
         when(mockedFilledResultSet.getString("role")).thenReturn("USER");
         when(mockedFilledResultSet.getBoolean("status")).thenReturn(true);
         //when
-        User actualUser = userRowMapper.mapRow(mockedFilledResultSet);
+        User actualUser = rowMapper.mapRow(mockedFilledResultSet);
         //then
         assertEquals("testuser@vinyl.com", actualUser.getEmail());
         assertEquals("HASH", actualUser.getPassword());
@@ -36,14 +38,6 @@ class UserRowMapperTest {
         assertEquals(1, actualUser.getIterations());
         assertEquals(Role.USER, actualUser.getRole());
         assertTrue(actualUser.getStatus());
-    }
-
-    @Test
-    @DisplayName("Checks if passing null ResultSet causes RuntimeException.")
-    void mapNullRowTest() {
-        assertThrows(RuntimeException.class, () -> {
-            userRowMapper.mapRow(null);
-        });
     }
 
 }

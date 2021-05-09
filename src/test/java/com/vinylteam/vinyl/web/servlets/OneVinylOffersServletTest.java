@@ -1,13 +1,9 @@
 package com.vinylteam.vinyl.web.servlets;
 
-import com.vinylteam.vinyl.entity.Role;
-import com.vinylteam.vinyl.entity.Shop;
-import com.vinylteam.vinyl.entity.User;
-import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.entity.*;
+import com.vinylteam.vinyl.service.OfferService;
 import com.vinylteam.vinyl.service.ShopService;
-import com.vinylteam.vinyl.service.VinylService;
-import com.vinylteam.vinyl.service.impl.DefaultShopService;
-import com.vinylteam.vinyl.service.impl.DefaultVinylService;
+import com.vinylteam.vinyl.service.UniqueVinylService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -27,29 +23,37 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class OneVinylOffersServletTest {
-    private final VinylService mockedVinylService = mock(DefaultVinylService.class);
-    private final ShopService mockedShopService = mock(DefaultShopService.class);
-    private final OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(mockedVinylService, mockedShopService);
+    private final UniqueVinylService mockedUniqueVinylService = mock(UniqueVinylService.class);
+    private final OfferService mockedOfferService = mock(OfferService.class);
+    private final ShopService mockedShopService = mock(ShopService.class);
+    private final InOrder inOrderUniqueVinylService = inOrder(mockedUniqueVinylService);
+    private final InOrder inOrderOfferService = inOrder(mockedOfferService);
+    private final OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(mockedUniqueVinylService, mockedOfferService, mockedShopService);
 
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
     private final HttpSession mockedHttpSession = mock(HttpSession.class);
     private final User mockedUser = mock(User.class);
     private final PrintWriter printWriter = new PrintWriter(new StringWriter());
-    private final Vinyl mockedUniqueVinyl = mock(Vinyl.class);
-    private final Vinyl mockedVinyl = mock(Vinyl.class);
+    private final UniqueVinyl mockedUniqueVinyl = mock(UniqueVinyl.class);
+    private final Offer mockedOffer = mock(Offer.class);
     private final Shop mockedShop = mock(Shop.class);
-    private final List<Vinyl> vinylOffers = List.of(mockedVinyl);
-    private final List<Integer> shopsIds = new ArrayList<>();
+    private final List<UniqueVinyl> uniqueVinyls = List.of(mockedUniqueVinyl);
+    private final List<Offer> offers = List.of(mockedOffer);
+    private final List<Integer> shopsIds = new ArrayList<>(List.of(1));
     private final List<Shop> shopsByIds = List.of(mockedShop);
 
     @BeforeEach
     void beforeEach() {
+        reset(mockedUniqueVinylService);
+        reset(mockedOfferService);
+        reset(mockedShopService);
         reset(mockedRequest);
         reset(mockedResponse);
         reset(mockedHttpSession);
         reset(mockedUser);
         reset(mockedUniqueVinyl);
+        reset(mockedOffer);
         reset(mockedShop);
     }
 
@@ -59,33 +63,32 @@ class OneVinylOffersServletTest {
         //prepare
         when(mockedRequest.getSession(false)).thenReturn(null);
 
-        when(mockedRequest.getParameter("vinylId")).thenReturn("1");
-        when(mockedVinylService.getUniqueById(1)).thenReturn(mockedUniqueVinyl);
+        when(mockedRequest.getParameter("id")).thenReturn("1");
+        when(mockedUniqueVinylService.findById(1)).thenReturn(mockedUniqueVinyl);
 
-        when(mockedUniqueVinyl.getVinylId()).thenReturn(1L);
-        when(mockedVinylService.getManyByUniqueVinylId(1)).thenReturn(List.of(mockedVinyl));
-        when(mockedVinylService.getListOfShopIds(vinylOffers)).thenReturn(shopsIds);
+        when(mockedUniqueVinyl.getId()).thenReturn(1L);
+        when(mockedOfferService.findManyByUniqueVinylId(1)).thenReturn(offers);
+        when(mockedOfferService.getListOfShopIds(offers)).thenReturn(shopsIds);
         when(mockedShopService.getManyByListOfIds(shopsIds)).thenReturn(shopsByIds);
 
         when(mockedUniqueVinyl.getArtist()).thenReturn("artist1");
-        when(mockedVinylService.getManyUniqueByArtist("artist1")).thenReturn(vinylOffers);
+        when(mockedUniqueVinylService.findManyByArtist("artist1")).thenReturn(uniqueVinyls);
         when(mockedResponse.getWriter()).thenReturn(printWriter);
-        InOrder inOrderVinylService = inOrder(mockedVinylService);
         //when
         oneVinylOffersServlet.doGet(mockedRequest, mockedResponse);
         //then
         verify(mockedRequest).getSession(false);
         verify(mockedHttpSession, times(0)).getAttribute("user");
         verify(mockedUser, times(0)).getRole();
-        verify(mockedRequest).getParameter("vinylId");
-        inOrderVinylService.verify(mockedVinylService).getUniqueById(1);
+        verify(mockedRequest).getParameter("id");
+        inOrderUniqueVinylService.verify(mockedUniqueVinylService).findById(1);
 
-        inOrderVinylService.verify(mockedVinylService).getManyByUniqueVinylId(1);
-        inOrderVinylService.verify(mockedVinylService).getListOfShopIds(vinylOffers);
+        inOrderOfferService.verify(mockedOfferService).findManyByUniqueVinylId(1);
+        inOrderOfferService.verify(mockedOfferService).getListOfShopIds(offers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
 
-        verify(mockedUniqueVinyl, times(4)).getArtist();
-        inOrderVinylService.verify(mockedVinylService).getManyUniqueByArtist("artist1");
+        verify(mockedUniqueVinyl, times(3)).getArtist();
+        inOrderUniqueVinylService.verify(mockedUniqueVinylService).findManyByArtist("artist1");
         verify(mockedResponse).getWriter();
     }
 
@@ -97,18 +100,17 @@ class OneVinylOffersServletTest {
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
         when(mockedUser.getRole()).thenReturn(Role.USER);
 
-        when(mockedRequest.getParameter("vinylId")).thenReturn("1");
-        when(mockedVinylService.getUniqueById(1)).thenReturn(mockedUniqueVinyl);
+        when(mockedRequest.getParameter("id")).thenReturn("1");
+        when(mockedUniqueVinylService.findById(1)).thenReturn(mockedUniqueVinyl);
 
-        when(mockedUniqueVinyl.getVinylId()).thenReturn(1L);
-        when(mockedVinylService.getManyByUniqueVinylId(1)).thenReturn(List.of(mockedVinyl));
-        when(mockedVinylService.getListOfShopIds(vinylOffers)).thenReturn(shopsIds);
+        when(mockedUniqueVinyl.getId()).thenReturn(1L);
+        when(mockedOfferService.findManyByUniqueVinylId(1)).thenReturn(List.of(mockedOffer));
+        when(mockedOfferService.getListOfShopIds(offers)).thenReturn(shopsIds);
         when(mockedShopService.getManyByListOfIds(shopsIds)).thenReturn(shopsByIds);
 
         when(mockedUniqueVinyl.getArtist()).thenReturn("artist1");
-        when(mockedVinylService.getManyUniqueByArtist("artist1")).thenReturn(vinylOffers);
+        when(mockedUniqueVinylService.findManyByArtist("artist1")).thenReturn(uniqueVinyls);
         when(mockedResponse.getWriter()).thenReturn(printWriter);
-        InOrder inOrderVinylService = inOrder(mockedVinylService);
         //when
         oneVinylOffersServlet.doGet(mockedRequest, mockedResponse);
         //then
@@ -117,15 +119,15 @@ class OneVinylOffersServletTest {
         assertEquals(mockedUser, mockedHttpSession.getAttribute("user"));
         verify(mockedUser, times(1)).getRole();
         assertEquals(Role.USER, mockedUser.getRole());
-        verify(mockedRequest).getParameter("vinylId");
-        inOrderVinylService.verify(mockedVinylService).getUniqueById(1);
+        verify(mockedRequest).getParameter("id");
+        inOrderUniqueVinylService.verify(mockedUniqueVinylService).findById(1);
 
-        inOrderVinylService.verify(mockedVinylService).getManyByUniqueVinylId(1);
-        inOrderVinylService.verify(mockedVinylService).getListOfShopIds(vinylOffers);
+        inOrderOfferService.verify(mockedOfferService).findManyByUniqueVinylId(1L);
+        inOrderOfferService.verify(mockedOfferService).getListOfShopIds(offers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
 
-        verify(mockedUniqueVinyl, times(4)).getArtist();
-        inOrderVinylService.verify(mockedVinylService).getManyUniqueByArtist("artist1");
+        verify(mockedUniqueVinyl, times(3)).getArtist();
+        inOrderUniqueVinylService.verify(mockedUniqueVinylService).findManyByArtist("artist1");
         verify(mockedResponse).getWriter();
     }
 
@@ -136,34 +138,33 @@ class OneVinylOffersServletTest {
         when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(null);
 
-        when(mockedRequest.getParameter("vinylId")).thenReturn("1");
-        when(mockedVinylService.getUniqueById(1)).thenReturn(mockedUniqueVinyl);
+        when(mockedRequest.getParameter("id")).thenReturn("1");
+        when(mockedUniqueVinylService.findById(1)).thenReturn(mockedUniqueVinyl);
 
-        when(mockedUniqueVinyl.getVinylId()).thenReturn(1L);
-        when(mockedVinylService.getManyByUniqueVinylId(1)).thenReturn(List.of(mockedVinyl));
-        when(mockedVinylService.getListOfShopIds(vinylOffers)).thenReturn(shopsIds);
+        when(mockedUniqueVinyl.getId()).thenReturn(1L);
+        when(mockedOfferService.findManyByUniqueVinylId(1)).thenReturn(List.of(mockedOffer));
+        when(mockedOfferService.getListOfShopIds(offers)).thenReturn(shopsIds);
         when(mockedShopService.getManyByListOfIds(shopsIds)).thenReturn(shopsByIds);
 
         when(mockedUniqueVinyl.getArtist()).thenReturn("artist1");
-        when(mockedVinylService.getManyUniqueByArtist("artist1")).thenReturn(vinylOffers);
+        when(mockedUniqueVinylService.findManyByArtist("artist1")).thenReturn(uniqueVinyls);
         when(mockedResponse.getWriter()).thenReturn(printWriter);
-        InOrder inOrderVinylService = inOrder(mockedVinylService);
         //when
         oneVinylOffersServlet.doGet(mockedRequest, mockedResponse);
         //then
         verify(mockedRequest).getSession(false);
         verify(mockedHttpSession).getAttribute("user");
         assertNull(mockedHttpSession.getAttribute("user"));
-        verify(mockedUser, times(0)).getRole();
-        verify(mockedRequest).getParameter("vinylId");
-        inOrderVinylService.verify(mockedVinylService).getUniqueById(1);
+        verify(mockedUser, never()).getRole();
+        verify(mockedRequest).getParameter("id");
+        inOrderUniqueVinylService.verify(mockedUniqueVinylService).findById(1);
 
-        inOrderVinylService.verify(mockedVinylService).getManyByUniqueVinylId(1);
-        inOrderVinylService.verify(mockedVinylService).getListOfShopIds(vinylOffers);
+        inOrderOfferService.verify(mockedOfferService).findManyByUniqueVinylId(1L);
+        inOrderOfferService.verify(mockedOfferService).getListOfShopIds(offers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
 
-        verify(mockedUniqueVinyl, times(4)).getArtist();
-        inOrderVinylService.verify(mockedVinylService).getManyUniqueByArtist("artist1");
+        verify(mockedUniqueVinyl, times(3)).getArtist();
+        inOrderUniqueVinylService.verify(mockedUniqueVinylService).findManyByArtist("artist1");
         verify(mockedResponse).getWriter();
     }
 

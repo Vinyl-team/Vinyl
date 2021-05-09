@@ -24,14 +24,12 @@ public class DefaultUserService implements UserService {
     public boolean add(String email, String password) {
         boolean isAdded = false;
         if (email != null && password != null) {
-            User userToAdd = securityService
-                    .createUserWithHashedPassword(email, password.toCharArray());
+            User userToAdd = securityService.createUserWithHashedPassword(email, password.toCharArray());
             isAdded = userDao.add(userToAdd);
-            logger.debug("Attempted to add created user to db with boolean result {'isAdded':{}}",
-                    isAdded);
+            logger.debug("Attempted to add created user to db with boolean result {'isAdded':{}}", isAdded);
         }
-        logger.debug("Result of attempting to add user, created from passed email and password" +
-                " if both are not null is {'isAdded': {}, 'email':{}}", isAdded, email);
+        logger.debug("Result of attempting to add user, created from passed email and password if both are not null is {'isAdded': {}, 'email':{}}",
+                isAdded, email);
         return isAdded;
     }
 
@@ -53,9 +51,15 @@ public class DefaultUserService implements UserService {
 
     @Override
     public Optional<User> getByEmail(String email) {
-        Optional<User> resultingOptional = userDao.getByEmail(email);
-        logger.debug("Resulting optional is {'optional':{}}", resultingOptional);
-        return resultingOptional;
+        Optional<User> optionalUser = Optional.empty();
+        if (email != null) {
+            optionalUser = userDao.getByEmail(email);
+            logger.debug("Attempted to get optional with user found by email from db {'email':{}, 'optional':{}}", email, optionalUser);
+        } else {
+            logger.error("Passed email is null, returning empty optional");
+        }
+        logger.debug("Resulting optional is {'optional':{}}", optionalUser);
+        return optionalUser;
     }
 
     @Override

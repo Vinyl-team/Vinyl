@@ -1,8 +1,8 @@
 package com.vinylteam.vinyl.web.servlets;
 
+import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.entity.User;
-import com.vinylteam.vinyl.entity.Vinyl;
-import com.vinylteam.vinyl.service.VinylService;
+import com.vinylteam.vinyl.service.UniqueVinylService;
 import com.vinylteam.vinyl.web.templater.PageGenerator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,15 +16,15 @@ import java.util.Map;
 
 public class CatalogueServlet extends HttpServlet {
 
-    private final VinylService vinylService;
+    private final UniqueVinylService uniqueVinylService;
 
-    public CatalogueServlet(VinylService vinylService) {
-        this.vinylService = vinylService;
+    public CatalogueServlet(UniqueVinylService uniqueVinylService) {
+        this.uniqueVinylService = uniqueVinylService;
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        List<Vinyl> randomUniqueVinyls = vinylService.getManyRandomUnique(50);
+        List<UniqueVinyl> randomUniqueVinyls = uniqueVinylService.findManyRandom(50);
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         Map<String, String> attributes = new HashMap<>();
