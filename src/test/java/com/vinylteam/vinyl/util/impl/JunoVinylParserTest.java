@@ -14,61 +14,84 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class JunoVinylParserTest {
 
-    private JunoVinylParser parser = new JunoVinylParser();
+    private final JunoVinylParser parser = new JunoVinylParser();
 
     @Test
-    void getPageLinks() throws IOException {
+    void getPageLinks() {
         var pageLinks = parser.getPresentPageLinks();
         assertFalse(pageLinks.isEmpty());
     }
 
     @Test
-    public void countPageLinksTest(){
-       Set<String> links = Set.of("https://www.juno.co.uk/all/back-cat/3/?media_type=vinyl", "https://www.juno.co.uk/all/back-cat/333/?media_type=vinyl");
+    public void countPageLinksTest() {
+        Set<String> links = Set.of("https://www.juno.co.uk/all/back-cat/3/?media_type=vinyl", "https://www.juno.co.uk/all/back-cat/333/?media_type=vinyl");
         Integer number = parser.countPageLinks(links);
         assertEquals(333, number);
     }
 
     @Test
-    void givenLinksToOnePage_whenVinylsAreReceived_thenCorrect() throws IOException {
+    void givenLinksToOnePage_whenRawOffersAreReceived_thenCorrect() {
         var pageLink = "https://www.juno.co.uk/all/back-cat/2/?media_type=vinyl";
         var items = parser.readVinylsDataFromAllPages(Set.of(pageLink));
+        assertFalse(items.isEmpty());
     }
 
     @Test
-    void givenLinksToPages_whenFullListFromOneToMAxPAgeISReceived_thenCorrect() throws IOException {
+    void givenLinksToPages_whenFullListFromOneToMAxPageISReceived_thenCorrect() {
         var items = parser.getFullPageLinksList(Set.of("https://www.juno.co.uk/all/back-cat/3/?media_type=vinyl", "https://www.juno.co.uk/all/back-cat/12/?media_type=vinyl"));
         assertEquals(12, items.size());
     }
 
     @Test
-    void givenLinksToPages_whenVinylsAreReceived_thenCorrect() throws IOException {
+    void givenLinksToPages_whenRawOffersAreReceived_thenCorrect() {
         var items = parser.readVinylsDataFromAllPages(Set.of("https://www.juno.co.uk/all/back-cat/3/?media_type=vinyl", "https://www.juno.co.uk/all/back-cat/12/?media_type=vinyl"));
         assertFalse(items.isEmpty());
     }
 
     @Test
-    public void itemToRawOfferTest() throws IOException {
-        var testHtml = new File(this.getClass().getClassLoader().getResource("vinylITem.html").getPath());
+    public void givenHtmlImgElement_whenRawOfferISCreated_thenCorrect() throws IOException {
+        File testHtml = new File(this.getClass().getClassLoader().getResource("vinylITem.html").getPath());
         Document document = Jsoup.parse(testHtml, null);
         Element itemElement = document.select("div.dv-item").get(0);
-        var vinylItem = parser.itemToRawOffer(itemElement).orElse(null);
-        assertNotNull(vinylItem);
-        assertNotNull(vinylItem.getRelease());
-        assertFalse(vinylItem.getRelease().isEmpty());
-        assertNotNull(vinylItem.getArtist());
-        assertFalse(vinylItem.getArtist().isEmpty());
-        assertNotNull(vinylItem.getShopId());
-        assertNotNull(vinylItem.getOfferLink());
-        assertFalse(vinylItem.getOfferLink().isEmpty());
-        assertNotNull(vinylItem.getCurrency());
-        assertEquals(Currency.getCurrency("GBP"), vinylItem.getCurrency());
-        assertNotNull(vinylItem.getGenre());
-        assertFalse(vinylItem.getGenre().isEmpty());
-        assertEquals("Minimal/Tech House", vinylItem.getGenre());
-        assertNotNull(vinylItem.getPrice());
-        assertEquals(8.75, vinylItem.getPrice());
-        assertNotNull(vinylItem.getImageLink());
-        assertFalse(vinylItem.getImageLink().isEmpty());
+        var rawOffer = parser.itemToRawOffer(itemElement).orElse(null);
+        assertNotNull(rawOffer);
+        assertNotNull(rawOffer.getRelease());
+        assertFalse(rawOffer.getRelease().isEmpty());
+        assertNotNull(rawOffer.getArtist());
+        assertFalse(rawOffer.getArtist().isEmpty());
+        assertTrue(rawOffer.getShopId() > 0);
+        assertNotNull(rawOffer.getOfferLink());
+        assertFalse(rawOffer.getOfferLink().isEmpty());
+        assertNotNull(rawOffer.getCurrency());
+        assertEquals(Currency.getCurrency("GBP"), rawOffer.getCurrency());
+        assertNotNull(rawOffer.getGenre());
+        assertFalse(rawOffer.getGenre().isEmpty());
+        assertEquals("Minimal/Tech House", rawOffer.getGenre());
+        assertTrue(rawOffer.getPrice() > 0);
+        assertEquals(8.75, rawOffer.getPrice());
+        assertNotNull(rawOffer.getImageLink());
+        assertFalse(rawOffer.getImageLink().isEmpty());
+    }
+
+    @Test
+    public void givenVinylImageTag_whenLinkIsReturnedEitherFRomSrcOrDataSrcAttr_thenCorrect() {
+        String htmlImgSrcTag = "<IMG src='http://google.com/image.jpg' title='some image title'>";
+        String htmlImgDataSrcTag = "<IMG data-src='http://google.com/data-image.jpg' title='some image title'>";
+        String srcLink = getImgLink(htmlImgSrcTag);
+        assertEquals("http://google.com/image.jpg", srcLink);
+        String dataSrcLink = getImgLink(htmlImgDataSrcTag);
+        assertEquals("http://google.com/data-image.jpg", dataSrcLink);
+    }
+
+    @Test
+    public void givenPriceStringFRomHtml_whenNumericPriceReturned_thenCorrect(){
+        double price = parser.extractPrice("£5.77");
+        assertEquals(5.77, price);
+    }
+
+    private String getImgLink(String htmlImgTag) {
+        var documentSrc = Jsoup.parse(htmlImgTag);
+        var imageElement = documentSrc.select("img").get(0);
+        return parser.resolveVinylImageLink(imageElement);
     }
 }

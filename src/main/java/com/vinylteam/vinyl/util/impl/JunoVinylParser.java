@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.*;
@@ -21,7 +20,7 @@ import static java.util.stream.Collectors.toSet;
 public class JunoVinylParser implements VinylParser {
 
     private final String startBaseLink = "https://www.juno.co.uk/all/";
-    private final String startLink = startBaseLink + "back-cat/2/?media_type=RawOffer";
+    private final String startLink = startBaseLink + "back-cat/2/?media_type=vinyl";
 
     private final String RawOfferItemsListSelector = "div.product-list";
     private final String priceBlockSelector = "div.pl-buy";
@@ -46,8 +45,8 @@ public class JunoVinylParser implements VinylParser {
     Set<String> getPresentPageLinks() {
         var startDocument = getDocument(startLink);
         var pages = startDocument
-                .map(document -> document.select("a"))
                 .stream()
+                .flatMap(document -> document.select("a").stream())
                 .filter(supposedPageLink -> supposedPageLink.text().matches("[0-9]+"))
                 .filter(pageLink -> pageLink.attr("href").startsWith(startBaseLink))
                 .map(pageLink -> pageLink.attr("href"))
@@ -62,19 +61,19 @@ public class JunoVinylParser implements VinylParser {
                 IntStream.rangeClosed(1, maxPageNumber)
                         .mapToObj(pageNumber -> startLink.replaceAll(pageNumberPattern.toString(), "/" + pageNumber + "/"))
                         .collect(toSet());
+        log.debug("Resulting hash set of page links is {'pageLinks':{}}", pageLinks);
         return fullListOfPageLinks;
     }
 
     Integer countPageLinks(Set<String> pageLinks) {
-        var maxPageNumber = pageLinks
+        return pageLinks
                 .stream()
-                .map(pageLink -> pageNumberPattern.matcher(pageLink))
+                .map(pageNumberPattern::matcher)
                 .filter(Matcher::find)
                 .map(pageLinkMatcher -> pageLinkMatcher.group(1))
                 .map(Integer::parseInt)
                 .max(Comparator.naturalOrder())
                 .orElse(0);
-        return maxPageNumber;
     }
 
     Set<RawOffer> readVinylsDataFromAllPages(Set<String> pageLinks) {
@@ -92,7 +91,7 @@ public class JunoVinylParser implements VinylParser {
 
     Optional<RawOffer> itemToRawOffer(Element item) {
         try {
-            var imageLink = resolveProductImageLink(item.select(imageLinkSelector));
+            var imageLink = resolveVinylImageLink(item.select(imageLinkSelector).get(0));
             var RawOfferLink = item.select("a").get(0).attr("href");
             var info = item.select(RawOfferInfoBlockSelector);
             var infoDetails = info.select(RawOfferInfoItemsSelector);
@@ -116,15 +115,15 @@ public class JunoVinylParser implements VinylParser {
             return Optional.of(rawOffer);
         } catch (Exception e) {
             log.error("Error during RawOffer creation from the HTML element {}", item, e);
-            return Optional.ofNullable(null);
+            return Optional.empty();
         }
     }
 
-    private String resolveProductImageLink(Elements img) {
+    String resolveVinylImageLink(Element img) {
         return img.attr("src").startsWith("http") ? img.attr("src") : img.attr("data-src");
     }
 
-    private double extractPrice(String priceString) {
+    double extractPrice(String priceString) {
         var tmpPrice = priceString.replaceAll("^[^0-9]+", "");
         return Double.parseDouble(tmpPrice);
     }
@@ -134,7 +133,7 @@ public class JunoVinylParser implements VinylParser {
             return Optional.ofNullable(Jsoup.connect(url).get());
         } catch (IOException e) {
             log.error("Error while getting document by link {'link':{}}", url, e);
-            return Optional.ofNullable(null);
+            return Optional.empty();
         }
     }
 }
