@@ -31,7 +31,7 @@ public class JunoVinylParser implements VinylParser {
     private final String RawOfferInfoBlockSelector = "div.pl-info";
     private final String RawOfferInfoItemsSelector = "div.vi-text";
 
-    private Pattern pageNumberPattern = Pattern.compile("/([0-9]+)/");
+    private final Pattern pageNumberPattern = Pattern.compile("/([0-9]+)/");
 
     @Override
     public List<RawOffer> getRawOffersList() {
@@ -44,9 +44,9 @@ public class JunoVinylParser implements VinylParser {
     }
 
     Set<String> getPresentPageLinks() {
-        var result = getDocument(startLink);
-        var pages = result
-                .select("a")
+        var startDocument = getDocument(startLink);
+        var pages = startDocument
+                .map(document -> document.select("a"))
                 .stream()
                 .filter(supposedPageLink -> supposedPageLink.text().matches("[0-9]+"))
                 .filter(pageLink -> pageLink.attr("href").startsWith(startBaseLink))
@@ -57,37 +57,40 @@ public class JunoVinylParser implements VinylParser {
     }
 
     Set<String> getFullPageLinksList(Set<String> pageLinks) {
-        var maxPageNumber = pageLinks.stream()
+        Integer maxPageNumber = countPageLinks(pageLinks);
+        var fullListOfPageLinks =
+                IntStream.rangeClosed(1, maxPageNumber)
+                        .mapToObj(pageNumber -> startLink.replaceAll(pageNumberPattern.toString(), "/" + pageNumber + "/"))
+                        .collect(toSet());
+        return fullListOfPageLinks;
+    }
+
+    Integer countPageLinks(Set<String> pageLinks) {
+        var maxPageNumber = pageLinks
+                .stream()
                 .map(pageLink -> pageNumberPattern.matcher(pageLink))
                 .filter(Matcher::find)
                 .map(pageLinkMatcher -> pageLinkMatcher.group(1))
                 .map(Integer::parseInt)
                 .max(Comparator.naturalOrder())
                 .orElse(0);
-
-        var fullListOfPageLinks =
-                IntStream.rangeClosed(1, maxPageNumber)
-                        .mapToObj(pageNumber -> startLink.replaceAll(pageNumberPattern.toString(), "/" + pageNumber + "/"))
-                        .collect(toSet());
-
-        return fullListOfPageLinks;
+        return maxPageNumber;
     }
 
     Set<RawOffer> readVinylsDataFromAllPages(Set<String> pageLinks) {
-        var rawOfferSet = pageLinks.stream()
+        var rawOfferSet = pageLinks
+                .stream()
                 .map(this::getDocument)
-                .filter(Objects::nonNull)
-                .map(document -> document.select(RawOfferItemsListSelector))
+                .filter(Optional::isPresent)
+                .map(document -> document.get().select(RawOfferItemsListSelector))
                 .flatMap(RawOfferItemsList -> RawOfferItemsList.select(RawOfferItemSelector).stream())
-                .map(this::itemToRawOffer)
-                .filter(Objects::nonNull)
+                .flatMap(item -> this.itemToRawOffer(item).stream())
                 .collect(toSet());
         log.debug("Resulting set of rawOffer  is {'rawOfferSet':{}}", rawOfferSet);
         return rawOfferSet;
-
     }
 
-    private RawOffer itemToRawOffer(Element item) {
+    Optional<RawOffer> itemToRawOffer(Element item) {
         try {
             var imageLink = resolveProductImageLink(item.select(imageLinkSelector));
             var RawOfferLink = item.select("a").get(0).attr("href");
@@ -101,7 +104,7 @@ public class JunoVinylParser implements VinylParser {
             var release = infoDetails.get(1).select("a").text();
             var genre = infoDetails.get(4).text();
 
-            RawOffer rawOffer= new RawOffer();
+            RawOffer rawOffer = new RawOffer();
             rawOffer.setShopId(2);
             rawOffer.setRelease(release);
             rawOffer.setArtist(artist);
@@ -110,10 +113,10 @@ public class JunoVinylParser implements VinylParser {
             rawOffer.setOfferLink(RawOfferLink);
             rawOffer.setImageLink(imageLink);
             rawOffer.setGenre(genre);
-            return rawOffer;
-        } catch(Exception e){
+            return Optional.of(rawOffer);
+        } catch (Exception e) {
             log.error("Error during RawOffer creation from the HTML element {}", item, e);
-            return null;
+            return Optional.ofNullable(null);
         }
     }
 
@@ -126,13 +129,12 @@ public class JunoVinylParser implements VinylParser {
         return Double.parseDouble(tmpPrice);
     }
 
-    private Document getDocument(String url) {
+    private Optional<Document> getDocument(String url) {
         try {
-            return Jsoup.connect(url).get();
+            return Optional.ofNullable(Jsoup.connect(url).get());
         } catch (IOException e) {
             log.error("Error while getting document by link {'link':{}}", url, e);
-            return null;
+            return Optional.ofNullable(null);
         }
     }
-
 }
