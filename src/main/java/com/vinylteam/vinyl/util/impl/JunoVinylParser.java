@@ -22,24 +22,23 @@ public class JunoVinylParser implements VinylParser {
     private final String startBaseLink = "https://www.juno.co.uk/all/";
     private final String startLink = startBaseLink + "back-cat/2/?media_type=vinyl";
 
-    private final String RawOfferItemsListSelector = "div.product-list";
+    private final String vinylItemsListSelector = "div.product-list";
     private final String priceBlockSelector = "div.pl-buy";
     private final String priceLineSelector = "span.price_lrg.text-cta";
-    private final String RawOfferItemSelector = "div.dv-item";
+    private final String vinylItemSelector = "div.dv-item";
     private final String imageLinkSelector = "img.lazy_img.img-fluid";
-    private final String RawOfferInfoBlockSelector = "div.pl-info";
-    private final String RawOfferInfoItemsSelector = "div.vi-text";
+    private final String vinylInfoBlockSelector = "div.pl-info";
+    private final String vinylInfoItemsSelector = "div.vi-text";
 
     private final Pattern pageNumberPattern = Pattern.compile("/([0-9]+)/");
 
     @Override
     public List<RawOffer> getRawOffersList() {
         Set<String> pageLinks = getPresentPageLinks();
-
-        Set<RawOffer> RawOffers = readVinylsDataFromAllPages(pageLinks);
-        List<RawOffer> RawOffersJunoRawOfferList = new ArrayList<>(RawOffers);
-        log.debug("Resulting list of RawOffers from RawOffer.ua is {'RawOffersRawOfferUaList':{}}", RawOffersJunoRawOfferList);
-        return RawOffersJunoRawOfferList;
+        Set<RawOffer> rawOffers = readVinylsDataFromAllPages(pageLinks);
+        List<RawOffer> junoRawOfferList = new ArrayList<>(rawOffers);
+        log.debug("Resulting list of vinyls from www.juno.co.uk is {'junoRawOffersList':{}}", junoRawOfferList);
+        return junoRawOfferList;
     }
 
     Set<String> getPresentPageLinks() {
@@ -56,7 +55,7 @@ public class JunoVinylParser implements VinylParser {
     }
 
     Set<String> getFullPageLinksList(Set<String> pageLinks) {
-        Integer maxPageNumber = countPageLinks(pageLinks);
+        int maxPageNumber = countPageLinks(pageLinks);
         var fullListOfPageLinks =
                 IntStream.rangeClosed(1, maxPageNumber)
                         .mapToObj(pageNumber -> startLink.replaceAll(pageNumberPattern.toString(), "/" + pageNumber + "/"))
@@ -65,7 +64,7 @@ public class JunoVinylParser implements VinylParser {
         return fullListOfPageLinks;
     }
 
-    Integer countPageLinks(Set<String> pageLinks) {
+    int countPageLinks(Set<String> pageLinks) {
         return pageLinks
                 .stream()
                 .map(pageNumberPattern::matcher)
@@ -81,20 +80,20 @@ public class JunoVinylParser implements VinylParser {
                 .stream()
                 .map(this::getDocument)
                 .filter(Optional::isPresent)
-                .map(document -> document.get().select(RawOfferItemsListSelector))
-                .flatMap(RawOfferItemsList -> RawOfferItemsList.select(RawOfferItemSelector).stream())
+                .map(document -> document.get().select(vinylItemsListSelector))
+                .flatMap(vinylItemsList -> vinylItemsList.select(vinylItemSelector).stream())
                 .flatMap(item -> this.itemToRawOffer(item).stream())
                 .collect(toSet());
-        log.debug("Resulting set of rawOffer  is {'rawOfferSet':{}}", rawOfferSet);
+        log.debug("Resulting set of raw offers is {'rawOfferSet':{}}", rawOfferSet);
         return rawOfferSet;
     }
 
     Optional<RawOffer> itemToRawOffer(Element item) {
         try {
             var imageLink = resolveVinylImageLink(item.select(imageLinkSelector).get(0));
-            var RawOfferLink = item.select("a").get(0).attr("href");
-            var info = item.select(RawOfferInfoBlockSelector);
-            var infoDetails = info.select(RawOfferInfoItemsSelector);
+            var vinylLink = item.select("a").get(0).attr("href");
+            var info = item.select(vinylInfoBlockSelector);
+            var infoDetails = info.select(vinylInfoItemsSelector);
             var priceBlock = item.select(priceBlockSelector);
             var priceString = priceBlock.select(priceLineSelector).text();
             var price = extractPrice(priceString);
@@ -109,7 +108,7 @@ public class JunoVinylParser implements VinylParser {
             rawOffer.setArtist(artist);
             rawOffer.setPrice(price);
             rawOffer.setCurrency(Currency.getCurrency(priceCurrency));
-            rawOffer.setOfferLink(RawOfferLink);
+            rawOffer.setOfferLink(vinylLink);
             rawOffer.setImageLink(imageLink);
             rawOffer.setGenre(genre);
             return Optional.of(rawOffer);
