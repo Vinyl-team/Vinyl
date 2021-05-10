@@ -50,7 +50,7 @@ class JunoVinylParserTest {
 
     @Test
     public void givenHtmlImgElement_whenRawOfferISCreated_thenCorrect() throws IOException {
-        File testHtml = new File(this.getClass().getClassLoader().getResource("vinylITem.html").getPath());
+        File testHtml = new File(this.getClass().getClassLoader().getResource("vinylItem.html").getPath());
         Document document = Jsoup.parse(testHtml, null);
         Element itemElement = document.select("div.dv-item").get(0);
         var rawOffer = parser.itemToRawOffer(itemElement).orElse(null);
