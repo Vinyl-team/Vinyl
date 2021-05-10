@@ -35,10 +35,11 @@ public class JunoVinylParser implements VinylParser {
     @Override
     public List<RawOffer> getRawOffersList() {
         Set<String> pageLinks = getPresentPageLinks();
-        Set<RawOffer> rawOffers = readVinylsDataFromAllPages(pageLinks);
-        List<RawOffer> junoRawOfferList = new ArrayList<>(rawOffers);
-        log.debug("Resulting list of vinyls from www.juno.co.uk is {'junoRawOffersList':{}}", junoRawOfferList);
-        return junoRawOfferList;
+        Set<RawOffer> rawOffersSet = readVinylsDataFromAllPages(pageLinks);
+        List<RawOffer> rawOffersList = new ArrayList<>(rawOffersSet);
+        log.debug("Resulting list of vinyls from www.juno.co.uk is {'rawOffersList'" +
+                "':{}}", rawOffersList);
+        return rawOffersList;
     }
 
     Set<String> getPresentPageLinks() {
@@ -51,16 +52,18 @@ public class JunoVinylParser implements VinylParser {
                 .map(pageLink -> pageLink.attr("href"))
                 .collect(toSet());
         pages = getFullPageLinksList(pages);
+        log.debug("Resulting set of page links is {'pages':{}}", pages);
         return pages;
     }
 
     Set<String> getFullPageLinksList(Set<String> pageLinks) {
         int maxPageNumber = countPageLinks(pageLinks);
+        log.debug("Pages found {'maxPageNumber':{}}", maxPageNumber);
         var fullListOfPageLinks =
                 IntStream.rangeClosed(1, maxPageNumber)
                         .mapToObj(pageNumber -> startLink.replaceAll(pageNumberPattern.toString(), "/" + pageNumber + "/"))
                         .collect(toSet());
-        log.debug("Resulting hash set of page links is {'pageLinks':{}}", pageLinks);
+        log.debug("Resulting set of page links is {'pageLinks':{}}", pageLinks);
         return fullListOfPageLinks;
     }
 
