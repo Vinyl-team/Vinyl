@@ -31,7 +31,7 @@ public class JunoVinylParser implements VinylParser {
     private final String RawOfferInfoBlockSelector = "div.pl-info";
     private final String RawOfferInfoItemsSelector = "div.vi-text";
 
-    Pattern pageNumberPattern = Pattern.compile("/([0-9]+)/");
+    private Pattern pageNumberPattern = Pattern.compile("/([0-9]+)/");
 
     @Override
     public List<RawOffer> getRawOffersList() {
