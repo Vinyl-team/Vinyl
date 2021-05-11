@@ -109,7 +109,7 @@ insert into shops (link_to_main_page, link_to_image, name)
 values ('http://vinyl.ua/', 'img/shops/Vinyl_ua_logo.png', 'VinylUa');
 
 insert into shops (link_to_main_page, link_to_image, name)
-values ('https://www.juno.co.uk/', 'https://www.logosvgpng.com/wp-content/uploads/2018/04/juno-records-logo-vector.png', 'JunoCoUk');
+values ('https://www.juno.co.uk/', 'img/shops/junorecords_logo', 'JunoCoUk');
 
 CREATE OR REPLACE FUNCTION public.system_rows(
     internal)

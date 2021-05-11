@@ -4,6 +4,7 @@ import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.service.ShopService;
 import com.vinylteam.vinyl.service.VinylService;
 import com.vinylteam.vinyl.service.impl.DefaultShopService;
@@ -29,7 +30,8 @@ import static org.mockito.Mockito.*;
 class OneVinylOffersServletTest {
     private final VinylService mockedVinylService = mock(DefaultVinylService.class);
     private final ShopService mockedShopService = mock(DefaultShopService.class);
-    private final OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(mockedVinylService, mockedShopService);
+    private final DiscogsService discogsService = mock(DiscogsService.class);
+    private final OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(mockedVinylService, mockedShopService, discogsService);
 
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
@@ -84,7 +86,7 @@ class OneVinylOffersServletTest {
         inOrderVinylService.verify(mockedVinylService).getListOfShopIds(vinylOffers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
 
-        verify(mockedUniqueVinyl, times(4)).getArtist();
+        verify(mockedUniqueVinyl, times(5)).getArtist();
         inOrderVinylService.verify(mockedVinylService).getManyUniqueByArtist("artist1");
         verify(mockedResponse).getWriter();
     }
@@ -124,7 +126,7 @@ class OneVinylOffersServletTest {
         inOrderVinylService.verify(mockedVinylService).getListOfShopIds(vinylOffers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
 
-        verify(mockedUniqueVinyl, times(4)).getArtist();
+        verify(mockedUniqueVinyl, times(5)).getArtist();
         inOrderVinylService.verify(mockedVinylService).getManyUniqueByArtist("artist1");
         verify(mockedResponse).getWriter();
     }
@@ -162,7 +164,7 @@ class OneVinylOffersServletTest {
         inOrderVinylService.verify(mockedVinylService).getListOfShopIds(vinylOffers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
 
-        verify(mockedUniqueVinyl, times(4)).getArtist();
+        verify(mockedUniqueVinyl, times(5)).getArtist();
         inOrderVinylService.verify(mockedVinylService).getManyUniqueByArtist("artist1");
         verify(mockedResponse).getWriter();
     }

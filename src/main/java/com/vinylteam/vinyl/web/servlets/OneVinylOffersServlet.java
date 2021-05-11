@@ -3,14 +3,17 @@ package com.vinylteam.vinyl.web.servlets;
 import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.service.ShopService;
 import com.vinylteam.vinyl.service.VinylService;
+import com.vinylteam.vinyl.service.impl.DefaultDiscogsService;
 import com.vinylteam.vinyl.web.dto.OneVinylOffersServletResponse;
 import com.vinylteam.vinyl.web.templater.PageGenerator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,10 +25,12 @@ public class OneVinylOffersServlet extends HttpServlet {
 
     private final VinylService vinylService;
     private final ShopService shopService;
+    private final DiscogsService discogsService;
 
-    public OneVinylOffersServlet(VinylService vinylService, ShopService shopService) {
+    public OneVinylOffersServlet(VinylService vinylService, ShopService shopService, DiscogsService discogsService) {
         this.vinylService = vinylService;
         this.shopService = shopService;
+        this.discogsService = discogsService;
     }
 
     @Override
@@ -46,6 +51,14 @@ public class OneVinylOffersServlet extends HttpServlet {
         List<Vinyl> vinylOffers = vinylService.getManyByUniqueVinylId(uniqueVinyl.getVinylId());
         List<Integer> shopIds = vinylService.getListOfShopIds(vinylOffers);
         List<Shop> shopsFromOffers = shopService.getManyByListOfIds(shopIds);
+
+        try {
+            String discogsLink = discogsService.getDiscogsLink(uniqueVinyl.getArtist(),
+                    uniqueVinyl.getRelease(), uniqueVinyl.getFullNameVinyl());
+            attributes.put("discogsLink", discogsLink);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         List<OneVinylOffersServletResponse> vinylOffersResponseList = new ArrayList<>();
         for (Vinyl vinyl : vinylOffers) {

@@ -5,11 +5,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vinylteam.vinyl.discogs4j.client.DiscogsClient;
 import com.vinylteam.vinyl.discogs4j.entity.DiscogsVinylInfo;
 import com.vinylteam.vinyl.discogs4j.entity.RawResponse;
+import com.vinylteam.vinyl.discogs4j.util.HttpRequest;
+import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.service.DiscogsService;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.text.html.ListView;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +40,6 @@ public class DefaultDiscogsService implements DiscogsService {
         this.CALLBACK_URL = callbackUrl;
         this.discogsClient = new DiscogsClient(CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL);
         this.objectMapper = objectMapper;
-
         try {
             discogsClient.getRequestToken();
         } catch (ArrayIndexOutOfBoundsException e) {
@@ -43,17 +50,61 @@ public class DefaultDiscogsService implements DiscogsService {
     }
 
     @Override
-    public List<String> getVinylsReleasesFromDiscogsWantList(String discogsUserName) {
-        String discogsWantList = discogsClient.wantlist(discogsUserName);
-        Optional<List<DiscogsVinylInfo>> optionalDiscogsVinylInfoList = parseDiscogsWantList(discogsWantList);
-        logger.info("{'wantList':{}}", discogsWantList);
-        if (optionalDiscogsVinylInfoList.isPresent()) {
-            return getVinylsReleases(optionalDiscogsVinylInfoList.get());
+    public List<Vinyl> getDiscogsMatchList(String discogsUserName, List<Vinyl> allUniqueVinyl) {
+        List<Vinyl> forShowing = new ArrayList<>();
+        if (discogsUserName == null || allUniqueVinyl == null || discogsUserName.equals("") || allUniqueVinyl.isEmpty()){
+            return forShowing;
         }
-        return List.of();
+        Optional<List<DiscogsVinylInfo>> discogsVinylInfo = getDiscogsVinylInfo(discogsUserName);
+        if (discogsVinylInfo.isPresent()) {
+            for (DiscogsVinylInfo vinylInfo : discogsVinylInfo.get()) {
+                String release = getParametersForComparison(vinylInfo.getRelease());
+                String artist = getParametersForComparison(vinylInfo.getArtist());
+                for (Vinyl uniqueVinyl : allUniqueVinyl) {
+                    String uniqueRelease = getParametersForComparison(uniqueVinyl.getRelease());
+                    String uniqueArtist = getParametersForComparison(uniqueVinyl.getArtist());
+                    if (release.equals(uniqueRelease) && artist.equals(uniqueArtist)) {
+                        forShowing.add(uniqueVinyl);
+                    }
+                }
+            }
+        }
+        return forShowing;
     }
 
-    Optional<List<DiscogsVinylInfo>> parseDiscogsWantList(String discogsWantList) {
+    @Override
+    public String getDiscogsLink(String artist, String release, String fullName) throws ParseException {
+        String query;
+        String requestBody;
+        String discogsLink = "";
+        if (artist == null || release == null || fullName == null
+                || artist.equals("") || release.equals("") || fullName.equals("")){
+            return discogsLink;
+        }
+        String artistComparing = getParametersForComparison(artist);
+        String releaseComparing = getParametersForComparison(release);
+        query = fullName.replace(" ", "+");
+        HttpRequest request = HttpRequest.get("https://api.discogs.com/database/search?q=" + query +
+                "&token=DzUqaiWPuQDWExZlqrAUuIZBYAHuBjNnapETonep");
+        requestBody = request.body();
+        JSONObject jsonRequest = (JSONObject) new JSONParser().parse(requestBody);
+        JSONArray resultSearch = (JSONArray) jsonRequest.get("results");
+        if (resultSearch != null) {
+            for (Object searchItem : resultSearch) {
+                JSONObject jsonItem = (JSONObject) searchItem;
+                String discogsFullName = jsonItem.get("title").toString();
+                if (discogsFullName.contains(artistComparing) && discogsFullName.contains(releaseComparing)) {
+                    discogsLink = jsonItem.get("uri").toString();
+                    discogsLink = "https://www.discogs.com/ru" + discogsLink;
+                    break;
+                }
+            }
+        }
+        return discogsLink;
+    }
+
+    Optional<List<DiscogsVinylInfo>> getDiscogsVinylInfo(String discogsUserName) {
+        String discogsWantList = discogsClient.wantlist(discogsUserName);
         try {
             if (discogsWantList != null) {
                 RawResponse rawResponse = objectMapper.readValue(discogsWantList, RawResponse.class);
@@ -66,14 +117,14 @@ public class DefaultDiscogsService implements DiscogsService {
         }
     }
 
-    List<String> getVinylsReleases(List<DiscogsVinylInfo> discogsVinylInfoList) {
-        List<String> vinylsReleasesList = new ArrayList<>();
-
-        for (DiscogsVinylInfo discogsVinylInfo : discogsVinylInfoList) {
-            vinylsReleasesList.add(discogsVinylInfo.getRelease());
+    String getParametersForComparison(String param) {
+        String[] paramArray = param.split(" ");
+        logger.debug("Split param into param array {'param':{}, 'paramArray':{}}", param, paramArray);
+        if (paramArray.length > 1 && (paramArray[0].equalsIgnoreCase("the") || paramArray[0].equalsIgnoreCase("a"))) {
+            paramArray[0] = paramArray[1];
         }
-        logger.debug("Resulting vinyls releases list is {'releasesList':{}}", vinylsReleasesList);
-        return vinylsReleasesList;
+        logger.debug("Resulting string is {'resultParam':{}}", paramArray[0]);
+        return paramArray[0];
     }
 
 }

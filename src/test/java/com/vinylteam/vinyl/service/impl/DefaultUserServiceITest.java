@@ -153,7 +153,7 @@ class DefaultUserServiceITest {
     @Test
     @DisplayName("Checks if .add(...) with not existing in database user's email and password as arguments returns true.")
     void addWithNewEmailTest() {
-        assertTrue(userService.add("newuser@vinyl.com", "password3", "discogsUserName"));
+        assertTrue(userService.add("newuser@vinyl.com", "password3", "newDiscogsUserName"));
     }
 
     @Test

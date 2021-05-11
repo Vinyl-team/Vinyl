@@ -83,6 +83,11 @@ public class PageGenerator {
             context.setVariable("discogsUserName", discogsUserName);
         }
 
+        String discogsLink = attributes.get("discogsLink");
+        if (discogsLink != null){
+            context.setVariable("discogsLink", discogsLink);
+        }
+
         String message = attributes.get("message");
         if (message != null) {
             context.setVariable("message", message);
