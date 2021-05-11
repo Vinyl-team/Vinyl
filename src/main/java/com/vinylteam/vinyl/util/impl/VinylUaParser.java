@@ -22,15 +22,15 @@ public class VinylUaParser implements VinylParser {
     private final String startLink = "http://vinyl.ua";
     private final String classContainingGenresLinks = "dropdown-menu dropdown-menu-left";
     private final String classContainingPagesLinks = "pagination-wrapper margin-top-20";
-    private final String classContainingVinyl = "vinyl-release showcase";
-    private final String classContainingVinylRelease = "margin-top-clear margin-bot-5";
-    private final String classContainingVinylArtist = "text-ellipsis";
-    private final String classContainingVinylPriceDetails = "pull-left margin-top-5 showcase-release-price";
-    private final String classContainingVinylLinks = "img-showcase-release";
+    private final String classContainingUniqueVinylDetails = "vinyl-release showcase";
+    private final String classContainingRelease = "margin-top-clear margin-bot-5";
+    private final String classContainingArtist = "text-ellipsis";
+    private final String classContainingPriceDetails = "pull-left margin-top-5 showcase-release-price";
+    private final String classContainingOfferLinks = "img-showcase-release";
 
     HashSet<String> getGenresLinks() {
         HashSet<String> genreLinks = new HashSet<>();
-        Document document = null;
+        Document document;
         try {
             document = Jsoup.connect(startLink).get();
         } catch (IOException e) {
@@ -54,7 +54,7 @@ public class VinylUaParser implements VinylParser {
     HashSet<String> getPageLinks(HashSet<String> genreLinks) {
         LinkedHashSet<String> pageLinks = new LinkedHashSet<>();
         for (String genreLink : genreLinks) {
-            Document document = null;
+            Document document;
             try {
                 document = Jsoup.connect(genreLink).get();
             } catch (IOException e) {
@@ -77,10 +77,10 @@ public class VinylUaParser implements VinylParser {
         return pageLinks;
     }
 
-    HashSet<RawOffer> readRawOffersFromAllPages(HashSet<String> pageLinks) {
-        HashSet<RawOffer> rawOfferSet = new HashSet<>();
+    HashSet<String> getOfferLinks(HashSet<String> pageLinks) {
+        HashSet<String> offerLinks = new HashSet<>();
         for (String pageLink : pageLinks) {
-            Document document = null;
+            Document document;
             try {
                 document = Jsoup.connect(pageLink).get();
             } catch (IOException e) {
@@ -88,46 +88,79 @@ public class VinylUaParser implements VinylParser {
                 throw new RuntimeException("Fail while getting a document by " + pageLink, e);
             }
             logger.debug("Got document out of page link {'pageLink':{}, 'document':{}", pageLink, document);
-            Elements vinylElements = document.getElementsByClass(classContainingVinyl);
+            Elements vinylElements = document.getElementsByClass(classContainingUniqueVinylDetails);
             logger.debug("Got collection of vinyl elements {'vinylElements':{}}", vinylElements);
 
             for (Element vinylElement : vinylElements) {
-                String release = vinylElement.getElementsByClass(classContainingVinylRelease).text();
-                String artist = vinylElement.getElementsByClass(classContainingVinylArtist).select("a").text();
-                if (artist.equals("")) {
-                    artist = "Various Artists";
-                }
-                String priceDetails = vinylElement.getElementsByClass(classContainingVinylPriceDetails).text();
-                String priceNumber = priceDetails.substring(0, priceDetails.indexOf(' '));
-                String priceCurrency = priceDetails.substring(priceDetails.indexOf(' ') + 1);
-                String vinylLink = startLink + vinylElement
-                        .getElementsByClass(classContainingVinylLinks).select("a").attr("href");
-                String[] imageLinks = vinylElement
-                        .getElementsByClass(classContainingVinylLinks).attr("style").split("'");
-                String imageLink = imageLinks[1];
-                if (!imageLink.contains("amazonaws.com")) {
-                    imageLink = "img/goods/no_image.jpg";
-                }
-                String[] linkComponents = pageLink.split("[/?]");
-                String genre = linkComponents[4];
-
-                RawOffer rawOffer = new RawOffer();
-                rawOffer.setShopId(1);
-                rawOffer.setRelease(release);
-                rawOffer.setArtist(artist);
-                rawOffer.setPrice(Double.parseDouble(priceNumber));
-                rawOffer.setCurrency(Currency.getCurrency(priceCurrency));
-                rawOffer.setGenre(genre);
-                rawOffer.setOfferLink(vinylLink);
-                rawOffer.setImageLink(imageLink);
-                rawOfferSet.add(rawOffer);
-                logger.debug("Added rawOffer to hash set{'rawOffer':{}}", rawOffer);
+                String offerLink = startLink + vinylElement.getElementsByClass(classContainingOfferLinks).select("a").attr("href");
+                offerLinks.add(offerLink);
+                logger.debug("Added offer link to hash set{'offerLink':{}}", offerLink);
             }
             logger.debug("Parsed page link {'pageLink':{}}", pageLink);
+        }
+        logger.debug("Resulting hash set of offer links is {'offerLinks':{}}", offerLinks);
+        return offerLinks;
+
+    }
+
+    HashSet<RawOffer> readRawOffersFromAllOfferLinks(HashSet<String> offerLinks) {
+        HashSet<RawOffer> rawOfferSet = new HashSet<>();
+        for (String offerLink : offerLinks) {
+            rawOfferSet.add(getRawOfferFromOfferLink(offerLink));
         }
         logger.debug("Resulting hash set of rawOfferSet is {'rawOfferSet':{}}", rawOfferSet);
         return rawOfferSet;
     }
+
+    public RawOffer getRawOfferFromOfferLink(String offerLink) {
+        RawOffer rawOffer = new RawOffer();
+        Document document;
+        try {
+            document = Jsoup.connect(offerLink).get();
+        } catch (IOException e) {
+            logger.error("Error while getting document by link {'link':{}}", offerLink, e);
+            throw new RuntimeException("Fail while getting a document by " + offerLink, e);
+        }
+        logger.debug("Got document out of offer link {'offerLink':{}, 'document':{}", offerLink, document);
+        Elements uniqueVinylDetailsElements = document.getElementsByClass(classContainingUniqueVinylDetails);
+        Elements offerReleaseDetailsElements = document.getElementsByClass("list-meta");
+        Elements offerPriceDetailsElements = document.getElementsByClass("btn btn-lg btn-success btn-bevel full-width");
+        logger.debug("Got collections of unique vinyl details elements, offer release details elements, offer price details elements {'uniqueVinylDetailsElements':{}, " +
+                "'offerReleaseDetailsElements':{}, 'offerPriceDetailsElements':{}}", uniqueVinylDetailsElements, offerReleaseDetailsElements, offerPriceDetailsElements);
+        Element uniqueVinylDetails = uniqueVinylDetailsElements.first();
+        Element offerReleaseDetails = offerReleaseDetailsElements.first();
+        Element offerPriceDetails = offerPriceDetailsElements.first();
+        String release = uniqueVinylDetails.getElementsByClass(classContainingRelease).text();
+        String artist = uniqueVinylDetails.getElementsByClass(classContainingArtist).select("a").text();
+        if (artist.equals("")) {
+            artist = "Various Artists";
+        }
+        String priceDetails = uniqueVinylDetails.getElementsByClass(classContainingPriceDetails).text();
+        String priceNumber = priceDetails.substring(0, priceDetails.indexOf(' '));
+        String priceCurrency = priceDetails.substring(priceDetails.indexOf(' ') + 1);
+        String vinylLink = startLink + uniqueVinylDetails
+                .getElementsByClass(classContainingOfferLinks).select("a").attr("href");
+        String[] imageLinks = uniqueVinylDetails
+                .getElementsByClass(classContainingOfferLinks).attr("style").split("'");
+        String imageLink = imageLinks[1];
+        if (!imageLink.contains("amazonaws.com")) {
+            imageLink = "img/goods/no_image.jpg";
+        }
+        String[] linkComponents = offerLink.split("[/?]");
+        String genre = linkComponents[4];
+
+        rawOffer.setShopId(1);
+        rawOffer.setRelease(release);
+        rawOffer.setArtist(artist);
+        rawOffer.setPrice(Double.parseDouble(priceNumber));
+        rawOffer.setCurrency(Currency.getCurrency(priceCurrency));
+        rawOffer.setGenre(genre);
+        rawOffer.setOfferLink(vinylLink);
+        rawOffer.setImageLink(imageLink);
+        logger.debug("Parsed page link {'offerLink':{}}",offerLink);
+        logger.debug("Resulting raw offer is {'rawOffer':{}}", rawOffer);
+        return rawOffer;
+}
 
     @Override
     public List<RawOffer> getRawOffersList() {
@@ -135,10 +168,12 @@ public class VinylUaParser implements VinylParser {
         logger.info("got genre links {'genreLinks':{}}", genresLinks);
         HashSet<String> pageLinks = getPageLinks(genresLinks);
         logger.info("got page links {'pageLinks':{}}", pageLinks);
-        HashSet<RawOffer> rawOfferSet = readRawOffersFromAllPages(pageLinks);
-        logger.info("read {} rawOffers from all pages", rawOfferSet.size());
+        HashSet<String> offerLinks = getOfferLinks(pageLinks);
+        logger.info("got offer links {'offerLinks':{}}", offerLinks);
+        HashSet<RawOffer> rawOfferSet = readRawOffersFromAllOfferLinks(pageLinks);
+        logger.info("read {} rawOffers from all offer links", rawOfferSet.size());
         List<RawOffer> rawOffers = new ArrayList<>(rawOfferSet);
-        logger.debug("Resulting list of rawVinylData from vinyl.ua is {'rawOffers':{}}", rawOffers);
+        logger.debug("Resulting list of raw offers from vinyl.ua is {'rawOffers':{}}", rawOffers);
         return rawOffers;
     }
 
