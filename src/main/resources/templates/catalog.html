@@ -102,11 +102,11 @@
                     <div class="other-vinyls">
 
                         <div class="other-vinyls__item vinyl" th:each="vinyl : ${vinylList}">
-                            <a class="other-vinyls__image" th:href="@{oneVinyl(vinylId=${vinyl.vinylId})}">
+                            <a class="other-vinyls__image" th:href="@{oneVinyl(id=${vinyl.id})}">
                                 <img th:src="${vinyl.imageLink}" alt="vinyl image">
                             </a>
-                            <a th:href="@{oneVinyl(vinylId=${vinyl.vinylId})}" th:text="${vinyl.artist}" class="other-vinyls__artist">No artist</a>
-                            <a th:href="@{oneVinyl(vinylId=${vinyl.vinylId})}" th:text="${vinyl.release}" class="other-vinyls__release">No release</a>
+                            <a th:href="@{oneVinyl(id=${vinyl.id})}" th:text="${vinyl.artist}" class="other-vinyls__artist">No artist</a>
+                            <a th:href="@{oneVinyl(id=${vinyl.id})}" th:text="${vinyl.release}" class="other-vinyls__release">No release</a>
                         </div>
 
                     </div>

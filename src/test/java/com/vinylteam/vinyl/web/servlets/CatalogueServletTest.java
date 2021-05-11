@@ -2,11 +2,10 @@ package com.vinylteam.vinyl.web.servlets;
 
 
 import com.vinylteam.vinyl.entity.Role;
+import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.entity.User;
-import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.service.DiscogsService;
-import com.vinylteam.vinyl.service.VinylService;
-import com.vinylteam.vinyl.service.impl.DefaultVinylService;
+import com.vinylteam.vinyl.service.UniqueVinylService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -25,10 +24,9 @@ import static org.mockito.Mockito.*;
 
 class CatalogueServletTest {
 
-    private final VinylService mockedVinylService = mock(DefaultVinylService.class);
+    private final UniqueVinylService mockedUniqueVinylService = mock(UniqueVinylService.class);
     private final DiscogsService discogsService = mock(DiscogsService.class);
-    private final CatalogueServlet catalogueServlet = new CatalogueServlet(mockedVinylService, discogsService);
-
+    private final CatalogueServlet catalogueServlet = new CatalogueServlet(mockedUniqueVinylService, discogsService);
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
     private final InOrder inOrderResponse = inOrder(mockedResponse);
@@ -50,14 +48,14 @@ class CatalogueServletTest {
     @DisplayName("Checks if all right methods are called & session doesn't exist")
     void doGetNoSessionTest() throws IOException {
         //prepare
-        when(mockedVinylService.getManyRandomUnique(50)).thenReturn(
-                new ArrayList<>(Collections.nCopies(50, new Vinyl())));
+        when(mockedUniqueVinylService.findManyRandom(50)).thenReturn(
+                new ArrayList<>(Collections.nCopies(50, new UniqueVinyl())));
         when(mockedRequest.getSession(false)).thenReturn(null);
         when(mockedResponse.getWriter()).thenReturn(mockedPrintWriter);
         //when
         catalogueServlet.doGet(mockedRequest, mockedResponse);
         //then
-        verify(mockedVinylService).getManyRandomUnique(50);
+        verify(mockedUniqueVinylService).findManyRandom(50);
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderRequest.verify(mockedRequest).getSession(false);
@@ -70,8 +68,8 @@ class CatalogueServletTest {
     @DisplayName("Checks if all right methods are called & user is authed")
     void doGetWithAuthedUserTest() throws IOException {
         //prepare
-        when(mockedVinylService.getManyRandomUnique(50)).thenReturn(
-                new ArrayList<>(Collections.nCopies(50, new Vinyl())));
+        when(mockedUniqueVinylService.findManyRandom(50)).thenReturn(
+                new ArrayList<>(Collections.nCopies(50, new UniqueVinyl())));
         when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
         when(mockedUser.getRole()).thenReturn(Role.USER);
@@ -79,7 +77,7 @@ class CatalogueServletTest {
         //when
         catalogueServlet.doGet(mockedRequest, mockedResponse);
         //then
-        verify(mockedVinylService).getManyRandomUnique(50);
+        verify(mockedUniqueVinylService).findManyRandom(50);
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderRequest.verify(mockedRequest).getSession(false);
@@ -93,15 +91,15 @@ class CatalogueServletTest {
     @DisplayName("Checks if all right methods are called & user is not authed")
     void doGetWithNotAuthedUserTest() throws IOException {
         //prepare
-        when(mockedVinylService.getManyRandomUnique(50)).thenReturn(
-                new ArrayList<>(Collections.nCopies(50, new Vinyl())));
+        when(mockedUniqueVinylService.findManyRandom(50)).thenReturn(
+                new ArrayList<>(Collections.nCopies(50, new UniqueVinyl())));
         when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(null);
         when(mockedResponse.getWriter()).thenReturn(mockedPrintWriter);
         //when
         catalogueServlet.doGet(mockedRequest, mockedResponse);
         //then
-        verify(mockedVinylService).getManyRandomUnique(50);
+        verify(mockedUniqueVinylService).findManyRandom(50);
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderRequest.verify(mockedRequest).getSession(false);

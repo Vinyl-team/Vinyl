@@ -1,7 +1,7 @@
 package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.Currency;
-import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.entity.RawOffer;
 import com.vinylteam.vinyl.util.VinylParser;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,9 +28,15 @@ public class VinylUaParser implements VinylParser {
     private final String classContainingVinylPriceDetails = "pull-left margin-top-5 showcase-release-price";
     private final String classContainingVinylLinks = "img-showcase-release";
 
-    HashSet<String> getGenresLinks() throws IOException {
+    HashSet<String> getGenresLinks() {
         HashSet<String> genreLinks = new HashSet<>();
-        Document document = Jsoup.connect(startLink).get();
+        Document document = null;
+        try {
+            document = Jsoup.connect(startLink).get();
+        } catch (IOException e) {
+            logger.error("Error while getting document by link {'link':{}}", startLink, e);
+            throw new RuntimeException("Fail while getting a document by " + startLink, e);
+        }
         logger.debug("Got document out of start link {'startLink':{}, 'document':{}",
                 startLink, document);
         Elements innerAnchors = document.getElementsByClass(classContainingGenresLinks).select("a");
@@ -45,10 +51,16 @@ public class VinylUaParser implements VinylParser {
         return genreLinks;
     }
 
-    HashSet<String> getPageLinks(HashSet<String> genreLinks) throws IOException {
+    HashSet<String> getPageLinks(HashSet<String> genreLinks) {
         LinkedHashSet<String> pageLinks = new LinkedHashSet<>();
         for (String genreLink : genreLinks) {
-            Document document = Jsoup.connect(genreLink).get();
+            Document document = null;
+            try {
+                document = Jsoup.connect(genreLink).get();
+            } catch (IOException e) {
+                logger.error("Error while getting document by link {'link':{}}", genreLink, e);
+                throw new RuntimeException("Fail while getting a document by " + genreLink, e);
+            }
             logger.debug("Got document out of genre link {'genreLink':{}, 'document':{}", genreLink, document);
             Elements innerAnchors = document.getElementsByClass(classContainingPagesLinks).select("a");
             logger.debug("Got collection of anchors {'anchors':{}}", innerAnchors);
@@ -65,10 +77,16 @@ public class VinylUaParser implements VinylParser {
         return pageLinks;
     }
 
-    HashSet<Vinyl> readVinylsDataFromAllPages(HashSet<String> pageLinks) throws IOException {
-        HashSet<Vinyl> vinyls = new HashSet<>();
+    HashSet<RawOffer> readRawOffersFromAllPages(HashSet<String> pageLinks) {
+        HashSet<RawOffer> rawOfferSet = new HashSet<>();
         for (String pageLink : pageLinks) {
-            Document document = Jsoup.connect(pageLink).get();
+            Document document = null;
+            try {
+                document = Jsoup.connect(pageLink).get();
+            } catch (IOException e) {
+                logger.error("Error while getting document by link {'link':{}}", pageLink, e);
+                throw new RuntimeException("Fail while getting a document by " + pageLink, e);
+            }
             logger.debug("Got document out of page link {'pageLink':{}, 'document':{}", pageLink, document);
             Elements vinylElements = document.getElementsByClass(classContainingVinyl);
             logger.debug("Got collection of vinyl elements {'vinylElements':{}}", vinylElements);
@@ -79,7 +97,6 @@ public class VinylUaParser implements VinylParser {
                 if (artist.equals("")) {
                     artist = "Various Artists";
                 }
-                String fullNameVinyl = release + " - " + artist;
                 String priceDetails = vinylElement.getElementsByClass(classContainingVinylPriceDetails).text();
                 String priceNumber = priceDetails.substring(0, priceDetails.indexOf(' '));
                 String priceCurrency = priceDetails.substring(priceDetails.indexOf(' ') + 1);
@@ -94,32 +111,35 @@ public class VinylUaParser implements VinylParser {
                 String[] linkComponents = pageLink.split("[/?]");
                 String genre = linkComponents[4];
 
-                Vinyl vinyl = new Vinyl();
-                vinyl.setShopId(1);
-                vinyl.setRelease(release);
-                vinyl.setArtist(artist);
-                vinyl.setFullNameVinyl(fullNameVinyl);
-                vinyl.setPrice(Double.parseDouble(priceNumber));
-                vinyl.setCurrency(Currency.getCurrency(priceCurrency));
-                vinyl.setVinylLink(vinylLink);
-                vinyl.setImageLink(imageLink);
-                vinyl.setGenre(genre);
-                vinyls.add(vinyl);
-                logger.debug("Added vinyl to hash set{'vinyl':{}}", vinyl);
+                RawOffer rawOffer = new RawOffer();
+                rawOffer.setShopId(1);
+                rawOffer.setRelease(release);
+                rawOffer.setArtist(artist);
+                rawOffer.setPrice(Double.parseDouble(priceNumber));
+                rawOffer.setCurrency(Currency.getCurrency(priceCurrency));
+                rawOffer.setGenre(genre);
+                rawOffer.setOfferLink(vinylLink);
+                rawOffer.setImageLink(imageLink);
+                rawOfferSet.add(rawOffer);
+                logger.debug("Added rawOffer to hash set{'rawOffer':{}}", rawOffer);
             }
+            logger.debug("Parsed page link {'pageLink':{}}", pageLink);
         }
-        logger.debug("Resulting hash set of vinyls is {'vinyls':{}}", vinyls);
-        return vinyls;
+        logger.debug("Resulting hash set of rawOfferSet is {'rawOfferSet':{}}", rawOfferSet);
+        return rawOfferSet;
     }
 
     @Override
-    public List<Vinyl> getAllVinylsFromShopList() throws IOException {
+    public List<RawOffer> getRawOffersList() {
         HashSet<String> genresLinks = getGenresLinks();
+        logger.info("got genre links {'genreLinks':{}}", genresLinks);
         HashSet<String> pageLinks = getPageLinks(genresLinks);
-        HashSet<Vinyl> vinyls = readVinylsDataFromAllPages(pageLinks);
-        List<Vinyl> vinylsVinylUaList = new ArrayList<>(vinyls);
-        logger.debug("Resulting list of vinyls from vinyl.ua is {'vinylsVinylUaList':{}}", vinylsVinylUaList);
-        return vinylsVinylUaList;
+        logger.info("got page links {'pageLinks':{}}", pageLinks);
+        HashSet<RawOffer> rawOfferSet = readRawOffersFromAllPages(pageLinks);
+        logger.info("read {} rawOffers from all pages", rawOfferSet.size());
+        List<RawOffer> rawOffers = new ArrayList<>(rawOfferSet);
+        logger.debug("Resulting list of rawVinylData from vinyl.ua is {'rawOffers':{}}", rawOffers);
+        return rawOffers;
     }
 
 }

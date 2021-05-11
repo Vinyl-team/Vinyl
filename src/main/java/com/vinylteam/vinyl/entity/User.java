@@ -1,5 +1,7 @@
 package com.vinylteam.vinyl.entity;
 
+import java.util.Objects;
+
 public class User {
 
     private String email;
@@ -9,6 +11,18 @@ public class User {
     private int iterations;
     private Role role;
     private boolean status;
+
+    public User() {
+    }
+
+    public User(User user) {
+        this.email = user.email;
+        this.password = user.password;
+        this.salt = user.salt;
+        this.iterations = user.iterations;
+        this.role = user.role;
+        this.status = user.status;
+    }
 
     public String getEmail() {
         return email;
@@ -68,11 +82,28 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "\nUser{" +
                 "email='" + email +
                 ", role=" + role +
                 ", status=" + status +
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return iterations == user.iterations &&
+                status == user.status &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(salt, user.salt) &&
+                role == user.role;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email, password, salt, iterations, role, status);
+    }
 }

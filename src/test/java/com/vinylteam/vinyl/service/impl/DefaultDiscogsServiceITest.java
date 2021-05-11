@@ -1,7 +1,7 @@
 package com.vinylteam.vinyl.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.util.PropertiesReader;
 import org.json.simple.parser.ParseException;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,13 +12,14 @@ import org.junit.jupiter.api.TestInstance;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DefaultDiscogsServiceITest {
 
-    private final List<Vinyl> vinylListWithOneMatch;
-    private final List<Vinyl> vinylListWithNoMatch;
+    private final List<UniqueVinyl> vinylListWithOneMatch;
+    private final List<UniqueVinyl> vinylListWithNoMatch;
     private final PropertiesReader propertiesReader;
     private final DefaultDiscogsService defaultDiscogsService;
     private String discogsWantList = "{\"pagination\": {\"page\": 1, \"pages\": 1, \"per_page\": 50, \"items\": 3, \"urls\": {}}, \"wants\": [{\"id\": 12748000, \"resource_url\": \"https://api.discogs.com/users/Anthony_Hopkins/wants/12748000\", \"rating\": 0, \"date_added\": \"2021-04-07T12:49:32-07:00\", \"basic_information\": {\"id\": 12748000, \"master_id\": 29341, \"master_url\": \"https://api.discogs.com/masters/29341\", \"resource_url\": \"https://api.discogs.com/releases/12748000\", \"title\": \"Best Of Scorpions\", \"year\": 1991, \"formats\": [{\"name\": \"Cassette\", \"qty\": \"1\", \"descriptions\": [\"Compilation\", \"Reissue\"]}], \"labels\": [{\"name\": \"RCA\", \"catno\": \"NK 74006\", \"entity_type\": \"1\", \"entity_type_name\": \"Label\", \"id\": 895, \"resource_url\": \"https://api.discogs.com/labels/895\"}], \"artists\": [{\"name\": \"Scorpions\", \"anv\": \"\", \"join\": \"\", \"role\": \"\", \"tracks\": \"\", \"id\": 63552, \"resource_url\": \"https://api.discogs.com/artists/63552\"}], \"thumb\": \"\", \"cover_image\": \"\", \"genres\": [\"Rock\"], \"styles\": [\"Hard Rock\"]}}, {\"id\": 2288564, \"resource_url\": \"https://api.discogs.com/users/Anthony_Hopkins/wants/2288564\", \"rating\": 0, \"date_added\": \"2021-04-10T13:33:03-07:00\", \"basic_information\": {\"id\": 2288564, \"master_id\": null, \"master_url\": null, \"resource_url\": \"https://api.discogs.com/releases/2288564\", \"title\": \"No Freedom No Liberty\", \"year\": 2007, \"formats\": [{\"name\": \"Vinyl\", \"qty\": \"1\", \"text\": \"green\", \"descriptions\": [\"7\\\"\"]}], \"labels\": [{\"name\": \"True Rebel Records\", \"catno\": \"TRR012\", \"entity_type\": \"1\", \"entity_type_name\": \"Label\", \"id\": 139696, \"resource_url\": \"https://api.discogs.com/labels/139696\"}], \"artists\": [{\"name\": \"The Detectors\", \"anv\": \"\", \"join\": \"\", \"role\": \"\", \"tracks\": \"\", \"id\": 932626, \"resource_url\": \"https://api.discogs.com/artists/932626\"}], \"thumb\": \"\", \"cover_image\": \"\", \"genres\": [\"Rock\"], \"styles\": []}}, {\"id\": 1400099, \"resource_url\": \"https://api.discogs.com/users/Anthony_Hopkins/wants/1400099\", \"rating\": 0, \"date_added\": \"2021-04-10T13:39:02-07:00\", \"basic_information\": {\"id\": 1400099, \"master_id\": 16990, \"master_url\": \"https://api.discogs.com/masters/16990\", \"resource_url\": \"https://api.discogs.com/releases/1400099\", \"title\": \"\\u0416\\u0430\\u043b\\u044c, \\u041d\\u0435\\u0442 \\u0420\\u0443\\u0436\\u044c\\u044f\", \"year\": 2002, \"formats\": [{\"name\": \"CD\", \"qty\": \"1\", \"descriptions\": [\"Album\"]}], \"labels\": [{\"name\": \"\\u041c\\u0438\\u0441\\u0442\\u0435\\u0440\\u0438\\u044f \\u0417\\u0432\\u0443\\u043a\\u0430\", \"catno\": \"MZ-076-2\", \"entity_type\": \"1\", \"entity_type_name\": \"Label\", \"id\": 29191, \"resource_url\": \"https://api.discogs.com/labels/29191\"}], \"artists\": [{\"name\": \"\\u041a\\u043e\\u0440\\u043e\\u043b\\u044c \\u0418 \\u0428\\u0443\\u0442\", \"anv\": \"\", \"join\": \"\", \"role\": \"\", \"tracks\": \"\", \"id\": 386468, \"resource_url\": \"https://api.discogs.com/artists/386468\"}], \"thumb\": \"\", \"cover_image\": \"\", \"genres\": [\"Rock\"], \"styles\": [\"Punk\"]}}]}";
@@ -33,7 +34,7 @@ class DefaultDiscogsServiceITest {
     }
 
     @BeforeAll
-    void beforeAll(){
+    void beforeAll() {
         vinylListWithOneMatch.add(createVinyl("The Detectors", "No Freedom No Liberty"));
         vinylListWithOneMatch.add(createVinyl("Paul Jacobs", "Soul Grabber Part 2 (Remixes)"));
         vinylListWithOneMatch.add(createVinyl("Donnell & Douglas", "The Club Is Open"));
@@ -46,9 +47,9 @@ class DefaultDiscogsServiceITest {
 
     @Test
     @DisplayName("Return empty list if discogs username is null")
-    void getDiscogsMatchListWhenDiscogsUsernameIsNullTest(){
+    void getDiscogsMatchListWhenDiscogsUsernameIsNullTest() {
         //when
-        List<Vinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList(null, vinylListWithOneMatch);
+        List<UniqueVinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList(null, vinylListWithOneMatch);
 
         //then
         assertTrue(listAfterMatching.isEmpty());
@@ -56,9 +57,9 @@ class DefaultDiscogsServiceITest {
 
     @Test
     @DisplayName("Return empty list if discogs username is empty String")
-    void getDiscogsMatchListWhenDiscogsUsernameIsEmptyStringTest(){
+    void getDiscogsMatchListWhenDiscogsUsernameIsEmptyStringTest() {
         //when
-        List<Vinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("", vinylListWithOneMatch);
+        List<UniqueVinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("", vinylListWithOneMatch);
 
         //then
         assertTrue(listAfterMatching.isEmpty());
@@ -66,9 +67,9 @@ class DefaultDiscogsServiceITest {
 
     @Test
     @DisplayName("Return empty list if list of unique vinyls is null")
-    void getDiscogsMatchListWhenListOfUniqueVinylsIsNullTest(){
+    void getDiscogsMatchListWhenListOfUniqueVinylsIsNullTest() {
         //when
-        List<Vinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("discogsUserName",
+        List<UniqueVinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("discogsUserName",
                 null);
 
         //then
@@ -77,9 +78,9 @@ class DefaultDiscogsServiceITest {
 
     @Test
     @DisplayName("Return empty list if list of unique vinyls is empty")
-    void getDiscogsMatchListWhenListOfUniqueVinylsIsEmptyTest(){
+    void getDiscogsMatchListWhenListOfUniqueVinylsIsEmptyTest() {
         //when
-        List<Vinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("discogsUserName",
+        List<UniqueVinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("discogsUserName",
                 new ArrayList<>());
 
         //then
@@ -88,9 +89,9 @@ class DefaultDiscogsServiceITest {
 
     @Test
     @DisplayName("Return empty list if discogs username isn't exist")
-    void getDiscogsMatchListWhenDiscogsUsernameIsNotExistTest(){
+    void getDiscogsMatchListWhenDiscogsUsernameIsNotExistTest() {
         //when
-        List<Vinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("not_exit_user_name",
+        List<UniqueVinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("not_exit_user_name",
                 vinylListWithOneMatch);
 
         //then
@@ -99,9 +100,9 @@ class DefaultDiscogsServiceITest {
 
     @Test
     @DisplayName("Return empty list if there is no match after matching")
-    void getDiscogsMatchListWhenNoMatchingTest(){
+    void getDiscogsMatchListWhenNoMatchingTest() {
         //when
-        List<Vinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("Anthony_Hopkins",
+        List<UniqueVinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("Anthony_Hopkins",
                 vinylListWithNoMatch);
 
         //then
@@ -110,9 +111,9 @@ class DefaultDiscogsServiceITest {
 
     @Test
     @DisplayName("Return list whit matched vinyls")
-    void getDiscogsMatchListWhenThereIsMatchingTest(){
+    void getDiscogsMatchListWhenThereIsMatchingTest() {
         //when
-        List<Vinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("Anthony_Hopkins",
+        List<UniqueVinyl> listAfterMatching = defaultDiscogsService.getDiscogsMatchList("Anthony_Hopkins",
                 vinylListWithOneMatch);
 
         //then
@@ -240,8 +241,8 @@ class DefaultDiscogsServiceITest {
         assertEquals("https://www.discogs.com/ru/The-Detectors-No-Freedom-No-Liberty/release/2288564", discogsLink);
     }
 
-    private Vinyl createVinyl(String artist, String release){
-        Vinyl vinyl = new Vinyl();
+    private UniqueVinyl createVinyl(String artist, String release) {
+        UniqueVinyl vinyl = new UniqueVinyl();
         vinyl.setArtist(artist);
         vinyl.setRelease(release);
         return vinyl;

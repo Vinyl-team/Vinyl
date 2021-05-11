@@ -1,10 +1,9 @@
 package com.vinylteam.vinyl.web.servlets;
 
-import com.vinylteam.vinyl.discogs4j.entity.DiscogsVinylInfo;
+import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.entity.User;
-import com.vinylteam.vinyl.entity.Vinyl;
 import com.vinylteam.vinyl.service.DiscogsService;
-import com.vinylteam.vinyl.service.VinylService;
+import com.vinylteam.vinyl.service.UniqueVinylService;
 import com.vinylteam.vinyl.web.templater.PageGenerator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,28 +12,30 @@ import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.text.html.ListView;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CatalogueServlet extends HttpServlet {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final VinylService vinylService;
     private final DiscogsService discogsService;
+    private final UniqueVinylService uniqueVinylService;
 
-    public CatalogueServlet(VinylService vinylService, DiscogsService discogsService) {
-        this.vinylService = vinylService;
+    public CatalogueServlet(UniqueVinylService uniqueVinylService, DiscogsService discogsService) {
+        this.uniqueVinylService = uniqueVinylService;
         this.discogsService = discogsService;
     }
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String discogsUserName;
-        List<Vinyl> randomUniqueVinyls = vinylService.getManyRandomUnique(50);
-        List<Vinyl> forShowing = new ArrayList<>();
-        List<Vinyl> allUniqueVinyl = vinylService.getAllUnique();
+        List<UniqueVinyl> randomUniqueVinyls = uniqueVinylService.findManyRandom(50);
+        List<UniqueVinyl> forShowing = new ArrayList<>();
+        List<UniqueVinyl> allUniqueVinyl = uniqueVinylService.findAll();
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         Map<String, String> attributes = new HashMap<>();
@@ -53,4 +54,5 @@ public class CatalogueServlet extends HttpServlet {
             PageGenerator.getInstance().process("catalog", randomUniqueVinyls, attributes, response.getWriter());
         }
     }
+
 }

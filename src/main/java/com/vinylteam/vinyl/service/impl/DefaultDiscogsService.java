@@ -6,7 +6,7 @@ import com.vinylteam.vinyl.discogs4j.client.DiscogsClient;
 import com.vinylteam.vinyl.discogs4j.entity.DiscogsVinylInfo;
 import com.vinylteam.vinyl.discogs4j.entity.RawResponse;
 import com.vinylteam.vinyl.discogs4j.util.HttpRequest;
-import com.vinylteam.vinyl.entity.Vinyl;
+import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.service.DiscogsService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,9 +15,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.text.html.ListView;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,9 +48,9 @@ public class DefaultDiscogsService implements DiscogsService {
     }
 
     @Override
-    public List<Vinyl> getDiscogsMatchList(String discogsUserName, List<Vinyl> allUniqueVinyl) {
-        List<Vinyl> forShowing = new ArrayList<>();
-        if (discogsUserName == null || allUniqueVinyl == null || discogsUserName.equals("") || allUniqueVinyl.isEmpty()){
+    public List<UniqueVinyl> getDiscogsMatchList(String discogsUserName, List<UniqueVinyl> allUniqueVinyl) {
+        List<UniqueVinyl> forShowing = new ArrayList<>();
+        if (discogsUserName == null || allUniqueVinyl == null || discogsUserName.equals("") || allUniqueVinyl.isEmpty()) {
             return forShowing;
         }
         Optional<List<DiscogsVinylInfo>> discogsVinylInfo = getDiscogsVinylInfo(discogsUserName);
@@ -60,7 +58,7 @@ public class DefaultDiscogsService implements DiscogsService {
             for (DiscogsVinylInfo vinylInfo : discogsVinylInfo.get()) {
                 String release = getParametersForComparison(vinylInfo.getRelease());
                 String artist = getParametersForComparison(vinylInfo.getArtist());
-                for (Vinyl uniqueVinyl : allUniqueVinyl) {
+                for (UniqueVinyl uniqueVinyl : allUniqueVinyl) {
                     String uniqueRelease = getParametersForComparison(uniqueVinyl.getRelease());
                     String uniqueArtist = getParametersForComparison(uniqueVinyl.getArtist());
                     if (release.equals(uniqueRelease) && artist.equals(uniqueArtist)) {
@@ -78,7 +76,7 @@ public class DefaultDiscogsService implements DiscogsService {
         String requestBody;
         String discogsLink = "";
         if (artist == null || release == null || fullName == null
-                || artist.equals("") || release.equals("") || fullName.equals("")){
+                || artist.equals("") || release.equals("") || fullName.equals("")) {
             return discogsLink;
         }
         String artistComparing = getParametersForComparison(artist);
