@@ -1,5 +1,6 @@
 package com.vinylteam.vinyl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vinylteam.vinyl.dao.OfferDao;
 import com.vinylteam.vinyl.dao.ShopDao;
 import com.vinylteam.vinyl.dao.UniqueVinylDao;
@@ -10,14 +11,8 @@ import com.vinylteam.vinyl.dao.jdbc.JdbcUniqueVinylDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
 import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
-import com.vinylteam.vinyl.service.OfferService;
-import com.vinylteam.vinyl.service.ShopService;
-import com.vinylteam.vinyl.service.UniqueVinylService;
-import com.vinylteam.vinyl.service.UserService;
-import com.vinylteam.vinyl.service.impl.DefaultOfferService;
-import com.vinylteam.vinyl.service.impl.DefaultShopService;
-import com.vinylteam.vinyl.service.impl.DefaultUniqueVinylService;
-import com.vinylteam.vinyl.service.impl.DefaultUserService;
+import com.vinylteam.vinyl.service.*;
+import com.vinylteam.vinyl.service.impl.*;
 import com.vinylteam.vinyl.util.*;
 import com.vinylteam.vinyl.util.impl.JunoVinylParser;
 import com.vinylteam.vinyl.util.impl.VinylUaParser;
@@ -48,6 +43,13 @@ public class Starter {
     private static final String RESOURCE_PATH = propertiesReader.getProperty("resource.path");
 
     public static void main(String[] args) throws Exception {
+        DiscogsService discogsService = new DefaultDiscogsService(
+                propertiesReader.getProperty("consumer.key"),
+                propertiesReader.getProperty("consumer.secret"),
+                propertiesReader.getProperty("user.agent"),
+                propertiesReader.getProperty("callback.url"), new ObjectMapper()
+        );
+
 //DAO
         HikariDataSource dataSource;
         HikariConfig config = new HikariConfig();
@@ -94,9 +96,9 @@ public class Starter {
         SecurityFilter securityFilter = new SecurityFilter();
         SignInServlet signInServlet = new SignInServlet(userService);
         SignUpServlet signUpServlet = new SignUpServlet(userService);
-        CatalogueServlet catalogueServlet = new CatalogueServlet(uniqueVinylService);
+        CatalogueServlet catalogueServlet = new CatalogueServlet(uniqueVinylService, discogsService);
         SearchResultsServlet searchResultsServlet = new SearchResultsServlet(uniqueVinylService);
-        OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(uniqueVinylService, offerService, shopService);
+        OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(uniqueVinylService, offerService, shopService, discogsService);
         SignOutServlet signOutServlet = new SignOutServlet();
         ProfileServlet profileServlet = new ProfileServlet();
         EditProfileServlet editProfileServlet = new EditProfileServlet(securityService, userService);

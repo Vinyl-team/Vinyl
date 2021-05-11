@@ -109,7 +109,7 @@
                         <div class="user__fields-wrapper">
                             <div class="user__fields registration-page-user__fields">
                                 <label class="user__label">
-                                    <input class="user__input" type="email" name="email" id="email" placeholder="Email" onblur="checkEmail(this)" required>
+                                    <input class="user__input" type="email" name="email" id="email" placeholder="Email" onblur="checkEmail(this)" th:value="${email}" required>
                                 </label>
                                 <script language='javascript'>
                                     function checkEmail(emailInput) {
@@ -162,7 +162,7 @@
                                     }
                                 </script>
                                 <label class="user__label">
-                                    <input class="user__input" type="text" name="discogsUserName"
+                                    <input class="user__input" type="text" name="discogsUserName" th:value="${discogsUserName}"
                                            placeholder="Discogs Username">
                                 </label>
                             </div>

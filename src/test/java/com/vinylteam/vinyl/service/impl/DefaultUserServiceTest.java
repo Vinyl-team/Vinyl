@@ -9,8 +9,6 @@ import com.vinylteam.vinyl.util.ListPreparerForTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,7 +18,6 @@ import static org.mockito.Mockito.*;
 
 class DefaultUserServiceTest {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ListPreparerForTests listPreparer = new ListPreparerForTests();
     private final UserDao mockedUserDao = mock(UserDao.class);
     private final SecurityService mockedSecurityService = mock(DefaultSecurityService.class);
@@ -33,65 +30,65 @@ class DefaultUserServiceTest {
         reset(mockedSecurityService);
     }
 
-    @Test
-    @DisplayName("Checks if .add(...) with null email returns false, securityService.createUserWithHashedPassword(...), userDao.add(...) aren't called")
-    void addWithNullEmailTest() {
-        //prepare
-        String password = "password2";
-        //when
-        boolean actualIsAdded = userService.add(null, password);
-        //then
-        assertFalse(actualIsAdded);
-        verify(mockedSecurityService, never()).createUserWithHashedPassword(eq(null), eq(password.toCharArray()));
-        verify(mockedUserDao, never()).add(any());
-    }
+//    @Test
+//    @DisplayName("Checks if .add(...) with null email returns false, securityService.createUserWithHashedPassword(...), userDao.add(...) aren't called")
+//    void addWithNullEmailTest() {
+//        //prepare
+//        String password = "password2";
+//        //when
+//        boolean actualIsAdded = userService.add(null, password);
+//        //then
+//        assertFalse(actualIsAdded);
+//        verify(mockedSecurityService, never()).createUserWithHashedPassword(eq(null), eq(password.toCharArray()));
+//        verify(mockedUserDao, never()).add(any());
+//    }
 
-    @Test
-    @DisplayName("Checks if .add(...) with null password returns false, securityService.createUserWithHashedPassword(...), userDao.add(...) aren't called")
-    void addWithNullPasswordTest() {
-        //prepare
-        String email = "user2@waxdeals.com";
-        //when
-        boolean actualIsAdded = userService.add(email, null);
-        //then
-        assertFalse(actualIsAdded);
-        verify(mockedSecurityService, never()).createUserWithHashedPassword(eq(email), any());
-        verify(mockedUserDao, never()).add(any());
-    }
+//    @Test
+//    @DisplayName("Checks if .add(...) with null password returns false, securityService.createUserWithHashedPassword(...), userDao.add(...) aren't called")
+//    void addWithNullPasswordTest() {
+//        //prepare
+//        String email = "user2@waxdeals.com";
+//        //when
+//        boolean actualIsAdded = userService.add(email, null);
+//        //then
+//        assertFalse(actualIsAdded);
+//        verify(mockedSecurityService, never()).createUserWithHashedPassword(eq(email), any());
+//        verify(mockedUserDao, never()).add(any());
+//    }
 
-    @Test
-    @DisplayName("Checks if .add(...) with already existing in database user's email and password returns false," +
-            " securityService.createUserWithHashedPassword(...), userDao.add(...) are called")
-    void addWithExistingEmail() {
-        //prepare
-        String existingEmail = "user1@waxdeals.com";
-        String password = "password1";
-        when(mockedSecurityService.createUserWithHashedPassword(eq(existingEmail), eq(password.toCharArray()))).thenReturn(users.get(0));
-        when(mockedUserDao.add(users.get(0))).thenReturn(false);
-        //when
-        boolean actualIsAdded = userService.add(existingEmail, password);
-        //then
-        assertFalse(actualIsAdded);
-        verify(mockedSecurityService).createUserWithHashedPassword(eq(existingEmail), eq(password.toCharArray()));
-        verify(mockedUserDao).add(users.get(0));
-    }
+//    @Test
+//    @DisplayName("Checks if .add(...) with already existing in database user's email and password returns false," +
+//            " securityService.createUserWithHashedPassword(...), userDao.add(...) are called")
+//    void addWithExistingEmailTest() {
+//        //prepare
+//        String existingEmail = "user1@waxdeals.com";
+//        String password = "password1";
+//        when(mockedSecurityService.createUserWithHashedPassword(eq(existingEmail), eq(password.toCharArray()))).thenReturn(users.get(0));
+//        when(mockedUserDao.add(users.get(0))).thenReturn(false);
+//        //when
+//        boolean actualIsAdded = userService.add(existingEmail, password);
+//        //then
+//        assertFalse(actualIsAdded);
+//        verify(mockedSecurityService).createUserWithHashedPassword(eq(existingEmail), eq(password.toCharArray()));
+//        verify(mockedUserDao).add(users.get(0));
+//    }
 
-    @Test
-    @DisplayName("Checks if .add(...) with not existing in database user's email and password returns true," +
-            " securityService.createUserWithHashedPassword(...), userDao.add(...) are called")
-    void addWithNewEmail() {
-        //prepare
-        String newEmail = "user2@waxdeals.com";
-        String password = "password2";
-        when(mockedSecurityService.createUserWithHashedPassword(eq(newEmail), eq(password.toCharArray()))).thenReturn(users.get(1));
-        when(mockedUserDao.add(users.get(1))).thenReturn(true);
-        //when
-        boolean actualIsAdded = userService.add(newEmail, password);
-        //then
-        assertTrue(actualIsAdded);
-        verify(mockedSecurityService).createUserWithHashedPassword(eq(newEmail), eq(password.toCharArray()));
-        verify(mockedUserDao).add(users.get(1));
-    }
+//    @Test
+//    @DisplayName("Checks if .add(...) with not existing in database user's email and password returns true," +
+//            " securityService.createUserWithHashedPassword(...), userDao.add(...) are called")
+//    void addWithNewEmail() {
+//        //prepare
+//        String newEmail = "user2@waxdeals.com";
+//        String password = "password2";
+//        when(mockedSecurityService.createUserWithHashedPassword(eq(newEmail), eq(password.toCharArray()))).thenReturn(users.get(1));
+//        when(mockedUserDao.add(users.get(1))).thenReturn(true);
+//        //when
+//        boolean actualIsAdded = userService.add(newEmail, password);
+//        //then
+//        assertTrue(actualIsAdded);
+//        verify(mockedSecurityService).createUserWithHashedPassword(eq(newEmail), eq(password.toCharArray()));
+//        verify(mockedUserDao).add(users.get(1));
+//    }
 
     @Test
     @DisplayName("Checks if .getByEmail(...) calls userDao.getByEmail() when email is not null and returns it's result")
@@ -197,5 +194,74 @@ class DefaultUserServiceTest {
         verify(mockedUserDao).getByEmail(existingEmail);
         verify(mockedSecurityService).checkPasswordAgainstUserPassword(eq(optionalUserFromDB.get()), eq(rightPassword.toCharArray()));
     }
+
+    @Test
+    @DisplayName("Checks if edit(...) with null old email as an argument")
+    void editWhenOldEmailIsNullTest() {
+        //prepare
+        String newVerifiedUser = "newVerifieduser@vinyl.com";
+        String password = "newPassword";
+        String discogsUserName = "discogsUserName";
+        //when
+        boolean isEdit = userService.edit(null, newVerifiedUser, password, discogsUserName);
+        //then
+        assertFalse(isEdit);
+    }
+
+    @Test
+    @DisplayName("Checks if edit(...) with null newEmail as an argument")
+    void editWhenEmailIsNullTest() {
+        //prepare
+        String oldEmail = "oldEmail";
+        String password = "newPassword";
+        String discogsUserName = "discogsUserName";
+        //when
+        boolean isEdit = userService.edit(oldEmail, null, password, discogsUserName);
+        //then
+        assertFalse(isEdit);
+    }
+
+    @Test
+    @DisplayName("Checks if edit(...) with null newPassword as an argument")
+    void editWhenNewPasswordIsNullTest() {
+        //prepare
+        String oldEmail = "oldEmail";
+        String newVerifiedUser = "newVerifiedUser";
+        String discogsUserName = "discogsUserName";
+        //when
+        boolean isEdit = userService.edit(oldEmail, newVerifiedUser, null, discogsUserName);
+        //then
+        assertFalse(isEdit);
+    }
+
+//    @Test
+//    @DisplayName("Checks edit(...) with a non-existent user")
+//    void editWhenUserIsNotExistTest() {
+//        //prepare
+//        String notExistUser = "notExistUser";
+//        String newUser = "newUser";
+//        String newPassword = "newPassword";
+//        String discogsUserName = "discogsUserName";
+//        User userFromDB = new User();
+//        when(mockedSecurityService.createUserWithHashedPassword(newUser, newPassword.toCharArray(), discogsUserName)).thenReturn(userFromDB);
+//        //when
+//        assertFalse(userService.edit("non-existent-user@vinyl.com", "newVerifieduser@vinyl.com", "newPassword", "discogsUserName"));
+//
+//        //then
+//
+//    }
+//
+//    @Test
+//    @DisplayName("Checks edit(...) with an existing user")
+//    void editWhenUserIsExistTest() {
+//        assertTrue(userService.edit("verifieduser@vinyl.com", "newVerifieduser@vinyl.com", "newPassword", "discogsUserName"));
+//    }
+//
+//    @Test
+//    @DisplayName("Checks edit(...) when only password was changed")
+//    void editWhenOnlyPasswordWasChangedTest() {
+//        assertTrue(userService.edit("verifieduser@vinyl.com", "verifieduser@vinyl.com", "newPassword", "discogsUserName"));
+//        assertTrue(userDao.getByEmail("verifieduser@vinyl.com").orElse(new User()).getStatus());
+//    }
 
 }

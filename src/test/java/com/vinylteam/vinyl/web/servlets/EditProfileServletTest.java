@@ -194,6 +194,7 @@ class EditProfileServletTest {
         when(mockedRequest.getParameter("oldPassword")).thenReturn("oldPassword");
         when(mockedRequest.getParameter("newPassword")).thenReturn("newPassword");
         when(mockedRequest.getParameter("confirmNewPassword")).thenReturn("newPassword");
+        when(mockedRequest.getParameter("discogsUserName")).thenReturn("discogsUserName");
         when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
         when(mockedUser.getRole()).thenReturn(Role.USER);
@@ -208,6 +209,7 @@ class EditProfileServletTest {
         inOrderRequest.verify(mockedRequest).getParameter("oldPassword");
         inOrderRequest.verify(mockedRequest).getParameter("newPassword");
         inOrderRequest.verify(mockedRequest).getParameter("confirmNewPassword");
+        inOrderRequest.verify(mockedRequest).getParameter("discogsUserName");
         inOrderRequest.verify(mockedRequest).getSession(false);
         verify(mockedHttpSession, times(1)).getAttribute("user");
         assertEquals(mockedUser, mockedHttpSession.getAttribute("user"));
@@ -216,7 +218,7 @@ class EditProfileServletTest {
         verify(mockedUser, times(1)).getEmail();
         assertEquals("test@email.com", mockedUser.getEmail());
         verify(mockedSecurityService).checkPasswordAgainstUserPassword(mockedUser, "oldPassword".toCharArray());
-        verify(mockedUserService, times(0)).edit("test@email.com", "newTest@email.com", "newPassword");
+        verify(mockedUserService, times(0)).edit("test@email.com", "newTest@email.com", "newPassword", "discogsUserName");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
         inOrderResponse.verify(mockedResponse).getWriter();
     }
@@ -229,12 +231,13 @@ class EditProfileServletTest {
         when(mockedRequest.getParameter("oldPassword")).thenReturn("oldPassword");
         when(mockedRequest.getParameter("newPassword")).thenReturn("newPassword");
         when(mockedRequest.getParameter("confirmNewPassword")).thenReturn("newPassword");
+        when(mockedRequest.getParameter("discogsUserName")).thenReturn("discogsUserName");
         when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
         when(mockedUser.getRole()).thenReturn(Role.USER);
         when(mockedUser.getEmail()).thenReturn("test@email.com");
         when(mockedSecurityService.checkPasswordAgainstUserPassword(mockedUser, "oldPassword".toCharArray())).thenReturn(true);
-        when(mockedUserService.edit("test@email.com", "newTest@email.com", "newPassword")).thenReturn(false);
+        when(mockedUserService.edit("test@email.com", "newTest@email.com", "newPassword", "discogsUserName")).thenReturn(false);
         when(mockedResponse.getWriter()).thenReturn(printWriter);
         //when
         editProfileServlet.doPost(mockedRequest, mockedResponse);
@@ -244,6 +247,7 @@ class EditProfileServletTest {
         inOrderRequest.verify(mockedRequest).getParameter("oldPassword");
         inOrderRequest.verify(mockedRequest).getParameter("newPassword");
         inOrderRequest.verify(mockedRequest).getParameter("confirmNewPassword");
+        inOrderRequest.verify(mockedRequest).getParameter("discogsUserName");
         inOrderRequest.verify(mockedRequest).getSession(false);
         verify(mockedHttpSession, times(1)).getAttribute("user");
         assertEquals(mockedUser, mockedHttpSession.getAttribute("user"));
@@ -252,7 +256,7 @@ class EditProfileServletTest {
         verify(mockedUser, times(1)).getEmail();
         assertEquals("test@email.com", mockedUser.getEmail());
         verify(mockedSecurityService).checkPasswordAgainstUserPassword(mockedUser, "oldPassword".toCharArray());
-        verify(mockedUserService, times(1)).edit("test@email.com", "newTest@email.com", "newPassword");
+        verify(mockedUserService, times(1)).edit("test@email.com", "newTest@email.com", "newPassword", "discogsUserName");
         inOrderResponse.verify(mockedResponse, times(0)).setStatus(HttpServletResponse.SC_SEE_OTHER);
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
         inOrderResponse.verify(mockedResponse).getWriter();
@@ -266,12 +270,13 @@ class EditProfileServletTest {
         when(mockedRequest.getParameter("oldPassword")).thenReturn("oldPassword");
         when(mockedRequest.getParameter("newPassword")).thenReturn("newPassword");
         when(mockedRequest.getParameter("confirmNewPassword")).thenReturn("newPassword");
+        when(mockedRequest.getParameter("discogsUserName")).thenReturn("discogsUserName");
         when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
         when(mockedUser.getRole()).thenReturn(Role.USER);
         when(mockedUser.getEmail()).thenReturn("test@email.com");
         when(mockedSecurityService.checkPasswordAgainstUserPassword(mockedUser, "oldPassword".toCharArray())).thenReturn(true);
-        when(mockedUserService.edit("test@email.com", "newTest@email.com", "newPassword")).thenReturn(true);
+        when(mockedUserService.edit("test@email.com", "newTest@email.com", "newPassword", "discogsUserName")).thenReturn(true);
         when(mockedRequest.getSession(true)).thenReturn(newMockedHttpSession);
         when(mockedUserService.getByEmail("newTest@email.com")).thenReturn(Optional.ofNullable(mockedUser));
         when(mockedResponse.getWriter()).thenReturn(printWriter);
@@ -283,6 +288,7 @@ class EditProfileServletTest {
         inOrderRequest.verify(mockedRequest).getParameter("oldPassword");
         inOrderRequest.verify(mockedRequest).getParameter("newPassword");
         inOrderRequest.verify(mockedRequest).getParameter("confirmNewPassword");
+        inOrderRequest.verify(mockedRequest).getParameter("discogsUserName");
         inOrderRequest.verify(mockedRequest).getSession(false);
         verify(mockedHttpSession, times(1)).getAttribute("user");
         assertEquals(mockedUser, mockedHttpSession.getAttribute("user"));
@@ -291,7 +297,7 @@ class EditProfileServletTest {
         verify(mockedUser, times(1)).getEmail();
         assertEquals("test@email.com", mockedUser.getEmail());
         verify(mockedSecurityService).checkPasswordAgainstUserPassword(mockedUser, "oldPassword".toCharArray());
-        verify(mockedUserService, times(1)).edit("test@email.com", "newTest@email.com", "newPassword");
+        verify(mockedUserService, times(1)).edit("test@email.com", "newTest@email.com", "newPassword", "discogsUserName");
         inOrderResponse.verify(mockedResponse, times(1)).setStatus(HttpServletResponse.SC_SEE_OTHER);
         verify(mockedHttpSession).invalidate();
         inOrderRequest.verify(mockedRequest).getSession(true);
