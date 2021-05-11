@@ -19,6 +19,7 @@ import com.vinylteam.vinyl.service.impl.DefaultShopService;
 import com.vinylteam.vinyl.service.impl.DefaultUniqueVinylService;
 import com.vinylteam.vinyl.service.impl.DefaultUserService;
 import com.vinylteam.vinyl.util.*;
+import com.vinylteam.vinyl.util.impl.JunoVinylParser;
 import com.vinylteam.vinyl.util.impl.VinylUaParser;
 import com.vinylteam.vinyl.web.filter.SecurityFilter;
 import com.vinylteam.vinyl.web.handler.DefaultErrorHandler;
@@ -74,7 +75,7 @@ public class Starter {
 
         ShopsParser shopsParser = new ShopsParser();
         RawOffersSorter rawOffersSorter = new RawOffersSorter();
-        List<VinylParser> vinylParsers = List.of(new VinylUaParser());
+        List<VinylParser> vinylParsers = List.of(new VinylUaParser(), new JunoVinylParser());
         Updater updater = new Updater(uniqueVinylService, offerService, shopsParser, vinylParsers, rawOffersSorter);
         TimerTask updateTask = new TimerTask() {
             @Override
