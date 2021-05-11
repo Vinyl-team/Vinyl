@@ -43,16 +43,14 @@ public class JunoVinylParser implements VinylParser {
 
     Set<String> getPresentPageLinks() {
         var startDocument = getDocument(START_LINK);
-        var pages = startDocument
+        var pageLinksShownFromStartList = startDocument
                 .stream()
                 .flatMap(document -> document.select("a").stream())
                 .filter(supposedPageLink -> supposedPageLink.text().matches("[0-9]+"))
                 .filter(pageLink -> pageLink.attr("href").startsWith(START_BASE_LINK))
                 .map(pageLink -> pageLink.attr("href"))
                 .collect(toSet());
-        pages = getFullPageLinksList(pages);
-        log.debug("Resulting set of page links is {'pages':{}}", pages);
-        return pages;
+        return getFullPageLinksList(pageLinksShownFromStartList);
     }
 
     Set<String> getFullPageLinksList(Set<String> pageLinks) {
@@ -62,7 +60,7 @@ public class JunoVinylParser implements VinylParser {
                 IntStream.rangeClosed(1, maxPageNumber)
                         .mapToObj(pageNumber -> START_LINK.replaceAll(PAGE_NUMBER_PATTERN.toString(), "/" + pageNumber + "/"))
                         .collect(toSet());
-        log.debug("Resulting set of page links is {'pageLinks':{}}", pageLinks);
+        log.debug("Resulting set of page links (with no gaps in sequence) is {'pageLinks':{}}", pageLinks);
         return fullListOfPageLinks;
     }
 
@@ -115,7 +113,7 @@ public class JunoVinylParser implements VinylParser {
             rawOffer.setGenre(genre);
             return Optional.of(rawOffer);
         } catch (Exception e) {
-            log.warn("Error during RawOffer creation from the HTML element {}", item, e);
+            log.warn("Element will be skipped, since some error happened during RawOffer creation from the element: {}", item, e);
             return Optional.empty();
         }
     }
@@ -133,7 +131,7 @@ public class JunoVinylParser implements VinylParser {
         try {
             return Optional.ofNullable(Jsoup.connect(url).get());
         } catch (IOException e) {
-            log.warn("Error while getting document by link {'link':{}}", url, e);
+            log.warn("Page represented by the link will be skipped, since some error happened while getting document by link {'link':{}}", url, e);
             return Optional.empty();
         }
     }
