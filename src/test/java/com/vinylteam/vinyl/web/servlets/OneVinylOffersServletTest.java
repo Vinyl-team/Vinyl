@@ -90,7 +90,7 @@ class OneVinylOffersServletTest {
         inOrderOfferService.verify(mockedOfferService).getListOfShopIds(offers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
 
-        verify(mockedUniqueVinyl, times(3)).getArtist();
+        verify(mockedUniqueVinyl, times(4)).getArtist();
         inOrderUniqueVinylService.verify(mockedUniqueVinylService).findManyByArtist("artist1");
         verify(mockedResponse).getWriter();
     }
@@ -129,7 +129,7 @@ class OneVinylOffersServletTest {
         inOrderOfferService.verify(mockedOfferService).getListOfShopIds(offers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
 
-        verify(mockedUniqueVinyl, times(3)).getArtist();
+        verify(mockedUniqueVinyl, times(4)).getArtist();
         inOrderUniqueVinylService.verify(mockedUniqueVinylService).findManyByArtist("artist1");
         verify(mockedResponse).getWriter();
     }
@@ -166,7 +166,7 @@ class OneVinylOffersServletTest {
         inOrderOfferService.verify(mockedOfferService).getListOfShopIds(offers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
 
-        verify(mockedUniqueVinyl, times(3)).getArtist();
+        verify(mockedUniqueVinyl, times(4)).getArtist();
         inOrderUniqueVinylService.verify(mockedUniqueVinylService).findManyByArtist("artist1");
         verify(mockedResponse).getWriter();
     }
