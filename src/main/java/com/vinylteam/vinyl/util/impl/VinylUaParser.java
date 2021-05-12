@@ -162,11 +162,11 @@ public class VinylUaParser implements VinylParser {
     @Override
     public List<RawOffer> getRawOffersList() {
         HashSet<String> genresLinks = getGenresLinks();
-        logger.info("got genre links {'genreLinks':{}}", genresLinks);
+        logger.debug("got genre links {'genreLinks':{}}", genresLinks);
         HashSet<String> pageLinks = getPageLinks(genresLinks);
-        logger.info("got page links {'pageLinks':{}}", pageLinks);
+        logger.debug("got page links {'pageLinks':{}}", pageLinks);
         HashSet<String> offerLinks = getOfferLinks(pageLinks);
-        logger.info("got offer links {'offerLinks':{}}", offerLinks);
+        logger.debug("got offer links {'offerLinks':{}}", offerLinks);
         HashSet<RawOffer> rawOfferSet = readRawOffersFromAllOfferLinks(offerLinks);
         logger.info("read {} rawOffers from all offer links", rawOfferSet.size());
         List<RawOffer> rawOffers = new ArrayList<>(rawOfferSet);
