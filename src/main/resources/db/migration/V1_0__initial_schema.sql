@@ -14,7 +14,10 @@ create table users
     status     boolean       not null,
     role       varchar(50)   not null
         constraint either_of_two_roles
-            check (((role)::text = 'USER'::text) OR ((role)::text = 'ADMIN'::text))
+            check (((role)::text = 'USER'::text) OR ((role)::text = 'ADMIN'::text)),
+    discogs_user_name      varchar(500)
+        constraint unique_discogs_user_name
+            unique
 );
 
 create table unique_vinyls
@@ -103,7 +106,7 @@ insert into shops (link_to_main_page, link_to_image, name)
 values ('http://vinyl.ua/', 'img/shops/Vinyl_ua_logo.png', 'VinylUa');
 
 insert into shops (link_to_main_page, link_to_image, name)
-values ('https://www.juno.co.uk/', 'https://www.logosvgpng.com/wp-content/uploads/2018/04/juno-records-logo-vector.png', 'JunoCoUk');
+values ('https://www.juno.co.uk/', 'img/shops/junorecords_logo.png', 'JunoCoUk');
 
 
 

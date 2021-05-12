@@ -4,6 +4,7 @@ package com.vinylteam.vinyl.web.servlets;
 import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.entity.User;
+import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.service.UniqueVinylService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,11 +25,12 @@ import static org.mockito.Mockito.*;
 class CatalogueServletTest {
 
     private final UniqueVinylService mockedUniqueVinylService = mock(UniqueVinylService.class);
-    private final CatalogueServlet catalogueServlet = new CatalogueServlet(mockedUniqueVinylService);
+    private final DiscogsService discogsService = mock(DiscogsService.class);
+    private final CatalogueServlet catalogueServlet = new CatalogueServlet(mockedUniqueVinylService, discogsService);
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
-    private final InOrder inOrderRequest = inOrder(mockedRequest);
     private final InOrder inOrderResponse = inOrder(mockedResponse);
+    private final InOrder inOrderRequest = inOrder(mockedRequest);
     private final HttpSession mockedHttpSession = mock(HttpSession.class);
     private final User mockedUser = mock(User.class);
     private final PrintWriter mockedPrintWriter = mock(PrintWriter.class);

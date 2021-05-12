@@ -26,6 +26,7 @@ class CurrencyTest {
         assertEquals(Currency.GBP, Currency.getCurrency("GBP").get());
         assertEquals(Currency.USD, Currency.getCurrency("USD").get());
         assertEquals(Currency.UAH, Currency.getCurrency("грн").get());
+        assertEquals(Currency.UAH, Currency.getCurrency("грн.").get());
     }
 
     @Test

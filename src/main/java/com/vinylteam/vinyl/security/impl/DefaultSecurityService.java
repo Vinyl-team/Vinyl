@@ -35,13 +35,14 @@ public class DefaultSecurityService implements SecurityService {
     }
 
     @Override
-    public User createUserWithHashedPassword(String email, char[] password) {
+    public User createUserWithHashedPassword(String email, char[] password, String discogsUserName) {
         byte[] salt = generateSalt();
         int iterations = 10000;
         String hashedPassword = hashPassword(password, salt, iterations);
         User user = new User();
         user.setEmail(email);
         user.setPassword(hashedPassword);
+        user.setDiscogsUserName(discogsUserName);
         user.setSalt(Base64.getEncoder().encodeToString(salt));
         user.setIterations(iterations);
         user.setRole(Role.USER);

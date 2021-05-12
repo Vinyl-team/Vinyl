@@ -1,12 +1,16 @@
 package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.RawOffer;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.util.HashSet;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VinylUaParserITest {
@@ -43,19 +47,13 @@ class VinylUaParserITest {
     }
 
     @Test
-    @DisplayName("Checks that returned raw offer is right after parsing offer link.")
+    @DisplayName("Checks that returned raw offer is filled after parsing offer link.")
     void getRawOfferFromOfferLinkTest() {
-        assertFalse(vinylUaParser.getOfferLinks(onePageTestLink).isEmpty());
+        assertTrue(vinylUaParser.getRawOfferFromOfferLink(offerLink).getRelease() != null);
     }
 
     @Test
-    @DisplayName("Checks that returned raw offer is right after parsing offer link.")
-    void getRawOfferFromInvalidOfferLinkTest() {
-        assertFalse(vinylUaParser.getOfferLinks(onePageTestLink).isEmpty());
-    }
-
-    @Test
-    @DisplayName("Checks that returned hashset of raw offers is right after parsing.")
+    @DisplayName("Checks that returned hashset of raw offers isn't emty after parsing.")
     void readRawOffersFromAllOfferLinksTest() {
         assertFalse(vinylUaParser.readRawOffersFromAllOfferLinks(oneOfferTestLink).isEmpty());
     }

@@ -26,7 +26,7 @@ public enum Currency {
         Logger logger = LoggerFactory.getLogger(Currency.class);
         logger.debug("getCurrency started with {currencyDescription':{}}", currencyDescription);
         Currency resultingCurrency = null;
-        if (currencyDescription.equals("грн") || currencyDescription.equals("₴")) {
+        if (currencyDescription.equals("грн") || currencyDescription.equals("грн.") || currencyDescription.equals("₴")) {
             resultingCurrency = UAH;
         }
         if (currencyDescription.equals("GBP") || currencyDescription.equals("£")) {

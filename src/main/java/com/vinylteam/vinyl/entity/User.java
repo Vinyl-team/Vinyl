@@ -6,6 +6,7 @@ public class User {
 
     private String email;
     private String password;
+    private String discogsUserName;
     private String salt;
     private int iterations;
     private Role role;
@@ -37,6 +38,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getDiscogsUserName() {
+        return discogsUserName;
+    }
+
+    public void setDiscogsUserName(String discogsUserName) {
+        this.discogsUserName = discogsUserName;
     }
 
     public String getSalt() {

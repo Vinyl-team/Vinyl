@@ -21,24 +21,26 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public boolean add(String email, String password) {
+    public boolean add(String email, String password, String discogsUserName) {
         boolean isAdded = false;
         if (email != null && password != null) {
-            User userToAdd = securityService.createUserWithHashedPassword(email, password.toCharArray());
+            User userToAdd = securityService
+                    .createUserWithHashedPassword(email, password.toCharArray(), discogsUserName);
             isAdded = userDao.add(userToAdd);
-            logger.debug("Attempted to add created user to db with boolean result {'isAdded':{}}", isAdded);
+            logger.debug("Attempted to add created user to db with boolean result {'isAdded':{}}",
+                    isAdded);
         }
-        logger.debug("Result of attempting to add user, created from passed email and password if both are not null is {'isAdded': {}, 'email':{}}",
-                isAdded, email);
+        logger.debug("Result of attempting to add user, created from passed email and password" +
+                " if both are not null is {'isAdded': {}, 'email':{}}", isAdded, email);
         return isAdded;
     }
 
     @Override
-    public boolean edit(String oldEmail, String newEmail, String newPassword) {
+    public boolean edit(String oldEmail, String newEmail, String newPassword, String discogsUserName) {
         boolean isEdit = false;
         if (newEmail != null && newPassword != null && oldEmail != null) {
             User userToEdit = securityService
-                    .createUserWithHashedPassword(newEmail, newPassword.toCharArray());
+                    .createUserWithHashedPassword(newEmail, newPassword.toCharArray(), discogsUserName);
             if (oldEmail.equals(newEmail)) {
                 userToEdit.setStatus(true);
             }

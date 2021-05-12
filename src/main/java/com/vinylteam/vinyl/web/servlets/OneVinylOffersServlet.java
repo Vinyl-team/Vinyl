@@ -4,6 +4,7 @@ import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.entity.User;
+import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.service.OfferService;
 import com.vinylteam.vinyl.service.ShopService;
 import com.vinylteam.vinyl.service.UniqueVinylService;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,11 +27,14 @@ public class OneVinylOffersServlet extends HttpServlet {
     private final UniqueVinylService uniqueVinylService;
     private final OfferService offerService;
     private final ShopService shopService;
+    private final DiscogsService discogsService;
 
-    public OneVinylOffersServlet(UniqueVinylService uniqueVinylService, OfferService offerService, ShopService shopService) {
+    public OneVinylOffersServlet(UniqueVinylService uniqueVinylService, OfferService offerService,
+                                 ShopService shopService, DiscogsService discogsService) {
         this.uniqueVinylService = uniqueVinylService;
         this.offerService = offerService;
         this.shopService = shopService;
+        this.discogsService = discogsService;
     }
 
     @Override
@@ -49,6 +54,14 @@ public class OneVinylOffersServlet extends HttpServlet {
         List<Offer> offers = offerService.findManyByUniqueVinylId(uniqueVinyl.getId());
         List<Integer> shopIds = offerService.getListOfShopIds(offers);
         List<Shop> shopsFromOffers = shopService.getManyByListOfIds(shopIds);
+
+        try {
+            String discogsLink = discogsService.getDiscogsLink(uniqueVinyl.getArtist(),
+                    uniqueVinyl.getRelease(), uniqueVinyl.getFullName());
+            attributes.put("discogsLink", discogsLink);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         List<OneVinylOffersServletResponse> offersResponseList = new ArrayList<>();
         for (Offer offer : offers) {
