@@ -219,7 +219,7 @@ class JdbcUniqueVinylDaoITest {
     }
 
     @Test
-    @DisplayName("Returns filled list by artist that has matches with offers in the table")
+    @DisplayName("Returns filled list of unique vinyls that have offers by artist")
     void findManyByArtistTest() {
         //prepare
         List<UniqueVinyl> expectedUniqueVinyls = listPreparer.getUniqueVinylsList();

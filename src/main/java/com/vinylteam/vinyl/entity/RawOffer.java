@@ -1,6 +1,5 @@
 package com.vinylteam.vinyl.entity;
 
-import java.util.Objects;
 import java.util.Optional;
 
 public class RawOffer {
@@ -10,7 +9,6 @@ public class RawOffer {
     private String artist;
     private double price;
     private Optional<Currency> currency;
-    private String catNumber;
     private String genre;
     private String offerLink;
     private String imageLink;
@@ -24,7 +22,6 @@ public class RawOffer {
         this.artist = rawOffer.artist;
         this.price = rawOffer.price;
         this.currency = rawOffer.currency;
-        this.catNumber = rawOffer.catNumber;
         this.genre = rawOffer.genre;
         this.offerLink = rawOffer.offerLink;
         this.imageLink = rawOffer.imageLink;
@@ -70,14 +67,6 @@ public class RawOffer {
         this.currency = currency;
     }
 
-    public String getCatNumber() {
-        return catNumber;
-    }
-
-    public void setCatNumber(String catNumber) {
-        this.catNumber = catNumber;
-    }
-
     public String getGenre() {
         return genre;
     }
@@ -103,27 +92,6 @@ public class RawOffer {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RawOffer)) return false;
-        RawOffer rawOffer = (RawOffer) o;
-        return shopId == rawOffer.shopId &&
-                Double.compare(rawOffer.price, price) == 0 &&
-                Objects.equals(release, rawOffer.release) &&
-                Objects.equals(artist, rawOffer.artist) &&
-                Objects.equals(currency, rawOffer.currency) &&
-                Objects.equals(catNumber, rawOffer.catNumber) &&
-                Objects.equals(genre, rawOffer.genre) &&
-                Objects.equals(offerLink, rawOffer.offerLink) &&
-                Objects.equals(imageLink, rawOffer.imageLink);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(shopId, release, artist, price, currency, catNumber, genre, offerLink, imageLink);
-    }
-
-    @Override
     public String toString() {
         return "\nRawOffer{" +
                 "shopId=" + shopId +
@@ -131,10 +99,9 @@ public class RawOffer {
                 ", artist='" + artist + '\'' +
                 ", price=" + price +
                 ", currency=" + currency +
-                ", catNumber='" + catNumber + '\'' +
-                ", genre='" + genre + '\'' +
                 ", offerLink='" + offerLink + '\'' +
                 ", imageLink='" + imageLink + '\'' +
+                ", genre='" + genre + '\'' +
                 '}';
     }
 

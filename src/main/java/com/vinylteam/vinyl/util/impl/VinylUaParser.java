@@ -22,11 +22,11 @@ public class VinylUaParser implements VinylParser {
     private final String startLink = "http://vinyl.ua";
     private final String classContainingGenresLinks = "dropdown-menu dropdown-menu-left";
     private final String classContainingPagesLinks = "pagination-wrapper margin-top-20";
+    private final String classContainingOffersLinks = "full-space";
     private final String classContainingUniqueVinylDetails = "vinyl-release showcase";
     private final String classContainingRelease = "margin-top-clear margin-bot-5";
     private final String classContainingArtist = "text-ellipsis";
     private final String classContainingPriceDetails = "pull-left margin-top-5 showcase-release-price";
-    private final String classContainingOfferLinks = "img-showcase-release";
 
     HashSet<String> getGenresLinks() {
         HashSet<String> genreLinks = new HashSet<>();
@@ -39,9 +39,9 @@ public class VinylUaParser implements VinylParser {
         }
         logger.debug("Got document out of start link {'startLink':{}, 'document':{}",
                 startLink, document);
-        Elements innerAnchors = document.getElementsByClass(classContainingGenresLinks).select("a");
-        logger.debug("Got collection of anchors {'anchors':{}}", innerAnchors);
-        for (Element anchor : innerAnchors) {
+        Elements anchors = document.getElementsByClass(classContainingGenresLinks).select("a");
+        logger.debug("Got collection of anchors {'anchors':{}}", anchors);
+        for (Element anchor : anchors) {
             String anchorLink = anchor.attr("href");
             String link = startLink + anchorLink;
             genreLinks.add(link);
@@ -62,9 +62,9 @@ public class VinylUaParser implements VinylParser {
                 throw new RuntimeException("Fail while getting a document by " + genreLink, e);
             }
             logger.debug("Got document out of genre link {'genreLink':{}, 'document':{}", genreLink, document);
-            Elements innerAnchors = document.getElementsByClass(classContainingPagesLinks).select("a");
-            logger.debug("Got collection of anchors {'anchors':{}}", innerAnchors);
-            for (Element anchor : innerAnchors) {
+            Elements anchors = document.getElementsByClass(classContainingPagesLinks).select("a");
+            logger.debug("Got collection of anchors {'anchors':{}}", anchors);
+            for (Element anchor : anchors) {
                 String anchorLink = anchor.attr("href");
                 String link = startLink + anchorLink;
                 if (link.contains("?page=") && !link.contains("ussr?page=2")) {
@@ -88,11 +88,11 @@ public class VinylUaParser implements VinylParser {
                 throw new RuntimeException("Fail while getting a document by " + pageLink, e);
             }
             logger.debug("Got document out of page link {'pageLink':{}, 'document':{}", pageLink, document);
-            Elements vinylElements = document.getElementsByClass(classContainingUniqueVinylDetails);
-            logger.debug("Got collection of vinyl elements {'vinylElements':{}}", vinylElements);
+            Elements anchors = document.getElementsByClass(classContainingOffersLinks);
+            logger.debug("Got collection of inner anchors with links to offers {'anchors':{}}", anchors);
 
-            for (Element vinylElement : vinylElements) {
-                String offerLink = startLink + vinylElement.getElementsByClass(classContainingOfferLinks).select("a").attr("href");
+            for (Element anchor : anchors) {
+                String offerLink = startLink + anchor.attr("href");
                 offerLinks.add(offerLink);
                 logger.debug("Added offer link to hash set{'offerLink':{}}", offerLink);
             }
@@ -117,11 +117,11 @@ public class VinylUaParser implements VinylParser {
         Document document;
         try {
             document = Jsoup.connect(offerLink).get();
+            logger.debug("Got document out of offer link {'offerLink':{}, 'document':{}", offerLink, document);
         } catch (IOException e) {
             logger.error("Error while getting document by link {'link':{}}", offerLink, e);
             throw new RuntimeException("Fail while getting a document by " + offerLink, e);
         }
-        logger.debug("Got document out of offer link {'offerLink':{}, 'document':{}", offerLink, document);
         Elements uniqueVinylDetailsElements = document.getElementsByClass(classContainingUniqueVinylDetails);
         Elements offerReleaseDetailsElements = document.getElementsByClass("list-meta");
         Elements offerPriceDetailsElements = document.getElementsByClass("btn btn-lg btn-success btn-bevel full-width");
@@ -139,9 +139,9 @@ public class VinylUaParser implements VinylParser {
         String priceNumber = priceDetails.substring(0, priceDetails.indexOf(' '));
         String priceCurrency = priceDetails.substring(priceDetails.indexOf(' ') + 1);
         String vinylLink = startLink + uniqueVinylDetails
-                .getElementsByClass(classContainingOfferLinks).select("a").attr("href");
+                .getElementsByClass(classContainingOffersLinks).select("a").attr("href");
         String[] imageLinks = uniqueVinylDetails
-                .getElementsByClass(classContainingOfferLinks).attr("style").split("'");
+                .getElementsByClass(classContainingOffersLinks).attr("style").split("'");
         String imageLink = imageLinks[1];
         if (!imageLink.contains("amazonaws.com")) {
             imageLink = "img/goods/no_image.jpg";

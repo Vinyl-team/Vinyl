@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -19,26 +21,33 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class JunoVinylParser implements VinylParser {
 
-    private final static String START_BASE_LINK = "https://www.juno.co.uk/all/";
-    private final static String START_LINK = START_BASE_LINK + "back-cat/2/?media_type=vinyl";
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final static String VINYL_ITEM_LIST_SELECTOR = "div.product-list";
-    private final static String PRICE_BLOCK_SELECTOR = "div.pl-buy";
-    private final static String PRICE_LINE_SELECTOR = "span.price_lrg.text-cta";
-    private final static String VINYL_ITEM_SELECTOR = "div.dv-item";
-    private final static String VINYL_IMAGE_LINK_SELECTOR = "img.lazy_img.img-fluid";
-    private final static String VINYL_INFO_BLOCK_SELECTOR = "div.pl-info";
-    private final static String VINYL_INFO_ITEMS_SELECTOR = "div.vi-text";
+    private final String START_BASE_LINK = "https://www.juno.co.uk/all/";
+    private final String START_LINK = START_BASE_LINK + "back-cat/2/?media_type=vinyl";
 
-    private final static Pattern PAGE_NUMBER_PATTERN = Pattern.compile("/([0-9]+)/");
+    private final String VINYL_ITEM_LIST_SELECTOR = "div.product-list";
+    private final String PRICE_BLOCK_SELECTOR = "div.pl-buy";
+    private final String PRICE_LINE_SELECTOR = "span.price_lrg.text-cta";
+    private final String VINYL_ITEM_SELECTOR = "div.dv-item";
+    private final String VINYL_IMAGE_LINK_SELECTOR = "img.lazy_img.img-fluid";
+    private final String VINYL_INFO_BLOCK_SELECTOR = "div.pl-info";
+    private final String VINYL_INFO_ITEMS_SELECTOR = "div.vi-text";
+
+    private final Pattern PAGE_NUMBER_PATTERN = Pattern.compile("/([0-9]+)/");
 
     @Override
     public List<RawOffer> getRawOffersList() {
         Set<String> pageLinks = getPresentPageLinks();
         Set<RawOffer> rawOffersSet = readVinylsDataFromAllPages(pageLinks);
         List<RawOffer> rawOffersList = new ArrayList<>(rawOffersSet);
-        log.debug("Resulting list of vinyls from www.juno.co.uk is {'rawOffersList':{}}", rawOffersList);
+        logger.debug("Resulting list of vinyls from www.juno.co.uk is {'rawOffersList':{}}", rawOffersList);
         return rawOffersList;
+    }
+
+    @Override
+    public RawOffer getRawOfferFromOfferLink(String offerLink) {
+        return null;
     }
 
     Set<String> getPresentPageLinks() {
@@ -55,12 +64,12 @@ public class JunoVinylParser implements VinylParser {
 
     Set<String> getFullPageLinksList(Set<String> pageLinks) {
         int maxPageNumber = countPageLinks(pageLinks);
-        log.debug("Pages found {'maxPageNumber':{}}", maxPageNumber);
+        logger.debug("Pages found {'maxPageNumber':{}}", maxPageNumber);
         var fullListOfPageLinks =
                 IntStream.rangeClosed(1, maxPageNumber)
                         .mapToObj(pageNumber -> START_LINK.replaceAll(PAGE_NUMBER_PATTERN.toString(), "/" + pageNumber + "/"))
                         .collect(toSet());
-        log.debug("Resulting set of page links (with no gaps in sequence) is {'pageLinks':{}}", pageLinks);
+        logger.info("Resulting set of page links (with no gaps in sequence) is {'pageLinks':{}}", pageLinks);
         return fullListOfPageLinks;
     }
 
@@ -84,7 +93,7 @@ public class JunoVinylParser implements VinylParser {
                 .flatMap(vinylItemsList -> vinylItemsList.select(VINYL_ITEM_SELECTOR).stream())
                 .flatMap(item -> this.itemToRawOffer(item).stream())
                 .collect(toSet());
-        log.debug("Resulting set of raw offers is {'rawOfferSet':{}}", rawOfferSet);
+        logger.debug("Resulting set of raw offers is {'rawOfferSet':{}}", rawOfferSet);
         return rawOfferSet;
     }
 
@@ -113,7 +122,7 @@ public class JunoVinylParser implements VinylParser {
             rawOffer.setGenre(genre);
             return Optional.of(rawOffer);
         } catch (Exception e) {
-            log.warn("Element will be skipped, since some error happened during RawOffer creation from the element: {}", item, e);
+            logger.warn("Element will be skipped, since some error happened during RawOffer creation from the element: {}", item, e);
             return Optional.empty();
         }
     }
@@ -131,7 +140,7 @@ public class JunoVinylParser implements VinylParser {
         try {
             return Optional.ofNullable(Jsoup.connect(url).get());
         } catch (IOException e) {
-            log.warn("Page represented by the link will be skipped, since some error happened while getting document by link {'link':{}}", url, e);
+            logger.warn("Page represented by the link will be skipped, since some error happened while getting document by link {'link':{}}", url, e);
             return Optional.empty();
         }
     }
