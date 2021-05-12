@@ -1,6 +1,7 @@
 package com.vinylteam.vinyl.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vinylteam.vinyl.discogs4j.entity.DiscogsVinylInfo;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.util.PropertiesReader;
 import org.json.simple.parser.ParseException;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -239,6 +241,109 @@ class DefaultDiscogsServiceITest {
 
         //then
         assertEquals("https://www.discogs.com/ru/The-Detectors-No-Freedom-No-Liberty/release/2288564", discogsLink);
+    }
+
+    @Test
+    @DisplayName("Return empty list of discogs vinyl info when discogs user name is null")
+    void getDiscogsVinylInfoWhenDiscogsUserNameIsNullTest(){
+        //when
+        Optional<List<DiscogsVinylInfo>> discogsVinylInfoList = defaultDiscogsService.getDiscogsVinylInfo(null);
+
+        //then
+        assertEquals(Optional.empty(), discogsVinylInfoList);
+    }
+
+    @Test
+    @DisplayName("Return empty list of discogs vinyl info when discogs user name is empty String")
+    void getDiscogsVinylInfoWhenDiscogsUserNameIsEmptyStringTest(){
+        //when
+        Optional<List<DiscogsVinylInfo>> discogsVinylInfoList = defaultDiscogsService.getDiscogsVinylInfo("");
+
+        //then
+        assertEquals(Optional.empty(), discogsVinylInfoList);
+    }
+
+    @Test
+    @DisplayName("Return empty list of discogs vinyl info when discogs want list is null")
+    void getDiscogsVinylInfoWhenDiscogsWantListIsNullTest(){
+        //when
+        Optional<List<DiscogsVinylInfo>> discogsVinylInfoList = defaultDiscogsService
+                .getDiscogsVinylInfo("not_exist_discogs_user_name");
+
+        //then
+        assertEquals(Optional.empty(), discogsVinylInfoList);
+    }
+
+    @Test
+    @DisplayName("Return list of discogs vinyl info")
+    void getDiscogsVinylInfoTest(){
+        //when
+        Optional<List<DiscogsVinylInfo>> discogsVinylInfoList = defaultDiscogsService
+                .getDiscogsVinylInfo("Anthony_Hopkins");
+
+        //then
+        assertEquals(discogsWantList, defaultDiscogsService.getDiscogsClient().wantlist("Anthony_Hopkins"));
+        assertEquals(3, discogsVinylInfoList.get().size());
+    }
+
+    @Test
+    @DisplayName("Return empty String when parameter is null")
+    void getParametersForComparisonWhenParameterIsNullTest(){
+        //when
+        String parameterForComparison = defaultDiscogsService.getParametersForComparison(null);
+
+        //then
+        assertEquals("", parameterForComparison);
+    }
+
+    @Test
+    @DisplayName("Return first word 'the' when String is 'ThE'")
+    void getParametersForComparisonWhenStringContainsOnlyOneWordAndItIsTheTest(){
+        //when
+        String parameterForComparison = defaultDiscogsService.getParametersForComparison("ThE");
+
+        //then
+        assertEquals("the", parameterForComparison);
+    }
+
+    @Test
+    @DisplayName("Return first word 'a' when String is 'A'")
+    void getParametersForComparisonWhenStringContainsOnlyOneWordAndItIsATest(){
+        //when
+        String parameterForComparison = defaultDiscogsService.getParametersForComparison("A");
+
+        //then
+        assertEquals("a", parameterForComparison);
+    }
+
+    @Test
+    @DisplayName("Return second word 'artist' when String is 'The Artist'")
+    void getParametersForComparisonWhenStringContainsTwoWordsWithArticleTheTest(){
+        //when
+        String parameterForComparison = defaultDiscogsService.getParametersForComparison("The Artist");
+
+        //then
+        assertEquals("artist", parameterForComparison);
+    }
+
+    @Test
+    @DisplayName("Return second word 'release' when String is 'A Release'")
+    void getParametersForComparisonWhenStringContainsTwoWordsWithArticleATest(){
+        //when
+        String parameterForComparison = defaultDiscogsService.getParametersForComparison("A Release");
+
+        //then
+        assertEquals("release", parameterForComparison);
+    }
+
+    @Test
+    @DisplayName("Return first word 'best' when String is 'BEST RELEASE is here'")
+    void getParametersForComparisonWhenStringContainsManyWordsWithoutArticleTest(){
+        //when
+        String parameterForComparison = defaultDiscogsService.getParametersForComparison("BEST RELEASE is here");
+
+        //then
+        assertEquals("best", parameterForComparison);
     }
 
     private UniqueVinyl createVinyl(String artist, String release) {

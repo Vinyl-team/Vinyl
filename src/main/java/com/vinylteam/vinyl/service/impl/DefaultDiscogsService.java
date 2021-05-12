@@ -90,7 +90,7 @@ public class DefaultDiscogsService implements DiscogsService {
         if (resultSearch != null) {
             for (Object searchItem : resultSearch) {
                 JSONObject jsonItem = (JSONObject) searchItem;
-                String discogsFullName = jsonItem.get("title").toString();
+                String discogsFullName = jsonItem.get("title").toString().toLowerCase();
                 if (discogsFullName.contains(artistComparing) && discogsFullName.contains(releaseComparing)) {
                     discogsLink = jsonItem.get("uri").toString();
                     discogsLink = "https://www.discogs.com/ru" + discogsLink;
@@ -101,7 +101,14 @@ public class DefaultDiscogsService implements DiscogsService {
         return discogsLink;
     }
 
+    public DiscogsClient getDiscogsClient() {
+        return discogsClient;
+    }
+
     Optional<List<DiscogsVinylInfo>> getDiscogsVinylInfo(String discogsUserName) {
+        if (discogsUserName == null || discogsUserName.equals("")){
+            return Optional.empty();
+        }
         String discogsWantList = discogsClient.wantlist(discogsUserName);
         try {
             if (discogsWantList != null) {
@@ -116,13 +123,16 @@ public class DefaultDiscogsService implements DiscogsService {
     }
 
     String getParametersForComparison(String param) {
+        if (param == null){
+            return "";
+        }
         String[] paramArray = param.split(" ");
         logger.debug("Split param into param array {'param':{}, 'paramArray':{}}", param, paramArray);
         if (paramArray.length > 1 && (paramArray[0].equalsIgnoreCase("the") || paramArray[0].equalsIgnoreCase("a"))) {
             paramArray[0] = paramArray[1];
         }
         logger.debug("Resulting string is {'resultParam':{}}", paramArray[0]);
-        return paramArray[0];
+        return paramArray[0].toLowerCase();
     }
 
 }

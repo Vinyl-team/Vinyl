@@ -25,6 +25,7 @@ class UserRowMapperTest {
         ResultSet mockedFilledResultSet = mock(ResultSet.class);
         when(mockedFilledResultSet.getString("email")).thenReturn("testuser@vinyl.com");
         when(mockedFilledResultSet.getString("password")).thenReturn("HASH");
+        when(mockedFilledResultSet.getString("discogs_user_name")).thenReturn("discogsUserName");
         when(mockedFilledResultSet.getString("salt")).thenReturn("salt");
         when(mockedFilledResultSet.getInt("iterations")).thenReturn(1);
         when(mockedFilledResultSet.getString("role")).thenReturn("USER");
@@ -34,6 +35,7 @@ class UserRowMapperTest {
         //then
         assertEquals("testuser@vinyl.com", actualUser.getEmail());
         assertEquals("HASH", actualUser.getPassword());
+        assertEquals("discogsUserName", actualUser.getDiscogsUserName());
         assertEquals("salt", actualUser.getSalt());
         assertEquals(1, actualUser.getIterations());
         assertEquals(Role.USER, actualUser.getRole());
