@@ -19,10 +19,11 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class JunoVinylParser implements VinylParser {
 
-    private static final String START_BASE_LINK = "https://www.juno.co.uk/all/";
-    private static final String START_LINK = START_BASE_LINK + "back-cat/2/?media_type=vinyl";
+    private static final String BASE_LINK = "https://www.juno.co.uk";
+    private static final String CATALOG_ROOT_LINK = BASE_LINK + "/all/";
+    private static final String START_PAGE_LINK = CATALOG_ROOT_LINK + "back-cat/2/?media_type=vinyl";
 
-    private static final String PRELIMINARY_PAGE_LINK_SELECTOR = "a[href^=" + START_BASE_LINK + "]";
+    private static final String PRELIMINARY_PAGE_LINK_SELECTOR = "a[href^=" + CATALOG_ROOT_LINK + "]";
     private static final String VINYL_ITEM_LIST_SELECTOR = "div.product-list";
     private static final String PRICE_BLOCK_SELECTOR = "div.pl-buy";
     private static final String PRICE_LINE_SELECTOR = "span.price_lrg.text-cta";
@@ -32,6 +33,10 @@ public class JunoVinylParser implements VinylParser {
     private static final String VINYL_INFO_ITEMS_SELECTOR = "div.vi-text";
 
     private static final Pattern PAGE_NUMBER_PATTERN = Pattern.compile("/([0-9]+)/");
+
+    static String getBaseLink(){
+        return BASE_LINK;
+    }
 
     @Override
     public List<RawOffer> getRawOffersList() {
@@ -43,7 +48,7 @@ public class JunoVinylParser implements VinylParser {
     }
 
     Set<String> getPresentPageLinks() {
-        var startDocument = getDocument(START_LINK);
+        var startDocument = getDocument(START_PAGE_LINK);
         var pageLinksShownFromStartList = startDocument
                 .stream()
                 .flatMap(document -> document.select(PRELIMINARY_PAGE_LINK_SELECTOR).stream())
@@ -58,7 +63,7 @@ public class JunoVinylParser implements VinylParser {
         log.debug("Pages found {'maxPageNumber':{}}", maxPageNumber);
         var fullListOfPageLinks =
                 IntStream.rangeClosed(1, maxPageNumber)
-                        .mapToObj(pageNumber -> START_LINK.replaceAll(PAGE_NUMBER_PATTERN.toString(), "/" + pageNumber + "/"))
+                        .mapToObj(pageNumber -> START_PAGE_LINK.replaceAll(PAGE_NUMBER_PATTERN.toString(), "/" + pageNumber + "/"))
                         .collect(toSet());
         log.debug("Resulting set of page links (with no gaps in sequence) is {'pageLinks':{}}", pageLinks);
         return fullListOfPageLinks;
@@ -91,7 +96,7 @@ public class JunoVinylParser implements VinylParser {
     Optional<RawOffer> itemToRawOffer(Element item) {
         try {
             var imageLink = resolveVinylImageLink(item.select(VINYL_IMAGE_LINK_SELECTOR).get(0));
-            var vinylLink = item.select("a").get(0).attr("href");
+            var vinylLink = getBaseLink() + item.select("a").get(0).attr("href");
             var info = item.select(VINYL_INFO_BLOCK_SELECTOR);
             var infoDetails = info.select(VINYL_INFO_ITEMS_SELECTOR);
             var priceBlock = item.select(PRICE_BLOCK_SELECTOR);

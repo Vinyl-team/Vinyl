@@ -55,7 +55,7 @@ class JunoVinylParserITest {
     }
 
     @Test
-    @DisplayName("Checks whether RawOffer instance is created based on HTML fragment that represents vinyl item")
+    @DisplayName("Checks whether RawOffer instance is created and fields are set based on HTML fragment that represents vinyl item")
     void givenHtmlImgElementWhenRawOfferIsCreatedThenCorrect() throws IOException {
         File testHtml = new File(this.getClass().getClassLoader().getResource("vinylItem.html").getPath());
         Document document = Jsoup.parse(testHtml, null);
@@ -68,6 +68,7 @@ class JunoVinylParserITest {
         assertFalse(rawOffer.getArtist().isEmpty());
         assertTrue(rawOffer.getShopId() > 0);
         assertNotNull(rawOffer.getOfferLink());
+        assertTrue(rawOffer.getOfferLink().startsWith(JunoVinylParser.getBaseLink()));
         assertFalse(rawOffer.getOfferLink().isEmpty());
         assertNotNull(rawOffer.getCurrency());
         assertEquals(Currency.getCurrency("GBP"), rawOffer.getCurrency());
