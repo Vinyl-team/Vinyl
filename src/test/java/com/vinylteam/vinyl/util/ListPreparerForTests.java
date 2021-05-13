@@ -61,6 +61,7 @@ public class ListPreparerForTests {
             User user = new User();
             user.setEmail("user" + (i + 1) + "@waxdeals.com");
             user.setPassword("hash" + (i + 1));
+            user.setDiscogsUserName("discogsUserName" + (i + 1));
             user.setSalt("salt" + (i + 1));
             user.setIterations(i + 1);
             user.setRole(Role.USER);

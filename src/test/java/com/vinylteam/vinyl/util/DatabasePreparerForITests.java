@@ -26,7 +26,7 @@ public class DatabasePreparerForITests {
     private final String INSERT_IN_UNIQUE_VINYLS = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image, has_offers) VALUES(?, ?, ?, ?, ?, ?)";
     private final String INSERT_IN_OFFERS = "INSERT INTO public.offers(unique_vinyl_id, shop_id, price, currency, genre, link_to_offer) " +
             "VALUES(?, ?, ?, ?, ?, ?)";
-    private final String INSERT_IN_USERS = "INSERT INTO public.users (email, password, salt, iterations, role, status) VALUES (?, ?, ?, ?, ?, ?)";
+    private final String INSERT_IN_USERS = "INSERT INTO public.users (email, password, salt, iterations, status, role, discogs_user_name) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final PropertiesReader propertiesReader = new PropertiesReader();
     private final HikariDataSource dataSource;
     private final HikariConfig config = new HikariConfig();
@@ -145,8 +145,9 @@ public class DatabasePreparerForITests {
                 insertUsers.setString(2, user.getPassword());
                 insertUsers.setString(3, user.getSalt());
                 insertUsers.setInt(4, user.getIterations());
-                insertUsers.setString(5, user.getRole().toString());
-                insertUsers.setBoolean(6, user.getStatus());
+                insertUsers.setBoolean(5, user.getStatus());
+                insertUsers.setString(6, user.getRole().toString());
+                insertUsers.setString(7, user.getDiscogsUserName());
                 insertUsers.addBatch();
             }
             insertUsers.executeBatch();
