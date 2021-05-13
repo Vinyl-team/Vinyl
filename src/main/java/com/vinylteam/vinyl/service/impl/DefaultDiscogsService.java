@@ -50,19 +50,31 @@ public class DefaultDiscogsService implements DiscogsService {
     @Override
     public List<UniqueVinyl> getDiscogsMatchList(String discogsUserName, List<UniqueVinyl> allUniqueVinyl) {
         List<UniqueVinyl> forShowing = new ArrayList<>();
-        if (discogsUserName == null || allUniqueVinyl == null || discogsUserName.equals("") || allUniqueVinyl.isEmpty()) {
+        if (discogsUserName == null || allUniqueVinyl == null || discogsUserName.isEmpty() || allUniqueVinyl.isEmpty()) {
             return forShowing;
         }
         Optional<List<DiscogsVinylInfo>> discogsVinylInfo = getDiscogsVinylInfo(discogsUserName);
+        logger.debug("Get list with DiscogsVinylInfo {'discogsVinylInfo':{}}", discogsVinylInfo);
         if (discogsVinylInfo.isPresent()) {
             for (DiscogsVinylInfo vinylInfo : discogsVinylInfo.get()) {
                 String release = getParametersForComparison(vinylInfo.getRelease());
+                logger.debug("Prepared release from DiscogsVinylInfo for comparison with release from UniqueVinyl {'release':{}}",
+                        release);
                 String artist = getParametersForComparison(vinylInfo.getArtist());
+                logger.debug("Prepared artist from DiscogsVinylInfo for comparison with artist from UniqueVinyl {'artist':{}}",
+                        artist);
                 for (UniqueVinyl uniqueVinyl : allUniqueVinyl) {
                     String uniqueRelease = getParametersForComparison(uniqueVinyl.getRelease());
+                    logger.debug("Prepared uniqueRelease from UniqueVinyl for comparison with release from DiscogsVinylInfo {'uniqueRelease':{}}",
+                            uniqueRelease);
                     String uniqueArtist = getParametersForComparison(uniqueVinyl.getArtist());
+                    logger.debug("Prepared uniqueArtist from UniqueVinyl for comparison with artist from DiscogsVinylInfo {'uniqueArtist':{}}",
+                            uniqueArtist);
                     if (release.equals(uniqueRelease) && artist.equals(uniqueArtist)) {
                         forShowing.add(uniqueVinyl);
+                        logger.debug("Comparison with artist & release from DiscogsVinylInfo & UniqueVinyl is successful. UniqueVinyl " +
+                                        "was added into list of UniqueVinyl that call 'forShowing' {'forShowing':{}}",
+                                forShowing);
                     }
                 }
             }
@@ -76,24 +88,33 @@ public class DefaultDiscogsService implements DiscogsService {
         String requestBody;
         String discogsLink = "";
         if (artist == null || release == null || fullName == null
-                || artist.equals("") || release.equals("") || fullName.equals("")) {
+                || artist.isEmpty() || release.isEmpty() || fullName.isEmpty()) {
             return discogsLink;
         }
         String artistComparing = getParametersForComparison(artist);
+        logger.debug("Prepared artistComparing for comparison with release from Discogs {'artistComparing':{}}", artistComparing);
         String releaseComparing = getParametersForComparison(release);
+        logger.debug("Prepared releaseComparing for comparison with artist from Discogs {'releaseComparing':{}}", releaseComparing);
         query = fullName.replace(" ", "+");
+        logger.debug("Prepared query for search vinyl on Discogs {'query':{}}", query);
         HttpRequest request = HttpRequest.get("https://api.discogs.com/database/search?q=" + query +
                 "&token=DzUqaiWPuQDWExZlqrAUuIZBYAHuBjNnapETonep");
         requestBody = request.body();
+        logger.debug("Get requestBody after search vinyl on Discogs {'requestBody':{}}", requestBody);
         JSONObject jsonRequest = (JSONObject) new JSONParser().parse(requestBody);
+        logger.debug("Get JSONObject from requestBody after search vinyl on Discogs {'jsonRequest':{}}", jsonRequest);
         JSONArray resultSearch = (JSONArray) jsonRequest.get("results");
+        logger.debug("Get JSONArray of necessary data from JSONObject after search vinyl on Discogs {'resultSearch':{}}", resultSearch);
         if (resultSearch != null) {
             for (Object searchItem : resultSearch) {
                 JSONObject jsonItem = (JSONObject) searchItem;
                 String discogsFullName = jsonItem.get("title").toString().toLowerCase();
+                logger.debug("Prepared discogsFullName from Discogs for comparison with artist & release {'discogsFullName':{}}",
+                        discogsFullName);
                 if (discogsFullName.contains(artistComparing) && discogsFullName.contains(releaseComparing)) {
                     discogsLink = jsonItem.get("uri").toString();
                     discogsLink = "https://www.discogs.com/ru" + discogsLink;
+                    logger.debug("Created link of vinyl to Discogs after successful comparison with data from db {'discogsLink':{}}", discogsLink);
                     break;
                 }
             }
@@ -101,12 +122,8 @@ public class DefaultDiscogsService implements DiscogsService {
         return discogsLink;
     }
 
-    public DiscogsClient getDiscogsClient() {
-        return discogsClient;
-    }
-
     Optional<List<DiscogsVinylInfo>> getDiscogsVinylInfo(String discogsUserName) {
-        if (discogsUserName == null || discogsUserName.equals("")){
+        if (discogsUserName == null || discogsUserName.isEmpty()) {
             return Optional.empty();
         }
         String discogsWantList = discogsClient.wantlist(discogsUserName);
@@ -123,7 +140,7 @@ public class DefaultDiscogsService implements DiscogsService {
     }
 
     String getParametersForComparison(String param) {
-        if (param == null){
+        if (param == null) {
             return "";
         }
         String[] paramArray = param.split(" ");

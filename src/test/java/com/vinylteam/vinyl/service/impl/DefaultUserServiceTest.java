@@ -259,7 +259,7 @@ class DefaultUserServiceTest {
 
     @Test
     @DisplayName("Return false when user doesn't exist")
-    void editWhenUserDoesNotExistInDbTest(){
+    void editWhenUserDoesNotExistInDbTest() {
         //prepare
         String notExistUser = "notExistUser@wax-deals.com";
         String newUser = "newUser@wax-deals.com";
@@ -278,7 +278,7 @@ class DefaultUserServiceTest {
 
     @Test
     @DisplayName("Return true when user exist")
-    void editWhenUserExistInDbTest(){
+    void editWhenUserExistInDbTest() {
         //prepare
         String existingUser = "existingUser@wax-deals.com";
         String newUser = "newUser@wax-deals.com";
@@ -297,7 +297,7 @@ class DefaultUserServiceTest {
 
     @Test
     @DisplayName("Return true when user exist and email don't changed")
-    void editWhenUserExistInDbAndEmailDoNotChangedTest(){
+    void editWhenUserExistInDbAndEmailDoNotChangedTest() {
         //prepare
         String existingUser = "existingUser@wax-deals.com";
         String newUser = "existingUser@wax-deals.com";
