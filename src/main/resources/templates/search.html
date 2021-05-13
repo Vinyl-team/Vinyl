@@ -27,8 +27,13 @@
             <li>
               <a href="#" class="header__menu-item">about</a>
             </li>
-            <li>
-              <a href="catalog" class="header__menu-item">catalog</a>
+            <li th:switch="${userRole}">
+              <div th:case="null">
+                <a href="catalog" class="header__menu-item">catalog</a>
+              </div>
+              <div th:case="*">
+                <a href="catalog" class="header__menu-item">wantlist</a>
+              </div>
             </li>
             <li>
               <a href="/" class="header__logo">
@@ -131,8 +136,8 @@
                 <a class="other-vinyls__image" th:href="@{oneVinyl(id=${vinylFromFirstRow.id})}">
                   <img th:src="${vinylFromFirstRow.imageLink}" alt="vinyl image">
                 </a>
-                <a th:text="${vinylFromFirstRow.artist}" th:href="@{oneVinyl(id=${vinylFromFirstRow.id})}" class="other-vinyls__artist">No artist</a>
-                <a th:text="${vinylFromFirstRow.release}" th:href="@{oneVinyl(id=${vinylFromFirstRow.id})}" class="other-vinyls__release">No release</a>
+                <a th:utext="${vinylFromFirstRow.artist}+'&lt;span class=&quot;tip-text tip-text-other&quot;&gt;'+${vinylFromFirstRow.artist}+'&lt;/span&gt;'" th:href="@{oneVinyl(id=${vinylFromFirstRow.id})}" class="other-vinyls__artist">No artist</a>
+                <a th:utext="${vinylFromFirstRow.release}+'&lt;span class=&quot;tip-text tip-text-other&quot;&gt;'+${vinylFromFirstRow.release}+'&lt;/span&gt;'" th:href="@{oneVinyl(id=${vinylFromFirstRow.id})}" class="other-vinyls__release">No release</a>
               </div>
             </div>
             
@@ -147,8 +152,8 @@
               <a class="other-vinyls__image" th:href="@{oneVinyl(id=${vinylFromOtherRow.id})}">
                 <img th:src="${vinylFromOtherRow.imageLink}" alt="vinyl image">
               </a>
-              <a th:text="${vinylFromOtherRow.artist}" th:href="@{oneVinyl(id=${vinylFromOtherRow.id})}" class="other-vinyls__artist">No artist</a>
-              <a th:text="${vinylFromOtherRow.release}" th:href="@{oneVinyl(id=${vinylFromOtherRow.id})}" class="other-vinyls__release">No release</a>
+              <a th:utext="${vinylFromOtherRow.artist}+'&lt;span class=&quot;tip-text tip-text-other&quot;&gt;'+${vinylFromOtherRow.artist}+'&lt;/span&gt;'" th:href="@{oneVinyl(id=${vinylFromOtherRow.id})}" class="other-vinyls__artist">No artist</a>
+              <a th:utext="${vinylFromOtherRow.release}+'&lt;span class=&quot;tip-text tip-text-other&quot;&gt;'+${vinylFromOtherRow.release}+'&lt;/span&gt;'" th:href="@{oneVinyl(id=${vinylFromOtherRow.id})}" class="other-vinyls__release">No release</a>
             </div>
 
           </div>

@@ -75,7 +75,7 @@ public class Starter {
         ShopService shopService = new DefaultShopService(shopDao);
 //UTIL, FILL IN DATABASE
 
-        ShopsParser shopsParser = new ShopsParser();
+        /*ShopsParser shopsParser = new ShopsParser();
         RawOffersSorter rawOffersSorter = new RawOffersSorter();
         List<VinylParser> vinylParsers = List.of(new VinylUaParser(), new JunoVinylParser());
         Updater updater = new Updater(uniqueVinylService, offerService, shopsParser, vinylParsers, rawOffersSorter);
@@ -90,7 +90,7 @@ public class Starter {
 
         Timer updateTimer = new Timer("Update Timer");
         long updatePeriod = Long.parseLong(propertiesReader.getProperty("updatePeriod"));
-        updateTimer.scheduleAtFixedRate(updateTask, 0, updatePeriod);
+        updateTimer.scheduleAtFixedRate(updateTask, 0, updatePeriod);*/
 //WEB
 
         SecurityFilter securityFilter = new SecurityFilter();
