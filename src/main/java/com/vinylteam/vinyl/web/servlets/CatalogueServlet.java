@@ -33,6 +33,7 @@ public class CatalogueServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String discogsUserName;
+        User user = null;
         List<UniqueVinyl> randomUniqueVinyls = uniqueVinylService.findManyRandom(50);
         List<UniqueVinyl> forShowing = new ArrayList<>();
         List<UniqueVinyl> allUniqueVinyl = uniqueVinylService.findAll();
@@ -41,14 +42,14 @@ public class CatalogueServlet extends HttpServlet {
         Map<String, String> attributes = new HashMap<>();
         HttpSession session = request.getSession(false);
         if (session != null) {
-            User user = (User) session.getAttribute("user");
+            user = (User) session.getAttribute("user");
             if (user != null) {
                 attributes.put("userRole", user.getRole().toString());
                 discogsUserName = user.getDiscogsUserName();
                 forShowing = discogsService.getDiscogsMatchList(discogsUserName, allUniqueVinyl);
             }
         }
-        if (!forShowing.isEmpty()) {
+        if (user != null) {
             PageGenerator.getInstance().process("catalog", forShowing, attributes, response.getWriter());
         } else {
             PageGenerator.getInstance().process("catalog", randomUniqueVinyls, attributes, response.getWriter());

@@ -27,8 +27,13 @@
                         <li>
                             <a href="#" class="header__menu-item">about</a>
                         </li>
-                        <li>
-                            <a href="catalog" class="header__menu-item header__menu-item_active">catalog</a>
+                        <li th:switch="${userRole}">
+                            <div th:case="null">
+                                <a href="catalog" class="header__menu-item header__menu-item_active">catalog</a>
+                            </div>
+                            <div th:case="*">
+                                <a href="catalog" class="header__menu-item header__menu-item_active">wantlist</a>
+                            </div>
                         </li>
                         <li>
                             <a href="/" class="header__logo">
@@ -98,17 +103,27 @@
 
                 <!-- first row of goods -->
 
+                <div th:if="${#lists.isEmpty(vinylList)}">
+                    <div class="search-none">
+                        <p class="search-none__one">Now your want list is empty.</p>
+                        <p class="search-none__two">Useful tips:</p>
+                        <ul class="search-none__ul-search">
+                            <li>You can add the record on the website <a href="https://www.discogs.com/" target="_blank">www.discogs.com</a> to the want list</li>
+                            <li>Or on our website pressing the heart on the record</li>
+                        </ul>
+                        <p class="search-none__three">Thank you.</p>
+                    </div>
+                </div>
+
                 <div class="vinyls-content__row">
                     <div class="other-vinyls">
-
                         <div class="other-vinyls__item vinyl" th:each="vinyl : ${vinylList}">
                             <a class="other-vinyls__image" th:href="@{oneVinyl(id=${vinyl.id})}">
                                 <img th:src="${vinyl.imageLink}" alt="vinyl image">
                             </a>
-                            <a th:href="@{oneVinyl(id=${vinyl.id})}" th:text="${vinyl.artist}" class="other-vinyls__artist">No artist</a>
-                            <a th:href="@{oneVinyl(id=${vinyl.id})}" th:text="${vinyl.release}" class="other-vinyls__release">No release</a>
+                            <a th:href="@{oneVinyl(id=${vinyl.id})}" th:utext="${vinyl.artist}+'&lt;span class=&quot;tip-text tip-text-other&quot;&gt;'+${vinyl.artist}+'&lt;/span&gt;'" class="other-vinyls__artist">No artist</a>
+                            <a th:href="@{oneVinyl(id=${vinyl.id})}" th:utext="${vinyl.release}+'&lt;span class=&quot;tip-text tip-text-other&quot;&gt;'+${vinyl.release}+'&lt;/span&gt;'" class="other-vinyls__release">No release</a>
                         </div>
-
                     </div>
                 </div>
 

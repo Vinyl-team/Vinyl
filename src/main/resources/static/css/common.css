@@ -161,7 +161,6 @@ h1 {
 }
 
 .header__row{
-  height: 5.25em;
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -170,6 +169,7 @@ h1 {
 
 .header__menu{
   flex: 1 1 auto;
+  height: 5.22em;
 }
 
 .header__menu-list{
@@ -177,8 +177,12 @@ h1 {
   height: 3.6em;
   width: 49.5em;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   margin: 0 auto;
+}
+
+.header__menu-list li{
+  line-height: 1;
 }
 
 .header__menu-item{
@@ -191,7 +195,7 @@ h1 {
 }
 
 .head__login-signs{
-  height: 3.6em;
+  height: 4.78em;
   position: absolute;
   right: 0;
   display: flex;

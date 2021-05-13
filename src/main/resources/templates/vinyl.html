@@ -28,8 +28,13 @@
                         <li>
                             <a href="#" class="header__menu-item">about</a>
                         </li>
-                        <li>
-                            <a href="catalog" class="header__menu-item">catalog</a>
+                        <li th:switch="${userRole}">
+                            <div th:case="null">
+                                <a href="catalog" class="header__menu-item">catalog</a>
+                            </div>
+                            <div th:case="*">
+                                <a href="catalog" class="header__menu-item">wantlist</a>
+                            </div>
                         </li>
                         <li>
                             <a href="/" class="header__logo">
@@ -111,7 +116,6 @@
                                     </div>
                                     <div class="first-vinyl__artist" th:utext="${firstVinyl.artist}+'&lt;span class=&quot;vinyl-tip-text tip-text&quot;&gt;'+${firstVinyl.artist}+'&lt;/span&gt;'">No artist</div>
                                     <div class="first-vinyl__release" th:utext="${firstVinyl.release}+'&lt;span class=&quot;vinyl-tip-text tip-text&quot;&gt;'+${firstVinyl.release}+'&lt;/span&gt;'">No release</div>
-                                    <div class="first-vinyl__catalog">Catalog No: MFO 42902</div>
                                 </div>
                             </div>
                         </div>
@@ -128,30 +132,34 @@
                                 </a>
                             </div>
                             <div class="shop-list__row shop-list__row-second-title">
-                                <div class="shop-list__item shop-list__second-item-title">
-                                    <div class="shop-list__title">Shops</div>
+                                <div class="shop-list__second-item-title">
+                                    <div class="shop-list__title shop-list__shop-width shop-list__item-direction">Shops</div>
                                 </div>
-                                <div class="shop-list__item shop-list__second-item-title">
-                                    <div class="shop-list__title">Stock</div>
+                                <div class="shop-list__second-item-title">
+                                    <div class="shop-list__title shop-list__catalog-width shop-list__item-direction">Catalog No:</div>
                                 </div>
-                                <div class="shop-list__item shop-list__second-item-title">
-                                    <div class="shop-list__title">Price</div>
+                                <div class="shop-list__second-item-title">
+                                    <div class="shop-list__title shop-list__stock-width shop-list__item-direction">Stock</div>
                                 </div>
-                                <div class="shop-list__item shop-list__second-item-title">
-                                    <div class="shop-list__title"></div>
+                                <div class="shop-list__second-item-title">
+                                    <div class="shop-list__title shop-list__price-width shop-list__item-direction">Price</div>
+                                </div>
+                                <div class="shop-list__second-item-title">
+                                    <div class="shop-list__title shop-list__go-to-shop-width shop-list__item-direction"></div>
                                 </div>
                             </div>
 
                             <div class="shop-list__column shop-list__scrollbar">
                                 <div class="shop-list__row" th:each="vinylOffer : ${vinylOffersList}">
-                                    <div class="shop-list__item item-body shop-list__item-image">
+                                    <div class="item-body shop-list__item-image">
                                         <img th:src="${vinylOffer.shopImageLink}" alt="shop icon">
                                     </div>
-                                    <div class="shop-list__item item-body on-stock"></div>
-                                    <div class="shop-list__item item-body shop-list__item-price"
+                                    <div class="item-body shop-list__catalog-width shop-list__item-direction">GF2 3000</div>
+                                    <div class="item-body on-stock shop-list__stock-width shop-list__item-direction"></div>
+                                    <div class="item-body shop-list__item-price shop-list__price-width shop-list__item-direction"
                                          th:text="${vinylOffer.price}">No price
                                     </div>
-                                    <div class="shop-list__item item-body">
+                                    <div class="item-body shop-list__go-to-shop-width shop-list__item-direction">
                                         <a th:href="${vinylOffer.offerLink}" class="button on-stock-button"
                                            target="_blank">GO TO SHOP</a>
                                     </div>
@@ -175,10 +183,10 @@
                             <a class="other-vinyls__image" th:href="@{oneVinyl(id=${vinylByArtist.id})}">
                                 <img th:src="${vinylByArtist.imageLink}" alt="vinyl image">
                             </a>
-                            <a th:href="@{oneVinyl(id=${vinylByArtist.id})}" th:text="${vinylByArtist.artist}"
+                            <a th:href="@{oneVinyl(id=${vinylByArtist.id})}" th:utext="${vinylByArtist.artist}+'&lt;span class=&quot;tip-text tip-text-other&quot;&gt;'+${vinylByArtist.artist}+'&lt;/span&gt;'"
                                class="other-vinyls__artist">No artist</a>
                             <a th:href="@{oneVinyl(id=${vinylByArtist.id})}"
-                               th:text="${vinylByArtist.release}" class="other-vinyls__release">No release</a>
+                               th:utext="${vinylByArtist.release}+'&lt;span class=&quot;tip-text tip-text-other&quot;&gt;'+${vinylByArtist.release}+'&lt;/span&gt;'" class="other-vinyls__release">No release</a>
                         </div>
                     </div>
 
