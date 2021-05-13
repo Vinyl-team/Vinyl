@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class JunoVinylParser implements VinylParser {
 
-    private static final String BASE_LINK = "https://www.juno.co.uk";
+    protected static final String BASE_LINK = "https://www.juno.co.uk";
     private static final String CATALOG_ROOT_LINK = BASE_LINK + "/all/";
     private static final String START_PAGE_LINK = CATALOG_ROOT_LINK + "back-cat/2/?media_type=vinyl";
 
@@ -33,10 +33,6 @@ public class JunoVinylParser implements VinylParser {
     private static final String VINYL_INFO_ITEMS_SELECTOR = "div.vi-text";
 
     private static final Pattern PAGE_NUMBER_PATTERN = Pattern.compile("/([0-9]+)/");
-
-    static String getBaseLink(){
-        return BASE_LINK;
-    }
 
     @Override
     public List<RawOffer> getRawOffersList() {
@@ -96,7 +92,7 @@ public class JunoVinylParser implements VinylParser {
     Optional<RawOffer> itemToRawOffer(Element item) {
         try {
             var imageLink = resolveVinylImageLink(item.select(VINYL_IMAGE_LINK_SELECTOR).get(0));
-            var vinylLink = getBaseLink() + item.select("a").get(0).attr("href");
+            var vinylLink = BASE_LINK + item.select("a").get(0).attr("href");
             var info = item.select(VINYL_INFO_BLOCK_SELECTOR);
             var infoDetails = info.select(VINYL_INFO_ITEMS_SELECTOR);
             var priceBlock = item.select(PRICE_BLOCK_SELECTOR);

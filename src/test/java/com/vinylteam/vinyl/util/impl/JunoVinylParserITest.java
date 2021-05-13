@@ -68,7 +68,7 @@ class JunoVinylParserITest {
         assertFalse(rawOffer.getArtist().isEmpty());
         assertTrue(rawOffer.getShopId() > 0);
         assertNotNull(rawOffer.getOfferLink());
-        assertTrue(rawOffer.getOfferLink().startsWith(JunoVinylParser.getBaseLink()));
+        assertTrue(rawOffer.getOfferLink().startsWith(JunoVinylParser.BASE_LINK));
         assertFalse(rawOffer.getOfferLink().isEmpty());
         assertNotNull(rawOffer.getCurrency());
         assertEquals(Currency.getCurrency("GBP"), rawOffer.getCurrency());
