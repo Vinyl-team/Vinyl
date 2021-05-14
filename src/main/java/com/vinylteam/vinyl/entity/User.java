@@ -18,6 +18,7 @@ public class User {
     public User(User user) {
         this.email = user.email;
         this.password = user.password;
+        this.discogsUserName = user.discogsUserName;
         this.salt = user.salt;
         this.iterations = user.iterations;
         this.role = user.role;

@@ -5,8 +5,6 @@ import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.util.DatabasePreparerForITests;
 import com.vinylteam.vinyl.util.DataGeneratorForTests;
 import org.junit.jupiter.api.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -17,15 +15,22 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JdbcUserDaoITest {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
     private final JdbcUserDao jdbcUserDao = new JdbcUserDao(databasePreparer.getDataSource());
+    private User newUser = new User();
     private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
     private final List<User> users = dataGenerator.getUsersList();
 
     @BeforeAll
     void beforeAll() throws SQLException {
         databasePreparer.truncateCascadeUsers();
+        newUser.setEmail("user3@waxdeals.com");
+        newUser.setPassword("hash3");
+        newUser.setDiscogsUserName("discogsUserName3");
+        newUser.setSalt("salt3");
+        newUser.setIterations(3);
+        newUser.setRole(Role.USER);
+        newUser.setStatus(true);
     }
 
     @AfterAll
@@ -85,13 +90,7 @@ class JdbcUserDaoITest {
     @DisplayName("Adds user to db")
     void addNewTest() {
         //prepare
-        User expectedUser = new User();
-        expectedUser.setEmail("user3@waxdeals.com");
-        expectedUser.setPassword("hash3");
-        expectedUser.setSalt("salt3");
-        expectedUser.setIterations(3);
-        expectedUser.setRole(Role.USER);
-        expectedUser.setStatus(true);
+        User expectedUser = new User(newUser);
         //when
         assertTrue(jdbcUserDao.add(expectedUser));
         //then
@@ -111,6 +110,18 @@ class JdbcUserDaoITest {
     }
 
     @Test
+    @DisplayName("Adds new user with existing discogsUserName")
+    void addNewWithExistingDiscogsUserNameTest() {
+        //prepare
+        User expectedUser = new User(newUser);
+        expectedUser.setDiscogsUserName("discogsUserName1");
+        //when
+        assertFalse(jdbcUserDao.add(expectedUser));
+        //then
+        assertEquals(2, jdbcUserDao.countAll());
+    }
+
+    @Test
     @DisplayName("Adds existing user with new password")
     void addExistingWithNewPasswordTest() {
         //prepare
@@ -125,32 +136,36 @@ class JdbcUserDaoITest {
     @Test
     @DisplayName("Edit non-existent user in db")
     void editNonExistentUserInDbTest() {
+        //prepare
         String oldNonExistentEmail = "user4@waxdeals.com";
-        User user = new User();
-        user.setEmail("user5@waxdeals.com");
-        user.setPassword("HASH4");
-        user.setSalt("");
-        user.setIterations(0);
-        user.setRole(Role.USER);
-        user.setStatus(true);
-
+        User user = new User(newUser);
+        //then
         assertFalse(jdbcUserDao.edit(oldNonExistentEmail, user));
     }
 
     @Test
     @DisplayName("Edit existing user in db")
     void editWithAnExistingUserInDbTest() {
+        //prepare
         String oldExistingEmail = "user2@waxdeals.com";
-        User user = new User();
-        user.setEmail("user3@waxdeals.com");
-        user.setPassword("HASH2");
-        user.setSalt("");
-        user.setIterations(0);
-        user.setRole(Role.USER);
-        user.setStatus(true);
-
+        User user = new User(newUser);
+        //when
         assertTrue(jdbcUserDao.edit(oldExistingEmail, user));
+        //then
         assertEquals("user3@waxdeals.com", jdbcUserDao.getByEmail("user3@waxdeals.com").orElse(new User()).getEmail());
+    }
+
+    @Test
+    @DisplayName("Edit user and try to change discogsUserName that already exist in db")
+    void editWithAnExistingUserInDbAndTryToChangeDiscogsUserNameThatAlreadyExistTest() {
+        //prepare
+        String oldExistingEmail = "user2@waxdeals.com";
+        User user = new User(newUser);
+        user.setDiscogsUserName("discogsUserName1");
+        //when
+        assertFalse(jdbcUserDao.edit(oldExistingEmail, user));
+        //then
+        assertEquals("user2@waxdeals.com", jdbcUserDao.getByEmail("user2@waxdeals.com").orElse(new User()).getEmail());
     }
 
 }

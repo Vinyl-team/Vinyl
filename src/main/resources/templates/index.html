@@ -27,8 +27,13 @@
             <li>
               <a href="#" class="header__menu-item">about</a>
             </li>
-            <li>
-              <a href="catalog" class="header__menu-item">catalog</a>
+            <li th:switch="${userRole}">
+              <div th:case="null">
+                <a href="catalog" class="header__menu-item">catalog</a>
+              </div>
+              <div th:case="*">
+                <a href="catalog" class="header__menu-item">wantlist</a>
+              </div>
             </li>
             <li>
               <a href="/" class="header__logo">
