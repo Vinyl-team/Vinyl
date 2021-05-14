@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class DataGeneratorForTests {
 
-    public Shop getTemplateShopWithNumber(int number) {
+    public Shop getShopWithNumber(int number) {
         if (number < 1) {
             throw new RuntimeException("Don't generate template shop from number < 1! number: " + number);
         }
@@ -20,12 +20,12 @@ public class DataGeneratorForTests {
         return shop;
     }
 
-    public User getTemplateUserWithNumber(int number) {
+    public User getUserWithNumber(int number) {
         if (number < 1) {
             throw new RuntimeException("Don't generate template user from number < 1! number: " + number);
         }
         User user = new User();
-        user.setEmail("user" + number + "@waxdeals.com");
+        user.setEmail("user" + number + "@wax-deals.com");
         user.setPassword("hash" + number);
         user.setSalt("salt" + number);
         user.setIterations(number);
@@ -35,7 +35,7 @@ public class DataGeneratorForTests {
         return user;
     }
 
-    public UniqueVinyl getTemplateUniqueVinylWithNumber(int number) {
+    public UniqueVinyl getUniqueVinylWithNumber(int number) {
         if (number < 1) {
             throw new RuntimeException("Don't generate template unique vinyl from number < 1! number: " + number);
         }
@@ -49,7 +49,7 @@ public class DataGeneratorForTests {
         return uniqueVinyl;
     }
 
-    public Offer getTemplateOfferWithUniqueVinylIdAndShopId(int uniqueVinylId, int shopId) {
+    public Offer getOfferWithUniqueVinylIdAndShopId(int uniqueVinylId, int shopId) {
         if (uniqueVinylId < 1 || shopId < 1) {
             throw new RuntimeException("Don't generate template offer from uniqueVinylId < 1 or shopId < 1! uniqueVinylId: " + uniqueVinylId + ", shopId: " + shopId);
         }
@@ -63,7 +63,7 @@ public class DataGeneratorForTests {
         return offer;
     }
 
-    public RawOffer getTemplateRawOfferWithShopIdAndNumber(int shopId, int number) {
+    public RawOffer getRawOfferWithShopIdAndNumber(int shopId, int number) {
         if (number < 1) {
             throw new RuntimeException("Don't generate template raw offer from shopId < 1 or number < 1! shopId: " + shopId + " number: " + number);
         }
@@ -130,7 +130,7 @@ public class DataGeneratorForTests {
         List<User> users = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             User user = new User();
-            user.setEmail("user" + (i + 1) + "@waxdeals.com");
+            user.setEmail("user" + (i + 1) + "@wax-deals.com");
             user.setPassword("hash" + (i + 1));
             user.setDiscogsUserName("discogsUserName" + (i + 1));
             user.setSalt("salt" + (i + 1));

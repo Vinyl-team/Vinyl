@@ -1,8 +1,8 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
 import com.vinylteam.vinyl.entity.Shop;
-import com.vinylteam.vinyl.util.DatabasePreparerForITests;
 import com.vinylteam.vinyl.util.DataGeneratorForTests;
+import com.vinylteam.vinyl.util.DatabasePreparerForITests;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;

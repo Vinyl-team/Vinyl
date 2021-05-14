@@ -5,8 +5,8 @@ import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.util.DataFinderFromDBForITests;
-import com.vinylteam.vinyl.util.DatabasePreparerForITests;
 import com.vinylteam.vinyl.util.DataGeneratorForTests;
+import com.vinylteam.vinyl.util.DatabasePreparerForITests;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
@@ -129,13 +129,9 @@ class JdbcOfferDaoITest {
         //prepare
         List<UniqueVinyl> expectedUpdatedUniqueVinyls = dataGenerator.getUniqueVinylsList();
         expectedUpdatedUniqueVinyls.get(3).setHasOffers(true);
-        List<Offer> expectedUpdatedOffers = dataGenerator.getOffersList();
-        Offer newOffer = new Offer(expectedUpdatedOffers.get(0));
+        Offer newOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(4, 1);
         newOffer.setId(7);
-        newOffer.setUniqueVinylId(4);
-        newOffer.setPrice(41.);
-        newOffer.setGenre("genre4");
-        newOffer.setOfferLink("shop1/release4");
+        List<Offer> expectedUpdatedOffers = dataGenerator.getOffersList();
         expectedUpdatedOffers.add(newOffer);
         //when
         List<Offer> actualUnaddedOffers = offerDao.updateUniqueVinylsRewriteAll(expectedUpdatedUniqueVinyls, expectedUpdatedOffers);
@@ -152,21 +148,12 @@ class JdbcOfferDaoITest {
     void updateUniqueVinylsRewriteAllNewUniqueVinylNewOfferTest() {
         //prepare
         List<UniqueVinyl> expectedUpdatedUniqueVinyls = dataGenerator.getUniqueVinylsList();
-        List<Offer> expectedUpdatedOffers = dataGenerator.getOffersList();
-        UniqueVinyl newUniqueVinyl = new UniqueVinyl(expectedUpdatedUniqueVinyls.get(0));
-        newUniqueVinyl.setId(5);
-        newUniqueVinyl.setRelease("release5");
-        newUniqueVinyl.setArtist("artist5");
-        newUniqueVinyl.setFullName(newUniqueVinyl.getRelease() + " - " + newUniqueVinyl.getArtist());
-        newUniqueVinyl.setImageLink("/image5");
+        UniqueVinyl newUniqueVinyl = dataGenerator.getUniqueVinylWithNumber(5);
         newUniqueVinyl.setHasOffers(true);
         expectedUpdatedUniqueVinyls.add(newUniqueVinyl);
-        Offer newOffer = new Offer(expectedUpdatedOffers.get(0));
+        List<Offer> expectedUpdatedOffers = dataGenerator.getOffersList();
+        Offer newOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(5, 1);
         newOffer.setId(7);
-        newOffer.setUniqueVinylId(5);
-        newOffer.setPrice(51.);
-        newOffer.setGenre("genre5");
-        newOffer.setOfferLink("shop1/release5");
         expectedUpdatedOffers.add(newOffer);
         //when
         List<Offer> actualUnaddedOffers = offerDao.updateUniqueVinylsRewriteAll(expectedUpdatedUniqueVinyls, expectedUpdatedOffers);
@@ -179,7 +166,7 @@ class JdbcOfferDaoITest {
     }
 
     @Test
-    @DisplayName("Returns list of unadded offers with all offers on updating filled db with all false vinyls with offers referencing them")
+    @DisplayName("Returns list of unadded offers with all offers - on updating filled db with all false vinyls with offers referencing them")
     void updateUniqueVinylsRewriteAllUniqueVinylsAllFalseWithOffersReferencingTest() {
         //prepare
         List<UniqueVinyl> expectedUpdatedUniqueVinyls = dataGenerator.getUniqueVinylsList();
@@ -198,20 +185,15 @@ class JdbcOfferDaoITest {
     }
 
     @Test
-    @DisplayName("Returns list of unadded offers with one offer on updating filled db with one of the offers referencing false vinyl")
+    @DisplayName("Returns list of unadded offers with one offer - on updating filled db with one of the offers referencing false vinyl")
     void updateUniqueVinylsRewriteAllSomeOffersReferencingFalseUniqueVinylTest() {
         //prepare
         List<UniqueVinyl> expectedUpdatedUniqueVinyls = dataGenerator.getUniqueVinylsList();
         List<Offer> expectedUpdatedOffers = dataGenerator.getOffersList();
         List<Offer> updatedOffersFalseUniqueVinylId = dataGenerator.getOffersList();
-        Offer newOfferFalseUniqueVinylId = new Offer(expectedUpdatedOffers.get(0));
-        newOfferFalseUniqueVinylId.setId(7);
-        newOfferFalseUniqueVinylId.setUniqueVinylId(4);
-        newOfferFalseUniqueVinylId.setPrice(41.);
-        newOfferFalseUniqueVinylId.setGenre("genre4");
-        newOfferFalseUniqueVinylId.setOfferLink("shop1/release4");
-        updatedOffersFalseUniqueVinylId.add(newOfferFalseUniqueVinylId);
-        List<Offer> expectedUnaddedOffers = updatedOffersFalseUniqueVinylId.subList(6, 7);
+        Offer offerFalseUniqueVinylId = dataGenerator.getOfferWithUniqueVinylIdAndShopId(4, 1);
+        updatedOffersFalseUniqueVinylId.add(offerFalseUniqueVinylId);
+        List<Offer> expectedUnaddedOffers = new ArrayList<>(List.of(offerFalseUniqueVinylId));
         //when
         List<Offer> actualUnaddedOffers = offerDao.updateUniqueVinylsRewriteAll(expectedUpdatedUniqueVinyls, updatedOffersFalseUniqueVinylId);
         //then
@@ -223,20 +205,16 @@ class JdbcOfferDaoITest {
     }
 
     @Test
-    @DisplayName("Returns list of unadded offers with offer with nonexistent uniqueVinylIds when database is initially filled, and one of the offers has uniqueVinylId that does not exist")
+    @DisplayName("Returns list of unadded offers with offer with nonexistent uniqueVinylIds when database is initially filled," +
+            " and one of the offers has uniqueVinylId that does not exist")
     void updateUniqueVinylsRewriteAllUniqueVinylsSomeOffersFalseUniqueVinylIdTest() {
         //prepare
         List<UniqueVinyl> expectedUpdatedUniqueVinyls = dataGenerator.getUniqueVinylsList();
         List<Offer> expectedUpdatedOffers = dataGenerator.getOffersList();
         List<Offer> updatedOffersNonExistentUniqueVinylId = dataGenerator.getOffersList();
-        Offer offerNonExistentUniqueVinylId = new Offer(expectedUpdatedOffers.get(0));
-        offerNonExistentUniqueVinylId.setId(7);
-        offerNonExistentUniqueVinylId.setUniqueVinylId(5);
-        offerNonExistentUniqueVinylId.setPrice(51.);
-        offerNonExistentUniqueVinylId.setGenre("genre5");
-        offerNonExistentUniqueVinylId.setOfferLink("shop1/release5");
+        Offer offerNonExistentUniqueVinylId = dataGenerator.getOfferWithUniqueVinylIdAndShopId(5, 1);
         updatedOffersNonExistentUniqueVinylId.add(offerNonExistentUniqueVinylId);
-        List<Offer> expectedUnaddedOffers = updatedOffersNonExistentUniqueVinylId.subList(6, 7);
+        List<Offer> expectedUnaddedOffers = new ArrayList<>(List.of(offerNonExistentUniqueVinylId));
         //when
         List<Offer> actualUnaddedOffers = offerDao.updateUniqueVinylsRewriteAll(expectedUpdatedUniqueVinyls, updatedOffersNonExistentUniqueVinylId);
         //then

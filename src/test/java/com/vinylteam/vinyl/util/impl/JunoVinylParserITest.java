@@ -91,9 +91,10 @@ class JunoVinylParserITest {
         String dataSrcLink = getImgLink(htmlImgDataSrcTag);
         assertEquals("http://google.com/data-image.jpg", dataSrcLink);
     }
+
     @Test
     @DisplayName("Checks extractPrice() method which returns numeric price from the string received in HTML")
-    void givenPriceStringFromHtmlWhenNumericPriceReturnedThenCorrect(){
+    void givenPriceStringFromHtmlWhenNumericPriceReturnedThenCorrect() {
         double price = parser.extractPrice("£5.77");
         assertEquals(5.77, price);
     }

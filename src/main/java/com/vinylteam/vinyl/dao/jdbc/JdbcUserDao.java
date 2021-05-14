@@ -8,14 +8,16 @@ import org.postgresql.util.PSQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class JdbcUserDao implements UserDao {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserRowMapper userRowMapper = new UserRowMapper();
-    private final String COUNT_ALL = "SELECT COUNT(*) FROM public.users";
     private final String FIND_BY_EMAIL = "SELECT email, password, salt, iterations, role, status, discogs_user_name" +
             " FROM public.users" +
             " WHERE email=?";
@@ -64,8 +66,8 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public boolean edit(String email, User user) {
-        boolean isEdit = false;
+    public boolean update(String email, User user) {
+        boolean isUpdated = false;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement updateStatement = connection.prepareStatement(UPDATE)) {
             updateStatement.setString(1, user.getEmail());
@@ -79,21 +81,21 @@ public class JdbcUserDao implements UserDao {
             logger.debug("Prepared statement {'preparedStatement':{}}.", updateStatement);
             int result = updateStatement.executeUpdate();
             if (result > 0) {
-                isEdit = true;
+                isUpdated = true;
             }
         } catch (PSQLException e) {
             logger.debug("Database error while edit user to public.users", e);
-            isEdit = false;
+            isUpdated = false;
         } catch (SQLException e) {
-            logger.error("Error while edit user to public.users", e);
+            logger.error("Error while updating user in public.users", e);
             throw new RuntimeException(e);
         }
-        if (isEdit) {
-            logger.info("User was edit to the database {'user':{}}.", user);
+        if (isUpdated) {
+            logger.info("User was updated in the database {'user':{}}.", user);
         } else {
-            logger.info("Failed to edit user to the database {'user':{}}.", user);
+            logger.info("Failed to update user in the database {'user':{}}.", user);
         }
-        return isEdit;
+        return isUpdated;
     }
 
     @Override
@@ -119,23 +121,6 @@ public class JdbcUserDao implements UserDao {
         }
         logger.debug("Resulting optional with user is {'Optional.ofNullable(user)':{}}", Optional.ofNullable(user));
         return Optional.ofNullable(user);
-    }
-
-    int countAll() {
-        int count = -1;
-        try (Connection connection = dataSource.getConnection();
-             Statement countStatement = connection.createStatement();
-             ResultSet resultSet = countStatement.executeQuery(COUNT_ALL)) {
-            logger.debug("Executed statement {'statement':{}}", countStatement);
-            if (resultSet.next()) {
-                count = resultSet.getInt(1);
-            }
-        } catch (SQLException e) {
-            logger.error("SQLException while counting amount of rows in public.users", e);
-            throw new RuntimeException(e);
-        }
-        logger.debug("Resulting count is {'count':{}}", count);
-        return count;
     }
 
 }

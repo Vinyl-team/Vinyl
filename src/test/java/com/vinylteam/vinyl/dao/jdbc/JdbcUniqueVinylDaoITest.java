@@ -4,8 +4,8 @@ import com.vinylteam.vinyl.dao.UniqueVinylDao;
 import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
-import com.vinylteam.vinyl.util.DatabasePreparerForITests;
 import com.vinylteam.vinyl.util.DataGeneratorForTests;
+import com.vinylteam.vinyl.util.DatabasePreparerForITests;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
@@ -99,7 +99,7 @@ class JdbcUniqueVinylDaoITest {
     }
 
     @Test
-    @DisplayName("Returns filled list with exact amount of different unique vinyls selected randomly when requested amount is less than amount of rows in table")
+    @DisplayName("Returns filled list with exact amount of different unique vinyls selected randomly from table when requested amount is smaller than amount of rows in table")
     void findManyRandomTest() {
         //when
         List<UniqueVinyl> actualUniqueVinyls = uniqueVinylDao.findManyRandom(2);
@@ -109,7 +109,7 @@ class JdbcUniqueVinylDaoITest {
     }
 
     @Test
-    @DisplayName("Returns filled list with all unique vinyls from table selected randomly when requested amount is equal or bigger than amount of rows in table")
+    @DisplayName("Returns filled list with all unique vinyls selected randomly from table when requested amount is equal or bigger than amount of rows in table")
     void findManyRandomAmountBiggerThanTableSizeTest() {
         //prepare
         List<UniqueVinyl> expectedUniqueVinyls = dataGenerator.getUniqueVinylsList();
@@ -257,7 +257,7 @@ class JdbcUniqueVinylDaoITest {
     }
 
     @Test
-    @DisplayName("Returns empty list when table is empty")
+    @DisplayName("Returns empty list when finding by artist and table is empty")
     void findManyByArtistEmptyTableTest() throws SQLException {
         //prepare
         databasePreparer.truncateCascadeUniqueVinyls();
