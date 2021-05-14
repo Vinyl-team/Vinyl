@@ -5,7 +5,7 @@ import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.util.DatabasePreparerForITests;
-import com.vinylteam.vinyl.util.ListPreparerForTests;
+import com.vinylteam.vinyl.util.DataGeneratorForTests;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
@@ -18,10 +18,10 @@ class JdbcUniqueVinylDaoITest {
 
     private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
     private final UniqueVinylDao uniqueVinylDao = new JdbcUniqueVinylDao(databasePreparer.getDataSource());
-    private final ListPreparerForTests listPreparer = new ListPreparerForTests();
-    private final List<Shop> shops = listPreparer.getShopsList();
-    private final List<UniqueVinyl> uniqueVinyls = listPreparer.getUniqueVinylsList();
-    private final List<Offer> offers = listPreparer.getOffersList();
+    private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
+    private final List<Shop> shops = dataGenerator.getShopsList();
+    private final List<UniqueVinyl> uniqueVinyls = dataGenerator.getUniqueVinylsList();
+    private final List<Offer> offers = dataGenerator.getOffersList();
 
     @BeforeAll
     void beforeAll() throws SQLException {
@@ -49,7 +49,7 @@ class JdbcUniqueVinylDaoITest {
     @DisplayName("Returns filled list with all unique vinyls from table that isn't empty")
     void findAllTest() {
         //prepare
-        List<UniqueVinyl> expectedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        List<UniqueVinyl> expectedUniqueVinyls = dataGenerator.getUniqueVinylsList();
         for (UniqueVinyl expectedUniqueVinyl : expectedUniqueVinyls) {
             expectedUniqueVinyl.setHasOffers(false);
         }
@@ -74,7 +74,7 @@ class JdbcUniqueVinylDaoITest {
     @DisplayName("Returns uniqueVinyl by id match from table")
     void findByIdTest() {
         //prepare
-        UniqueVinyl expectedUniqueVinyl = listPreparer.getUniqueVinylsList().get(0);
+        UniqueVinyl expectedUniqueVinyl = dataGenerator.getUniqueVinylsList().get(0);
         expectedUniqueVinyl.setHasOffers(false);
         //when
         UniqueVinyl actualUniqueVinyl = uniqueVinylDao.findById(1);
@@ -112,7 +112,7 @@ class JdbcUniqueVinylDaoITest {
     @DisplayName("Returns filled list with all unique vinyls from table selected randomly when requested amount is equal or bigger than amount of rows in table")
     void findManyRandomAmountBiggerThanTableSizeTest() {
         //prepare
-        List<UniqueVinyl> expectedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        List<UniqueVinyl> expectedUniqueVinyls = dataGenerator.getUniqueVinylsList();
         expectedUniqueVinyls.remove(3);
         for (UniqueVinyl expectedUniqueVinyl : expectedUniqueVinyls) {
             expectedUniqueVinyl.setHasOffers(false);
@@ -158,7 +158,7 @@ class JdbcUniqueVinylDaoITest {
     @DisplayName("Returns filled list by full name substring matcher that has matches with offers in table")
     void findManyFilteredTest() {
         //prepare
-        List<UniqueVinyl> expectedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        List<UniqueVinyl> expectedUniqueVinyls = dataGenerator.getUniqueVinylsList();
         expectedUniqueVinyls.subList(1, 4).clear();
         expectedUniqueVinyls.get(0).setHasOffers(false);
         //when
@@ -180,7 +180,7 @@ class JdbcUniqueVinylDaoITest {
     @DisplayName("Returns filled list of all rows with has_offers=true when finding by full name substring matcher that is empty string")
     void findManyFilteredEmptyMatcherTest() {
         //prepare
-        List<UniqueVinyl> expectedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        List<UniqueVinyl> expectedUniqueVinyls = dataGenerator.getUniqueVinylsList();
         expectedUniqueVinyls.remove(3);
         for (UniqueVinyl expectedUniqueVinyl : expectedUniqueVinyls) {
             expectedUniqueVinyl.setHasOffers(false);
@@ -222,7 +222,7 @@ class JdbcUniqueVinylDaoITest {
     @DisplayName("Returns filled list of unique vinyls that have offers by artist")
     void findManyByArtistTest() {
         //prepare
-        List<UniqueVinyl> expectedUniqueVinyls = listPreparer.getUniqueVinylsList();
+        List<UniqueVinyl> expectedUniqueVinyls = dataGenerator.getUniqueVinylsList();
         expectedUniqueVinyls.subList(1, 4).clear();
         expectedUniqueVinyls.get(0).setHasOffers(false);
         //when

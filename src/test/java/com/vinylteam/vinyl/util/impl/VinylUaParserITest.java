@@ -1,13 +1,11 @@
 package com.vinylteam.vinyl.util.impl;
 
-import com.vinylteam.vinyl.entity.RawOffer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
 import java.util.HashSet;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,13 +54,6 @@ class VinylUaParserITest {
     @DisplayName("Checks that returned hashset of raw offers isn't emty after parsing.")
     void readRawOffersFromAllOfferLinksTest() {
         assertFalse(vinylUaParser.readRawOffersFromAllOfferLinks(oneOfferTestLink).isEmpty());
-    }
-
-    @Test
-    @DisplayName("Checks that returned list of raw offers isn't empty after parsing.")
-    void getRawOffersListTest() {
-        List<RawOffer> actualRawOffers = vinylUaParser.getRawOffersList();
-        assertFalse(actualRawOffers.isEmpty());
     }
 
 }

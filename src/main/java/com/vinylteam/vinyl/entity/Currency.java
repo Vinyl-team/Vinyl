@@ -26,20 +26,17 @@ public enum Currency {
         Logger logger = LoggerFactory.getLogger(Currency.class);
         logger.debug("getCurrency started with {currencyDescription':{}}", currencyDescription);
         Currency resultingCurrency = null;
-        if (currencyDescription.equals("грн") || currencyDescription.equals("грн.") || currencyDescription.equals("₴")) {
+        if ("грн".equals(currencyDescription) || "грн.".equals(currencyDescription) || "₴".equals(currencyDescription)) {
             resultingCurrency = UAH;
-        }
-        if (currencyDescription.equals("GBP") || currencyDescription.equals("£")) {
+        } else if ("GBP".equals(currencyDescription) || "£".equals(currencyDescription)) {
             resultingCurrency = GBP;
-        }
-        if (currencyDescription.equals("USD") || currencyDescription.equals("$")) {
+        } else if ("USD".equals(currencyDescription) || "$".equals(currencyDescription)) {
             resultingCurrency = USD;
-        }
-        if (currencyDescription.equals(" EUR") || currencyDescription.equals("EUR") || currencyDescription.equals("€")
-                || currencyDescription.equals("&nbsp;€")) {
+        } else if (" EUR".equals(currencyDescription) || "EUR".equals(currencyDescription) || "€".equals(currencyDescription)
+                || "&nbsp;€".equals(currencyDescription)) {
             resultingCurrency = EUR;
         }
-        logger.debug("Resulting optional with currency is {'Optional.ofNullable(resultingCurrency)':{}}",
+        logger.debug("Resulting optional with currency is {'resultingOptionalCurrency':{}}",
                 Optional.ofNullable(resultingCurrency));
         return Optional.ofNullable(resultingCurrency);
     }

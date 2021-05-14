@@ -3,7 +3,7 @@ package com.vinylteam.vinyl.dao.jdbc;
 import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.util.DatabasePreparerForITests;
-import com.vinylteam.vinyl.util.ListPreparerForTests;
+import com.vinylteam.vinyl.util.DataGeneratorForTests;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +20,8 @@ class JdbcUserDaoITest {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
     private final JdbcUserDao jdbcUserDao = new JdbcUserDao(databasePreparer.getDataSource());
-    private final ListPreparerForTests listPreparer = new ListPreparerForTests();
-    private final List<User> users = listPreparer.getUsersList();
+    private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
+    private final List<User> users = dataGenerator.getUsersList();
 
     @BeforeAll
     void beforeAll() throws SQLException {

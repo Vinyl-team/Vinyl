@@ -6,7 +6,78 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ListPreparerForTests {
+public class DataGeneratorForTests {
+
+    public Shop getTemplateShopWithNumber(int number) {
+        if (number < 1) {
+            throw new RuntimeException("Don't generate template shop from number < 1! number: " + number);
+        }
+        Shop shop = new Shop();
+        shop.setId(number);
+        shop.setName("shop" + number);
+        shop.setMainPageLink(shop.getName() + "/main");
+        shop.setImageLink(shop.getName() + "/image.png");
+        return shop;
+    }
+
+    public User getTemplateUserWithNumber(int number) {
+        if (number < 1) {
+            throw new RuntimeException("Don't generate template user from number < 1! number: " + number);
+        }
+        User user = new User();
+        user.setEmail("user" + number + "@waxdeals.com");
+        user.setPassword("hash" + number);
+        user.setSalt("salt" + number);
+        user.setIterations(number);
+        user.setRole(Role.USER);
+        user.setStatus(true);
+        user.setDiscogsUserName("discogsUserName" + number);
+        return user;
+    }
+
+    public UniqueVinyl getTemplateUniqueVinylWithNumber(int number) {
+        if (number < 1) {
+            throw new RuntimeException("Don't generate template unique vinyl from number < 1! number: " + number);
+        }
+        UniqueVinyl uniqueVinyl = new UniqueVinyl();
+        uniqueVinyl.setId(number);
+        uniqueVinyl.setRelease("release" + number);
+        uniqueVinyl.setArtist("artist" + number);
+        uniqueVinyl.setFullName(uniqueVinyl.getRelease() + " - " + uniqueVinyl.getArtist());
+        uniqueVinyl.setImageLink("/image" + number);
+        uniqueVinyl.setHasOffers(false);
+        return uniqueVinyl;
+    }
+
+    public Offer getTemplateOfferWithUniqueVinylIdAndShopId(int uniqueVinylId, int shopId) {
+        if (uniqueVinylId < 1 || shopId < 1) {
+            throw new RuntimeException("Don't generate template offer from uniqueVinylId < 1 or shopId < 1! uniqueVinylId: " + uniqueVinylId + ", shopId: " + shopId);
+        }
+        Offer offer = new Offer();
+        offer.setUniqueVinylId(uniqueVinylId);
+        offer.setShopId(shopId);
+        offer.setPrice(uniqueVinylId * 10. + shopId);
+        offer.setCurrency(Optional.of(Currency.UAH));
+        offer.setGenre("genre" + uniqueVinylId);
+        offer.setOfferLink("shop" + offer.getShopId() + "/release" + offer.getUniqueVinylId());
+        return offer;
+    }
+
+    public RawOffer getTemplateRawOfferWithShopIdAndNumber(int shopId, int number) {
+        if (number < 1) {
+            throw new RuntimeException("Don't generate template raw offer from shopId < 1 or number < 1! shopId: " + shopId + " number: " + number);
+        }
+        RawOffer rawOffer = new RawOffer();
+        rawOffer.setShopId(shopId);
+        rawOffer.setRelease("release" + number);
+        rawOffer.setArtist("artist" + number);
+        rawOffer.setPrice(number * 10. + shopId);
+        rawOffer.setCurrency(Optional.of(Currency.UAH));
+        rawOffer.setGenre("genre" + number);
+        rawOffer.setOfferLink("shop" + rawOffer.getShopId() + "/" + rawOffer.getRelease());
+        rawOffer.setImageLink("/image" + number);
+        return rawOffer;
+    }
 
     public List<Shop> getShopsList() {
         List<Shop> shops = new ArrayList<>();
@@ -65,6 +136,7 @@ public class ListPreparerForTests {
             user.setIterations(i + 1);
             user.setRole(Role.USER);
             user.setStatus(true);
+            user.setDiscogsUserName("discogsUserName" + (i + 1));
             users.add(user);
         }
         return users;

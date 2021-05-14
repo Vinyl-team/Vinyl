@@ -17,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 class RawOffersSorterTest {
 
     private final RawOffersSorter sorter = new RawOffersSorter();
-    private final ListPreparerForTests listPreparer = new ListPreparerForTests();
+    private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
     private final List<RawOffer> rawOffers = new ArrayList<>();
     private final List<UniqueVinyl> uniqueVinyls = new ArrayList<>();
     private final List<Offer> offers = new ArrayList<>();
 
     @BeforeAll
     void beforeAll() {
-        listPreparer.fillListsForRawOffersSorterTest(rawOffers, uniqueVinyls, offers);
+        dataGenerator.fillListsForRawOffersSorterTest(rawOffers, uniqueVinyls, offers);
     }
 
     @Test

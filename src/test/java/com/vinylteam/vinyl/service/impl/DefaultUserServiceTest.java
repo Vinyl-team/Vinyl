@@ -5,7 +5,7 @@ import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
 import com.vinylteam.vinyl.service.UserService;
-import com.vinylteam.vinyl.util.ListPreparerForTests;
+import com.vinylteam.vinyl.util.DataGeneratorForTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,11 +18,11 @@ import static org.mockito.Mockito.*;
 
 class DefaultUserServiceTest {
 
-    private final ListPreparerForTests listPreparer = new ListPreparerForTests();
+    private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
     private final UserDao mockedUserDao = mock(UserDao.class);
     private final SecurityService mockedSecurityService = mock(DefaultSecurityService.class);
     private final UserService userService = new DefaultUserService(mockedUserDao, mockedSecurityService);
-    private final List<User> users = listPreparer.getUsersList();
+    private final List<User> users = dataGenerator.getUsersList();
 
     @BeforeEach
     void beforeEach() {

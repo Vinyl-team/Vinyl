@@ -39,4 +39,10 @@ class CurrencyTest {
         assertTrue(Currency.getCurrency("hryvna").isEmpty());
     }
 
+    @Test
+    @DisplayName("Tests if we get empty optional by null currencyDescriptor")
+    void getCurrencyNullTest() {
+        assertTrue(Currency.getCurrency(null).isEmpty());
+    }
+
 }
