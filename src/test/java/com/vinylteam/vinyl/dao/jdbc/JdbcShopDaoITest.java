@@ -56,14 +56,25 @@ class JdbcShopDaoITest {
 
     @Test
     @DisplayName("Gets list of all shops from db`s non-empty table")
-    void getAllShops() {
+    void findAllShops() {
         //prepare
         List<Shop> expectedShops = listPreparer.getShopsList();
         //when
-        List<Shop> actualShops = jdbcShopDao.getAll();
+        List<Shop> actualShops = jdbcShopDao.findAll();
         //then
         assertEquals(3, actualShops.size());
         assertEquals(expectedShops, actualShops);
+    }
+
+    @Test
+    @DisplayName("Gets empty list of all shops from empty table")
+    void findAllShopsFromEmptyTable() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeShops();
+        //when
+        List<Shop> actualShops = jdbcShopDao.findAll();
+        //then
+        assertTrue(actualShops.isEmpty());
     }
 
     @Test
@@ -99,17 +110,6 @@ class JdbcShopDaoITest {
         List<Integer> ids = List.of(1, 2);
         //when
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);
-        //then
-        assertTrue(actualShops.isEmpty());
-    }
-
-    @Test
-    @DisplayName("Gets empty list of all shops from empty table")
-    void getAllShopsFromEmptyTable() throws SQLException {
-        //prepare
-        databasePreparer.truncateCascadeShops();
-        //when
-        List<Shop> actualShops = jdbcShopDao.getAll();
         //then
         assertTrue(actualShops.isEmpty());
     }

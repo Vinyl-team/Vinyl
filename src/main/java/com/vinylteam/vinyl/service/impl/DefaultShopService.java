@@ -31,8 +31,8 @@ public class DefaultShopService implements ShopService {
     }
 
     @Override
-    public List<Shop> getAll() {
-        List<Shop> shops = shopDao.getAll();
+    public List<Shop> findAll() {
+        List<Shop> shops = shopDao.findAll();
         logger.debug("Resulting list of shops is {'shops':{}}", shops);
         return shops;
     }
