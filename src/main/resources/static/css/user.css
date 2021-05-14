@@ -47,6 +47,12 @@
   padding-left: 1.07em;
 }
 
+.input-message {
+  height: 10.71em;
+  padding-top: 0.79em;
+  resize: none;
+}
+
 .user__submit-input{
   font-weight: bold;
   font-size: 18px;
