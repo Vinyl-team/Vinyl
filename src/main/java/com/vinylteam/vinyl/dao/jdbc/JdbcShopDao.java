@@ -18,8 +18,11 @@ public class JdbcShopDao implements ShopDao {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ShopRowMapper shopRowMapper = new ShopRowMapper();
-    final String SELECT_MANY_SHOPS_BY_IDS = "SELECT id, link_to_main_page, link_to_image, name " +
+    final String SELECT_MANY_SHOPS_BY_IDS = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image " +
             "FROM public.shops WHERE id IN ()";
+
+    final String SELECT_ALL_SHOPS = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image FROM public.shops";
+
     private final HikariDataSource dataSource;
 
     public JdbcShopDao(HikariDataSource dataSource) {
@@ -51,7 +54,21 @@ public class JdbcShopDao implements ShopDao {
 
     @Override
     public List<Shop> getAll() {
-        return List.of();
+        List<Shop> shops = new ArrayList<>();
+        try (Connection connection = dataSource.getConnection();
+             Statement getAllStatement = connection.createStatement();
+             ResultSet resultSet = getAllStatement.executeQuery(SELECT_ALL_SHOPS)) {
+            logger.debug("Executed statement {'statement':{}}", getAllStatement);
+            while (resultSet.next()) {
+                Shop shop = shopRowMapper.mapRow(resultSet);
+                shops.add(shop);
+            }
+        } catch (SQLException e) {
+            logger.error("Error while getting list of all shops from db {'shops':{}}",
+                    shops, e);
+            throw new RuntimeException(e);
+        }
+        return shops;
     }
 
     String fillSelectManyByIdsStatement(List<Integer> ids) {
