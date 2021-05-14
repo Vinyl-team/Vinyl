@@ -30,6 +30,7 @@ class DefaultShopServiceTest {
     @BeforeAll
     void beforeAll() {
         when(mockedShopDao.getManyByListOfIds(anyList())).thenReturn(shops);
+        when(mockedShopDao.getAll()).thenReturn(shops);
     }
 
     @Test
@@ -41,6 +42,15 @@ class DefaultShopServiceTest {
 
         assertSame(shops, actualShops);
         verify(mockedShopDao).getManyByListOfIds(ids);
+    }
+
+    @Test
+    @DisplayName("Checks that when list of id-s isn't null ShopDao.getAll() is called, it's result is returned")
+    void getAllTest() {
+        List<Shop> actualShops = shopService.getAll();
+
+        assertSame(shops, actualShops);
+        verify(mockedShopDao).getAll();
     }
 
     @Test

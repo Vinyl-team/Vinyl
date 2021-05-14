@@ -55,6 +55,18 @@ class JdbcShopDaoITest {
     }
 
     @Test
+    @DisplayName("Gets list of all shops from db`s non-empty table")
+    void getAllShops() {
+        //prepare
+        List<Shop> expectedShops = listPreparer.getShopsList();
+        //when
+        List<Shop> actualShops = jdbcShopDao.getAll();
+        //then
+        assertEquals(3, actualShops.size());
+        assertEquals(expectedShops, actualShops);
+    }
+
+    @Test
     @DisplayName("Gets list of shops with id-s with list of id-s where some ids do not exist in db")
     void getManyByListOfIdsWithSomeNonExistentIds() {
         //prepare
@@ -92,11 +104,22 @@ class JdbcShopDaoITest {
     }
 
     @Test
+    @DisplayName("Gets empty list of all shops from empty table")
+    void getAllShopsFromEmptyTable() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeShops();
+        //when
+        List<Shop> actualShops = jdbcShopDao.getAll();
+        //then
+        assertTrue(actualShops.isEmpty());
+    }
+
+    @Test
     @DisplayName("Gets String filled with ids from filled list of ids")
     void fillSelectManyByIdsStatementWithFilledIdListTest() {
         //prepare
         List<Integer> ids = List.of(1, 2);
-        String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name " +
+        String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image " +
                 "FROM public.shops WHERE id IN (1, 2)";
         //when
         String actualStatement = jdbcShopDao.fillSelectManyByIdsStatement(ids);
@@ -109,7 +132,7 @@ class JdbcShopDaoITest {
     void fillSelectManyByIdsStatementWithEmptyIdListTest() {
         //prepare
         List<Integer> ids = new ArrayList<>();
-        String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name " +
+        String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image " +
                 "FROM public.shops WHERE id IN ()";
         //when
         String actualStatement = jdbcShopDao.fillSelectManyByIdsStatement(ids);

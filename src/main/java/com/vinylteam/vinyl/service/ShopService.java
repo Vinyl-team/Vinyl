@@ -7,5 +7,6 @@ import java.util.List;
 public interface ShopService {
 
     List<Shop> getManyByListOfIds(List<Integer> ids);
+    List<Shop> getAll();
 
 }

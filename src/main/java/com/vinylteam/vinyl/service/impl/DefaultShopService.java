@@ -30,4 +30,11 @@ public class DefaultShopService implements ShopService {
         return shops;
     }
 
+    @Override
+    public List<Shop> getAll() {
+        List<Shop> shops = shopDao.getAll();
+        logger.debug("Resulting list of shops is {'shops':{}}", shops);
+        return shops;
+    }
+
 }
