@@ -49,6 +49,11 @@ public class JdbcShopDao implements ShopDao {
         return shops;
     }
 
+    @Override
+    public List<Shop> getAll() {
+        return List.of();
+    }
+
     String fillSelectManyByIdsStatement(List<Integer> ids) {
         StringBuffer stringBuffer = new StringBuffer(SELECT_MANY_SHOPS_BY_IDS);
         for (Integer id : ids) {
