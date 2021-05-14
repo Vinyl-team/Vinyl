@@ -17,6 +17,7 @@ public class Shop {
         this.id = shop.id;
         this.mainPageLink = shop.mainPageLink;
         this.imageLink = shop.imageLink;
+        this.smallImageLink = shop.smallImageLink;
         this.name = shop.name;
     }
 
@@ -68,12 +69,13 @@ public class Shop {
         return id == shop.id &&
                 Objects.equals(mainPageLink, shop.mainPageLink) &&
                 Objects.equals(imageLink, shop.imageLink) &&
+                Objects.equals(smallImageLink, shop.smallImageLink) &&
                 Objects.equals(name, shop.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, mainPageLink, imageLink, name);
+        return Objects.hash(id, mainPageLink, imageLink, smallImageLink, name);
     }
 
     @Override
@@ -82,6 +84,7 @@ public class Shop {
                 "id=" + id +
                 ", mainPageLink='" + mainPageLink + '\'' +
                 ", imageLink='" + imageLink + '\'' +
+                ", smallImageLink='" + smallImageLink + '\'' +
                 ", name='" + name + '\'' +
                 '}';
     }
