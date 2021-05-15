@@ -16,6 +16,7 @@ public class ListPreparerForTests {
             shop.setName("shop" + (i + 1));
             shop.setMainPageLink(shop.getName() + "/main");
             shop.setImageLink(shop.getName() + "/image.png");
+            shop.setSmallImageLink("/smallImage.png");
             shops.add(shop);
         }
         return shops;

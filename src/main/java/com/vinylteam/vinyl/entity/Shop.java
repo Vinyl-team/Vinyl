@@ -8,6 +8,7 @@ public class Shop {
     private String mainPageLink;
     private String imageLink;
     private String name;
+    private String smallImageLink;
 
     public Shop() {
     }
@@ -49,6 +50,14 @@ public class Shop {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getSmallImageLink() {
+        return smallImageLink;
+    }
+
+    public void setSmallImageLink(String smallImageLink) {
+        this.smallImageLink = smallImageLink;
     }
 
     @Override
