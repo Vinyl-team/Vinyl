@@ -47,7 +47,7 @@ class JdbcUserDaoITest {
     void getByExistingEmailTest() {
         //prepare
         Optional<User> optionalUserGottenByExistingEmail;
-        User expectedUser = new User(users.get(0));
+        User expectedUser = dataGenerator.getUserWithNumber(1);
         //when
         optionalUserGottenByExistingEmail = userDao.getByEmail("user1@wax-deals.com");
         //then
@@ -103,7 +103,7 @@ class JdbcUserDaoITest {
     @DisplayName("Adds existing user with new password and salt")
     void addExistingWithNewPasswordTest() {
         //prepare
-        User existingUserNewPassword = new User(users.get(0));
+        User existingUserNewPassword = dataGenerator.getUserWithNumber(1);
         existingUserNewPassword.setPassword("hash3");
         existingUserNewPassword.setSalt("salt3");
         //when
@@ -141,7 +141,7 @@ class JdbcUserDaoITest {
     @DisplayName("Edit user and try to change discogsUserName that already exist in db")
     void editWithAnExistingUserInDbAndTryToChangeDiscogsUserNameThatAlreadyExistTest() {
         //prepare
-        User changedUser = new User(users.get(1));
+        User changedUser = dataGenerator.getUserWithNumber(2);
         changedUser.setDiscogsUserName("discogsUserName1");
         String oldExistingEmail = changedUser.getEmail();
         //when

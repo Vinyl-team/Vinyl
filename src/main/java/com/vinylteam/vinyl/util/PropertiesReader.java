@@ -52,7 +52,7 @@ public class PropertiesReader {
             }
         } else if (env.equals("PROD")) {
             URI databaseUri;
-            String databaseUrlVariable = System.getenv("DATABASE_URL");
+            String databaseUrlVariable = System.getenv("RDS_DATABASE_URL");
             String portVariable = System.getenv("PORT");
             logger.debug("Read \"DATABASE_URL\" and \"PORT\" variables from environment {'DATABASE_URL':{}, 'PORT':{}}",
                     databaseUrlVariable, portVariable);

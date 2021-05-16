@@ -16,15 +16,15 @@ import java.util.Optional;
 
 public class JdbcUserDao implements UserDao {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final UserRowMapper userRowMapper = new UserRowMapper();
-    private final String FIND_BY_EMAIL = "SELECT email, password, salt, iterations, role, status, discogs_user_name" +
+    private static final Logger logger = LoggerFactory.getLogger(JdbcUserDao.class);
+    private static final UserRowMapper userRowMapper = new UserRowMapper();
+    private static final String FIND_BY_EMAIL = "SELECT email, password, salt, iterations, role, status, discogs_user_name" +
             " FROM public.users" +
             " WHERE email=?";
-    private final String INSERT = "INSERT INTO public.users" +
+    private static final String INSERT = "INSERT INTO public.users" +
             " (email, password, salt, iterations, role, status, discogs_user_name)" +
             " VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private final String UPDATE = "UPDATE public.users" +
+    private static final String UPDATE = "UPDATE public.users" +
             " SET email = ?, password = ?, salt = ?, iterations = ?, role = ?, status = ?, discogs_user_name = ?" +
             " WHERE email = ?";
     private final HikariDataSource dataSource;
