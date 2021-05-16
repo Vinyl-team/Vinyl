@@ -16,16 +16,16 @@ import java.util.*;
 
 public class VinylUaParser implements VinylParser {
 
-    private final static Logger logger = LoggerFactory.getLogger(VinylUaParser.class);
-    private final static String START_LINK = "http://vinyl.ua";
-    private final static String SELECTOR_SCRIPT_WITH_HIGH_RES_IMAGE_LINK = "script:containsData(openPhotoSwipe)";
-    private final static String SELECTOR_RELEASE = "div.boxed div.col-sm-7 > h3.normal-text";
-    private final static String SELECTOR_ARTIST = "div.boxed div.col-sm-7 > h4.normal-text > span.text-ellipsis > a";
-    private final static String SELECTOR_PRICE_DETAILS = "div.boxed div.col-sm-4 > button.btn-success > b";
-    private final static String SELECTOR_GENRE = "div.boxed div.col-xs-12 table.list-meta td.text-right:contains(Жанр:) + td";
-    private final static String SELECTOR_GENRE_ANCHORS = "nav#intro div#bs-example-navbar-collapse-1 > ul.nav > li.dropdown > ul.dropdown-menu > li > a";
-    private final static String SELECTOR_PAGE_ANCHORS = "div.pagination-wrapper > ul.pagination > li:not(.nav-pagi) > a";
-    private final static String SELECTOR_OFFER_ANCHORS = "div.row > div.col-sm-9 > div.row div.vinyl-release > div.boxed > p > a";
+    private static final Logger logger = LoggerFactory.getLogger(VinylUaParser.class);
+    private static final String START_LINK = "http://vinyl.ua";
+    private static final String SELECTOR_SCRIPT_WITH_HIGH_RES_IMAGE_LINK = "script:containsData(openPhotoSwipe)";
+    private static final String SELECTOR_RELEASE = "div.boxed div.col-sm-7 > h3.normal-text";
+    private static final String SELECTOR_ARTIST = "div.boxed div.col-sm-7 > h4.normal-text > span.text-ellipsis > a";
+    private static final String SELECTOR_PRICE_DETAILS = "div.boxed div.col-sm-4 > button.btn-success > b";
+    private static final String SELECTOR_GENRE = "div.boxed div.col-xs-12 table.list-meta td.text-right:contains(Жанр:) + td";
+    private static final String SELECTOR_GENRE_ANCHORS = "nav#intro div#bs-example-navbar-collapse-1 > ul.nav > li.dropdown > ul.dropdown-menu > li > a";
+    private static final String SELECTOR_PAGE_ANCHORS = "div.pagination-wrapper > ul.pagination > li:not(.nav-pagi) > a";
+    private static final String SELECTOR_OFFER_ANCHORS = "div.row > div.col-sm-9 > div.row div.vinyl-release > div.boxed > p > a";
 
     HashSet<String> getGenresLinks() {
         HashSet<String> genreLinks = new HashSet<>();
