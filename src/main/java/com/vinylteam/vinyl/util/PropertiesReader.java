@@ -11,23 +11,23 @@ import java.util.Properties;
 
 public class PropertiesReader {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final Properties properties = new Properties();
-    private final String independentPropertiesFile = "application.properties";
+    private static final Logger logger = LoggerFactory.getLogger(PropertiesReader.class);
+    private static final Properties properties = new Properties();
+    private static final String INDEPENDENT_PROPERTIES_FILE = "application.properties";
 
     public PropertiesReader() {
         String beginningOfErrorMessage = "Error during loading properties from";
 
         try (InputStream inputStream = PropertiesReader.class.getClassLoader()
-                .getResourceAsStream(independentPropertiesFile)) {
+                .getResourceAsStream(INDEPENDENT_PROPERTIES_FILE)) {
             logger.debug("Created input stream from file {'inputStream':{}, 'fileName':{}}",
-                    inputStream, independentPropertiesFile);
+                    inputStream, INDEPENDENT_PROPERTIES_FILE);
             validateInputStream(inputStream);
             properties.load(inputStream);
             logger.debug("Loaded properties from input stream {'properties':{}, 'inputStream':{}}",
                     properties, inputStream);
         } catch (IOException e) {
-            logger.error("{} {'fileName':{}}", beginningOfErrorMessage, independentPropertiesFile, e);
+            logger.error("{} {'fileName':{}}", beginningOfErrorMessage, INDEPENDENT_PROPERTIES_FILE, e);
             throw new RuntimeException(e);
         }
 
@@ -54,15 +54,15 @@ public class PropertiesReader {
             URI databaseUri;
             String databaseUrlVariable = System.getenv("RDS_DATABASE_URL");
             String portVariable = System.getenv("PORT");
-            logger.debug("Read \"DATABASE_URL\" and \"PORT\" variables from environment {'DATABASE_URL':{}, 'PORT':{}}",
+            logger.debug("Read \"RDS_DATABASE_URL\" and \"PORT\" variables from environment {'RDS_DATABASE_URL':{}, 'PORT':{}}",
                     databaseUrlVariable, portVariable);
             try {
                 databaseUri = new URI(databaseUrlVariable);
-                logger.debug("Initialized databaseUri with URI from value of environmental variable \"DATABASE_URL\" " +
-                        "{'databaseUri':{}, 'DATABASE_URI':{}}", databaseUri, databaseUrlVariable);
+                logger.debug("Initialized databaseUri with URI from value of environmental variable \"RDS_DATABASE_URL\" " +
+                        "{'databaseUri':{}, 'RDS_DATABASE_URI':{}}", databaseUri, databaseUrlVariable);
             } catch (URISyntaxException e) {
                 logger.error("Error during initializing databaseUri with URI from value " +
-                        "of environmental variable \"DATABASE_URL\" {'DATABASE_URI':{}}", databaseUrlVariable, e);
+                        "of environmental variable \"RDS_DATABASE_URL\" {'RDS_DATABASE_URL':{}}", databaseUrlVariable, e);
                 throw new RuntimeException(e);
             }
 
