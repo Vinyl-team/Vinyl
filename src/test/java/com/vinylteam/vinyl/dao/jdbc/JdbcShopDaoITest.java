@@ -58,7 +58,7 @@ class JdbcShopDaoITest {
     @DisplayName("Gets list of all shops from db`s non-empty table")
     void findAllShops() {
         //prepare
-        List<Shop> expectedShops = listPreparer.getShopsList();
+        List<Shop> expectedShops = dataGenerator.getShopsList();
         //when
         List<Shop> actualShops = jdbcShopDao.findAll();
         //then
@@ -120,7 +120,7 @@ class JdbcShopDaoITest {
         //prepare
         List<Integer> ids = List.of(1, 2);
         String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image " +
-                "FROM public.shops WHERE id IN (1, 2)";
+                "FROM public.shops WHERE id IN (1, 2)  ORDER BY shop_order NULLS FIRST";
         //when
         String actualStatement = jdbcShopDao.fillSelectManyByIdsStatement(ids);
         //then
@@ -133,7 +133,7 @@ class JdbcShopDaoITest {
         //prepare
         List<Integer> ids = new ArrayList<>();
         String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image " +
-                "FROM public.shops WHERE id IN ()";
+                "FROM public.shops WHERE id IN ()  ORDER BY shop_order NULLS FIRST";
         //when
         String actualStatement = jdbcShopDao.fillSelectManyByIdsStatement(ids);
         //then
