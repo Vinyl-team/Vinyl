@@ -10,17 +10,6 @@ public class Shop {
     private String smallImageLink;
     private String name;
 
-    public Shop() {
-    }
-
-    public Shop(Shop shop) {
-        this.id = shop.id;
-        this.mainPageLink = shop.mainPageLink;
-        this.imageLink = shop.imageLink;
-        this.smallImageLink = shop.smallImageLink;
-        this.name = shop.name;
-    }
-
     public int getId() {
         return id;
     }

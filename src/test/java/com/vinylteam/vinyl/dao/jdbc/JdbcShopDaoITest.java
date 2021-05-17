@@ -1,8 +1,8 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
 import com.vinylteam.vinyl.entity.Shop;
+import com.vinylteam.vinyl.util.DataGeneratorForTests;
 import com.vinylteam.vinyl.util.DatabasePreparerForITests;
-import com.vinylteam.vinyl.util.ListPreparerForTests;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
@@ -17,8 +17,8 @@ class JdbcShopDaoITest {
 
     private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
     private final JdbcShopDao jdbcShopDao = new JdbcShopDao(databasePreparer.getDataSource());
-    private final ListPreparerForTests listPreparer = new ListPreparerForTests();
-    private final List<Shop> shops = listPreparer.getShopsList();
+    private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
+    private final List<Shop> shops = dataGenerator.getShopsList();
 
     @BeforeAll
     void beforeAll() throws SQLException {
@@ -45,7 +45,7 @@ class JdbcShopDaoITest {
     void getManyByListOfIds() {
         //prepare
         List<Integer> ids = List.of(1, 2);
-        List<Shop> expectedShops = listPreparer.getShopsList();
+        List<Shop> expectedShops = dataGenerator.getShopsList();
         expectedShops.remove(2);
         //when
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);
@@ -82,7 +82,7 @@ class JdbcShopDaoITest {
     void getManyByListOfIdsWithSomeNonExistentIds() {
         //prepare
         List<Integer> ids = List.of(1, 2, 4);
-        List<Shop> expectedShops = listPreparer.getShopsList();
+        List<Shop> expectedShops = dataGenerator.getShopsList();
         expectedShops.remove(2);
         //when
         List<Shop> actualShops = jdbcShopDao.getManyByListOfIds(ids);

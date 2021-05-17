@@ -1,6 +1,5 @@
 package com.vinylteam.vinyl.entity;
 
-import java.util.Objects;
 import java.util.Optional;
 
 public class RawOffer {
@@ -13,20 +12,6 @@ public class RawOffer {
     private String genre;
     private String offerLink;
     private String imageLink;
-
-    public RawOffer() {
-    }
-
-    public RawOffer(RawOffer rawOffer) {
-        this.shopId = rawOffer.shopId;
-        this.release = rawOffer.release;
-        this.artist = rawOffer.artist;
-        this.price = rawOffer.price;
-        this.currency = rawOffer.currency;
-        this.genre = rawOffer.genre;
-        this.offerLink = rawOffer.offerLink;
-        this.imageLink = rawOffer.imageLink;
-    }
 
     public int getShopId() {
         return shopId;
@@ -106,23 +91,4 @@ public class RawOffer {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof RawOffer)) return false;
-        RawOffer rawOffer = (RawOffer) o;
-        return shopId == rawOffer.shopId &&
-                Double.compare(rawOffer.price, price) == 0 &&
-                Objects.equals(release, rawOffer.release) &&
-                Objects.equals(artist, rawOffer.artist) &&
-                Objects.equals(currency, rawOffer.currency) &&
-                Objects.equals(genre, rawOffer.genre) &&
-                Objects.equals(offerLink, rawOffer.offerLink) &&
-                Objects.equals(imageLink, rawOffer.imageLink);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(shopId, release, artist, price, currency, genre, offerLink, imageLink);
-    }
 }

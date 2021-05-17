@@ -43,6 +43,11 @@ public class JunoVinylParser implements VinylParser {
         return rawOffersList;
     }
 
+    @Override
+    public RawOffer getRawOfferFromOfferLink(String offerLink) {
+        return null;
+    }
+
     Set<String> getPresentPageLinks() {
         var startDocument = getDocument(START_PAGE_LINK);
         var pageLinksShownFromStartList = startDocument
