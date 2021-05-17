@@ -8,7 +8,7 @@ public interface UserDao {
 
     boolean add(User user);
 
-    boolean edit(String email, User user);
+    boolean update(String email, User user);
 
     Optional<User> getByEmail(String email);
 

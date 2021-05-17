@@ -4,7 +4,7 @@ import com.vinylteam.vinyl.dao.UniqueVinylDao;
 import com.vinylteam.vinyl.dao.jdbc.JdbcUniqueVinylDao;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.service.UniqueVinylService;
-import com.vinylteam.vinyl.util.ListPreparerForTests;
+import com.vinylteam.vinyl.util.DataGeneratorForTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,8 +19,8 @@ class DefaultUniqueVinylServiceTest {
 
     private final UniqueVinylDao mockedUniqueVinylDao = mock(JdbcUniqueVinylDao.class);
     private final UniqueVinylService uniqueVinylService = new DefaultUniqueVinylService(mockedUniqueVinylDao);
-    private final ListPreparerForTests listPreparer = new ListPreparerForTests();
-    List<UniqueVinyl> uniqueVinyls = listPreparer.getUniqueVinylsList();
+    private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
+    List<UniqueVinyl> uniqueVinyls = dataGenerator.getUniqueVinylsList();
 
     @BeforeEach
     void beforeEach() {

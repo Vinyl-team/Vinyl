@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UpdaterTest {
 
-    private final ListPreparerForTests listPreparer = new ListPreparerForTests();
+    private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
     private final List<VinylParser> vinylParsers = new ArrayList<>();
     private final List<RawOffer> rawOffers = new ArrayList<>();
     private final List<UniqueVinyl> uniqueVinyls = new ArrayList<>();
@@ -31,7 +31,7 @@ class UpdaterTest {
 
     @BeforeAll
     void beforeAll() {
-        listPreparer.fillListsForRawOffersSorterTest(rawOffers, uniqueVinyls, offers);
+        dataGenerator.fillListsForRawOffersSorterTest(rawOffers, uniqueVinyls, offers);
     }
 
     @Test
