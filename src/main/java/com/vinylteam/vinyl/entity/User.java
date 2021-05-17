@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class User {
 
+    private Long id;
     private String email;
     private String password;
     private String discogsUserName;
@@ -23,6 +24,14 @@ public class User {
         this.iterations = user.iterations;
         this.role = user.role;
         this.status = user.status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {

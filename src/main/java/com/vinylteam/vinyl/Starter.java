@@ -1,14 +1,8 @@
 package com.vinylteam.vinyl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vinylteam.vinyl.dao.OfferDao;
-import com.vinylteam.vinyl.dao.ShopDao;
-import com.vinylteam.vinyl.dao.UniqueVinylDao;
-import com.vinylteam.vinyl.dao.UserDao;
-import com.vinylteam.vinyl.dao.jdbc.JdbcOfferDao;
-import com.vinylteam.vinyl.dao.jdbc.JdbcShopDao;
-import com.vinylteam.vinyl.dao.jdbc.JdbcUniqueVinylDao;
-import com.vinylteam.vinyl.dao.jdbc.JdbcUserDao;
+import com.vinylteam.vinyl.dao.*;
+import com.vinylteam.vinyl.dao.jdbc.*;
 import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
 import com.vinylteam.vinyl.service.*;
@@ -66,15 +60,21 @@ public class Starter {
         UniqueVinylDao uniqueVinylDao = new JdbcUniqueVinylDao(dataSource);
         OfferDao offerDao = new JdbcOfferDao(dataSource);
         ShopDao shopDao = new JdbcShopDao(dataSource);
-//SERVICE
+        UserPostDao userPostDao = new JdbcUserPostDao(dataSource);
 
+//SERVICE
         SecurityService securityService = new DefaultSecurityService();
         UserService userService = new DefaultUserService(userDao, securityService);
         UniqueVinylService uniqueVinylService = new DefaultUniqueVinylService(uniqueVinylDao);
         OfferService offerService = new DefaultOfferService(offerDao);
         ShopService shopService = new DefaultShopService(shopDao);
+        MailSender mailSender = new MailSender(propertiesReader.getProperty("mail.smtp.username"),
+                propertiesReader.getProperty("mail.smtp.password"),
+                propertiesReader.getProperty("mail.smtp.host"),
+                propertiesReader.getProperty("mail.smtp.port"),
+                propertiesReader.getProperty("mail.smtp.username"));
+        UserPostService userPostService = new DefaultUserPostService(userPostDao, mailSender);
 //UTIL, FILL IN DATABASE
-
         ShopsParser shopsParser = new ShopsParser();
         RawOffersSorter rawOffersSorter = new RawOffersSorter();
         List<VinylParser> vinylParsers = List.of(new VinylUaParser(), new JunoVinylParser());
@@ -91,8 +91,8 @@ public class Starter {
         Timer updateTimer = new Timer("Update Timer");
         long updatePeriod = Long.parseLong(propertiesReader.getProperty("updatePeriod"));
         updateTimer.scheduleAtFixedRate(updateTask, 0, updatePeriod);
-//WEB
 
+//WEB
         SecurityFilter securityFilter = new SecurityFilter();
         SignInServlet signInServlet = new SignInServlet(userService);
         SignUpServlet signUpServlet = new SignUpServlet(userService);
@@ -103,6 +103,7 @@ public class Starter {
         ProfileServlet profileServlet = new ProfileServlet();
         EditProfileServlet editProfileServlet = new EditProfileServlet(securityService, userService);
         HomeServlet homeServlet = new HomeServlet();
+        ContactUsServlet contactUsServlet = new ContactUsServlet(userPostService);
 
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -120,6 +121,7 @@ public class Starter {
         servletContextHandler.addServlet(new ServletHolder(profileServlet), "/profile");
         servletContextHandler.addServlet(new ServletHolder(editProfileServlet), "/editProfile");
         servletContextHandler.addServlet(new ServletHolder(homeServlet), "");
+        servletContextHandler.addServlet(new ServletHolder(contactUsServlet), "/contact");
 
         servletContextHandler.addServlet(DefaultServlet.class, "/*");
 
@@ -129,21 +131,3 @@ public class Starter {
         logger.info("Server started");
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

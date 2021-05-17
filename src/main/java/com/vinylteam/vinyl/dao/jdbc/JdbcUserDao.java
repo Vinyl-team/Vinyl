@@ -16,7 +16,7 @@ public class JdbcUserDao implements UserDao {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserRowMapper userRowMapper = new UserRowMapper();
     private final String COUNT_ALL = "SELECT COUNT(*) FROM public.users";
-    private final String FIND_BY_EMAIL = "SELECT email, password, salt, iterations, role, status, discogs_user_name" +
+    private final String FIND_BY_EMAIL = "SELECT id, email, password, salt, iterations, role, status, discogs_user_name" +
             " FROM public.users" +
             " WHERE email=?";
     private final String INSERT = "INSERT INTO public.users" +

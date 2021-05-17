@@ -1,0 +1,41 @@
+package com.vinylteam.vinyl.dao.jdbc;
+
+import com.vinylteam.vinyl.dao.UserPostDao;
+import com.vinylteam.vinyl.entity.UserPost;
+import com.vinylteam.vinyl.util.DatabasePreparerForITests;
+import org.junit.jupiter.api.*;
+
+import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class JdbcUserPostDaoITest {
+    private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
+    private final UserPostDao userPostDao = new JdbcUserPostDao(databasePreparer.getDataSource());
+
+
+    @BeforeAll
+    void beforeAll() throws SQLException {
+        databasePreparer.truncateAllVinylTables();
+    }
+
+    @AfterAll
+    void afterAll() throws SQLException {
+        databasePreparer.truncateAllVinylTables();
+    }
+
+    @AfterEach
+    void afterEach() throws SQLException {
+        databasePreparer.truncateAllVinylTables();
+    }
+
+    @Test
+    @DisplayName("Adds user to db")
+    void addNewUserPostTest() {
+        //prepare
+        UserPost expectedUserPost = new UserPost(1L, "name", "email", "theme", "message");
+        //when
+        assertTrue(userPostDao.save(expectedUserPost));
+    }
+}
