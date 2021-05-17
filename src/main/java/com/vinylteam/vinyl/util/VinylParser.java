@@ -8,4 +8,6 @@ public interface VinylParser {
 
     List<RawOffer> getRawOffersList();
 
+    RawOffer getRawOfferFromOfferLink(String offerLink);
+
 }

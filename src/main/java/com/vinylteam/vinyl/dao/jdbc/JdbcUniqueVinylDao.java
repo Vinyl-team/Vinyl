@@ -17,13 +17,13 @@ import java.util.List;
 
 public class JdbcUniqueVinylDao implements UniqueVinylDao {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final RowMapper<UniqueVinyl> rowMapper = new UniqueVinylRowMapper();
-    private final String SELECT_ALL = "SELECT id, release, artist, full_name, link_to_image FROM public.unique_vinyls";
-    private final String SELECT_BY_ID = SELECT_ALL + " WHERE id=?";
-    private final String SELECT_MANY_RANDOM = SELECT_ALL + " WHERE has_offers ORDER BY random() LIMIT ?";
-    private final String SELECT_MANY_BY_FULL_NAME_MATCH = SELECT_ALL + " WHERE full_name ILIKE ? AND has_offers";
-    private final String SELECT_BY_ARTIST = SELECT_ALL + " WHERE artist=? AND has_offers";
+    private static final Logger logger = LoggerFactory.getLogger(JdbcUniqueVinylDao.class);
+    private static final RowMapper<UniqueVinyl> rowMapper = new UniqueVinylRowMapper();
+    private static final String SELECT_ALL = "SELECT id, release, artist, full_name, link_to_image FROM public.unique_vinyls";
+    private static final String SELECT_BY_ID = SELECT_ALL + " WHERE id=?";
+    private static final String SELECT_MANY_RANDOM = SELECT_ALL + " WHERE has_offers ORDER BY random() LIMIT ?";
+    private static final String SELECT_MANY_BY_FULL_NAME_MATCH = SELECT_ALL + " WHERE full_name ILIKE ? AND has_offers";
+    private static final String SELECT_BY_ARTIST = SELECT_ALL + " WHERE artist=? AND has_offers";
     private final HikariDataSource dataSource;
 
     public JdbcUniqueVinylDao(HikariDataSource dataSource) {

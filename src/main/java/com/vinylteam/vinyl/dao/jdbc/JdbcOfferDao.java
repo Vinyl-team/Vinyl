@@ -15,18 +15,18 @@ import java.util.List;
 
 public class JdbcOfferDao implements OfferDao {
 
-    private final String INSERT_VALID = "INSERT INTO offers (unique_vinyl_id, shop_id, price, currency, genre, link_to_offer) SELECT * FROM (VALUES(?, ?, ?, ?, ?, ?))" +
+    private static final String INSERT_VALID = "INSERT INTO offers (unique_vinyl_id, shop_id, price, currency, genre, link_to_offer) SELECT * FROM (VALUES(?, ?, ?, ?, ?, ?))" +
             " AS offer(unique_vinyl_id, shop_id, price, currency, genre, link_to_offer)" +
             " WHERE EXISTS (SELECT * FROM unique_vinyls WHERE unique_vinyls.id=offer.unique_vinyl_id AND unique_vinyls.has_offers)";
-    private final String UPDATE_UNIQUE_VINYLS_ALL_FALSE = "UPDATE unique_vinyls SET has_offers=FALSE WHERE has_offers=TRUE";
-    private final String UPSERT_UNIQUE_VINYLS = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image, has_offers) VALUES(?, ?, ?, ?, ?, ?)" +
+    private static final String UPDATE_UNIQUE_VINYLS_ALL_FALSE = "UPDATE unique_vinyls SET has_offers=FALSE WHERE has_offers=TRUE";
+    private static final String UPSERT_UNIQUE_VINYLS = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image, has_offers) VALUES(?, ?, ?, ?, ?, ?)" +
             " ON CONFLICT(id) DO UPDATE SET has_offers = EXCLUDED.has_offers WHERE unique_vinyls.has_offers<>EXCLUDED.has_offers";
-    private final String SELECT_ALL = "SELECT id, unique_vinyl_id, shop_id, price, currency, genre, link_to_offer FROM public.offers";
-    private final String SELECT_MANY_BY_UNIQUE_VINYL_ID = SELECT_ALL + " WHERE unique_vinyl_id=?";
-    private final String SELECT_BY_ID = SELECT_ALL + " WHERE id=?";
-    private final String TRUNCATE_RESTART_IDENTITY = "TRUNCATE offers RESTART IDENTITY";
-    private final RowMapper<Offer> rowMapper = new OfferRowMapper();
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final String SELECT_ALL = "SELECT id, unique_vinyl_id, shop_id, price, currency, genre, link_to_offer FROM public.offers";
+    private static final String SELECT_MANY_BY_UNIQUE_VINYL_ID = SELECT_ALL + " WHERE unique_vinyl_id=?";
+    private static final String SELECT_BY_ID = SELECT_ALL + " WHERE id=?";
+    private static final String TRUNCATE_RESTART_IDENTITY = "TRUNCATE offers RESTART IDENTITY";
+    private static final RowMapper<Offer> rowMapper = new OfferRowMapper();
+    private static final Logger logger = LoggerFactory.getLogger(JdbcOfferDao.class);
     private final HikariDataSource dataSource;
 
     public JdbcOfferDao(HikariDataSource dataSource) {

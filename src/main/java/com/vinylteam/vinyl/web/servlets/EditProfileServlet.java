@@ -68,9 +68,9 @@ public class EditProfileServlet extends HttpServlet {
                     if (checkOldPassword) {
                         boolean isEdit;
                         if (!newPassword.equals("")){
-                            isEdit = userService.edit(email, newEmail, newPassword, newDiscogsUserName);
+                            isEdit = userService.update(email, newEmail, newPassword, newDiscogsUserName);
                         } else {
-                            isEdit = userService.edit(email, newEmail, oldPassword, newDiscogsUserName);
+                            isEdit = userService.update(email, newEmail, oldPassword, newDiscogsUserName);
                         }
                         logger.debug("Got result of edit user by email with " +
                                 "passed email and password to db {'newEmail':{}, 'isEdit':{}}", newEmail, isEdit);

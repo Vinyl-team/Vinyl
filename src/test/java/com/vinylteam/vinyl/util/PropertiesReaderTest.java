@@ -25,7 +25,7 @@ class PropertiesReaderTest {
     void testPropertiesReaderAsOnHeroku() throws Exception {
         final PropertiesReader[] propertiesReader = new PropertiesReader[1];
         withEnvironmentVariable("env", "PROD")
-                .and("DATABASE_URL", "postgres://allconsonantsuser:longpassword" +
+                .and("RDS_DATABASE_URL", "postgres://allconsonantsuser:longpassword" +
                         "@some-amazonw:5122/lostamongotherdatabases")
                 .and("PORT", "4125")
                 .execute(() -> propertiesReader[0] = new PropertiesReader());

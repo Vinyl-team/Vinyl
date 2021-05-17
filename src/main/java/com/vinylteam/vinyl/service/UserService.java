@@ -8,7 +8,7 @@ public interface UserService {
 
     boolean add(String email, String password, String discogsUserName);
 
-    boolean edit(String oldEmail, String newEmail, String newPassword, String discogsUserName);
+    boolean update(String oldEmail, String newEmail, String newPassword, String discogsUserName);
 
     boolean remove(User user);
 

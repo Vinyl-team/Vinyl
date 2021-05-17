@@ -4,7 +4,7 @@ import com.vinylteam.vinyl.dao.OfferDao;
 import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.service.OfferService;
-import com.vinylteam.vinyl.util.ListPreparerForTests;
+import com.vinylteam.vinyl.util.DataGeneratorForTests;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,11 +17,11 @@ import static org.mockito.Mockito.*;
 
 class DefaultOfferServiceTest {
 
-    private final ListPreparerForTests listPreparer = new ListPreparerForTests();
+    private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
     private final OfferDao mockedOfferDao = mock(OfferDao.class);
     private final OfferService offerService = new DefaultOfferService(mockedOfferDao);
-    private final List<Offer> offers = listPreparer.getOffersList();
-    private final List<UniqueVinyl> uniqueVinyls = listPreparer.getUniqueVinylsList();
+    private final List<Offer> offers = dataGenerator.getOffersList();
+    private final List<UniqueVinyl> uniqueVinyls = dataGenerator.getUniqueVinylsList();
 
     @BeforeEach
     void beforeEach() {
