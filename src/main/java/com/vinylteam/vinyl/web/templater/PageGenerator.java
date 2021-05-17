@@ -84,7 +84,7 @@ public class PageGenerator {
         }
 
         String discogsLink = attributes.get("discogsLink");
-        if (discogsLink != null){
+        if (discogsLink != null) {
             context.setVariable("discogsLink", discogsLink);
         }
 

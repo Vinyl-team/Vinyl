@@ -12,19 +12,6 @@ public class User {
     private Role role;
     private boolean status;
 
-    public User() {
-    }
-
-    public User(User user) {
-        this.email = user.email;
-        this.password = user.password;
-        this.discogsUserName = user.discogsUserName;
-        this.salt = user.salt;
-        this.iterations = user.iterations;
-        this.role = user.role;
-        this.status = user.status;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -87,6 +74,7 @@ public class User {
                 "email='" + email +
                 ", role=" + role +
                 ", status=" + status +
+                ", discogsUserName=" + discogsUserName +
                 '}';
     }
 
@@ -99,12 +87,14 @@ public class User {
                 status == user.status &&
                 Objects.equals(email, user.email) &&
                 Objects.equals(password, user.password) &&
+                Objects.equals(discogsUserName, user.discogsUserName) &&
                 Objects.equals(salt, user.salt) &&
                 role == user.role;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(email, password, salt, iterations, role, status);
+        return Objects.hash(email, password, discogsUserName, salt, iterations, role, status);
     }
+
 }

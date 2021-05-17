@@ -25,7 +25,7 @@ public class DataFinderFromDBForITests {
     private final RowMapper<User> userRowMapper = new UserRowMapper();
     private final RowMapper<UniqueVinyl> uniqueVinylRowMapper = new UniqueVinylRowMapper();
     private final RowMapper<Offer> offerRowMapper = new OfferRowMapper();
-    private final String SELECT_ALL_USERS = "SELECT email, password, salt, iterations, role, status FROM users ORDER BY id";
+    private final String SELECT_ALL_USERS = "SELECT email, password, salt, iterations, role, status, discogs_user_name FROM users ORDER BY id";
     private final String SELECT_ALL_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image, has_offers FROM unique_vinyls ORDER BY id";
     private final String SELECT_ALL_OFFERS = "SELECT id, unique_vinyl_id, shop_id, price, currency, genre, link_to_offer FROM offers ORDER BY id";
 

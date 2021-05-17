@@ -16,9 +16,9 @@ import java.util.List;
 
 public class JdbcShopDao implements ShopDao {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final ShopRowMapper shopRowMapper = new ShopRowMapper();
-    final String SELECT_MANY_SHOPS_BY_IDS = "SELECT id, link_to_main_page, link_to_image, name " +
+    private static final Logger logger = LoggerFactory.getLogger(JdbcShopDao.class);
+    private static final ShopRowMapper shopRowMapper = new ShopRowMapper();
+    private static final String SELECT_MANY_SHOPS_BY_IDS = "SELECT id, link_to_main_page, link_to_image, name " +
             "FROM public.shops WHERE id IN ()";
     private final HikariDataSource dataSource;
 
