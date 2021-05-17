@@ -36,6 +36,11 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
+    public boolean remove(User user){
+        return userDao.remove(user);
+    }
+
+    @Override
     public boolean edit(String oldEmail, String newEmail, String newPassword, String discogsUserName) {
         boolean isEdit = false;
         if (newEmail != null && newPassword != null && oldEmail != null) {

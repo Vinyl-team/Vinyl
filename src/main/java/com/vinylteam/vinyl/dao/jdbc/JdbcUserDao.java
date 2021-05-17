@@ -22,6 +22,7 @@ public class JdbcUserDao implements UserDao {
     private final String INSERT = "INSERT INTO public.users" +
             " (email, password, salt, iterations, role, status, discogs_user_name)" +
             " VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private final String REMOVE = "DELETE FROM users WHERE email = ?";
     private final String UPDATE = "UPDATE public.users" +
             " SET email = ?, password = ?, salt = ?, iterations = ?, role = ?, status = ?, discogs_user_name = ?" +
             " WHERE email = ?";
@@ -61,6 +62,31 @@ public class JdbcUserDao implements UserDao {
             logger.info("Failed to add user to the database {'user':{}}.", user);
         }
         return isAdded;
+    }
+
+    @Override
+    public boolean remove(User user){
+        boolean isDeleted = false;
+        try(Connection connection = dataSource.getConnection();
+        PreparedStatement removeStatement = connection.prepareStatement(REMOVE)){
+            removeStatement.setString(1, user.getEmail());
+            int result = removeStatement.executeUpdate();
+            if (result > 0){
+                isDeleted = true;
+            }
+        } catch (PSQLException e){
+            logger.debug("Database error while delete user from public.users", e);
+            isDeleted = false;
+        } catch (SQLException e){
+            logger.debug("Error while delete user from public.users", e);
+            isDeleted = false;
+        }
+        if (isDeleted){
+            logger.debug("User was deleted from database {'user':{}}.", user);
+        } else {
+            logger.debug("Failed delete user from database {'user':{}}.", user);
+        }
+        return isDeleted;
     }
 
     @Override

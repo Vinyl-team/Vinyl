@@ -8,6 +8,8 @@ public interface UserDao {
 
     boolean add(User user);
 
+    boolean remove(User user);
+
     boolean edit(String email, User user);
 
     Optional<User> getByEmail(String email);

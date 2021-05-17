@@ -263,8 +263,8 @@ class EditProfileServletTest {
     }
 
     @Test
-    @DisplayName("Checks doPost method when everything is good and user was edited")
-    void doPostWhenUserWasEditedTest() throws IOException {
+    @DisplayName("Checks doPost method when everything is good and user was edited & new password isn't empty")
+    void doPostWhenUserWasEditedAndNewPasswordIsNotEmptyTest() throws IOException {
         //prepare
         when(mockedRequest.getParameter("email")).thenReturn("newTest@email.com");
         when(mockedRequest.getParameter("oldPassword")).thenReturn("oldPassword");
@@ -298,6 +298,50 @@ class EditProfileServletTest {
         assertEquals("test@email.com", mockedUser.getEmail());
         verify(mockedSecurityService).checkPasswordAgainstUserPassword(mockedUser, "oldPassword".toCharArray());
         verify(mockedUserService, times(1)).edit("test@email.com", "newTest@email.com", "newPassword", "discogsUserName");
+        inOrderResponse.verify(mockedResponse, times(1)).setStatus(HttpServletResponse.SC_SEE_OTHER);
+        verify(mockedHttpSession).invalidate();
+        inOrderRequest.verify(mockedRequest).getSession(true);
+        verify(newMockedHttpSession).setMaxInactiveInterval(60 * 60 * 5);
+        verify(mockedUserService).getByEmail("newTest@email.com");
+        inOrderResponse.verify(mockedResponse).getWriter();
+    }
+
+    @Test
+    @DisplayName("Checks doPost method when everything is good and user was edited & new password is empty")
+    void doPostWhenUserWasEditedAndNewPasswordIsEmptyTest() throws IOException {
+        //prepare
+        when(mockedRequest.getParameter("email")).thenReturn("newTest@email.com");
+        when(mockedRequest.getParameter("oldPassword")).thenReturn("oldPassword");
+        when(mockedRequest.getParameter("newPassword")).thenReturn("");
+        when(mockedRequest.getParameter("confirmNewPassword")).thenReturn("");
+        when(mockedRequest.getParameter("discogsUserName")).thenReturn("discogsUserName");
+        when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
+        when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
+        when(mockedUser.getRole()).thenReturn(Role.USER);
+        when(mockedUser.getEmail()).thenReturn("test@email.com");
+        when(mockedSecurityService.checkPasswordAgainstUserPassword(mockedUser, "oldPassword".toCharArray())).thenReturn(true);
+        when(mockedUserService.edit("test@email.com", "newTest@email.com", "oldPassword", "discogsUserName")).thenReturn(true);
+        when(mockedRequest.getSession(true)).thenReturn(newMockedHttpSession);
+        when(mockedUserService.getByEmail("newTest@email.com")).thenReturn(Optional.ofNullable(mockedUser));
+        when(mockedResponse.getWriter()).thenReturn(printWriter);
+        //when
+        editProfileServlet.doPost(mockedRequest, mockedResponse);
+        //then
+        inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
+        inOrderRequest.verify(mockedRequest).getParameter("email");
+        inOrderRequest.verify(mockedRequest).getParameter("oldPassword");
+        inOrderRequest.verify(mockedRequest).getParameter("newPassword");
+        inOrderRequest.verify(mockedRequest).getParameter("confirmNewPassword");
+        inOrderRequest.verify(mockedRequest).getParameter("discogsUserName");
+        inOrderRequest.verify(mockedRequest).getSession(false);
+        verify(mockedHttpSession, times(1)).getAttribute("user");
+        assertEquals(mockedUser, mockedHttpSession.getAttribute("user"));
+        verify(mockedUser, times(1)).getRole();
+        assertEquals(Role.USER, mockedUser.getRole());
+        verify(mockedUser, times(1)).getEmail();
+        assertEquals("test@email.com", mockedUser.getEmail());
+        verify(mockedSecurityService).checkPasswordAgainstUserPassword(mockedUser, "oldPassword".toCharArray());
+        verify(mockedUserService, times(1)).edit("test@email.com", "newTest@email.com", "oldPassword", "discogsUserName");
         inOrderResponse.verify(mockedResponse, times(1)).setStatus(HttpServletResponse.SC_SEE_OTHER);
         verify(mockedHttpSession).invalidate();
         inOrderRequest.verify(mockedRequest).getSession(true);
