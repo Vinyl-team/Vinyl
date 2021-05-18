@@ -26,6 +26,7 @@
         <slf4j.api.version>1.7.30</slf4j.api.version>
         <hikari.cp.version>3.4.5</hikari.cp.version>
         <jackson.databind.version>2.11.3</jackson.databind.version>
+        <javax.mail.version>1.4.7</javax.mail.version>
 
         <!--Test Dependencies-->
         <junit.jupiter.engine.version>5.7.1</junit.jupiter.engine.version>
@@ -193,7 +194,7 @@
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>1.4.7</version>
+            <version>${javax.mail.version}</version>
         </dependency>
 
         <!--TESTS-->

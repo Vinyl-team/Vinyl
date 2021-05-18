@@ -8,6 +8,7 @@ import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -15,7 +16,6 @@ class JdbcUserPostDaoITest {
     private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
     private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
     private final UserPostDao userPostDao = new JdbcUserPostDao(databasePreparer.getDataSource());
-
 
     @BeforeAll
     void beforeAll() throws SQLException {
@@ -31,11 +31,23 @@ class JdbcUserPostDaoITest {
     }
 
     @Test
-    @DisplayName("Adds user to db")
+    @DisplayName("Adds user post to db")
     void addNewUserPostTest() {
         //prepare
         UserPost expectedUserPost = new UserPost(1L, "name", "email", "theme", "message");
         //when
-        assertTrue(userPostDao.save(expectedUserPost));
+        assertTrue(userPostDao.add(expectedUserPost));
+    }
+
+    @Test
+    @DisplayName("Adds user post to db")
+    void duplicatedIdsTest() {
+        //prepare
+        UserPost firstPost = new UserPost(1L, "name", "email", "theme", "message");
+        UserPost secondPost = new UserPost(1L, "secondName", "secondEmail", "secondTheme",
+                "secondMessage");
+        //when
+        assertTrue(userPostDao.add(firstPost));
+        assertFalse(userPostDao.add(secondPost));
     }
 }

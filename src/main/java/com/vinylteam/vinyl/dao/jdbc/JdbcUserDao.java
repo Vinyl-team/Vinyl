@@ -4,9 +4,8 @@ import com.vinylteam.vinyl.dao.UserDao;
 import com.vinylteam.vinyl.dao.jdbc.mapper.UserRowMapper;
 import com.vinylteam.vinyl.entity.User;
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,13 +13,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
+@Slf4j
 public class JdbcUserDao implements UserDao {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserRowMapper userRowMapper = new UserRowMapper();
-    private final String COUNT_ALL = "SELECT COUNT(*) FROM public.users";
-    private final String FIND_BY_EMAIL = "SELECT id, email, password, salt, iterations, role, status, discogs_user_name" +
-
+    private final static String FIND_BY_EMAIL = "SELECT id, email, password, salt, iterations, role, status, discogs_user_name" +
             " FROM public.users" +
             " WHERE email=?";
     private static final String INSERT = "INSERT INTO public.users" +
@@ -47,22 +43,22 @@ public class JdbcUserDao implements UserDao {
             insertStatement.setString(5, user.getRole().toString());
             insertStatement.setBoolean(6, user.getStatus());
             insertStatement.setString(7, user.getDiscogsUserName());
-            logger.debug("Prepared statement {'preparedStatement':{}}.", insertStatement);
+            log.debug("Prepared statement {'preparedStatement':{}}.", insertStatement);
             int result = insertStatement.executeUpdate();
             if (result > 0) {
                 isAdded = true;
             }
         } catch (PSQLException e) {
-            logger.debug("Database error while adding user to public.users", e);
+            log.debug("Database error while adding user to public.users", e);
             isAdded = false;
         } catch (SQLException e) {
-            logger.error("Error while adding user to public.users", e);
+            log.error("Error while adding user to public.users", e);
             throw new RuntimeException(e);
         }
         if (isAdded) {
-            logger.info("User is added to the database {'user':{}}.", user);
+            log.info("User is added to the database {'user':{}}.", user);
         } else {
-            logger.info("Failed to add user to the database {'user':{}}.", user);
+            log.info("Failed to add user to the database {'user':{}}.", user);
         }
         return isAdded;
     }
@@ -80,22 +76,22 @@ public class JdbcUserDao implements UserDao {
             updateStatement.setBoolean(6, user.getStatus());
             updateStatement.setString(7, user.getDiscogsUserName());
             updateStatement.setString(8, email);
-            logger.debug("Prepared statement {'preparedStatement':{}}.", updateStatement);
+            log.debug("Prepared statement {'preparedStatement':{}}.", updateStatement);
             int result = updateStatement.executeUpdate();
             if (result > 0) {
                 isUpdated = true;
             }
         } catch (PSQLException e) {
-            logger.debug("Database error while edit user to public.users", e);
+            log.debug("Database error while edit user to public.users", e);
             isUpdated = false;
         } catch (SQLException e) {
-            logger.error("Error while updating user in public.users", e);
+            log.error("Error while updating user in public.users", e);
             throw new RuntimeException(e);
         }
         if (isUpdated) {
-            logger.info("User was updated in the database {'user':{}}.", user);
+            log.info("User was updated in the database {'user':{}}.", user);
         } else {
-            logger.info("Failed to update user in the database {'user':{}}.", user);
+            log.info("Failed to update user in the database {'user':{}}.", user);
         }
         return isUpdated;
     }
@@ -106,23 +102,22 @@ public class JdbcUserDao implements UserDao {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement findByEmailStatement = connection.prepareStatement(FIND_BY_EMAIL)) {
             findByEmailStatement.setString(1, email);
-            logger.debug("Prepared statement {'preparedStatement':{}}.", findByEmailStatement);
+            log.debug("Prepared statement {'preparedStatement':{}}.", findByEmailStatement);
             try (ResultSet resultSet = findByEmailStatement.executeQuery()) {
                 if (resultSet.next()) {
                     user = userRowMapper.mapRow(resultSet);
                     if (resultSet.next()) {
                         RuntimeException e = new RuntimeException();
-                        logger.error("More than one user was found for email: {}", email, e);
+                        log.error("More than one user was found for email: {}", email, e);
                         throw e;
                     }
                 }
             }
         } catch (SQLException e) {
-            logger.error("SQLException retrieving user by email from public.users", e);
+            log.error("SQLException retrieving user by email from public.users", e);
             throw new RuntimeException(e);
         }
-        logger.debug("Resulting optional with user is {'Optional.ofNullable(user)':{}}", Optional.ofNullable(user));
+        log.debug("Resulting optional with user is {'Optional.ofNullable(user)':{}}", Optional.ofNullable(user));
         return Optional.ofNullable(user);
     }
-
 }

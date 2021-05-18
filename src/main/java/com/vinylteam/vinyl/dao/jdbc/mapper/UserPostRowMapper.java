@@ -2,15 +2,13 @@ package com.vinylteam.vinyl.dao.jdbc.mapper;
 
 import com.vinylteam.vinyl.dao.RowMapper;
 import com.vinylteam.vinyl.entity.UserPost;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Slf4j
 public class UserPostRowMapper implements RowMapper<UserPost> {
-    private Logger logger = LoggerFactory.getLogger(getClass());
-
     @Override
     public UserPost mapRow(ResultSet resultSet) {
         UserPost userPost = new UserPost();
@@ -21,10 +19,10 @@ public class UserPostRowMapper implements RowMapper<UserPost> {
             userPost.setEmail(resultSet.getString("email"));
             userPost.setTheme(resultSet.getString("theme"));
             userPost.setMessage(resultSet.getString("message"));
-            logger.debug("Resulting UserPost object {'userPost':{}}", userPost);
+            log.debug("Resulting user post object {'userPost':{}}", userPost);
             return userPost;
         } catch (SQLException e) {
-            logger.error("Error while getting data from result set into UserPost object {'userPost':{}}", userPost, e);
+            log.error("Error while getting data from result set into user post object {'userPost':{}}", userPost, e);
             throw new RuntimeException(e);
         }
     }

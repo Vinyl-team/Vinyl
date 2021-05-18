@@ -32,7 +32,12 @@ public class ContactUsServlet extends HttpServlet {
             User user = (User) session.getAttribute("user");
             if (user != null) {
                 UserPost post = new UserPost(user.getId(), name, email, subject, messageContactUs);
-                service.processSave(post);
+                boolean isPostProcessed = service.processAdd(post);
+                if(isPostProcessed){
+                    response.setStatus(HttpServletResponse.SC_OK);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
             }
         }
         response.sendRedirect("/");

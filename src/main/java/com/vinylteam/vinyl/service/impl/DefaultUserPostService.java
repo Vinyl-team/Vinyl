@@ -15,13 +15,14 @@ public class DefaultUserPostService implements UserPostService {
     }
 
     @Override
-    public void processSave(UserPost post) {
-        userPostDao.save(post);
-        mailSender.sendMail(post.getEmail(), post.getTheme(), post.getMessage());
+    public boolean processAdd(UserPost post) {
+        boolean isAddedToDb = userPostDao.add(post);
+        boolean isMailSent = mailSender.sendMail(post.getEmail(), post.getTheme(), post.getMessage());
+        return isAddedToDb && isMailSent;
     }
 
     @Override
-    public boolean save(UserPost post) {
-        return userPostDao.save(post);
+    public boolean add(UserPost post) {
+        return userPostDao.add(post);
     }
 }
