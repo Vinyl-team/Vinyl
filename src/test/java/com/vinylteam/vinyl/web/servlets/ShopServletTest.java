@@ -4,10 +4,10 @@ import com.vinylteam.vinyl.entity.Role;
 import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.service.ShopService;
+import com.vinylteam.vinyl.util.DataGeneratorForTests;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,6 @@ import org.mockito.InOrder;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,16 +36,7 @@ class ShopServletTest {
     private final List<Shop> testListOfShops;
 
     ShopServletTest(){
-        testListOfShops = new ArrayList<>();
-        for (int i = 1; i < 4; i++) {
-            Shop shop = new Shop();
-            shop.setId(i);
-            shop.setName("shop" + i);
-            shop.setMainPageLink(shop.getName() + "/main");
-            shop.setImageLink(shop.getName() + "/image.png");
-            shop.setSmallImageLink(shop.getName() + "/smallImage.png");
-            testListOfShops.add(shop);
-        }
+        testListOfShops = new DataGeneratorForTests().getShopsList();
     }
 
 
