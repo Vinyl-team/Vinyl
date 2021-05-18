@@ -147,32 +147,44 @@ public class JunoVinylParser implements VinylParser {
     }
 
     Double getPriceFromDocument(Document document) {
-        String priceDetails = document.select(SELECTOR_PRICE_DETAILS).text();
-        log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", priceDetails, document.location());
-        if (priceDetails.length() > 0) {
+        String fullPriceDetails = document.select(SELECTOR_PRICE_DETAILS).text();
+        log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", fullPriceDetails, document.location());
+        if (fullPriceDetails.length() > 0) {
+            String priceDetails = fullPriceDetails;
             try {
-                String priceNumber = priceDetails.substring(priceDetails.lastIndexOf("£") + 1);
+                if (priceDetails.contains(" ")) {
+                    priceDetails = priceDetails.substring(priceDetails.lastIndexOf(" ") + 1);
+                }
+                String priceNumber = priceDetails.substring(1);
                 double price = Double.parseDouble(priceNumber);
-                log.debug("Got price from price details {'price':{}, 'priceDetails':{}}", price, priceDetails);
+                log.debug("Got price from price details {'price':{}, 'priceDetails':{}}", price, fullPriceDetails);
                 return price;
             } catch (Exception e) {
-                log.error("Error while gettin price from price details from link {'priceDetails':{}, 'link':{}}", priceDetails, document.location());
+                log.error("Error while getting price from price details from link {'priceDetails':{}, 'link':{}}", fullPriceDetails, document.location());
             }
         }
-        log.warn("Can't find price from price details from link, returning 0. {'priceDetails':{}, 'link':{}}", priceDetails, document.location());
+        log.warn("Can't find price from price details from link, returning 0. {'priceDetails':{}, 'link':{}}", fullPriceDetails, document.location());
         return 0.;
     }
 
     Optional<Currency> getOptionalCurrencyFromDocument(Document document) {
-        String priceDetails = document.select(SELECTOR_PRICE_DETAILS).text();
-        log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", priceDetails, document.location());
-        if (priceDetails.length() > 0) {
-            String currency = priceDetails.substring(0, 1);
-            Optional<Currency> optionalCurrency = Currency.getCurrency(currency);
-            log.debug("Got optional with currency from price details {'optionalCurrency':{}, 'priceDetails':{}}", optionalCurrency, priceDetails);
-            return optionalCurrency;
+        String fullPriceDetails = document.select(SELECTOR_PRICE_DETAILS).text();
+        log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", fullPriceDetails, document.location());
+        if (fullPriceDetails.length() > 0) {
+            String priceDetails = fullPriceDetails;
+            try {
+                if (priceDetails.contains(" ")) {
+                    priceDetails = priceDetails.substring(priceDetails.lastIndexOf(" ") + 1);
+                }
+                String currency = priceDetails.substring(0, 1);
+                Optional<Currency> optionalCurrency = Currency.getCurrency(currency);
+                log.debug("Got optional with currency from price details {'optionalCurrency':{}, 'priceDetails':{}}", optionalCurrency, priceDetails);
+                return optionalCurrency;
+            } catch (Exception e) {
+                log.error("Error while getting optional with currency from price details from link {'priceDetails':{}, 'link':{}}", priceDetails, document.location());
+            }
         }
-        log.warn("Can't find currency description from price details from link, returning empty optional {'priceDetails':{}, 'link':{}}", priceDetails, document.location());
+        log.warn("Can't find currency description from price details from link, returning empty optional {'priceDetails':{}, 'link':{}}", fullPriceDetails, document.location());
         return Optional.empty();
     }
 

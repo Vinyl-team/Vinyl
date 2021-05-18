@@ -21,7 +21,7 @@ class JunoVinylParserITest {
 
     private final JunoVinylParser parser = new JunoVinylParser();
     private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
-    private final String validOfferLink = "https://www.juno.co.uk/products/me-in-your-eyes/699011-01/";
+    private final String validOfferLink = "https://www.juno.co.uk/products/michel-legrand-suburbia-suite-evergreen-review-ep/702627-01/";
     private final String invalidOfferLink = "https://www.juno.co.uk";
     private final Set<String> offerLinksSet = new HashSet<>(Set.of(validOfferLink, invalidOfferLink));
     private Document validLinkDocument;
