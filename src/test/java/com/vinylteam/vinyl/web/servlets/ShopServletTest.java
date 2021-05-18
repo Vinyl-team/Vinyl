@@ -39,7 +39,6 @@ class ShopServletTest {
         testListOfShops = new DataGeneratorForTests().getShopsList();
     }
 
-
     @BeforeEach
     void beforeEach() {
         reset(mockedRequest);
@@ -60,8 +59,8 @@ class ShopServletTest {
         //then
         verify(mockedShopService).findAll();
         inOrderRequest.verify(mockedRequest).getSession(false);
-        verify(mockedHttpSession, times(0)).getAttribute("user");
-        verify(mockedUser, times(0)).getRole();
+        verify(mockedHttpSession, never()).getAttribute("user");
+        verify(mockedUser, never()).getRole();
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderResponse.verify(mockedResponse).getWriter();
@@ -105,7 +104,7 @@ class ShopServletTest {
         inOrderRequest.verify(mockedRequest).getSession(false);
         verify(mockedHttpSession).getAttribute("user");
         assertNull(mockedHttpSession.getAttribute("user"));
-        verify(mockedUser, times(0)).getRole();
+        verify(mockedUser, never()).getRole();
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderResponse.verify(mockedResponse).getWriter();

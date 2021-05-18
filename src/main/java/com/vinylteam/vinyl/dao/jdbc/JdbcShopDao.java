@@ -4,8 +4,7 @@ import com.vinylteam.vinyl.dao.ShopDao;
 import com.vinylteam.vinyl.dao.jdbc.mapper.ShopRowMapper;
 import com.vinylteam.vinyl.entity.Shop;
 import com.zaxxer.hikari.HikariDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -14,9 +13,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class JdbcShopDao implements ShopDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(JdbcShopDao.class);
     private static final ShopRowMapper shopRowMapper = new ShopRowMapper();
     private static final String SELECT_MANY_SHOPS_BY_IDS = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image " +
             "FROM public.shops WHERE id IN ()  ORDER BY shop_order NULLS FIRST";
@@ -37,18 +36,18 @@ public class JdbcShopDao implements ShopDao {
             try (Connection connection = dataSource.getConnection();
                  Statement getManyByListOfIdsStatement = connection.createStatement();
                  ResultSet resultSet = getManyByListOfIdsStatement.executeQuery(queryToExecute)) {
-                logger.debug("Executed statement {'statement':{}}", getManyByListOfIdsStatement);
+                log.debug("Executed statement {'statement':{}}", getManyByListOfIdsStatement);
                 while (resultSet.next()) {
                     Shop shop = shopRowMapper.mapRow(resultSet);
                     shops.add(shop);
                 }
             } catch (SQLException e) {
-                logger.error("Error while getting list of shops with ids from list of ids from db {'ids':{}, 'shops':{}}",
+                log.error("Error while getting list of shops with ids from list of ids from db {'ids':{}, 'shops':{}}",
                         ids, shops, e);
                 throw new RuntimeException(e);
             }
         }
-        logger.debug("Resulting list of shops with ids from list of ids is {'shops':{}}", shops);
+        log.debug("Resulting list of shops with ids from list of ids is {'shops':{}}", shops);
         return shops;
     }
 
@@ -58,13 +57,13 @@ public class JdbcShopDao implements ShopDao {
         try (Connection connection = dataSource.getConnection();
              Statement findAllStatement = connection.createStatement();
              ResultSet resultSet = findAllStatement.executeQuery(SELECT_ALL_SHOPS)) {
-            logger.debug("Executed statement {'statement':{}}", findAllStatement);
+            log.debug("Executed statement {'statement':{}}", findAllStatement);
             while (resultSet.next()) {
                 Shop shop = shopRowMapper.mapRow(resultSet);
                 shops.add(shop);
             }
         } catch (SQLException e) {
-            logger.error("Error while getting list of all shops from db {'shops':{}}",
+            log.error("Error while getting list of all shops from db {'shops':{}}",
                     shops, e);
             throw new RuntimeException(e);
         }
@@ -79,7 +78,7 @@ public class JdbcShopDao implements ShopDao {
             }
             stringBuffer.insert(stringBuffer.lastIndexOf(")"), id);
         }
-        logger.debug("Resulting string from string buffer is {'string':{}}", stringBuffer);
+        log.debug("Resulting string from string buffer is {'string':{}}", stringBuffer);
         return stringBuffer.toString();
     }
 

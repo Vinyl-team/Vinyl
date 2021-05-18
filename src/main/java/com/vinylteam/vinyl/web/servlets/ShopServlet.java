@@ -17,7 +17,7 @@ import java.util.Map;
 @Slf4j
 public class ShopServlet extends HttpServlet {
 
-    ShopService shopService;
+    private ShopService shopService;
 
     public ShopServlet(ShopService shopService) {
         this.shopService = shopService;
