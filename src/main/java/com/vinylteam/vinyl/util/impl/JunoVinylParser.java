@@ -39,8 +39,11 @@ public class JunoVinylParser implements VinylParser {
     @Override
     public List<RawOffer> getRawOffersList() {
         Set<String> pageLinks = getAllLinksFromStartPage();
+        log.info("got page links {'pageLinks':{}}", pageLinks.size());
         Set<String> offerLinks = readOfferLinksFromAllPages(pageLinks);
+        log.info("got offer links {'offerLinks':{}}", offerLinks.size());
         Set<RawOffer> rawOffersSet = getValidRawOffersFromAllOfferLinks(offerLinks);
+        log.info("read {} rawOffers from all offer links", rawOffersSet.size());
         List<RawOffer> rawOffersList = new ArrayList<>(rawOffersSet);
         log.debug("Resulting list of vinyls from www.juno.co.uk is {'rawOffersList':{}}", rawOffersList);
         return rawOffersList;
@@ -126,16 +129,20 @@ public class JunoVinylParser implements VinylParser {
 
     String getReleaseFromDocument(Document document) {
         String release = document.select(SELECTOR_RELEASE).text();
+        if ("".equals(release)) {
+            log.warn("Release from link is empty {'link':{}}", document.location());
+        }
         log.debug("Got release from page by offer link {'release':{}, 'offerLink':{}}", release, document.location());
         return release;
     }
 
     String getArtistFromDocument(Document document) {
         String artist = document.select(SELECTOR_ARTIST).text();
-        if (artist.equals("")) {
+        if ("".equals((artist))) {
+            log.warn("Artist from link is empty, returning default value {'link':{}}", document.location());
             artist = "Various Artists";
         }
-        log.debug("Got artist from page by offer link  {'artist':{}, 'offerLink':{}}", artist, document.location());
+        log.debug("Got artist from page by offer link {'artist':{}, 'offerLink':{}}", artist, document.location());
         return artist;
     }
 
@@ -143,11 +150,16 @@ public class JunoVinylParser implements VinylParser {
         String priceDetails = document.select(SELECTOR_PRICE_DETAILS).text();
         log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", priceDetails, document.location());
         if (priceDetails.length() > 0) {
-            String priceNumber = priceDetails.substring(1);
-            double price = Double.parseDouble(priceNumber);
-            log.debug("Got price from price details {'price':{}, 'priceDetails':{}}", price, priceDetails);
-            return price;
+            try {
+                String priceNumber = priceDetails.substring(priceDetails.lastIndexOf("£") + 1);
+                double price = Double.parseDouble(priceNumber);
+                log.debug("Got price from price details {'price':{}, 'priceDetails':{}}", price, priceDetails);
+                return price;
+            } catch (Exception e) {
+                log.error("Error while gettin price from price details from link {'priceDetails':{}, 'link':{}}", priceDetails, document.location());
+            }
         }
+        log.warn("Can't find price from price details from link, returning 0. {'priceDetails':{}, 'link':{}}", priceDetails, document.location());
         return 0.;
     }
 
@@ -160,7 +172,7 @@ public class JunoVinylParser implements VinylParser {
             log.debug("Got optional with currency from price details {'optionalCurrency':{}, 'priceDetails':{}}", optionalCurrency, priceDetails);
             return optionalCurrency;
         }
-        log.warn("Can't find currency description from price details, returning empty optional {'priceDetails':{}}", priceDetails);
+        log.warn("Can't find currency description from price details from link, returning empty optional {'priceDetails':{}, 'link':{}}", priceDetails, document.location());
         return Optional.empty();
     }
 
@@ -177,6 +189,9 @@ public class JunoVinylParser implements VinylParser {
 
     String getGenreFromDocument(Document document) {
         String genre = document.select(SELECTOR_GENRE).text();
+        if (genre.equals("")) {
+            log.warn("Genre from link is empty {'link':{}}", document.location());
+        }
         log.debug("Got genre from page by offer link {'genre':{}, 'offerLink':{}}", genre, document.location());
         return genre;
     }
@@ -188,6 +203,8 @@ public class JunoVinylParser implements VinylParser {
                 && !("".equals(rawOffer.getRelease()))
                 && rawOffer.getOfferLink() != null) {
             isValid = true;
+        } else {
+            log.error("Raw offer isn't valid {'rawOffer':{}}", rawOffer);
         }
         return isValid;
     }
