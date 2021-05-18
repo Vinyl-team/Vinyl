@@ -6,6 +6,7 @@ import com.vinylteam.vinyl.util.VinylParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.util.*;
@@ -23,30 +24,31 @@ public class JunoVinylParser implements VinylParser {
     private static final String START_PAGE_LINK = CATALOG_ROOT_LINK + "back-cat/2/?media_type=vinyl";
 
     private static final String PRELIMINARY_PAGE_LINK_SELECTOR = "a[href^=" + CATALOG_ROOT_LINK + "]";
-    private static final String SELECTOR_OFFER_LIST = "div.product-list";
-    private static final String SELECTOR_OFFER_ANCHORS = "div.dv-item > div.row > div.order-1 > a";
-
-    private static final String BASE_SELECTOR_OFFER_DETAILS = "div.juno-page.container-fluid.product-info > div.row";
-    private static final String BASE_SELECTOR_OFFER_TEXT_DETAILS = BASE_SELECTOR_OFFER_DETAILS + " > div.order-1 > div.juno-section";
-    private static final String SELECTOR_RELEASE = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.gutters-sm + div.row.gutters-sm > div.col-12 > div.product-title > h2 > span";
-    private static final String SELECTOR_ARTIST = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.gutters-sm + div.row.gutters-sm > div.col-12 > div.product-artist > h2 > a";
-    private static final String SELECTOR_PRICE_DETAILS = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.no-gutters.mt-2 > div.col-12.col-sm-7 > div.product-actions > div.product-pricing > span";
-    private static final String SELECTOR_GENRE = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.no-gutters.mt-2 > div.col-12.col-sm-5 > div.product-meta.mb-2 > strong:contains(Genre:) + a";
-    private static final String SELECTOR_SCRIPT_HIGH_RES_IMAGE_LINK = BASE_SELECTOR_OFFER_DETAILS + " > div.order-2 > div#artwork-carousel > div#artwork-carousel-jwc > div.jw-scroller.jws-transform > div.jw-page + div.jw-page > img";
+    private static final String VINYL_ITEM_LIST_SELECTOR = "div.product-list";
+    private static final String PRICE_BLOCK_SELECTOR = "div.pl-buy";
+    private static final String PRICE_LINE_SELECTOR = "span.price_lrg.text-cta";
+    private static final String VINYL_ITEM_SELECTOR = "div.dv-item";
+    private static final String VINYL_IMAGE_LINK_SELECTOR = "img.lazy_img.img-fluid";
+    private static final String VINYL_INFO_BLOCK_SELECTOR = "div.pl-info";
+    private static final String VINYL_INFO_ITEMS_SELECTOR = "div.vi-text";
 
     private static final Pattern PAGE_NUMBER_PATTERN = Pattern.compile("/([0-9]+)/");
 
     @Override
     public List<RawOffer> getRawOffersList() {
-        Set<String> pageLinks = getAllLinksFromStartPage();
-        Set<String> offerLinks = readOfferLinksFromAllPages(pageLinks);
-        Set<RawOffer> rawOffersSet = getValidRawOffersFromAllOfferLinks(offerLinks);
+        Set<String> pageLinks = getPresentPageLinks();
+        Set<RawOffer> rawOffersSet = readVinylsDataFromAllPages(pageLinks);
         List<RawOffer> rawOffersList = new ArrayList<>(rawOffersSet);
         log.debug("Resulting list of vinyls from www.juno.co.uk is {'rawOffersList':{}}", rawOffersList);
         return rawOffersList;
     }
 
-    Set<String> getAllLinksFromStartPage() {
+    @Override
+    public RawOffer getRawOfferFromOfferLink(String offerLink) {
+        return null;
+    }
+
+    Set<String> getPresentPageLinks() {
         var startDocument = getDocument(START_PAGE_LINK);
         var pageLinksShownFromStartList = startDocument
                 .stream()
@@ -54,10 +56,10 @@ public class JunoVinylParser implements VinylParser {
                 .filter(supposedPageLink -> supposedPageLink.text().matches("[0-9]+"))
                 .map(pageLink -> pageLink.attr("href"))
                 .collect(toSet());
-        return getAllPageLinksSet(pageLinksShownFromStartList);
+        return getFullPageLinksList(pageLinksShownFromStartList);
     }
 
-    Set<String> getAllPageLinksSet(Set<String> pageLinks) {
+    Set<String> getFullPageLinksList(Set<String> pageLinks) {
         int maxPageNumber = countPageLinks(pageLinks);
         log.debug("Pages found {'maxPageNumber':{}}", maxPageNumber);
         var fullListOfPageLinks =
@@ -79,120 +81,59 @@ public class JunoVinylParser implements VinylParser {
                 .orElse(0);
     }
 
-    Set<String> readOfferLinksFromAllPages(Set<String> pageLinks) {
-        var offerLinks = pageLinks
+    Set<RawOffer> readVinylsDataFromAllPages(Set<String> pageLinks) {
+        var rawOfferSet = pageLinks
                 .stream()
                 .map(this::getDocument)
                 .filter(Optional::isPresent)
-                .map(document -> document.get().select(SELECTOR_OFFER_LIST))
-                .flatMap(offerAnchorsList -> offerAnchorsList.select(SELECTOR_OFFER_ANCHORS).stream())
-                .map(offerLink -> (BASE_LINK + offerLink.attr("href")))
+                .map(document -> document.get().select(VINYL_ITEM_LIST_SELECTOR))
+                .flatMap(vinylItemsList -> vinylItemsList.select(VINYL_ITEM_SELECTOR).stream())
+                .flatMap(item -> this.itemToRawOffer(item).stream())
                 .collect(toSet());
-        log.debug("Resulting set of offer links is {'offerLinks':{}}", offerLinks);
-        return offerLinks;
+        log.debug("Resulting set of raw offers is {'rawOfferSet':{}}", rawOfferSet);
+        return rawOfferSet;
     }
 
-    Set<RawOffer> getValidRawOffersFromAllOfferLinks(Set<String> offerLinks) {
-        var rawOffers = offerLinks
-                .stream()
-                .map(this::getRawOfferFromOfferLink)
-                .filter(this::isValid)
-                .collect(toSet());
-        log.debug("Resulting set of raw offers is {'rawOffers':{}}", rawOffers);
-        return rawOffers;
-    }
+    Optional<RawOffer> itemToRawOffer(Element item) {
+        try {
+            var imageLink = resolveVinylImageLink(item.select(VINYL_IMAGE_LINK_SELECTOR).get(0));
+            var vinylLink = BASE_LINK + item.select("a").get(0).attr("href");
+            var info = item.select(VINYL_INFO_BLOCK_SELECTOR);
+            var infoDetails = info.select(VINYL_INFO_ITEMS_SELECTOR);
+            var priceBlock = item.select(PRICE_BLOCK_SELECTOR);
+            var priceString = priceBlock.select(PRICE_LINE_SELECTOR).text();
+            var price = extractPrice(priceString);
+            var priceCurrency = "GBP";
+            var artist = infoDetails.get(0).select("a").text();
+            var release = infoDetails.get(1).select("a").text();
+            var genre = infoDetails.get(4).text();
 
-    @Override
-    public RawOffer getRawOfferFromOfferLink(String offerLink) {
-        Document document = getDocument(offerLink).get();
-        var imageLink = getHighResImageLinkFromDocument(document);
-        var price = getPriceFromDocument(document);
-        var priceCurrency = getOptionalCurrencyFromDocument(document);
-        var artist = getArtistFromDocument(document);
-        var release = getReleaseFromDocument(document);
-        var genre = getGenreFromDocument(document);
-
-        var rawOffer = new RawOffer();
-        rawOffer.setShopId(2);
-        rawOffer.setRelease(release);
-        rawOffer.setArtist(artist);
-        rawOffer.setPrice(price);
-        rawOffer.setCurrency(priceCurrency);
-        rawOffer.setOfferLink(offerLink);
-        rawOffer.setImageLink(imageLink);
-        rawOffer.setGenre(genre);
-        return rawOffer;
-    }
-
-    String getReleaseFromDocument(Document document) {
-        String release = document.select(SELECTOR_RELEASE).text();
-        log.debug("Got release from page by offer link {'release':{}, 'offerLink':{}}", release, document.location());
-        return release;
-    }
-
-    String getArtistFromDocument(Document document) {
-        String artist = document.select(SELECTOR_ARTIST).text();
-        if (artist.equals("")) {
-            artist = "Various Artists";
+            var rawOffer = new RawOffer();
+            rawOffer.setShopId(2);
+            rawOffer.setRelease(release);
+            rawOffer.setArtist(artist);
+            rawOffer.setPrice(price);
+            rawOffer.setCurrency(Currency.getCurrency(priceCurrency));
+            rawOffer.setOfferLink(vinylLink);
+            rawOffer.setImageLink(imageLink);
+            rawOffer.setGenre(genre);
+            return Optional.of(rawOffer);
+        } catch (Exception e) {
+            log.warn("Element will be skipped, since some error happened during RawOffer creation from the element: {}", item, e);
+            return Optional.empty();
         }
-        log.debug("Got artist from page by offer link  {'artist':{}, 'offerLink':{}}", artist, document.location());
-        return artist;
     }
 
-    Double getPriceFromDocument(Document document) {
-        String priceDetails = document.select(SELECTOR_PRICE_DETAILS).text();
-        log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", priceDetails, document.location());
-        if (priceDetails.length() > 0) {
-            String priceNumber = priceDetails.substring(1);
-            double price = Double.parseDouble(priceNumber);
-            log.debug("Got price from price details {'price':{}, 'priceDetails':{}}", price, priceDetails);
-            return price;
-        }
-        return 0.;
+    String resolveVinylImageLink(Element img) {
+        return img.attr("src").startsWith("http") ? img.attr("src") : img.attr("data-src");
     }
 
-    Optional<Currency> getOptionalCurrencyFromDocument(Document document) {
-        String priceDetails = document.select(SELECTOR_PRICE_DETAILS).text();
-        log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", priceDetails, document.location());
-        if (priceDetails.length() > 0) {
-            String currency = priceDetails.substring(0, 1);
-            Optional<Currency> optionalCurrency = Currency.getCurrency(currency);
-            log.debug("Got optional with currency from price details {'optionalCurrency':{}, 'priceDetails':{}}", optionalCurrency, priceDetails);
-            return optionalCurrency;
-        }
-        log.warn("Can't find currency description from price details, returning empty optional {'priceDetails':{}}", priceDetails);
-        return Optional.empty();
+    double extractPrice(String priceString) {
+        var tmpPrice = priceString.replaceAll("^[^0-9]+", "");
+        return Double.parseDouble(tmpPrice);
     }
 
-    String getHighResImageLinkFromDocument(Document document) {
-        String highResImageLink = document.select(SELECTOR_SCRIPT_HIGH_RES_IMAGE_LINK).attr("data-src-full");
-        if (highResImageLink.length() > 0) {
-            log.debug("Got high resolution image link from page by offer link {'highResImageLink':{}, 'offerLink':{}}", highResImageLink, document.location());
-        } else {
-            log.warn("Can't find image link from page by offer link, returning default {'offerLink':{}}", document.location());
-            highResImageLink = "img/goods/no_image.jpg";
-        }
-        return highResImageLink;
-    }
-
-    String getGenreFromDocument(Document document) {
-        String genre = document.select(SELECTOR_GENRE).text();
-        log.debug("Got genre from page by offer link {'genre':{}, 'offerLink':{}}", genre, document.location());
-        return genre;
-    }
-
-    boolean isValid(RawOffer rawOffer) {
-        boolean isValid = false;
-        if (rawOffer.getPrice() != 0.
-                && rawOffer.getCurrency().isPresent()
-                && !("".equals(rawOffer.getRelease()))
-                && rawOffer.getOfferLink() != null) {
-            isValid = true;
-        }
-        return isValid;
-    }
-
-    Optional<Document> getDocument(String url) {
+    private Optional<Document> getDocument(String url) {
         try {
             return Optional.ofNullable(Jsoup.connect(url).get());
         } catch (IOException e) {
@@ -200,5 +141,4 @@ public class JunoVinylParser implements VinylParser {
             return Optional.empty();
         }
     }
-
 }
