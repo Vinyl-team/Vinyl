@@ -104,6 +104,9 @@
   font-size: 24px;
   line-height: 33px;
   padding-bottom: 23px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .search-none__ul-search li{
