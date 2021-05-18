@@ -38,16 +38,4 @@ class JdbcUserPostDaoITest {
         //when
         assertTrue(userPostDao.add(expectedUserPost));
     }
-
-    @Test
-    @DisplayName("Adds user post to db")
-    void duplicatedIdsTest() {
-        //prepare
-        UserPost firstPost = new UserPost(1L, "name", "email", "theme", "message");
-        UserPost secondPost = new UserPost(1L, "secondName", "secondEmail", "secondTheme",
-                "secondMessage");
-        //when
-        assertTrue(userPostDao.add(firstPost));
-        assertFalse(userPostDao.add(secondPost));
-    }
 }
