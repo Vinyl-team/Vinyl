@@ -1,15 +1,14 @@
 package com.vinylteam.vinyl.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
+@Slf4j
 public class MailSender {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private String username;
     private Session session;
 
@@ -43,10 +42,10 @@ public class MailSender {
             message.setText(mailBody);
 
             Transport.send(message);
-            logger.info("Email sent successfully for recipient : {}", recipient);
+            log.info("Email sent successfully for recipient : {}", recipient);
 
         } catch (MessagingException e) {
-            logger.info("Can't send email to recipient : {}  due to error : {}", recipient, e.toString());
+            log.error("Can't send email to recipient : {}  due to error : {}", recipient, e.toString());
             return false;
         }
         return true;
