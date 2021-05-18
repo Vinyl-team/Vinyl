@@ -16,16 +16,16 @@ import java.util.*;
 
 public class VinylUaParser implements VinylParser {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final String START_LINK = "http://vinyl.ua";
-    private final String SELECTOR_SCRIPT_WITH_HIGH_RES_IMAGE_LINK = "script:containsData(openPhotoSwipe)";
-    private final String SELECTOR_RELEASE = "div.boxed div.col-sm-7 > h3.normal-text";
-    private final String SELECTOR_ARTIST = "div.boxed div.col-sm-7 > h4.normal-text > span.text-ellipsis > a";
-    private final String SELECTOR_PRICE_DETAILS = "div.boxed div.col-sm-4 > button.btn-success > b";
-    private final String SELECTOR_GENRE = "div.boxed div.col-xs-12 table.list-meta td.text-right:contains(Жанр:) + td";
-    private final String SELECTOR_GENRE_ANCHORS = "nav#intro div#bs-example-navbar-collapse-1 > ul.nav > li.dropdown > ul.dropdown-menu > li > a";
-    private final String SELECTOR_PAGE_ANCHORS = "div.pagination-wrapper > ul.pagination > li:not(.nav-pagi) > a";
-    private final String SELECTOR_OFFER_ANCHORS = "div.row > div.col-sm-9 > div.row div.vinyl-release > div.boxed > p > a";
+    private static final Logger logger = LoggerFactory.getLogger(VinylUaParser.class);
+    private static final String START_LINK = "http://vinyl.ua";
+    private static final String SELECTOR_SCRIPT_WITH_HIGH_RES_IMAGE_LINK = "script:containsData(openPhotoSwipe)";
+    private static final String SELECTOR_RELEASE = "div.boxed div.col-sm-7 > h3.normal-text";
+    private static final String SELECTOR_ARTIST = "div.boxed div.col-sm-7 > h4.normal-text > span.text-ellipsis > a";
+    private static final String SELECTOR_PRICE_DETAILS = "div.boxed div.col-sm-4 > button.btn-success > b";
+    private static final String SELECTOR_GENRE = "div.boxed div.col-xs-12 table.list-meta td.text-right:contains(Жанр:) + td";
+    private static final String SELECTOR_GENRE_ANCHORS = "nav#intro div#bs-example-navbar-collapse-1 > ul.nav > li.dropdown > ul.dropdown-menu > li > a";
+    private static final String SELECTOR_PAGE_ANCHORS = "div.pagination-wrapper > ul.pagination > li:not(.nav-pagi) > a";
+    private static final String SELECTOR_OFFER_ANCHORS = "div.row > div.col-sm-9 > div.row div.vinyl-release > div.boxed > p > a";
 
     HashSet<String> getGenresLinks() {
         HashSet<String> genreLinks = new HashSet<>();
@@ -116,6 +116,28 @@ public class VinylUaParser implements VinylParser {
         return rawOfferSet;
     }
 
+    public RawOffer getRawOfferFromOfferLink(String offerLink) {
+        RawOffer rawOffer = new RawOffer();
+        Document document;
+        try {
+            document = Jsoup.connect(offerLink).get();
+            logger.debug("Got document out of offer link {'offerLink':{}, 'document':{}", offerLink, document);
+        } catch (IOException e) {
+            logger.error("Error while getting document by link {'link':{}}", offerLink, e);
+            throw new RuntimeException("Fail while getting a document by " + offerLink, e);
+        }
+        rawOffer.setShopId(1);
+        rawOffer.setRelease(getReleaseFromDocument(document));
+        rawOffer.setArtist(getArtistFromDocument(document));
+        rawOffer.setPrice(getPriceFromDocument(document));
+        rawOffer.setCurrency(getOptionalCurrencyFromDocument(document));
+        rawOffer.setGenre(getGenreFromDocument(document));
+        rawOffer.setOfferLink(offerLink);
+        rawOffer.setImageLink(getHighResImageLinkFromDocument(document));
+        logger.debug("Parsed page link {'offerLink':{}}", offerLink);
+        return rawOffer;
+    }
+
     String getReleaseFromDocument(Document document) {
         String release = document.select(SELECTOR_RELEASE).text();
         logger.debug("Got release from page by offer link {'release':{}, 'offerLink':{}}", release, document.location());
@@ -183,48 +205,15 @@ public class VinylUaParser implements VinylParser {
         return genre;
     }
 
-    private boolean isValid(RawOffer rawOffer) {
-        if (!"".equals(rawOffer.getRelease())) {
-            return true;
+    boolean isValid(RawOffer rawOffer) {
+        boolean isValid = false;
+        if (rawOffer.getPrice() != 0.
+                && rawOffer.getCurrency().isPresent()
+                && !("".equals(rawOffer.getRelease()))
+                && rawOffer.getOfferLink() != null) {
+            isValid = true;
         }
-        if (!"Various Artists".equals(rawOffer.getArtist())) {
-            return true;
-        }
-        if (rawOffer.getPrice() != 0.) {
-            return true;
-        }
-        if (rawOffer.getCurrency().isPresent()) {
-            return true;
-        }
-        if (!"".equals(rawOffer.getGenre())) {
-            return true;
-        }
-        if (!"img/goods/no_image.jpg".equals(rawOffer.getImageLink())) {
-            return true;
-        }
-        return false;
-    }
-
-    public RawOffer getRawOfferFromOfferLink(String offerLink) {
-        RawOffer rawOffer = new RawOffer();
-        Document document;
-        try {
-            document = Jsoup.connect(offerLink).get();
-            logger.debug("Got document out of offer link {'offerLink':{}, 'document':{}", offerLink, document);
-        } catch (IOException e) {
-            logger.error("Error while getting document by link {'link':{}}", offerLink, e);
-            throw new RuntimeException("Fail while getting a document by " + offerLink, e);
-        }
-        rawOffer.setShopId(1);
-        rawOffer.setRelease(getReleaseFromDocument(document));
-        rawOffer.setArtist(getArtistFromDocument(document));
-        rawOffer.setPrice(getPriceFromDocument(document));
-        rawOffer.setCurrency(getOptionalCurrencyFromDocument(document));
-        rawOffer.setGenre(getGenreFromDocument(document));
-        rawOffer.setOfferLink(offerLink);
-        rawOffer.setImageLink(getHighResImageLinkFromDocument(document));
-        logger.debug("Parsed page link {'offerLink':{}}", offerLink);
-        return rawOffer;
+        return isValid;
     }
 
     @Override
