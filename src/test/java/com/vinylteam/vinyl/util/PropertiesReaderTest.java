@@ -23,7 +23,7 @@ class PropertiesReaderTest {
         assertEquals("jdbc:postgresql://some-amazonw:5122/lostamongotherdatabases",
                 propertiesReader[0].getProperty("jdbc.url"));
         assertEquals("org.postgresql.Driver", propertiesReader[0].getProperty("jdbc.driver"));
-        assertEquals("5", propertiesReader[0].getProperty("jdbc.maximum.pool.size"));
+        assertEquals("2", propertiesReader[0].getProperty("jdbc.maximum.pool.size"));
         assertEquals("4125", propertiesReader[0].getProperty("appPort"));
     }
 
