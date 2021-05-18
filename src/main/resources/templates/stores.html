@@ -86,8 +86,6 @@
 
       </div>
 
-      <!-- #### -->
-
     </div>
   </header>
 
@@ -101,7 +99,7 @@
         <div class="shops-content__row">
           <div class="all-shops">
             <div class="all-shops__item" th:each="shop : ${shopList}">
-              <a th:href="${shop.mainPageLink}" target="_blank">
+              <a th:href="@{shop.mainPageLink}" target="_blank">
                 <img th:src="${shop.imageLink}" alt="shop image">
               </a>
             </div>

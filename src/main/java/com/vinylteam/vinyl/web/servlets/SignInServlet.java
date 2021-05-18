@@ -7,17 +7,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 public class SignInServlet extends HttpServlet {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final UserService userService;
     private final String verifiedRedirect = "/";
 
@@ -49,28 +48,28 @@ public class SignInServlet extends HttpServlet {
         attributes.put("email", email);
 
         Optional<User> optionalUser = userService.signInCheck(email, password);
-        logger.debug("Received a optional with User with password verification by the passed " +
+        log.debug("Received a optional with User with password verification by the passed " +
                 "email address and password {'email':{}, 'optionalUser':{}}", email, optionalUser);
         if (optionalUser.isPresent()) {
             if (optionalUser.get().getStatus()) {
-                logger.debug("User's status is {'status':{}}", optionalUser.get().getStatus());
+                log.debug("User's status is {'status':{}}", optionalUser.get().getStatus());
                 response.setStatus(HttpServletResponse.SC_OK);
-                logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
+                log.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
                 User user = optionalUser.get();
                 HttpSession session = request.getSession(true);
                 session.setMaxInactiveInterval(60 * 60 * 5);
                 session.setAttribute("user", user);
                 response.sendRedirect("/");
             } else {
-                logger.debug("User's status is {'status':{}}", optionalUser.get().getStatus());
+                log.debug("User's status is {'status':{}}", optionalUser.get().getStatus());
                 response.setStatus(HttpServletResponse.SC_SEE_OTHER);
-                logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_SEE_OTHER);
+                log.debug("Set response status to {'status':{}}", HttpServletResponse.SC_SEE_OTHER);
                 attributes.put("message", "Sorry, your email has not been verified. Please go to your mailbox and follow the link to confirm your registration.");
                 PageGenerator.getInstance().process("signIn", attributes, response.getWriter());
             }
         } else {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
+            log.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
             attributes.put("message", "Sorry, login or password is not correct, please check yours credentials and try again.");
             PageGenerator.getInstance().process("signIn", attributes, response.getWriter());
         }

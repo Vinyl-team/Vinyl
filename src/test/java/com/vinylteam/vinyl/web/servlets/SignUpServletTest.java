@@ -101,6 +101,30 @@ class SignUpServletTest {
 
     @Test
     @DisplayName("Checks if all right methods are called and response has code set to 400 and redirected to /signUp " +
+            "when password is empty.")
+    void doPostWhenPasswordIsEmptyTest() throws IOException {
+        //prepare
+        when(mockedRequest.getParameter("email")).thenReturn("existinguser@vinyl.com");
+        when(mockedRequest.getParameter("password")).thenReturn("");
+        when(mockedRequest.getParameter("confirmPassword")).thenReturn("");
+        when(mockedRequest.getParameter("discogsUserName")).thenReturn("discogsUserName");
+        when(mockedResponse.getWriter()).thenReturn(printWriter);
+        //when
+        signUpServlet.doPost(mockedRequest, mockedResponse);
+        //then
+        inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
+        inOrderRequest.verify(mockedRequest).getParameter("email");
+        inOrderRequest.verify(mockedRequest).getParameter("password");
+        inOrderRequest.verify(mockedRequest).getParameter("confirmPassword");
+        inOrderRequest.verify(mockedRequest).getParameter("discogsUserName");
+        verify(mockedUserService, times(0))
+                .add("existinguser@vinyl.com", "", "discogsUserName");
+        inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        verify(mockedResponse).getWriter();
+    }
+
+    @Test
+    @DisplayName("Checks if all right methods are called and response has code set to 400 and redirected to /signUp " +
             "when password is not correct.")
     void doPostWithNotCorrectPasswordTest() throws IOException {
         //prepare

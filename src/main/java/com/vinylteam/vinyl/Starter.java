@@ -103,6 +103,7 @@ public class Starter {
         ProfileServlet profileServlet = new ProfileServlet();
         ShopServlet shopServlet = new ShopServlet(shopService);
         EditProfileServlet editProfileServlet = new EditProfileServlet(securityService, userService);
+        DeleteProfileServlet deleteProfileServlet = new DeleteProfileServlet(userService);
         HomeServlet homeServlet = new HomeServlet();
 
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);
@@ -121,6 +122,7 @@ public class Starter {
         servletContextHandler.addServlet(new ServletHolder(profileServlet), "/profile");
         servletContextHandler.addServlet(new ServletHolder(shopServlet), "/stores");
         servletContextHandler.addServlet(new ServletHolder(editProfileServlet), "/editProfile");
+        servletContextHandler.addServlet(new ServletHolder(deleteProfileServlet), "/deleteProfile");
         servletContextHandler.addServlet(new ServletHolder(homeServlet), "");
 
         servletContextHandler.addServlet(DefaultServlet.class, "/*");
