@@ -29,7 +29,6 @@ class JdbcOfferDaoITest {
     @BeforeAll
     void beforeAll() throws SQLException {
         databasePreparer.truncateAllVinylTables();
-        databasePreparer.closeDataSource();
     }
 
     @AfterAll
@@ -48,7 +47,6 @@ class JdbcOfferDaoITest {
     @AfterEach
     void afterEach() throws SQLException {
         databasePreparer.truncateAllVinylTables();
-        databasePreparer.closeDataSource();
     }
 
     @Test
