@@ -73,6 +73,20 @@ class JunoVinylParserITest {
     }
 
     @Test
+    @DisplayName("Checks that returned raw offer is filled with not-default values that aren't null after parsing valid offer link.")
+    void getRawOfferFromValidOfferLinkTest() {
+        RawOffer actualRawOffer = parser.getRawOfferFromOfferLink(validOfferLink);
+        assertNotEquals("img/goods/no_image.jpg", actualRawOffer.getImageLink());
+        assertNotNull(actualRawOffer.getImageLink());
+    }
+
+    @Test
+    @DisplayName("Checks that returned raw offer is filled but with default values after parsing not valid offer link.")
+    void getRawOfferFromInvalidOfferLinkTest() {
+        assertEquals("img/goods/no_image.jpg", parser.getRawOfferFromOfferLink(invalidOfferLink).getImageLink());
+    }
+
+    @Test
     @DisplayName("Checks that when price==0, isValid returns false")
     void isValidZeroPrice() {
         //prepare
