@@ -19,6 +19,7 @@ public class ShopRowMapper implements RowMapper<Shop> {
             shop.setMainPageLink(resultSet.getString("link_to_main_page"));
             shop.setImageLink(resultSet.getString("link_to_image"));
             shop.setName(resultSet.getString("name"));
+            shop.setSmallImageLink(resultSet.getString("link_to_small_image"));
             logger.debug("Resulting Shop object {'shop':{}}", shop);
             return shop;
         } catch (Exception e) {

@@ -101,6 +101,7 @@ public class Starter {
         OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(uniqueVinylService, offerService, shopService, discogsService);
         SignOutServlet signOutServlet = new SignOutServlet();
         ProfileServlet profileServlet = new ProfileServlet();
+        ShopServlet shopServlet = new ShopServlet(shopService);
         EditProfileServlet editProfileServlet = new EditProfileServlet(securityService, userService);
         DeleteProfileServlet deleteProfileServlet = new DeleteProfileServlet(userService);
         HomeServlet homeServlet = new HomeServlet();
@@ -120,6 +121,7 @@ public class Starter {
         servletContextHandler.addServlet(new ServletHolder(oneVinylOffersServlet), "/oneVinyl");
         servletContextHandler.addServlet(new ServletHolder(signOutServlet), "/signOut");
         servletContextHandler.addServlet(new ServletHolder(profileServlet), "/profile");
+        servletContextHandler.addServlet(new ServletHolder(shopServlet), "/stores");
         servletContextHandler.addServlet(new ServletHolder(editProfileServlet), "/editProfile");
         servletContextHandler.addServlet(new ServletHolder(deleteProfileServlet), "/deleteProfile");
         servletContextHandler.addServlet(new ServletHolder(homeServlet), "");

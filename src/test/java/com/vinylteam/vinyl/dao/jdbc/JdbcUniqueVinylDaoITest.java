@@ -31,6 +31,7 @@ class JdbcUniqueVinylDaoITest {
     @AfterAll
     void afterAll() throws SQLException {
         databasePreparer.truncateAllVinylTables();
+        databasePreparer.closeDataSource();
     }
 
     @BeforeEach

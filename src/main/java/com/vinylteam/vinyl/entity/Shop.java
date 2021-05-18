@@ -7,6 +7,7 @@ public class Shop {
     private int id;
     private String mainPageLink;
     private String imageLink;
+    private String smallImageLink;
     private String name;
 
     public int getId() {
@@ -41,6 +42,14 @@ public class Shop {
         this.name = name;
     }
 
+    public String getSmallImageLink() {
+        return smallImageLink;
+    }
+
+    public void setSmallImageLink(String smallImageLink) {
+        this.smallImageLink = smallImageLink;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -49,12 +58,13 @@ public class Shop {
         return id == shop.id &&
                 Objects.equals(mainPageLink, shop.mainPageLink) &&
                 Objects.equals(imageLink, shop.imageLink) &&
+                Objects.equals(smallImageLink, shop.smallImageLink) &&
                 Objects.equals(name, shop.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, mainPageLink, imageLink, name);
+        return Objects.hash(id, mainPageLink, imageLink, smallImageLink, name);
     }
 
     @Override
@@ -63,6 +73,7 @@ public class Shop {
                 "id=" + id +
                 ", mainPageLink='" + mainPageLink + '\'' +
                 ", imageLink='" + imageLink + '\'' +
+                ", smallImageLink='" + smallImageLink + '\'' +
                 ", name='" + name + '\'' +
                 '}';
     }

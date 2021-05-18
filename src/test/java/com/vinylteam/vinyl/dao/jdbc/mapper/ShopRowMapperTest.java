@@ -25,6 +25,7 @@ class ShopRowMapperTest {
         when(mockedFilledResultSet.getString("link_to_main_page")).thenReturn("shop1/main");
         when(mockedFilledResultSet.getString("link_to_image")).thenReturn("shop1/image.png");
         when(mockedFilledResultSet.getString("name")).thenReturn("shop1");
+        when(mockedFilledResultSet.getString("link_to_small_image")).thenReturn("shop1/small_image.png");
         //when
         Shop actualShop = rowMapper.mapRow(mockedFilledResultSet);
         //then
@@ -32,6 +33,7 @@ class ShopRowMapperTest {
         assertEquals("shop1/main", actualShop.getMainPageLink());
         assertEquals("shop1/image.png", actualShop.getImageLink());
         assertEquals("shop1", actualShop.getName());
+        assertEquals("shop1/small_image.png", actualShop.getSmallImageLink());
     }
 
 }

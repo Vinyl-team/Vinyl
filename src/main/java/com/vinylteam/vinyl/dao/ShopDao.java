@@ -8,4 +8,6 @@ public interface ShopDao {
 
     List<Shop> getManyByListOfIds(List<Integer> ids);
 
+    List<Shop> findAll();
+
 }

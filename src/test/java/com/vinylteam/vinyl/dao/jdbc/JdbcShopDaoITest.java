@@ -28,6 +28,7 @@ class JdbcShopDaoITest {
     @AfterAll
     void afterAll() throws SQLException {
         databasePreparer.truncateCascadeShops();
+        databasePreparer.closeDataSource();
     }
 
     @BeforeEach
@@ -52,6 +53,29 @@ class JdbcShopDaoITest {
         //then
         assertEquals(2, actualShops.size());
         assertEquals(expectedShops, actualShops);
+    }
+
+    @Test
+    @DisplayName("Gets list of all shops from db`s non-empty table")
+    void findAllShops() {
+        //prepare
+        List<Shop> expectedShops = dataGenerator.getShopsList();
+        //when
+        List<Shop> actualShops = jdbcShopDao.findAll();
+        //then
+        assertEquals(3, actualShops.size());
+        assertEquals(expectedShops, actualShops);
+    }
+
+    @Test
+    @DisplayName("Gets empty list of all shops from empty table")
+    void findAllShopsFromEmptyTable() throws SQLException {
+        //prepare
+        databasePreparer.truncateCascadeShops();
+        //when
+        List<Shop> actualShops = jdbcShopDao.findAll();
+        //then
+        assertTrue(actualShops.isEmpty());
     }
 
     @Test
@@ -96,8 +120,8 @@ class JdbcShopDaoITest {
     void fillSelectManyByIdsStatementWithFilledIdListTest() {
         //prepare
         List<Integer> ids = List.of(1, 2);
-        String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name " +
-                "FROM public.shops WHERE id IN (1, 2)";
+        String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image " +
+                "FROM public.shops WHERE id IN (1, 2)  ORDER BY shop_order NULLS FIRST";
         //when
         String actualStatement = jdbcShopDao.fillSelectManyByIdsStatement(ids);
         //then
@@ -109,8 +133,8 @@ class JdbcShopDaoITest {
     void fillSelectManyByIdsStatementWithEmptyIdListTest() {
         //prepare
         List<Integer> ids = new ArrayList<>();
-        String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name " +
-                "FROM public.shops WHERE id IN ()";
+        String expectedStatement = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image " +
+                "FROM public.shops WHERE id IN ()  ORDER BY shop_order NULLS FIRST";
         //when
         String actualStatement = jdbcShopDao.fillSelectManyByIdsStatement(ids);
         //then

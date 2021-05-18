@@ -81,12 +81,13 @@ public class DataGeneratorForTests {
 
     public List<Shop> getShopsList() {
         List<Shop> shops = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 1; i < 4; i++) {
             Shop shop = new Shop();
-            shop.setId(i + 1);
-            shop.setName("shop" + (i + 1));
+            shop.setId(i);
+            shop.setName("shop" + i);
             shop.setMainPageLink(shop.getName() + "/main");
             shop.setImageLink(shop.getName() + "/image.png");
+            shop.setSmallImageLink(shop.getName() + "/smallImage.png");
             shops.add(shop);
         }
         return shops;

@@ -102,11 +102,7 @@ create table unique_vinyls_browsing_history
             references unique_vinyls (id)
 );
 
-insert into shops (link_to_main_page, link_to_image, name)
-values ('http://vinyl.ua/', 'img/shops/Vinyl_ua_logo.png', 'VinylUa');
 
-insert into shops (link_to_main_page, link_to_image, name)
-values ('https://www.juno.co.uk/', 'img/shops/junorecords_logo.png', 'JunoCoUk');
 
 
 

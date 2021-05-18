@@ -1,5 +1,6 @@
 package com.vinylteam.vinyl.web.templater;
 
+import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.web.dto.OneVinylOffersServletResponse;
 import org.thymeleaf.TemplateEngine;
@@ -52,6 +53,13 @@ public class PageGenerator {
         process(fileName, list, new ArrayList<>(), attributes, writer);
     }
 
+    public void processStores(String fileName, List<Shop> list, Map<String, String> attributes, Writer writer) {
+        Context storesContext = new Context();
+        prepareUserContext(attributes, storesContext);
+        storesContext.setVariable("shopList", list);
+        templateEngine.process(fileName, storesContext, writer);
+    }
+
     public void process(String fileName, List<UniqueVinyl> vinylList, List<OneVinylOffersServletResponse> vinylOffersList, Map<String, String> attributes, Writer writer) {
         Context context = getContext(vinylList, vinylOffersList, attributes);
         templateEngine.process(fileName, context, writer);
@@ -68,25 +76,7 @@ public class PageGenerator {
             context.setVariable("matcher", searchWord);
         }
 
-        String userRole = attributes.get("userRole");
-        if (userRole != null) {
-            context.setVariable("userRole", userRole);
-        }
-
-        String email = attributes.get("email");
-        if (email != null) {
-            context.setVariable("email", email);
-        }
-
-        String discogsUserName = attributes.get("discogsUserName");
-        if (discogsUserName != null) {
-            context.setVariable("discogsUserName", discogsUserName);
-        }
-
-        String discogsLink = attributes.get("discogsLink");
-        if (discogsLink != null) {
-            context.setVariable("discogsLink", discogsLink);
-        }
+        prepareUserContext(attributes, context);
 
         String message = attributes.get("message");
         if (message != null) {
@@ -136,5 +126,27 @@ public class PageGenerator {
         context.setVariable("vinylOffersList", vinylOffersList);
 
         return context;
+    }
+
+    void prepareUserContext(Map<String, String> attributes, Context context) {
+        String userRole = attributes.get("userRole");
+        if (userRole != null) {
+            context.setVariable("userRole", userRole);
+        }
+
+        String email = attributes.get("email");
+        if (email != null) {
+            context.setVariable("email", email);
+        }
+
+        String discogsUserName = attributes.get("discogsUserName");
+        if (discogsUserName != null) {
+            context.setVariable("discogsUserName", discogsUserName);
+        }
+
+        String discogsLink = attributes.get("discogsLink");
+        if (discogsLink != null){
+            context.setVariable("discogsLink", discogsLink);
+        }
     }
 }

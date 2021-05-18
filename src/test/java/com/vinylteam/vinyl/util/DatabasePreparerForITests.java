@@ -9,6 +9,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -23,7 +24,7 @@ public class DatabasePreparerForITests {
     private final String TRUNCATE_OFFERS = "TRUNCATE public.offers RESTART IDENTITY";
     private final String TRUNCATE_USERS_CASCADE = "TRUNCATE public.users RESTART IDENTITY CASCADE";
     private final String TRUNCATE_USERS_POSTS_CASCADE = "TRUNCATE public.user_posts RESTART IDENTITY CASCADE";
-    private final String INSERT_IN_SHOPS = "INSERT INTO public.shops(id, link_to_main_page, link_to_image, name) VALUES(?, ?, ?, ?)";
+    private final String INSERT_IN_SHOPS = "INSERT INTO public.shops(id, link_to_main_page, link_to_image, name, link_to_small_image) VALUES(?, ?, ?, ?, ?)";
     private final String INSERT_IN_UNIQUE_VINYLS = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image, has_offers) VALUES(?, ?, ?, ?, ?, ?)";
     private final String INSERT_IN_OFFERS = "INSERT INTO public.offers(unique_vinyl_id, shop_id, price, currency, genre, link_to_offer) " +
             "VALUES(?, ?, ?, ?, ?, ?)";
@@ -101,6 +102,7 @@ public class DatabasePreparerForITests {
                 insertShops.setString(2, shop.getMainPageLink());
                 insertShops.setString(3, shop.getImageLink());
                 insertShops.setString(4, shop.getName());
+                insertShops.setString(5, shop.getSmallImageLink());
                 insertShops.addBatch();
             }
             insertShops.executeBatch();
@@ -161,6 +163,10 @@ public class DatabasePreparerForITests {
             insertUsers.executeBatch();
             connection.commit();
         }
+    }
+
+    public void closeDataSource(){
+        dataSource.close();
     }
 
 }
