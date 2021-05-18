@@ -35,7 +35,7 @@ class ShopServletTest {
     private final InOrder inOrderRequest = inOrder(mockedRequest);
     private final List<Shop> testListOfShops;
 
-    ShopServletTest(){
+    ShopServletTest() {
         testListOfShops = new DataGeneratorForTests().getShopsList();
     }
 
