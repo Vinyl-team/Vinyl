@@ -1,7 +1,6 @@
 package com.vinylteam.vinyl.web.servlets;
 
 import com.vinylteam.vinyl.entity.User;
-import com.vinylteam.vinyl.security.SecurityService;
 import com.vinylteam.vinyl.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,13 +15,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 
-class DeleteUserServletTest {
+class DeleteProfileServletTest {
     private final UserService mockedUserService = mock(UserService.class);
-    private final DeleteUserServlet deleteUserServlet = new DeleteUserServlet(mockedUserService);
+    private final DeleteProfileServlet deleteProfileServlet = new DeleteProfileServlet(mockedUserService);
 
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
@@ -46,7 +44,7 @@ class DeleteUserServletTest {
         //prepare
         when(mockedRequest.getSession(false)).thenReturn(null);
         //when
-        deleteUserServlet.doPost(mockedRequest, mockedResponse);
+        deleteProfileServlet.doPost(mockedRequest, mockedResponse);
         //then
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderRequest.verify(mockedRequest).getSession(false);
@@ -61,12 +59,12 @@ class DeleteUserServletTest {
         when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(null);
         //when
-        deleteUserServlet.doPost(mockedRequest, mockedResponse);
+        deleteProfileServlet.doPost(mockedRequest, mockedResponse);
         //then
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderRequest.verify(mockedRequest).getSession(false);
         verify(mockedHttpSession, times(1)).getAttribute("user");
-        verify(mockedUserService, times(0)).remove(mockedUser);
+        verify(mockedUserService, times(0)).delete(mockedUser);
         inOrderResponse.verify(mockedResponse).sendRedirect("/signIn");
     }
 
@@ -76,15 +74,15 @@ class DeleteUserServletTest {
         //prepare
         when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
-        when(mockedUserService.remove(mockedUser)).thenReturn(false);
+        when(mockedUserService.delete(mockedUser)).thenReturn(false);
         when(mockedResponse.getWriter()).thenReturn(printWriter);
         //when
-        deleteUserServlet.doPost(mockedRequest, mockedResponse);
+        deleteProfileServlet.doPost(mockedRequest, mockedResponse);
         //then
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderRequest.verify(mockedRequest).getSession(false);
         verify(mockedHttpSession, times(1)).getAttribute("user");
-        verify(mockedUserService, times(1)).remove(mockedUser);
+        verify(mockedUserService, times(1)).delete(mockedUser);
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_BAD_REQUEST);
         inOrderResponse.verify(mockedResponse).getWriter();
     }
@@ -95,14 +93,14 @@ class DeleteUserServletTest {
         //prepare
         when(mockedRequest.getSession(false)).thenReturn(mockedHttpSession);
         when(mockedHttpSession.getAttribute("user")).thenReturn(mockedUser);
-        when(mockedUserService.remove(mockedUser)).thenReturn(true);
+        when(mockedUserService.delete(mockedUser)).thenReturn(true);
         //when
-        deleteUserServlet.doPost(mockedRequest, mockedResponse);
+        deleteProfileServlet.doPost(mockedRequest, mockedResponse);
         //then
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderRequest.verify(mockedRequest).getSession(false);
         verify(mockedHttpSession, times(1)).getAttribute("user");
-        verify(mockedUserService, times(1)).remove(mockedUser);
+        verify(mockedUserService, times(1)).delete(mockedUser);
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         verify(mockedHttpSession).invalidate();
         inOrderResponse.verify(mockedResponse).sendRedirect("/signUp");

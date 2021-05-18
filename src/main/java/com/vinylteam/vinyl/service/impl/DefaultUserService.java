@@ -36,8 +36,8 @@ public class DefaultUserService implements UserService {
     }
 
     @Override
-    public boolean remove(User user){
-        return userDao.remove(user);
+    public boolean delete(User user) {
+        return userDao.delete(user);
     }
 
     @Override

@@ -8,15 +8,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class EditProfileServlet extends HttpServlet {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private SecurityService securityService;
     private UserService userService;
 
@@ -29,7 +28,7 @@ public class EditProfileServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
+        log.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
         Map<String, String> attributes = new HashMap<>();
         HttpSession session = request.getSession(false);
         if (session != null) {
@@ -61,22 +60,23 @@ public class EditProfileServlet extends HttpServlet {
                 String discogsUserName = user.getDiscogsUserName();
                 if (!newPassword.equals(confirmNewPassword)) {
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
+                    log.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
                     attributes.put("message", "Sorry, passwords don't match!");
                 } else {
                     boolean checkOldPassword = securityService.checkPasswordAgainstUserPassword(user, oldPassword.toCharArray());
                     if (checkOldPassword) {
-                        boolean isEdit;
-                        if (!newPassword.equals("")){
-                            isEdit = userService.update(email, newEmail, newPassword, newDiscogsUserName);
+                        boolean isUpdated;
+                        if (!newPassword.equals("")) {
+                            isUpdated = userService.update(email, newEmail, newPassword, newDiscogsUserName);
+                            log.debug("Trying update user with new email and new password in the database {'newEmail':{}}.", newEmail);
                         } else {
-                            isEdit = userService.update(email, newEmail, oldPassword, newDiscogsUserName);
+                            isUpdated = userService.update(email, newEmail, oldPassword, newDiscogsUserName);
+                            log.debug("Trying update user with new email and old password in the database {'newEmail':{}}.", newEmail);
                         }
-                        logger.debug("Got result of edit user by email with " +
-                                "passed email and password to db {'newEmail':{}, 'isEdit':{}}", newEmail, isEdit);
-                        if (isEdit) {
+                        if (isUpdated) {
+                            log.info("User was updated with new email or password in the database {'newEmail':{}}.", newEmail);
                             response.setStatus(HttpServletResponse.SC_SEE_OTHER);
-                            logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_SEE_OTHER);
+                            log.debug("Set response status to {'status':{}}", HttpServletResponse.SC_SEE_OTHER);
                             attributes.put("message", "Your profile is successfully changed.");
                             httpSession.invalidate();
                             email = newEmail;
@@ -85,13 +85,14 @@ public class EditProfileServlet extends HttpServlet {
                             newSession.setMaxInactiveInterval(60 * 60 * 5);
                             newSession.setAttribute("user", userService.getByEmail(email).orElse(user));
                         } else {
+                            log.info("Failed to update with new email or password user in the database {'newEmail':{}}.", newEmail);
                             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                            logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
+                            log.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
                             attributes.put("message", "Edit is fail! Try again!");
                         }
                     } else {
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
+                        log.debug("Set response status to {'status':{}}", HttpServletResponse.SC_BAD_REQUEST);
                         attributes.put("message", "Sorry, old password isn't correct!");
                     }
                 }

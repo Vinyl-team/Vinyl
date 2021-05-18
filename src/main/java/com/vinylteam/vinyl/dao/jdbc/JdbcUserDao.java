@@ -24,7 +24,7 @@ public class JdbcUserDao implements UserDao {
     private static final String INSERT = "INSERT INTO public.users" +
             " (email, password, salt, iterations, role, status, discogs_user_name)" +
             " VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String REMOVE = "DELETE FROM users WHERE email = ?";
+    private static final String DELETE = "DELETE FROM users WHERE email = ?";
     private static final String UPDATE = "UPDATE public.users" +
             " SET email = ?, password = ?, salt = ?, iterations = ?, role = ?, status = ?, discogs_user_name = ?" +
             " WHERE email = ?";
@@ -52,7 +52,7 @@ public class JdbcUserDao implements UserDao {
                 isAdded = true;
             }
         } catch (PSQLException e) {
-            logger.debug("Database error while adding user to public.users", e);
+            logger.error("Database error while adding user to public.users", e);
             isAdded = false;
         } catch (SQLException e) {
             logger.error("Error while adding user to public.users", e);
@@ -67,26 +67,27 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public boolean remove(User user){
+    public boolean delete(User user) {
         boolean isDeleted = false;
-        try(Connection connection = dataSource.getConnection();
-        PreparedStatement removeStatement = connection.prepareStatement(REMOVE)){
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement removeStatement = connection.prepareStatement(DELETE)) {
             removeStatement.setString(1, user.getEmail());
+            logger.debug("Prepared statement {'preparedStatement':{}}.", removeStatement);
             int result = removeStatement.executeUpdate();
-            if (result > 0){
+            if (result > 0) {
                 isDeleted = true;
             }
-        } catch (PSQLException e){
-            logger.debug("Database error while delete user from public.users", e);
+        } catch (PSQLException e) {
+            logger.error("Database error while delete user from public.users", e);
             isDeleted = false;
-        } catch (SQLException e){
-            logger.debug("Error while delete user from public.users", e);
+        } catch (SQLException e) {
+            logger.error("Error while delete user from public.users", e);
             isDeleted = false;
         }
-        if (isDeleted){
-            logger.debug("User was deleted from database {'user':{}}.", user);
+        if (isDeleted) {
+            logger.info("User was deleted from database {'user':{}}.", user);
         } else {
-            logger.debug("Failed delete user from database {'user':{}}.", user);
+            logger.info("Failed delete user from database {'user':{}}.", user);
         }
         return isDeleted;
     }
@@ -110,7 +111,7 @@ public class JdbcUserDao implements UserDao {
                 isUpdated = true;
             }
         } catch (PSQLException e) {
-            logger.debug("Database error while edit user to public.users", e);
+            logger.error("Database error while edit user to public.users", e);
             isUpdated = false;
         } catch (SQLException e) {
             logger.error("Error while updating user in public.users", e);

@@ -10,7 +10,7 @@ public interface UserService {
 
     boolean update(String oldEmail, String newEmail, String newPassword, String discogsUserName);
 
-    boolean remove(User user);
+    boolean delete(User user);
 
     Optional<User> getByEmail(String email);
 
