@@ -28,6 +28,7 @@ class JdbcShopDaoITest {
     @AfterAll
     void afterAll() throws SQLException {
         databasePreparer.truncateCascadeShops();
+        databasePreparer.closeDataSource();
     }
 
     @BeforeEach
