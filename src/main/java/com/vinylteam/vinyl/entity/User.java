@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class User {
 
+    private Long id;
     private String email;
     private String password;
     private String discogsUserName;
@@ -11,6 +12,27 @@ public class User {
     private int iterations;
     private Role role;
     private boolean status;
+
+    public User() {
+    }
+
+    public User(User user) {
+        this.email = user.email;
+        this.password = user.password;
+        this.discogsUserName = user.discogsUserName;
+        this.salt = user.salt;
+        this.iterations = user.iterations;
+        this.role = user.role;
+        this.status = user.status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getEmail() {
         return email;
@@ -96,5 +118,4 @@ public class User {
     public int hashCode() {
         return Objects.hash(email, password, discogsUserName, salt, iterations, role, status);
     }
-
 }
