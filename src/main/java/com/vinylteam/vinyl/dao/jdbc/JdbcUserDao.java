@@ -70,22 +70,22 @@ public class JdbcUserDao implements UserDao {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement removeStatement = connection.prepareStatement(DELETE)) {
             removeStatement.setString(1, user.getEmail());
-            logger.debug("Prepared statement {'preparedStatement':{}}.", removeStatement);
+            log.debug("Prepared statement {'preparedStatement':{}}.", removeStatement);
             int result = removeStatement.executeUpdate();
             if (result > 0) {
                 isDeleted = true;
             }
         } catch (PSQLException e) {
-            logger.error("Database error while delete user from public.users", e);
+            log.error("Database error while delete user from public.users", e);
             isDeleted = false;
         } catch (SQLException e) {
-            logger.error("Error while delete user from public.users", e);
+            log.error("Error while delete user from public.users", e);
             isDeleted = false;
         }
         if (isDeleted) {
-            logger.info("User was deleted from database {'user':{}}.", user);
+            log.info("User was deleted from database {'user':{}}.", user);
         } else {
-            logger.info("Failed delete user from database {'user':{}}.", user);
+            log.info("Failed delete user from database {'user':{}}.", user);
         }
         return isDeleted;
     }
