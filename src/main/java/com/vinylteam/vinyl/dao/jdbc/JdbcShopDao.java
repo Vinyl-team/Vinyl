@@ -17,7 +17,7 @@ import java.util.List;
 public class JdbcShopDao implements ShopDao {
 
     private static final ShopRowMapper shopRowMapper = new ShopRowMapper();
-    private static final String SELECT_MANY_SHOPS_BY_IDS = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image " +
+    private static final String SELECT_SHOPS_BY_IDS = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image " +
             "FROM public.shops WHERE id IN ()  ORDER BY shop_order NULLS FIRST";
 
     private static final String SELECT_ALL_SHOPS = "SELECT id, link_to_main_page, link_to_image, name, link_to_small_image FROM public.shops ORDER BY shop_order NULLS FIRST";
@@ -42,12 +42,12 @@ public class JdbcShopDao implements ShopDao {
                     shops.add(shop);
                 }
             } catch (SQLException e) {
-                log.error("Error while getting list of shops with ids from list of ids from db {'ids':{}, 'shops':{}}",
+                log.error("Error while getting list of shops by ids list from db {'ids':{}, 'shops':{}}",
                         ids, shops, e);
                 throw new RuntimeException(e);
             }
         }
-        log.debug("Resulting list of shops with ids from list of ids is {'shops':{}}", shops);
+        log.debug("List of shops received by ids list is {'shops':{}}", shops);
         return shops;
     }
 
@@ -71,7 +71,7 @@ public class JdbcShopDao implements ShopDao {
     }
 
     String fillSelectManyByIdsStatement(List<Integer> ids) {
-        StringBuffer stringBuffer = new StringBuffer(SELECT_MANY_SHOPS_BY_IDS);
+        StringBuffer stringBuffer = new StringBuffer(SELECT_SHOPS_BY_IDS);
         for (Integer id : ids) {
             if (stringBuffer.lastIndexOf(")") - stringBuffer.lastIndexOf("(") > 1) {
                 stringBuffer.insert(stringBuffer.lastIndexOf(")"), ", ");
