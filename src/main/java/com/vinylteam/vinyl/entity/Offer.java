@@ -13,19 +13,6 @@ public class Offer {
     private String genre;
     private String offerLink;
 
-    public Offer() {
-    }
-
-    public Offer(Offer offer) {
-        this.id = offer.id;
-        this.uniqueVinylId = offer.uniqueVinylId;
-        this.shopId = offer.shopId;
-        this.price = offer.price;
-        this.currency = offer.currency;
-        this.genre = offer.genre;
-        this.offerLink = offer.offerLink;
-    }
-
     public long getId() {
         return id;
     }

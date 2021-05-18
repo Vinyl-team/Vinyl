@@ -9,23 +9,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class PropertiesReaderTest {
 
     @Test
-    @DisplayName("Checks properties read from the right file when the project is running locally.")
-    void testPropertiesReaderAsOnLocalMachine() throws Exception {
-        final PropertiesReader[] propertiesReader = new PropertiesReader[1];
-        withEnvironmentVariable("env", null)
-                .execute(() -> propertiesReader[0] = new PropertiesReader());
-
-        assertEquals("postgres", propertiesReader[0].getProperty("jdbc.user"));
-        assertEquals("org.postgresql.Driver", propertiesReader[0].getProperty("jdbc.driver"));
-        assertEquals("5", propertiesReader[0].getProperty("jdbc.maximum.pool.size"));
-    }
-
-    @Test
     @DisplayName("Checks properties read from the right file when the project is running on Heroku.")
     void testPropertiesReaderAsOnHeroku() throws Exception {
         final PropertiesReader[] propertiesReader = new PropertiesReader[1];
         withEnvironmentVariable("env", "PROD")
-                .and("DATABASE_URL", "postgres://allconsonantsuser:longpassword" +
+                .and("RDS_DATABASE_URL", "postgres://allconsonantsuser:longpassword" +
                         "@some-amazonw:5122/lostamongotherdatabases")
                 .and("PORT", "4125")
                 .execute(() -> propertiesReader[0] = new PropertiesReader());

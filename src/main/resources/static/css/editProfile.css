@@ -11,6 +11,7 @@
 .content-edit-profile__column{
   height: 32.36em;
   width: 19.44em;
+  position: relative;
 }
 
 .edit-profile-user{

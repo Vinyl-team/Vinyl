@@ -140,7 +140,7 @@ class RawOffersSorterTest {
     void addOffersSortingByVinylEmptyRawOffersTest() {
         //prepare
         UniqueVinyl actualUniqueVinyl = dataGenerator.getUniqueVinylWithNumber(3);
-        UniqueVinyl expectedUniqueVinyl = new UniqueVinyl(actualUniqueVinyl);
+        UniqueVinyl expectedUniqueVinyl = dataGenerator.getUniqueVinylWithNumber(3);
         List<Offer> actualOffers = new ArrayList<>(offers.subList(0, 4));
         List<Offer> expectedOffers = new ArrayList<>(actualOffers);
         //when
@@ -157,7 +157,7 @@ class RawOffersSorterTest {
         //prepare
         List<RawOffer> actualRawOffers = new ArrayList<>(rawOffers.subList(4, 6));
         UniqueVinyl actualUniqueVinyl = dataGenerator.getUniqueVinylWithNumber(3);
-        UniqueVinyl expectedUniqueVinyl = new UniqueVinyl(actualUniqueVinyl);
+        UniqueVinyl expectedUniqueVinyl = dataGenerator.getUniqueVinylWithNumber(3);
         expectedUniqueVinyl.setHasOffers(true);
         List<Offer> actualOffers = new ArrayList<>(offers.subList(0, 4));
         List<Offer> expectedOffers = new ArrayList<>(offers);

@@ -6,21 +6,20 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class HomeServlet extends HttpServlet {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
-        logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
+        log.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
         Map<String, String> attributes = new HashMap<>();
         HttpSession session = request.getSession(false);
         if (session != null) {
