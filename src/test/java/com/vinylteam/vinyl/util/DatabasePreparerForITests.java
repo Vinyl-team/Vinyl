@@ -23,7 +23,7 @@ public class DatabasePreparerForITests {
     private final String TRUNCATE_OFFERS = "TRUNCATE public.offers RESTART IDENTITY";
     private final String TRUNCATE_USERS_CASCADE = "TRUNCATE public.users RESTART IDENTITY CASCADE";
     private final String TRUNCATE_USERS_POSTS_CASCADE = "TRUNCATE public.user_posts RESTART IDENTITY CASCADE";
-    private final String INSERT_IN_SHOPS = "INSERT INTO public.shops(id, link_to_main_page, link_to_image, name) VALUES(?, ?, ?, ?)";
+    private final String INSERT_IN_SHOPS = "INSERT INTO public.shops(id, link_to_main_page, link_to_image, name, link_to_small_image) VALUES(?, ?, ?, ?, ?)";
     private final String INSERT_IN_UNIQUE_VINYLS = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image, has_offers) VALUES(?, ?, ?, ?, ?, ?)";
     private final String INSERT_IN_OFFERS = "INSERT INTO public.offers(unique_vinyl_id, shop_id, price, currency, genre, link_to_offer) " +
             "VALUES(?, ?, ?, ?, ?, ?)";
