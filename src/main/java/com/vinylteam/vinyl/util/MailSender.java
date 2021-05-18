@@ -47,7 +47,6 @@ public class MailSender {
 
         } catch (MessagingException e) {
             logger.info("Can't send email to recipient : {}  due to error : {}", recipient, e.toString());
-            e.printStackTrace();
             return false;
         }
         return true;
