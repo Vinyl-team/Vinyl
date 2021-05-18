@@ -4,13 +4,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 
+@Slf4j
 public class SignOutServlet extends HttpServlet {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -20,7 +19,7 @@ public class SignOutServlet extends HttpServlet {
             session.invalidate();
         }
         response.setStatus(HttpServletResponse.SC_OK);
-        logger.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
+        log.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
         response.sendRedirect("/");
     }
 }

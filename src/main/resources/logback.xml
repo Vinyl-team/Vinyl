@@ -18,7 +18,7 @@
             <level>${FILTER_LEVEL}</level>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${FILE_NAME_PATTERN}</fileNamePattern>
+            <fileNamePattern>${PACKAGE_NAME}/${FILE_NAME_PATTERN}</fileNamePattern>
             <maxFileSize>5MB</maxFileSize>
             <maxHistory>10</maxHistory>
             <totalSizeCap>100MB</totalSizeCap>
