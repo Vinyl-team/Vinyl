@@ -7,8 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,6 +20,7 @@ class UserPostRowMapperTest {
     @Test
     @DisplayName("Map fields correctly for user post conversion")
     void mapFilledRowTest() throws SQLException {
+        LocalDateTime createdAt = LocalDateTime.of(2021, 5, 19, 21, 0);
         //prepare
         ResultSet mockedFilledResultSet = mock(ResultSet.class);
         when(mockedFilledResultSet.getLong("user_id")).thenReturn(99L);
@@ -25,6 +28,8 @@ class UserPostRowMapperTest {
         when(mockedFilledResultSet.getString("name")).thenReturn("Boris The Blade");
         when(mockedFilledResultSet.getString("theme")).thenReturn("Urgent Action");
         when(mockedFilledResultSet.getString("message")).thenReturn("I need new blades!");
+        when(mockedFilledResultSet.getTimestamp("created_at"))
+                .thenReturn(Timestamp.valueOf(createdAt));
         //when
         UserPost actualUserPost = rowMapper.mapRow(mockedFilledResultSet);
         //then
@@ -33,5 +38,6 @@ class UserPostRowMapperTest {
         assertEquals("Boris The Blade", actualUserPost.getName());
         assertEquals("Urgent Action", actualUserPost.getTheme());
         assertEquals("I need new blades!", actualUserPost.getMessage());
+        assertEquals(createdAt, actualUserPost.getCreatedAt());
     }
 }

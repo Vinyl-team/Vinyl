@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 @Slf4j
 public class UserPostRowMapper implements RowMapper<UserPost> {
@@ -19,6 +20,7 @@ public class UserPostRowMapper implements RowMapper<UserPost> {
             userPost.setEmail(resultSet.getString("email"));
             userPost.setTheme(resultSet.getString("theme"));
             userPost.setMessage(resultSet.getString("message"));
+            userPost.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
             log.debug("Resulting user post object {'userPost':{}}", userPost);
             return userPost;
         } catch (SQLException e) {
