@@ -31,4 +31,5 @@ public class DefaultCaptchaService implements CaptchaService {
         return CaptchaValidator.getInstance().validateResponseForID(captchaId,
                 response);
     }
+
 }

@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class ImageCaptchaServlet extends HttpServlet {
-    DefaultCaptchaService captchaService = new DefaultCaptchaService();
+    private DefaultCaptchaService captchaService = new DefaultCaptchaService();
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String captchaId = request.getSession().getId();
@@ -24,4 +24,5 @@ public class ImageCaptchaServlet extends HttpServlet {
         responseOutputStream.flush();
         responseOutputStream.close();
     }
+
 }
