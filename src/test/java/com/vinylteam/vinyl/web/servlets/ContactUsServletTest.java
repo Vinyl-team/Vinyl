@@ -71,4 +71,16 @@ class ContactUsServletTest {
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
     }
+
+    @Test
+    @DisplayName("Check if do request returns right content type for user with session")
+    void doGetReturnsCorrectContentTypeTest() throws IOException {
+        //prepare
+        when(mockedRequest.getSession()).thenReturn(mockedHttpSession);
+        when(mockedResponse.getWriter()).thenReturn(printWriter);
+        //when
+        contactUsServlet.doGet(mockedRequest, mockedResponse);
+        //then
+        inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
+    }
 }
