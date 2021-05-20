@@ -23,7 +23,6 @@ class UserPostRowMapperTest {
         LocalDateTime createdAt = LocalDateTime.of(2021, 5, 19, 21, 0);
         //prepare
         ResultSet mockedFilledResultSet = mock(ResultSet.class);
-        when(mockedFilledResultSet.getLong("user_id")).thenReturn(99L);
         when(mockedFilledResultSet.getString("email")).thenReturn("testuser@vinyl.com");
         when(mockedFilledResultSet.getString("name")).thenReturn("Boris The Blade");
         when(mockedFilledResultSet.getString("theme")).thenReturn("Urgent Action");
@@ -33,7 +32,6 @@ class UserPostRowMapperTest {
         //when
         UserPost actualUserPost = rowMapper.mapRow(mockedFilledResultSet);
         //then
-        assertEquals(99L, actualUserPost.getUserId());
         assertEquals("testuser@vinyl.com", actualUserPost.getEmail());
         assertEquals("Boris The Blade", actualUserPost.getName());
         assertEquals("Urgent Action", actualUserPost.getTheme());

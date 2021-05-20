@@ -106,6 +106,7 @@ public class Starter {
         DeleteProfileServlet deleteProfileServlet = new DeleteProfileServlet(userService);
         HomeServlet homeServlet = new HomeServlet();
         ContactUsServlet contactUsServlet = new ContactUsServlet(userPostService);
+        ImageCaptchaServlet imageCaptchaServlet = new ImageCaptchaServlet();
 
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
@@ -126,6 +127,7 @@ public class Starter {
         servletContextHandler.addServlet(new ServletHolder(deleteProfileServlet), "/deleteProfile");
         servletContextHandler.addServlet(new ServletHolder(homeServlet), "");
         servletContextHandler.addServlet(new ServletHolder(contactUsServlet), "/contact");
+        servletContextHandler.addServlet(new ServletHolder(imageCaptchaServlet), "/captcha");
 
         servletContextHandler.addServlet(DefaultServlet.class, "/*");
 

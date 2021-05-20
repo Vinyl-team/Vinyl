@@ -35,7 +35,7 @@ class JdbcUserPostDaoITest {
     void addNewUserPostTest() {
         LocalDateTime createdAt = LocalDateTime.of(2021, 5, 19, 21, 0);
         //prepare
-        UserPost expectedUserPost = new UserPost(1L, "name", "email", "theme", "message", createdAt);
+        UserPost expectedUserPost = new UserPost("name", "email", "theme", "message", createdAt);
         //when
         assertTrue(userPostDao.add(expectedUserPost));
     }
