@@ -1,14 +1,12 @@
 package com.vinylteam.vinyl.web.servlets;
 
-import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.entity.UserPost;
+import com.vinylteam.vinyl.service.CaptchaService;
 import com.vinylteam.vinyl.service.UserPostService;
-import com.vinylteam.vinyl.service.impl.DefaultCaptchaService;
 import com.vinylteam.vinyl.web.templater.PageGenerator;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -16,11 +14,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ContactUsServlet extends HttpServlet {
-    private final UserPostService service;
-    DefaultCaptchaService defaultCaptchaService = new DefaultCaptchaService();
+    private final UserPostService userPostService;
+    private final CaptchaService defaultCaptchaService;
 
-    public ContactUsServlet(UserPostService service) {
-        this.service = service;
+    public ContactUsServlet(UserPostService service, CaptchaService defaultCaptchaService) {
+        this.userPostService = service;
+        this.defaultCaptchaService = defaultCaptchaService;
     }
 
     @Override
@@ -44,7 +43,7 @@ public class ContactUsServlet extends HttpServlet {
 
         if (isCaptchaValid) {
             UserPost post = new UserPost(name, email, subject, messageContactUs, LocalDateTime.now());
-            boolean isPostProcessed = service.processAdd(post);
+            boolean isPostProcessed = userPostService.processAdd(post);
             if (isPostProcessed) {
                 response.setStatus(HttpServletResponse.SC_OK);
             } else {

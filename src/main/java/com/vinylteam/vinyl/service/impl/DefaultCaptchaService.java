@@ -1,6 +1,7 @@
 package com.vinylteam.vinyl.service.impl;
 
-import com.vinylteam.vinyl.util.CaptchaService;
+import com.vinylteam.vinyl.service.CaptchaService;
+import com.vinylteam.vinyl.util.CaptchaValidator;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
@@ -8,11 +9,13 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 
 @Slf4j
-public class DefaultCaptchaService {
+public class DefaultCaptchaService implements CaptchaService {
+
+    @Override
     public byte[] getCaptcha(String captchaId) {
         try (ByteArrayOutputStream jpegOutputStream = new ByteArrayOutputStream()) {
             BufferedImage challenge =
-                    CaptchaService.getInstance().getImageChallengeForID(captchaId);
+                    CaptchaValidator.getInstance().getImageChallengeForID(captchaId);
 
             ImageIO.write(challenge, "jpeg", jpegOutputStream);
             return jpegOutputStream.toByteArray();
@@ -23,8 +26,9 @@ public class DefaultCaptchaService {
         return null;
     }
 
+    @Override
     public boolean validateCaptcha(String captchaId, String response) {
-        return CaptchaService.getInstance().validateResponseForID(captchaId,
+        return CaptchaValidator.getInstance().validateResponseForID(captchaId,
                 response);
     }
 }

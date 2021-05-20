@@ -74,6 +74,7 @@ public class Starter {
                 propertiesReader.getProperty("mail.smtp.port"),
                 propertiesReader.getProperty("mail.smtp.username"));
         UserPostService userPostService = new DefaultUserPostService(userPostDao, mailSender);
+        CaptchaService defaultCaptchaService = new DefaultCaptchaService();
 //UTIL, FILL IN DATABASE
         ShopsParser shopsParser = new ShopsParser();
         RawOffersSorter rawOffersSorter = new RawOffersSorter();
@@ -105,7 +106,7 @@ public class Starter {
         EditProfileServlet editProfileServlet = new EditProfileServlet(securityService, userService);
         DeleteProfileServlet deleteProfileServlet = new DeleteProfileServlet(userService);
         HomeServlet homeServlet = new HomeServlet();
-        ContactUsServlet contactUsServlet = new ContactUsServlet(userPostService);
+        ContactUsServlet contactUsServlet = new ContactUsServlet(userPostService, defaultCaptchaService);
         ImageCaptchaServlet imageCaptchaServlet = new ImageCaptchaServlet();
 
         Resource resource = JarFileResource.newClassPathResource(RESOURCE_PATH);

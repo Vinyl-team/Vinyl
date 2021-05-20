@@ -31,7 +31,7 @@ public class ImageCaptchaServletTest {
     }
 
     @Test
-    @DisplayName("Checks if all right methods are called & user is not authed")
+    @DisplayName("We received right response status + type")
     void doGetWithNotAuthedUserTest() throws IOException {
         //prepare
         when(mockedRequest.getSession()).thenReturn(mockedHttpSession);
