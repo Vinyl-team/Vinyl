@@ -9,6 +9,7 @@ import com.vinylteam.vinyl.service.*;
 import com.vinylteam.vinyl.service.impl.*;
 import com.vinylteam.vinyl.util.*;
 import com.vinylteam.vinyl.util.impl.DecksParser;
+import com.vinylteam.vinyl.util.impl.CloneNlParser;
 import com.vinylteam.vinyl.util.impl.JunoVinylParser;
 import com.vinylteam.vinyl.util.impl.VinylUaParser;
 import com.vinylteam.vinyl.web.filter.SecurityFilter;
@@ -79,7 +80,7 @@ public class Starter {
 //UTIL, FILL IN DATABASE
         ShopsParser shopsParser = new ShopsParser();
         RawOffersSorter rawOffersSorter = new RawOffersSorter();
-        List<VinylParser> vinylParsers = List.of(new VinylUaParser(), new JunoVinylParser(), new DecksParser());
+        List<VinylParser> vinylParsers = List.of(new VinylUaParser(), new JunoVinylParser(), new DecksParser(), new CloneNlParser());
         Updater updater = new Updater(uniqueVinylService, offerService, shopsParser, vinylParsers, rawOffersSorter);
         TimerTask updateTask = new TimerTask() {
             @Override

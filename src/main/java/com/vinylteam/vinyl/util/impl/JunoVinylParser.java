@@ -2,6 +2,7 @@ package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.RawOffer;
+import com.vinylteam.vinyl.util.PriceUtils;
 import com.vinylteam.vinyl.util.VinylParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -154,44 +155,20 @@ public class JunoVinylParser implements VinylParser {
 
     Double getPriceFromDocument(Document document) {
         String fullPriceDetails = document.select(SELECTOR_PRICE_DETAILS).text();
-        log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", fullPriceDetails, document.location());
-        if (fullPriceDetails.length() > 0) {
-            String priceDetails = fullPriceDetails;
-            try {
-                if (priceDetails.contains(" ")) {
-                    priceDetails = priceDetails.substring(priceDetails.lastIndexOf(" ") + 1);
-                }
-                String priceNumber = priceDetails.substring(1);
-                double price = Double.parseDouble(priceNumber);
-                log.debug("Got price from price details {'price':{}, 'priceDetails':{}}", price, fullPriceDetails);
-                return price;
-            } catch (Exception e) {
-                log.error("Error while getting price from price details from link {'priceDetails':{}, 'link':{}}", fullPriceDetails, document.location());
-            }
+        String priceDetails = fullPriceDetails;
+        if (fullPriceDetails.contains(" ")) {
+            priceDetails = fullPriceDetails.substring(fullPriceDetails.lastIndexOf(" ") + 1);
         }
-        log.warn("Can't find price from price details from link, returning 0. {'priceDetails':{}, 'link':{}}", fullPriceDetails, document.location());
-        return 0.;
+        return PriceUtils.getPriceFromString(priceDetails);
     }
 
     Optional<Currency> getOptionalCurrencyFromDocument(Document document) {
         String fullPriceDetails = document.select(SELECTOR_PRICE_DETAILS).text();
         log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", fullPriceDetails, document.location());
-        if (fullPriceDetails.length() > 0) {
-            String priceDetails = fullPriceDetails;
-            try {
-                if (priceDetails.contains(" ")) {
-                    priceDetails = priceDetails.substring(priceDetails.lastIndexOf(" ") + 1);
-                }
-                String currency = priceDetails.substring(0, 1);
-                Optional<Currency> optionalCurrency = Currency.getCurrency(currency);
-                log.debug("Got optional with currency from price details {'optionalCurrency':{}, 'priceDetails':{}}", optionalCurrency, priceDetails);
-                return optionalCurrency;
-            } catch (Exception e) {
-                log.error("Error while getting optional with currency from price details from link {'priceDetails':{}, 'link':{}}", priceDetails, document.location());
-            }
+        if (fullPriceDetails.contains(" ")) {
+            fullPriceDetails = fullPriceDetails.substring(fullPriceDetails.lastIndexOf(" ") + 1);
         }
-        log.warn("Can't find currency description from price details from link, returning empty optional {'priceDetails':{}, 'link':{}}", fullPriceDetails, document.location());
-        return Optional.empty();
+        return PriceUtils.getCurrencyFromString(fullPriceDetails);
     }
 
     String getHighResImageLinkFromDocument(Document document) {
