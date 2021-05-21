@@ -107,24 +107,30 @@ public class JunoVinylParser implements VinylParser {
 
     @Override
     public RawOffer getRawOfferFromOfferLink(String offerLink) {
-        Document document = getDocument(offerLink).get();
-        var imageLink = getHighResImageLinkFromDocument(document);
-        var price = getPriceFromDocument(document);
-        var priceCurrency = getOptionalCurrencyFromDocument(document);
-        var artist = getArtistFromDocument(document);
-        var release = getReleaseFromDocument(document);
-        var genre = getGenreFromDocument(document);
+        Optional<Document> optionalDocument = getDocument(offerLink);
+        if (optionalDocument.isEmpty()) {
+            log.error("Can`t get document by: {'offerLink':{}}", offerLink);
+            return new RawOffer();
+        } else {
+            Document document = optionalDocument.get();
+            var imageLink = getHighResImageLinkFromDocument(document);
+            var price = getPriceFromDocument(document);
+            var priceCurrency = getOptionalCurrencyFromDocument(document);
+            var artist = getArtistFromDocument(document);
+            var release = getReleaseFromDocument(document);
+            var genre = getGenreFromDocument(document);
 
-        var rawOffer = new RawOffer();
-        rawOffer.setShopId(2);
-        rawOffer.setRelease(release);
-        rawOffer.setArtist(artist);
-        rawOffer.setPrice(price);
-        rawOffer.setCurrency(priceCurrency);
-        rawOffer.setOfferLink(offerLink);
-        rawOffer.setImageLink(imageLink);
-        rawOffer.setGenre(genre);
-        return rawOffer;
+            var rawOffer = new RawOffer();
+            rawOffer.setShopId(2);
+            rawOffer.setRelease(release);
+            rawOffer.setArtist(artist);
+            rawOffer.setPrice(price);
+            rawOffer.setCurrency(priceCurrency);
+            rawOffer.setOfferLink(offerLink);
+            rawOffer.setImageLink(imageLink);
+            rawOffer.setGenre(genre);
+            return rawOffer;
+        }
     }
 
     String getReleaseFromDocument(Document document) {
