@@ -171,7 +171,6 @@ public class JunoVinylParser implements VinylParser {
         return PriceUtils.getCurrencyFromString(fullPriceDetails);
     }
 
-
     String getHighResImageLinkFromDocument(Document document) {
         String highResImageLink = document.select(SELECTOR_SCRIPT_HIGH_RES_IMAGE_LINK).attr("data-src-full");
         if (highResImageLink.length() > 0) {

@@ -37,6 +37,7 @@ public class CloneNlParser implements VinylParser {
     private static final String VINYL_GENRES_SELECTOR = "DIV.tagsbuttons > A.label";
     private static final String PRICE_DETAILS_SELECTOR = "DIV.release TABLE.availability A.addtocart";
     private static final String ONE_VINYL_SELECTOR = "DIV.release";
+    private static final int SHOP_ID = 4;
 
     private final AtomicInteger documentCounter = new AtomicInteger(0);
 
@@ -145,7 +146,7 @@ public class CloneNlParser implements VinylParser {
         var genre = getGenreFromDocument(releaseElement);
 
         var rawOffer = new RawOffer();
-        rawOffer.setShopId(4);
+        rawOffer.setShopId(SHOP_ID);
         rawOffer.setRelease(release);
         rawOffer.setArtist(artist);
         rawOffer.setPrice(price);
@@ -156,7 +157,6 @@ public class CloneNlParser implements VinylParser {
         log.debug("New Raw Offer is Formed {'rawOffer': {}}", rawOffer);
         return rawOffer;
     }
-
 
     @Override
     public RawOffer getRawOfferFromOfferLink(String offerLink) {

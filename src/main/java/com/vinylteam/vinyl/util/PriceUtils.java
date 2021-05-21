@@ -39,4 +39,5 @@ public class PriceUtils {
         log.warn("Can't find currency description from price details from link, returning empty optional {'priceDetails':{}}", fullPriceDetails);
         return Optional.empty();
     }
+
 }
