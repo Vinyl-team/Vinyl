@@ -5,8 +5,7 @@ import com.vinylteam.vinyl.dao.UniqueVinylDao;
 import com.vinylteam.vinyl.dao.jdbc.mapper.UniqueVinylRowMapper;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.zaxxer.hikari.HikariDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,9 +14,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class JdbcUniqueVinylDao implements UniqueVinylDao {
 
-    private static final Logger logger = LoggerFactory.getLogger(JdbcUniqueVinylDao.class);
     private static final RowMapper<UniqueVinyl> rowMapper = new UniqueVinylRowMapper();
     private static final String SELECT_ALL = "SELECT id, release, artist, full_name, link_to_image FROM public.unique_vinyls";
     private static final String SELECT_BY_ID = SELECT_ALL + " WHERE id=?";
@@ -36,17 +35,17 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement findAllStatement = connection.prepareStatement(SELECT_ALL);
              ResultSet resultSet = findAllStatement.executeQuery()) {
-            logger.debug("Executed statement {'statement':{}}", findAllStatement);
+            log.debug("Executed statement {'statement':{}}", findAllStatement);
             while (resultSet.next()) {
                 UniqueVinyl uniqueVinyl = rowMapper.mapRow(resultSet);
                 uniqueVinyls.add(uniqueVinyl);
             }
         } catch (SQLException e) {
-            logger.error("Error while finding uniqueVinyls in db {'uniqueVinyls':{}}", uniqueVinyls, e);
+            log.error("Error while finding uniqueVinyls in db {'uniqueVinyls':{}}", uniqueVinyls, e);
             throw new RuntimeException(e);
         }
-        logger.info("Found all uniqueVinyls from db.");
-        logger.debug("Resulting uniqueVinyls are {'uniqueVinyls':{}}", uniqueVinyls);
+        log.info("Found all uniqueVinyls from db.");
+        log.debug("Resulting uniqueVinyls are {'uniqueVinyls':{}}", uniqueVinyls);
         return uniqueVinyls;
     }
 
@@ -56,21 +55,21 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement findByIdStatement = connection.prepareStatement(SELECT_BY_ID)) {
             findByIdStatement.setLong(1, id);
-            logger.debug("Prepared statement {'preparedStatement':{}}", findByIdStatement);
+            log.debug("Prepared statement {'preparedStatement':{}}", findByIdStatement);
             try (ResultSet resultSet = findByIdStatement.executeQuery()) {
                 if (resultSet.next()) {
                     uniqueVinyl = rowMapper.mapRow(resultSet);
                 } else {
                     RuntimeException e = new RuntimeException();
-                    logger.error("No uniqueVinyl with that id in table {'id':{}}", id, e);
+                    log.error("No uniqueVinyl with that id in table {'id':{}}", id, e);
                     throw e;
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error while finding uniqueVinyl by id from db {'id':{}}", id);
+            log.error("Error while finding uniqueVinyl by id from db {'id':{}}", id);
             throw new RuntimeException(e);
         }
-        logger.debug("Resulting uniqueVinyl is {'uniqueVinyl':{}}", uniqueVinyl);
+        log.debug("Resulting uniqueVinyl is {'uniqueVinyl':{}}", uniqueVinyl);
         return uniqueVinyl;
     }
 
@@ -80,7 +79,7 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement findAmountOfRandom = connection.prepareStatement(SELECT_MANY_RANDOM)) {
             findAmountOfRandom.setInt(1, amount);
-            logger.debug("Prepared statement {'preparedStatement':{}}", findAmountOfRandom);
+            log.debug("Prepared statement {'preparedStatement':{}}", findAmountOfRandom);
             try (ResultSet resultSet = findAmountOfRandom.executeQuery()) {
                 while (resultSet.next()) {
                     UniqueVinyl uniqueVinyl = rowMapper.mapRow(resultSet);
@@ -88,10 +87,10 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error while finding that amount of random uniqueVinyls from db {'amount':{}}", amount, e);
+            log.error("Error while finding that amount of random uniqueVinyls from db {'amount':{}}", amount, e);
             throw new RuntimeException("Error while finding " + amount + " of random unique vinyls from the db", e);
         }
-        logger.debug("Resulting uniqueVinyls are {'uniqueVinyls':{}}", randomUniqueVinyls);
+        log.debug("Resulting uniqueVinyls are {'uniqueVinyls':{}}", randomUniqueVinyls);
         return randomUniqueVinyls;
     }
 
@@ -99,14 +98,14 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
     public List<UniqueVinyl> findManyFiltered(String matcher) {
         if (matcher == null) {
             RuntimeException e = new NullPointerException();
-            logger.error("Passed matcher is null", e);
+            log.error("Passed matcher is null", e);
             throw e;
         }
         List<UniqueVinyl> filteredUniqueVinyls = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement findFilteredByFullNameSubstring = connection.prepareStatement(SELECT_MANY_BY_FULL_NAME_MATCH)) {
             findFilteredByFullNameSubstring.setString(1, '%' + matcher + '%');
-            logger.debug("Prepared statement {'preparedStatement':{}}", findFilteredByFullNameSubstring);
+            log.debug("Prepared statement {'preparedStatement':{}}", findFilteredByFullNameSubstring);
             try (ResultSet resultSet = findFilteredByFullNameSubstring.executeQuery()) {
                 while (resultSet.next()) {
                     UniqueVinyl uniqueVinyl = rowMapper.mapRow(resultSet);
@@ -114,9 +113,9 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error while finding uniqueVinyls by fullName matcher from db {'matcher':{}}", matcher, e);
+            log.error("Error while finding uniqueVinyls by fullName matcher from db {'matcher':{}}", matcher, e);
         }
-        logger.debug("Resulting uniqueVinyls are {'uniqueVinyls':{}}", filteredUniqueVinyls);
+        log.debug("Resulting uniqueVinyls are {'uniqueVinyls':{}}", filteredUniqueVinyls);
         return filteredUniqueVinyls;
     }
 
@@ -124,14 +123,14 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
     public List<UniqueVinyl> findManyByArtist(String artist) {
         if (artist == null) {
             RuntimeException e = new NullPointerException();
-            logger.error("Passed artist is null", e);
+            log.error("Passed artist is null", e);
             throw e;
         }
         List<UniqueVinyl> uniqueVinyls = new ArrayList<>();
         try (Connection connection = dataSource.getConnection();
              PreparedStatement findByArtist = connection.prepareStatement(SELECT_BY_ARTIST)) {
             findByArtist.setString(1, artist);
-            logger.debug("Prepared statement {'preparedStatement':{}}", findByArtist);
+            log.debug("Prepared statement {'preparedStatement':{}}", findByArtist);
             try (ResultSet resultSet = findByArtist.executeQuery()) {
                 while (resultSet.next()) {
                     UniqueVinyl uniqueVinyl = rowMapper.mapRow(resultSet);
@@ -139,9 +138,9 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error while finding uniqueVinyls by artist from db {'artist':{}}", artist, e);
+            log.error("Error while finding uniqueVinyls by artist from db {'artist':{}}", artist, e);
         }
-        logger.debug("Resulting uniqueVinyls are {'uniqueVinyls':{}}", uniqueVinyls);
+        log.debug("Resulting uniqueVinyls are {'uniqueVinyls':{}}", uniqueVinyls);
         return uniqueVinyls;
     }
 

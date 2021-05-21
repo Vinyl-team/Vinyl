@@ -53,4 +53,5 @@ public class CatalogueServlet extends HttpServlet {
             PageGenerator.getInstance().process("catalog", randomUniqueVinyls, attributes, response.getWriter());
         }
     }
+
 }

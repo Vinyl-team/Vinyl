@@ -9,6 +9,7 @@ import java.sql.SQLException;
 
 @Slf4j
 public class UserPostRowMapper implements RowMapper<UserPost> {
+
     @Override
     public UserPost mapRow(ResultSet resultSet) {
         UserPost userPost = new UserPost();
@@ -26,4 +27,5 @@ public class UserPostRowMapper implements RowMapper<UserPost> {
             throw new RuntimeException(e);
         }
     }
+
 }

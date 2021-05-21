@@ -12,9 +12,11 @@ import java.sql.SQLException;
 
 @Slf4j
 public class JdbcUserPostDao implements UserPostDao {
+
     private static final String INSERT = "INSERT INTO public.user_posts" +
             " (user_id, name, email, theme, message)" +
             " VALUES (?, ?, ?, ?, ?)";
+
     private final HikariDataSource dataSource;
 
     public JdbcUserPostDao(HikariDataSource dataSource) {
@@ -50,4 +52,5 @@ public class JdbcUserPostDao implements UserPostDao {
         }
         return isAdded;
     }
+
 }

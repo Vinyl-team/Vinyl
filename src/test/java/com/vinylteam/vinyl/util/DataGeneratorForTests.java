@@ -51,7 +51,8 @@ public class DataGeneratorForTests {
 
     public Offer getOfferWithUniqueVinylIdAndShopId(int uniqueVinylId, int shopId) {
         if (uniqueVinylId < 1 || shopId < 1) {
-            throw new RuntimeException("Don't generate template offer from uniqueVinylId < 1 or shopId < 1! uniqueVinylId: " + uniqueVinylId + ", shopId: " + shopId);
+            throw new RuntimeException("Don't generate template offer from uniqueVinylId < 1 or shopId < 1! " +
+                    "uniqueVinylId: " + uniqueVinylId + ", shopId: " + shopId);
         }
         Offer offer = new Offer();
         offer.setUniqueVinylId(uniqueVinylId);
@@ -65,7 +66,8 @@ public class DataGeneratorForTests {
 
     public RawOffer getRawOfferWithShopIdAndNumber(int shopId, int number) {
         if (number < 1) {
-            throw new RuntimeException("Don't generate template raw offer from shopId < 1 or number < 1! shopId: " + shopId + " number: " + number);
+            throw new RuntimeException("Don't generate template raw offer from shopId < 1 or number < 1! shopId: " +
+                    shopId + " number: " + number);
         }
         RawOffer rawOffer = new RawOffer();
         rawOffer.setShopId(shopId);

@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class VinylUaParserITest {
 
+    private static final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
     private VinylUaParser vinylUaParser = new VinylUaParser();
     private HashSet<String> oneGenreTestLink = new HashSet<>();
     private HashSet<String> onePageTestLink = new HashSet<>();
     private HashSet<String> offerLinksSet = new HashSet<>();
-    private static final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
     private String validOfferLink = "http://vinyl.ua/release/3372/georg-levin-everything-must-change%20%7D%7D";
     private String invalidOfferLink = "http://vinyl.ua/release/0";
     private Document validLinkDocument;

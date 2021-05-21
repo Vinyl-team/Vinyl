@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class MailSenderTest {
+
     @Test
     @DisplayName("Check mail sending with WRONG credentials")
     void sendTestEmailWrongCredentials() {
@@ -32,4 +33,5 @@ class MailSenderTest {
         boolean result = mailSender.sendMail("alexeysheleg22@gmail.com", "hello, dude", "Test email");
         Assertions.assertTrue(result);
     }
+
 }

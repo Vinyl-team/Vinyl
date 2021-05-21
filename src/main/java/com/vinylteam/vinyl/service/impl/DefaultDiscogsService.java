@@ -8,20 +8,19 @@ import com.vinylteam.vinyl.discogs4j.entity.RawResponse;
 import com.vinylteam.vinyl.discogs4j.util.HttpRequest;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.service.DiscogsService;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 public class DefaultDiscogsService implements DiscogsService {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ObjectMapper objectMapper;
     private final DiscogsClient discogsClient;
 
@@ -41,7 +40,7 @@ public class DefaultDiscogsService implements DiscogsService {
         try {
             discogsClient.getRequestToken();
         } catch (ArrayIndexOutOfBoundsException e) {
-            logger.error("Failed to connect to discogs user with {'consumeKey': {}, {'consumerSecret': {}, " +
+            log.error("Failed to connect to discogs user with {'consumeKey': {}, {'consumerSecret': {}, " +
                     "{'userAgent': {}, {'callbackUrl': {}} ", CONSUMER_KEY, CONSUMER_SECRET, USER_AGENT, CALLBACK_URL, e);
             throw new RuntimeException(e);
         }
@@ -54,25 +53,25 @@ public class DefaultDiscogsService implements DiscogsService {
             return forShowing;
         }
         Optional<List<DiscogsVinylInfo>> discogsVinylInfo = getDiscogsVinylInfo(discogsUserName);
-        logger.debug("Get list with DiscogsVinylInfo {'discogsVinylInfo':{}}", discogsVinylInfo);
+        log.debug("Get list with DiscogsVinylInfo {'discogsVinylInfo':{}}", discogsVinylInfo);
         if (discogsVinylInfo.isPresent()) {
             for (DiscogsVinylInfo vinylInfo : discogsVinylInfo.get()) {
                 String release = getParametersForComparison(vinylInfo.getRelease());
-                logger.debug("Prepared release from DiscogsVinylInfo for comparison with release from UniqueVinyl {'release':{}}",
+                log.debug("Prepared release from DiscogsVinylInfo for comparison with release from UniqueVinyl {'release':{}}",
                         release);
                 String artist = getParametersForComparison(vinylInfo.getArtist());
-                logger.debug("Prepared artist from DiscogsVinylInfo for comparison with artist from UniqueVinyl {'artist':{}}",
+                log.debug("Prepared artist from DiscogsVinylInfo for comparison with artist from UniqueVinyl {'artist':{}}",
                         artist);
                 for (UniqueVinyl uniqueVinyl : allUniqueVinyl) {
                     String uniqueRelease = getParametersForComparison(uniqueVinyl.getRelease());
-                    logger.debug("Prepared uniqueRelease from UniqueVinyl for comparison with release from DiscogsVinylInfo {'uniqueRelease':{}}",
+                    log.debug("Prepared uniqueRelease from UniqueVinyl for comparison with release from DiscogsVinylInfo {'uniqueRelease':{}}",
                             uniqueRelease);
                     String uniqueArtist = getParametersForComparison(uniqueVinyl.getArtist());
-                    logger.debug("Prepared uniqueArtist from UniqueVinyl for comparison with artist from DiscogsVinylInfo {'uniqueArtist':{}}",
+                    log.debug("Prepared uniqueArtist from UniqueVinyl for comparison with artist from DiscogsVinylInfo {'uniqueArtist':{}}",
                             uniqueArtist);
                     if (release.equals(uniqueRelease) && artist.equals(uniqueArtist)) {
                         forShowing.add(uniqueVinyl);
-                        logger.debug("Comparison with artist & release from DiscogsVinylInfo & UniqueVinyl is successful. UniqueVinyl " +
+                        log.debug("Comparison with artist & release from DiscogsVinylInfo & UniqueVinyl is successful. UniqueVinyl " +
                                         "was added into list of UniqueVinyl that call 'forShowing' {'forShowing':{}}",
                                 forShowing);
                     }
@@ -92,29 +91,29 @@ public class DefaultDiscogsService implements DiscogsService {
             return discogsLink;
         }
         String artistComparing = getParametersForComparison(artist);
-        logger.debug("Prepared artistComparing for comparison with release from Discogs {'artistComparing':{}}", artistComparing);
+        log.debug("Prepared artistComparing for comparison with release from Discogs {'artistComparing':{}}", artistComparing);
         String releaseComparing = getParametersForComparison(release);
-        logger.debug("Prepared releaseComparing for comparison with artist from Discogs {'releaseComparing':{}}", releaseComparing);
+        log.debug("Prepared releaseComparing for comparison with artist from Discogs {'releaseComparing':{}}", releaseComparing);
         query = fullName.replace(" ", "+");
-        logger.debug("Prepared query for search vinyl on Discogs {'query':{}}", query);
+        log.debug("Prepared query for search vinyl on Discogs {'query':{}}", query);
         HttpRequest request = HttpRequest.get("https://api.discogs.com/database/search?q=" + query +
                 "&token=DzUqaiWPuQDWExZlqrAUuIZBYAHuBjNnapETonep");
         requestBody = request.body();
-        logger.debug("Get requestBody after search vinyl on Discogs {'requestBody':{}}", requestBody);
+        log.debug("Get requestBody after search vinyl on Discogs {'requestBody':{}}", requestBody);
         JSONObject jsonRequest = (JSONObject) new JSONParser().parse(requestBody);
-        logger.debug("Get JSONObject from requestBody after search vinyl on Discogs {'jsonRequest':{}}", jsonRequest);
+        log.debug("Get JSONObject from requestBody after search vinyl on Discogs {'jsonRequest':{}}", jsonRequest);
         JSONArray resultSearch = (JSONArray) jsonRequest.get("results");
-        logger.debug("Get JSONArray of necessary data from JSONObject after search vinyl on Discogs {'resultSearch':{}}", resultSearch);
+        log.debug("Get JSONArray of necessary data from JSONObject after search vinyl on Discogs {'resultSearch':{}}", resultSearch);
         if (resultSearch != null) {
             for (Object searchItem : resultSearch) {
                 JSONObject jsonItem = (JSONObject) searchItem;
                 String discogsFullName = jsonItem.get("title").toString().toLowerCase();
-                logger.debug("Prepared discogsFullName from Discogs for comparison with artist & release {'discogsFullName':{}}",
+                log.debug("Prepared discogsFullName from Discogs for comparison with artist & release {'discogsFullName':{}}",
                         discogsFullName);
                 if (discogsFullName.contains(artistComparing) && discogsFullName.contains(releaseComparing)) {
                     discogsLink = jsonItem.get("uri").toString();
                     discogsLink = "https://www.discogs.com/ru" + discogsLink;
-                    logger.debug("Created link of vinyl to Discogs after successful comparison with data from db {'discogsLink':{}}", discogsLink);
+                    log.debug("Created link of vinyl to Discogs after successful comparison with data from db {'discogsLink':{}}", discogsLink);
                     break;
                 }
             }
@@ -134,7 +133,7 @@ public class DefaultDiscogsService implements DiscogsService {
             }
             return Optional.empty();
         } catch (JsonProcessingException e) {
-            logger.error("{'wantList':{}}", discogsWantList, e);
+            log.error("{'wantList':{}}", discogsWantList, e);
             throw new RuntimeException("Exception while want list json processing", e);
         }
     }
@@ -144,11 +143,11 @@ public class DefaultDiscogsService implements DiscogsService {
             return "";
         }
         String[] paramArray = param.split(" ");
-        logger.debug("Split param into param array {'param':{}, 'paramArray':{}}", param, paramArray);
+        log.debug("Split param into param array {'param':{}, 'paramArray':{}}", param, paramArray);
         if (paramArray.length > 1 && (paramArray[0].equalsIgnoreCase("the") || paramArray[0].equalsIgnoreCase("a"))) {
             paramArray[0] = paramArray[1];
         }
-        logger.debug("Resulting string is {'resultParam':{}}", paramArray[0]);
+        log.debug("Resulting string is {'resultParam':{}}", paramArray[0]);
         return paramArray[0].toLowerCase();
     }
 

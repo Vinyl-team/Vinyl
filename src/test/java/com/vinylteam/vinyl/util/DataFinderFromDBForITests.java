@@ -8,8 +8,7 @@ import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.entity.User;
 import com.zaxxer.hikari.HikariDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -18,16 +17,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class DataFinderFromDBForITests {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final HikariDataSource dataSource;
     private final RowMapper<User> userRowMapper = new UserRowMapper();
     private final RowMapper<UniqueVinyl> uniqueVinylRowMapper = new UniqueVinylRowMapper();
     private final RowMapper<Offer> offerRowMapper = new OfferRowMapper();
-    private final String SELECT_ALL_USERS = "SELECT id, email, password, salt, iterations, role, status, discogs_user_name FROM users ORDER BY id";
-    private final String SELECT_ALL_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image, has_offers FROM unique_vinyls ORDER BY id";
-    private final String SELECT_ALL_OFFERS = "SELECT id, unique_vinyl_id, shop_id, price, currency, genre, link_to_offer FROM offers ORDER BY id";
+    private static final String SELECT_ALL_USERS = "SELECT id, email, password, salt, iterations, role, status, discogs_user_name FROM users ORDER BY id";
+    private static final String SELECT_ALL_UNIQUE_VINYLS = "SELECT id, release, artist, full_name, link_to_image, has_offers FROM unique_vinyls ORDER BY id";
+    private static final String SELECT_ALL_OFFERS = "SELECT id, unique_vinyl_id, shop_id, price, currency, genre, link_to_offer FROM offers ORDER BY id";
 
     public DataFinderFromDBForITests(HikariDataSource dataSource) {
         this.dataSource = dataSource;
@@ -44,7 +43,7 @@ public class DataFinderFromDBForITests {
                 uniqueVinyls.add(uniqueVinyl);
             }
         } catch (SQLException e) {
-            logger.error("Error while finding all unique vinyls from test db {'uniqueVinyls':{}}", uniqueVinyls, e);
+            log.error("Error while finding all unique vinyls from test db {'uniqueVinyls':{}}", uniqueVinyls, e);
             throw new RuntimeException(e);
         }
         return uniqueVinyls;
@@ -60,7 +59,7 @@ public class DataFinderFromDBForITests {
                 users.add(user);
             }
         } catch (SQLException e) {
-            logger.error("Error while finding all users from test db {'users':{}}", users, e);
+            log.error("Error while finding all users from test db {'users':{}}", users, e);
             throw new RuntimeException(e);
         }
         return users;
@@ -76,7 +75,7 @@ public class DataFinderFromDBForITests {
                 offers.add(offer);
             }
         } catch (SQLException e) {
-            logger.error("Error while finding all offers from test db {'offers':{}}", offers, e);
+            log.error("Error while finding all offers from test db {'offers':{}}", offers, e);
             throw new RuntimeException(e);
         }
         return offers;

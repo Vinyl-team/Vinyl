@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class ContactUsServlet extends HttpServlet {
+
     private final UserPostService service;
 
     public ContactUsServlet(UserPostService service) {
@@ -33,7 +34,7 @@ public class ContactUsServlet extends HttpServlet {
             if (user != null) {
                 UserPost post = new UserPost(user.getId(), name, email, subject, messageContactUs);
                 boolean isPostProcessed = service.processAdd(post);
-                if(isPostProcessed){
+                if (isPostProcessed) {
                     response.setStatus(HttpServletResponse.SC_OK);
                 } else {
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -42,4 +43,5 @@ public class ContactUsServlet extends HttpServlet {
         }
         response.sendRedirect("/");
     }
+
 }

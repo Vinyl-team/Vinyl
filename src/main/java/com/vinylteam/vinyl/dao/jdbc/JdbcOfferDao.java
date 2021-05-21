@@ -6,13 +6,13 @@ import com.vinylteam.vinyl.dao.jdbc.mapper.OfferRowMapper;
 import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.zaxxer.hikari.HikariDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class JdbcOfferDao implements OfferDao {
 
     private static final String INSERT_VALID = "INSERT INTO offers (unique_vinyl_id, shop_id, price, currency, genre, link_to_offer) SELECT * FROM (VALUES(?, ?, ?, ?, ?, ?))" +
@@ -26,7 +26,6 @@ public class JdbcOfferDao implements OfferDao {
     private static final String SELECT_BY_ID = SELECT_ALL + " WHERE id=?";
     private static final String TRUNCATE_RESTART_IDENTITY = "TRUNCATE offers RESTART IDENTITY";
     private static final RowMapper<Offer> rowMapper = new OfferRowMapper();
-    private static final Logger logger = LoggerFactory.getLogger(JdbcOfferDao.class);
     private final HikariDataSource dataSource;
 
     public JdbcOfferDao(HikariDataSource dataSource) {
@@ -39,7 +38,7 @@ public class JdbcOfferDao implements OfferDao {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement findVinylByIdStatement = connection.prepareStatement(SELECT_MANY_BY_UNIQUE_VINYL_ID)) {
             findVinylByIdStatement.setLong(1, uniqueVinylId);
-            logger.debug("Prepared statement {'preparedStatement':{}}", findVinylByIdStatement);
+            log.debug("Prepared statement {'preparedStatement':{}}", findVinylByIdStatement);
             try (ResultSet resultSet = findVinylByIdStatement.executeQuery()) {
                 boolean isResultSetEmpty = true;
                 while (resultSet.next()) {
@@ -49,15 +48,15 @@ public class JdbcOfferDao implements OfferDao {
                 }
                 if (isResultSetEmpty) {
                     RuntimeException e = new RuntimeException();
-                    logger.error("No offer with that uniqueVinylId in table {'uniqueVinylId':{}}", uniqueVinylId, e);
+                    log.error("No offer with that uniqueVinylId in table {'uniqueVinylId':{}}", uniqueVinylId, e);
                     throw e;
                 }
             }
         } catch (SQLException e) {
-            logger.error("Error while finding offers by uniqueVinylId from db {'uniqueVinylId':{}}", uniqueVinylId, e);
+            log.error("Error while finding offers by uniqueVinylId from db {'uniqueVinylId':{}}", uniqueVinylId, e);
             throw new RuntimeException(e);
         }
-        logger.debug("Resulting offers are {'offers':{}}", offers);
+        log.debug("Resulting offers are {'offers':{}}", offers);
         return offers;
     }
 
@@ -65,22 +64,22 @@ public class JdbcOfferDao implements OfferDao {
     public List<Offer> updateUniqueVinylsRewriteAll(List<UniqueVinyl> uniqueVinyls, List<Offer> offers) {
         if (uniqueVinyls == null) {
             RuntimeException e = new NullPointerException("List of unique vinyls is null");
-            logger.error("List of unique vinyls is null", e);
+            log.error("List of unique vinyls is null", e);
             throw e;
         }
         if (offers == null) {
             RuntimeException e = new NullPointerException("List of offers is null");
-            logger.error("List of offers is null", e);
+            log.error("List of offers is null", e);
             throw e;
         }
         if (uniqueVinyls.isEmpty()) {
             RuntimeException e = new IllegalArgumentException("List of unique vinyls is empty");
-            logger.error("List of unique vinyls is empty", e);
+            log.error("List of unique vinyls is empty", e);
             throw e;
         }
         if (offers.isEmpty()) {
             RuntimeException e = new IllegalArgumentException("List of offers is empty");
-            logger.error("List of offers is empty", e);
+            log.error("List of offers is empty", e);
             throw e;
         }
         List<Offer> notAddedOffers = new ArrayList<>(offers);
@@ -90,9 +89,9 @@ public class JdbcOfferDao implements OfferDao {
              PreparedStatement insertValidOffers = connection.prepareStatement(INSERT_VALID)) {
             connection.setAutoCommit(false);
             prepareTables.executeUpdate(UPDATE_UNIQUE_VINYLS_ALL_FALSE);
-            logger.debug("Executed statement {'statement':{}}", UPDATE_UNIQUE_VINYLS_ALL_FALSE);
+            log.debug("Executed statement {'statement':{}}", UPDATE_UNIQUE_VINYLS_ALL_FALSE);
             prepareTables.executeUpdate(TRUNCATE_RESTART_IDENTITY);
-            logger.debug("Executed statement {'statement':{}}", TRUNCATE_RESTART_IDENTITY);
+            log.debug("Executed statement {'statement':{}}", TRUNCATE_RESTART_IDENTITY);
             for (UniqueVinyl uniqueVinyl : uniqueVinyls) {
                 upsertUniqueVinyls.setLong(1, uniqueVinyl.getId());
                 upsertUniqueVinyls.setString(2, uniqueVinyl.getRelease());
@@ -100,7 +99,7 @@ public class JdbcOfferDao implements OfferDao {
                 upsertUniqueVinyls.setString(4, uniqueVinyl.getFullName());
                 upsertUniqueVinyls.setString(5, uniqueVinyl.getImageLink());
                 upsertUniqueVinyls.setBoolean(6, uniqueVinyl.getHasOffers());
-                logger.debug("Prepared statement {'preparedStatement':{}}", upsertUniqueVinyls);
+                log.debug("Prepared statement {'preparedStatement':{}}", upsertUniqueVinyls);
                 upsertUniqueVinyls.addBatch();
             }
             upsertUniqueVinyls.executeBatch();
@@ -111,7 +110,7 @@ public class JdbcOfferDao implements OfferDao {
                 insertValidOffers.setString(4, offer.getCurrency().get().toString());
                 insertValidOffers.setString(5, offer.getGenre());
                 insertValidOffers.setString(6, offer.getOfferLink());
-                logger.debug("Prepared statement {'preparedStatement':{}}", insertValidOffers);
+                log.debug("Prepared statement {'preparedStatement':{}}", insertValidOffers);
                 insertValidOffers.addBatch();
             }
             int[] updateCounts = insertValidOffers.executeBatch();
@@ -119,17 +118,17 @@ public class JdbcOfferDao implements OfferDao {
                 if (updateCounts[i] == 1) {
                     notAddedOffers.remove(i);
                 } else {
-                    logger.info("Offer wasn't added {'offer':{}}", notAddedOffers.get(i));
+                    log.info("Offer wasn't added {'offer':{}}", notAddedOffers.get(i));
                 }
             }
             connection.commit();
             connection.setAutoCommit(true);
         } catch (SQLException e) {
-            logger.error("Error while updating database with uniqueVinyls and refilling database with offers {'uniqueVinyls':{}, 'offers':{}}",
+            log.error("Error while updating database with uniqueVinyls and refilling database with offers {'uniqueVinyls':{}, 'offers':{}}",
                     uniqueVinyls, offers, e);
             throw new RuntimeException("Error while updating database with uniqueVinyls and refilling database with offers", e);
         }
-        logger.info("Database updated, couldn't add {} offers", notAddedOffers.size());
+        log.info("Database updated, couldn't add {} offers", notAddedOffers.size());
         return notAddedOffers;
     }
 

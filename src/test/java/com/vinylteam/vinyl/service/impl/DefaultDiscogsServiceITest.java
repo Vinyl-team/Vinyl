@@ -350,4 +350,5 @@ class DefaultDiscogsServiceITest {
         vinyl.setRelease(release);
         return vinyl;
     }
+
 }

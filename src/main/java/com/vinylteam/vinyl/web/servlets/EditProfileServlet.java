@@ -16,6 +16,7 @@ import java.util.Map;
 
 @Slf4j
 public class EditProfileServlet extends HttpServlet {
+
     private SecurityService securityService;
     private UserService userService;
 
@@ -106,4 +107,5 @@ public class EditProfileServlet extends HttpServlet {
             response.sendRedirect("/signIn");
         }
     }
+
 }

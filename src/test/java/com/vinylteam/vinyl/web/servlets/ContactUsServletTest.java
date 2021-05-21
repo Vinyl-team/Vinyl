@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class ContactUsServletTest {
+
     private final UserPostService userPostService = mock(UserPostService.class);
     private final ContactUsServlet contactUsServlet = new ContactUsServlet(userPostService);
 
@@ -71,4 +72,5 @@ class ContactUsServletTest {
         verify(mockedHttpSession).getAttribute("user");
         assertEquals(mockedUser, mockedHttpSession.getAttribute("user"));
     }
+
 }

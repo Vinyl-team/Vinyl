@@ -13,6 +13,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class UserPostRowMapperTest {
+
     private final RowMapper<UserPost> rowMapper = new UserPostRowMapper();
 
     @Test
@@ -34,4 +35,5 @@ class UserPostRowMapperTest {
         assertEquals("Urgent Action", actualUserPost.getTheme());
         assertEquals("I need new blades!", actualUserPost.getMessage());
     }
+
 }

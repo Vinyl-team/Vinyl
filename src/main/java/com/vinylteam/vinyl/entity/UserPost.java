@@ -3,6 +3,7 @@ package com.vinylteam.vinyl.entity;
 import java.util.Objects;
 
 public class UserPost {
+
     private long id;
     private long userId;
     private String name;
@@ -98,4 +99,5 @@ public class UserPost {
                 ", message='" + message + '\'' +
                 '}';
     }
+
 }

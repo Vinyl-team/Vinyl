@@ -6,6 +6,7 @@ import com.vinylteam.vinyl.service.UserPostService;
 import com.vinylteam.vinyl.util.MailSender;
 
 public class DefaultUserPostService implements UserPostService {
+
     private final UserPostDao userPostDao;
     private final MailSender mailSender;
 
@@ -25,4 +26,5 @@ public class DefaultUserPostService implements UserPostService {
     public boolean add(UserPost post) {
         return userPostDao.add(post);
     }
+
 }

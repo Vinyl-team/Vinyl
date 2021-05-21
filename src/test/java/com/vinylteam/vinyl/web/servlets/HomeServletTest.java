@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class HomeServletTest {
+
     private final HomeServlet homeServlet = new HomeServlet();
 
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
@@ -93,4 +94,5 @@ class HomeServletTest {
         verify(mockedUser, times(0)).getRole();
         verify(mockedResponse).getWriter();
     }
+
 }

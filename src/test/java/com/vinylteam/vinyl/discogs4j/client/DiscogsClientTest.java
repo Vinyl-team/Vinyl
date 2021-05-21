@@ -25,4 +25,5 @@ class DiscogsClientTest {
         //then
         assertEquals(discogsWantList, resultWantList);
     }
+
 }

@@ -8,11 +8,11 @@ import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JdbcUserPostDaoITest {
+
     private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
     private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
     private final UserPostDao userPostDao = new JdbcUserPostDao(databasePreparer.getDataSource());
@@ -38,4 +38,5 @@ class JdbcUserPostDaoITest {
         //when
         assertTrue(userPostDao.add(expectedUserPost));
     }
+
 }

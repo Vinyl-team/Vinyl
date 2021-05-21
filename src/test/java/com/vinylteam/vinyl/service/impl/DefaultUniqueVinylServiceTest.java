@@ -20,7 +20,7 @@ class DefaultUniqueVinylServiceTest {
     private final UniqueVinylDao mockedUniqueVinylDao = mock(JdbcUniqueVinylDao.class);
     private final UniqueVinylService uniqueVinylService = new DefaultUniqueVinylService(mockedUniqueVinylDao);
     private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
-    List<UniqueVinyl> uniqueVinyls = dataGenerator.getUniqueVinylsList();
+    private final List<UniqueVinyl> uniqueVinyls = dataGenerator.getUniqueVinylsList();
 
     @BeforeEach
     void beforeEach() {
