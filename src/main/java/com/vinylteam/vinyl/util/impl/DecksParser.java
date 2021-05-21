@@ -14,10 +14,9 @@ import java.util.*;
 
 @Slf4j
 public class DecksParser implements VinylParser {
+
     private static final String BASE_LINK = "https://www.decks.de";
     private static final String START_PAGE_LINK = BASE_LINK + "/decks/workfloor/lists/list_db.php";
-
-    private static final String SELECTOR_OFFERS_ANCHORS = "body.bodyWORKFLOOR > div.allVinyls > div#tabchktk.oneLine.firstOneLine.tablenorm2 > div.ATLBlock.ATLBlockwlist > div.AT_chaoj.ATBlock > div.LArtist.maxOneLine > a";
 
     @Override
     public List<RawOffer> getRawOffersList() {
@@ -51,7 +50,8 @@ public class DecksParser implements VinylParser {
         Optional<Document> startDocument = getDocument(START_PAGE_LINK);
         if (startDocument.isPresent()) {
             Element iframeElement = startDocument.get().select("iframe").first();
-            Elements elementsWithGenreLinks = iframeElement.parents().get(0).getElementsByClass("menueBodySub").select("a");
+            Elements elementsWithGenreLinks = iframeElement.parents().get(0).getElementsByClass("menueBodySub")
+                    .select("a");
             for (Element elementWithGenreLink : elementsWithGenreLinks) {
                 String genresLink = elementWithGenreLink.attr("href");
                 if (!genresLink.equals("javascript:void(0);")) {
@@ -65,14 +65,13 @@ public class DecksParser implements VinylParser {
 
     private String getHighResImageLinkFromDocument(Document offerDocument) {
         Element iframeElement = offerDocument.select("iframe").first();
-        String imageLink = iframeElement.parents().get(0).getElementsByClass("bigCoverDetail").select("img").attr("src");
-        return imageLink;
+        return iframeElement.parents().get(0).getElementsByClass("bigCoverDetail").select("img")
+                .attr("src");
     }
 
     String getGenreFromDocument(Document offerDocument) {
         Element iframeElement = offerDocument.select("iframe").first();
-        String genre = iframeElement.parents().get(0).getElementsByClass("LStylehead").text();
-        return genre;
+        return iframeElement.parents().get(0).getElementsByClass("LStylehead").text();
     }
 
     Optional<Currency> getOptionalCurrencyFromDocument(Document offerDocument) {
@@ -80,8 +79,7 @@ public class DecksParser implements VinylParser {
         String priceDetails = iframeElement.parents().get(0).getElementsByClass("preisschild").text();
         if (priceDetails.indexOf(' ') != -1) {
             String currency = priceDetails.substring(priceDetails.indexOf(' ') + 1, priceDetails.indexOf('*') - 1);
-            Optional<Currency> optionalCurrency = Currency.getCurrency(currency);
-            return optionalCurrency;
+            return Currency.getCurrency(currency);
         }
         return Optional.empty();
     }
@@ -98,14 +96,14 @@ public class DecksParser implements VinylParser {
 
     String getArtistFromDocument(Document offerDocument) {
         Element iframeElement = offerDocument.select("iframe").first();
-        String artist = iframeElement.parents().get(0).getElementsByClass("detail_artist  lightCol mainColBG ").select("h1").text();
-        return artist;
+        return iframeElement.parents().get(0).getElementsByClass("detail_artist  lightCol mainColBG ")
+                .select("h1").text();
     }
 
     String getReleaseFromDocument(Document offerDocument) {
         Element iframeElement = offerDocument.select("iframe").first();
-        String release = iframeElement.parents().get(0).getElementsByClass("detail_titel  lightCol mainCol ").select("h1").text();
-        return release;
+        return iframeElement.parents().get(0).getElementsByClass("detail_titel  lightCol mainCol ")
+                .select("h1").text();
     }
 
     public HashSet<RawOffer> readRawOffersFromAllOfferLinks(HashSet<String> offerLinks) {
@@ -115,7 +113,8 @@ public class DecksParser implements VinylParser {
             if (isValid(rawOffer)) {
                 rawOfferSet.add(rawOffer);
             } else {
-                log.warn("Can't fill raw offer by offer link, not adding it to set {'rawOffer':{}, 'offerLink':{}}", rawOffer, offerLink);
+                log.warn("Can't fill raw offer by offer link, not adding it to set {'rawOffer':{}, 'offerLink':{}}",
+                        rawOffer, offerLink);
             }
         }
         log.info("Got row offers from Decks.de: {}", rawOfferSet.size());
@@ -139,7 +138,8 @@ public class DecksParser implements VinylParser {
             Optional<Document> pageDocument = getDocument(pageLink);
             if (pageDocument.isPresent()) {
                 Element iframeElement = pageDocument.get().select("iframe").first();
-                Elements elementsWithOfferLinks = iframeElement.parents().get(0).getElementsByClass("cover1").select("a");
+                Elements elementsWithOfferLinks = iframeElement.parents().get(0)
+                        .getElementsByClass("cover1").select("a");
                 for (Element elementWithOfferLink : elementsWithOfferLinks) {
                     String offerLink = elementWithOfferLink.attr("href");
                     if (offerLink.contains(BASE_LINK)) {
@@ -157,11 +157,11 @@ public class DecksParser implements VinylParser {
         String pageCount;
         for (String genreLink : genresLinks) {
             List<String> pageCountList = new ArrayList<>();
-//            pageLinks.add(genreLink);
             Optional<Document> genreDocument = getDocument(genreLink);
             if (genreDocument.isPresent()) {
                 Element iframeElement = genreDocument.get().select("iframe").first();
-                Elements elementsWithLinkToPages = iframeElement.parents().get(0).getElementsByClass("pager").select("a");
+                Elements elementsWithLinkToPages = iframeElement.parents().get(0).
+                        getElementsByClass("pager").select("a");
                 String templateLink = START_PAGE_LINK + elementsWithLinkToPages.get(0).attr("href");
                 for (Element elementWithLinkToPages : elementsWithLinkToPages) {
                     pageCountList.add(elementWithLinkToPages.text());
@@ -174,31 +174,20 @@ public class DecksParser implements VinylParser {
                 for (int i = 0; i < Integer.parseInt(pageCount); i++) {
                     pageLinks.add(templateLink.replace("aktuell=0", "aktuell=" + i));
                 }
-//                for (int i = 0; i < pageCount.get(pageCount.size()-1); i++) {
-//
-//                }
             }
         }
         log.info("Got pages from Decks.de: {}", pageLinks.size());
         return pageLinks;
     }
 
-    private Optional<Document> getDocument(String url) {
+    Optional<Document> getDocument(String url) {
         try {
-//            Document document = Jsoup.connect(url).get();
-//            Element element = document.select("iframe").first();
-//            Elements bodyWORKFLOOR1 = element.parents().get(0).getElementsByClass("divlink");
-//            ----
-//            String iFrameSrc = BASE_LINK + element.attr("src");
-//            Document iframeDocument = Jsoup.connect(iFrameSrc).get();
-//            Elements bodyWORKFLOOR = iframeDocument.getElementsByClass("bodyWORKFLOOR");
-//
-//
-//            Document iFrame = Jsoup.parse(elements.get(0).data());
             return Optional.ofNullable(Jsoup.connect(url).get());
         } catch (IOException e) {
-            log.warn("Page represented by the link will be skipped, since some error happened while getting document by link {'link':{}}", url, e);
+            log.warn("Page represented by the link will be skipped, since some error happened while getting document" +
+                    " by link {'link':{}}", url, e);
             return Optional.empty();
         }
     }
+
 }
