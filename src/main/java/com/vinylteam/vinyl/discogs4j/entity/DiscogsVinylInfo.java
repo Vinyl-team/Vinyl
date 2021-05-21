@@ -3,17 +3,16 @@ package com.vinylteam.vinyl.discogs4j.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
+@Slf4j
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DiscogsVinylInfo {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     @JsonIgnore
     private String release;
     @JsonIgnore
@@ -22,7 +21,7 @@ public class DiscogsVinylInfo {
     @JsonSetter("basic_information")
     public void deserializeBasicInformationNode(Map<String, Object> basicInformationNode) {
         if (basicInformationNode.isEmpty()) {
-            logger.error("Failed to deserialize basic information node: {}", Arrays.toString(basicInformationNode.entrySet().toArray()));
+            log.error("Failed to deserialize basic information node: {}", Arrays.toString(basicInformationNode.entrySet().toArray()));
             return;
         }
 

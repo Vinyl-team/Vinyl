@@ -30,4 +30,5 @@ public class HomeServlet extends HttpServlet {
         }
         PageGenerator.getInstance().process("index", attributes, response.getWriter());
     }
+
 }

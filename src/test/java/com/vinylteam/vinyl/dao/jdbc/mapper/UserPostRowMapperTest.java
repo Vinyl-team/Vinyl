@@ -15,13 +15,14 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class UserPostRowMapperTest {
+
     private final RowMapper<UserPost> rowMapper = new UserPostRowMapper();
 
     @Test
     @DisplayName("Map fields correctly for user post conversion")
     void mapFilledRowTest() throws SQLException {
-        LocalDateTime createdAt = LocalDateTime.now();
         //prepare
+        LocalDateTime createdAt = LocalDateTime.now();
         ResultSet mockedFilledResultSet = mock(ResultSet.class);
         when(mockedFilledResultSet.getString("email")).thenReturn("testuser@vinyl.com");
         when(mockedFilledResultSet.getString("name")).thenReturn("Boris The Blade");
@@ -38,4 +39,5 @@ class UserPostRowMapperTest {
         assertEquals("I need new blades!", actualUserPost.getMessage());
         assertEquals(createdAt, actualUserPost.getCreatedAt());
     }
+
 }

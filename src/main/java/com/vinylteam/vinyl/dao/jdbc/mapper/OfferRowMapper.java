@@ -3,16 +3,14 @@ package com.vinylteam.vinyl.dao.jdbc.mapper;
 import com.vinylteam.vinyl.dao.RowMapper;
 import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.Offer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
+@Slf4j
 public class OfferRowMapper implements RowMapper<Offer> {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public Offer mapRow(ResultSet resultSet) {
@@ -25,10 +23,10 @@ public class OfferRowMapper implements RowMapper<Offer> {
             offer.setCurrency(Optional.of(Currency.valueOf(resultSet.getString("currency"))));
             offer.setGenre(resultSet.getString("genre"));
             offer.setOfferLink(resultSet.getString("link_to_offer"));
-            logger.debug("Resulting Offer object {'offer':{}}", offer);
+            log.debug("Resulting Offer object {'offer':{}}", offer);
             return offer;
         } catch (SQLException e) {
-            logger.error("Error while getting data from result set into Offer object {'offer':{}}", offer, e);
+            log.error("Error while getting data from result set into Offer object {'offer':{}}", offer, e);
             throw new RuntimeException(e);
         }
     }

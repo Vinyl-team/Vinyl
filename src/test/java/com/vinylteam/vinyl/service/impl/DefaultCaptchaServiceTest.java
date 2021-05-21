@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class DefaultCaptchaServiceTest {
-    CaptchaService captchaService = new DefaultCaptchaService();
+    private final CaptchaService captchaService = new DefaultCaptchaService();
 
     @Test
     @DisplayName("Checks that service generate not empty array for valid session id")
@@ -29,4 +29,5 @@ class DefaultCaptchaServiceTest {
         //then
         Assertions.assertNotNull(captcha);
     }
+
 }

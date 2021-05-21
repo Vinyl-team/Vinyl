@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PageGenerator {
+
     private static PageGenerator pageGenerator;
     private TemplateEngine templateEngine;
 
@@ -145,8 +146,9 @@ public class PageGenerator {
         }
 
         String discogsLink = attributes.get("discogsLink");
-        if (discogsLink != null){
+        if (discogsLink != null) {
             context.setVariable("discogsLink", discogsLink);
         }
     }
+
 }

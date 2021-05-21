@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import static org.mockito.Mockito.*;
 
 class ContactUsServletTest {
+
     private final UserPostService userPostService = mock(UserPostService.class);
     private final DefaultCaptchaService defaultCaptchaService = mock(DefaultCaptchaService.class);
     private final ContactUsServlet contactUsServlet = new ContactUsServlet(userPostService, defaultCaptchaService);
@@ -83,4 +84,5 @@ class ContactUsServletTest {
         //then
         inOrderResponse.verify(mockedResponse).setContentType("text/html;charset=utf-8");
     }
+
 }

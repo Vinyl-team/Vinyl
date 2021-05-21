@@ -1,6 +1,7 @@
 package com.vinylteam.vinyl.web.dto;
 
 public class OneVinylOffersServletResponse {
+
     private Double price;
     private String offerLink;
     private String shopImageLink;
@@ -28,4 +29,5 @@ public class OneVinylOffersServletResponse {
     public void setShopImageLink(String shopImageLink) {
         this.shopImageLink = shopImageLink;
     }
+
 }

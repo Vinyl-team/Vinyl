@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class ShopServletTest {
+
     private final ShopService mockedShopService = mock(ShopService.class);
     private final ShopServlet shopServlet = new ShopServlet(mockedShopService);
 
@@ -108,4 +109,5 @@ class ShopServletTest {
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderResponse.verify(mockedResponse).getWriter();
     }
+
 }

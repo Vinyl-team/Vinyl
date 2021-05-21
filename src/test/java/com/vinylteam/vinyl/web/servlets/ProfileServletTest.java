@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class ProfileServletTest {
+
     private final ProfileServlet profileServlet = new ProfileServlet();
 
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
@@ -94,4 +95,5 @@ class ProfileServletTest {
         verify(mockedUser, times(0)).getRole();
         verify(mockedResponse).getWriter();
     }
+
 }

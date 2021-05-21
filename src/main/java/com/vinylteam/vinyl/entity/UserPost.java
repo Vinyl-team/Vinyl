@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class UserPost {
+
     private long id;
     private String name;
     private String email;
@@ -99,4 +100,5 @@ public class UserPost {
                 ", createdAt='" + createdAt + '\'' +
                 '}';
     }
+
 }
