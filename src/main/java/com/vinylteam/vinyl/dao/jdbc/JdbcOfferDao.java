@@ -23,9 +23,10 @@ public class JdbcOfferDao implements OfferDao {
             " ON CONFLICT(id) DO UPDATE SET has_offers = EXCLUDED.has_offers WHERE unique_vinyls.has_offers<>EXCLUDED.has_offers";
     private static final String SELECT_ALL = "SELECT id, unique_vinyl_id, shop_id, price, currency, genre, link_to_offer FROM public.offers";
     private static final String SELECT_MANY_BY_UNIQUE_VINYL_ID = SELECT_ALL + " WHERE unique_vinyl_id=?";
-    private static final String SELECT_BY_ID = SELECT_ALL + " WHERE id=?";
     private static final String TRUNCATE_RESTART_IDENTITY = "TRUNCATE offers RESTART IDENTITY";
     private static final RowMapper<Offer> rowMapper = new OfferRowMapper();
+    private static final String PREPARED_STATEMENT = "Prepared statement {'preparedStatement':{}}";
+    private static final String EXECUTED_STATEMENT = "Executed statement {'statement':{}}";
     private final HikariDataSource dataSource;
 
     public JdbcOfferDao(HikariDataSource dataSource) {
@@ -38,7 +39,7 @@ public class JdbcOfferDao implements OfferDao {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement findVinylByIdStatement = connection.prepareStatement(SELECT_MANY_BY_UNIQUE_VINYL_ID)) {
             findVinylByIdStatement.setLong(1, uniqueVinylId);
-            log.debug("Prepared statement {'preparedStatement':{}}", findVinylByIdStatement);
+            log.debug(PREPARED_STATEMENT, findVinylByIdStatement);
             try (ResultSet resultSet = findVinylByIdStatement.executeQuery()) {
                 boolean isResultSetEmpty = true;
                 while (resultSet.next()) {
@@ -89,9 +90,9 @@ public class JdbcOfferDao implements OfferDao {
              PreparedStatement insertValidOffers = connection.prepareStatement(INSERT_VALID)) {
             connection.setAutoCommit(false);
             prepareTables.executeUpdate(UPDATE_UNIQUE_VINYLS_ALL_FALSE);
-            log.debug("Executed statement {'statement':{}}", UPDATE_UNIQUE_VINYLS_ALL_FALSE);
+            log.debug(EXECUTED_STATEMENT, UPDATE_UNIQUE_VINYLS_ALL_FALSE);
             prepareTables.executeUpdate(TRUNCATE_RESTART_IDENTITY);
-            log.debug("Executed statement {'statement':{}}", TRUNCATE_RESTART_IDENTITY);
+            log.debug(EXECUTED_STATEMENT, TRUNCATE_RESTART_IDENTITY);
             for (UniqueVinyl uniqueVinyl : uniqueVinyls) {
                 upsertUniqueVinyls.setLong(1, uniqueVinyl.getId());
                 upsertUniqueVinyls.setString(2, uniqueVinyl.getRelease());
@@ -99,7 +100,7 @@ public class JdbcOfferDao implements OfferDao {
                 upsertUniqueVinyls.setString(4, uniqueVinyl.getFullName());
                 upsertUniqueVinyls.setString(5, uniqueVinyl.getImageLink());
                 upsertUniqueVinyls.setBoolean(6, uniqueVinyl.getHasOffers());
-                log.debug("Prepared statement {'preparedStatement':{}}", upsertUniqueVinyls);
+                log.debug(PREPARED_STATEMENT, upsertUniqueVinyls);
                 upsertUniqueVinyls.addBatch();
             }
             upsertUniqueVinyls.executeBatch();
@@ -110,7 +111,7 @@ public class JdbcOfferDao implements OfferDao {
                 insertValidOffers.setString(4, offer.getCurrency().get().toString());
                 insertValidOffers.setString(5, offer.getGenre());
                 insertValidOffers.setString(6, offer.getOfferLink());
-                log.debug("Prepared statement {'preparedStatement':{}}", insertValidOffers);
+                log.debug(PREPARED_STATEMENT, insertValidOffers);
                 insertValidOffers.addBatch();
             }
             int[] updateCounts = insertValidOffers.executeBatch();

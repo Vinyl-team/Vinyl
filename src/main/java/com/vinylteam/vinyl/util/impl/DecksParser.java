@@ -40,7 +40,6 @@ public class DecksParser implements VinylParser {
             rawOffer.setGenre(getGenreFromDocument(offerDocument.get()));
             rawOffer.setOfferLink(offerLink);
             rawOffer.setImageLink(getHighResImageLinkFromDocument(offerDocument.get()));
-
         }
         return rawOffer;
     }
@@ -122,14 +121,10 @@ public class DecksParser implements VinylParser {
     }
 
     boolean isValid(RawOffer rawOffer) {
-        boolean isValid = false;
-        if (rawOffer.getPrice() != 0.
+        return rawOffer.getPrice() != 0d
                 && rawOffer.getCurrency().isPresent()
-                && !("".equals(rawOffer.getRelease()))
-                && rawOffer.getOfferLink() != null) {
-            isValid = true;
-        }
-        return isValid;
+                && !rawOffer.getRelease().isEmpty()
+                && rawOffer.getOfferLink() != null;
     }
 
     public HashSet<String> getOfferLinks(HashSet<String> pageLinks) {

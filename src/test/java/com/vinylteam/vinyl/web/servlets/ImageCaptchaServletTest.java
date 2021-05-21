@@ -13,7 +13,8 @@ import java.io.IOException;
 
 import static org.mockito.Mockito.*;
 
-public class ImageCaptchaServletTest {
+class ImageCaptchaServletTest {
+
     private final ImageCaptchaServlet imageCaptchaServlet = new ImageCaptchaServlet();
 
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
@@ -44,4 +45,5 @@ public class ImageCaptchaServletTest {
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderRequest.verify(mockedRequest).getSession();
     }
+
 }
