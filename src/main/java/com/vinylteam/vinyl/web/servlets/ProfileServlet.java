@@ -32,4 +32,5 @@ public class ProfileServlet extends HttpServlet {
         }
         PageGenerator.getInstance().process("profile", attributes, response.getWriter());
     }
+
 }

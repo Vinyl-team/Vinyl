@@ -3,7 +3,6 @@ package com.vinylteam.vinyl.web.servlets;
 import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.service.ShopService;
 import com.vinylteam.vinyl.web.templater.PageGenerator;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,4 +40,5 @@ public class ShopServlet extends HttpServlet {
         }
         PageGenerator.getInstance().processStores("stores", shopList, attributes, response.getWriter());
     }
+
 }

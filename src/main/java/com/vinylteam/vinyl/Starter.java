@@ -8,6 +8,7 @@ import com.vinylteam.vinyl.security.impl.DefaultSecurityService;
 import com.vinylteam.vinyl.service.*;
 import com.vinylteam.vinyl.service.impl.*;
 import com.vinylteam.vinyl.util.*;
+import com.vinylteam.vinyl.util.impl.DecksParser;
 import com.vinylteam.vinyl.util.impl.CloneNlParser;
 import com.vinylteam.vinyl.util.impl.JunoVinylParser;
 import com.vinylteam.vinyl.util.impl.VinylUaParser;
@@ -17,6 +18,7 @@ import com.vinylteam.vinyl.web.servlets.*;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.servlet.DispatcherType;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -24,16 +26,15 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.JarFileResource;
 import org.eclipse.jetty.util.resource.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@Slf4j
 public class Starter {
-    private static final Logger logger = LoggerFactory.getLogger(Starter.class);
+
     private static final PropertiesReader propertiesReader = new PropertiesReader();
     private static final String RESOURCE_PATH = propertiesReader.getProperty("resource.path");
 
@@ -55,7 +56,7 @@ public class Starter {
         config.setDriverClassName(propertiesReader.getProperty("jdbc.driver"));
         config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getProperty("jdbc.maximum.pool.size")));
         dataSource = new HikariDataSource(config);
-        logger.info("Configed dataSourse");
+        log.info("Configured dataSource");
 
         UserDao userDao = new JdbcUserDao(dataSource);
         UniqueVinylDao uniqueVinylDao = new JdbcUniqueVinylDao(dataSource);
@@ -79,14 +80,14 @@ public class Starter {
 //UTIL, FILL IN DATABASE
         ShopsParser shopsParser = new ShopsParser();
         RawOffersSorter rawOffersSorter = new RawOffersSorter();
-        List<VinylParser> vinylParsers = List.of(new VinylUaParser(), new JunoVinylParser(), new CloneNlParser());
+        List<VinylParser> vinylParsers = List.of(new VinylUaParser(), new JunoVinylParser(), new DecksParser(), new CloneNlParser());
         Updater updater = new Updater(uniqueVinylService, offerService, shopsParser, vinylParsers, rawOffersSorter);
         TimerTask updateTask = new TimerTask() {
             @Override
             public void run() {
-                logger.info("Started updater task");
+                log.info("Started updater task");
                 updater.updateUniqueVinylsRewriteOffers();
-                logger.info("Finished updater task");
+                log.info("Finished updater task");
             }
         };
 
@@ -136,6 +137,7 @@ public class Starter {
         Server server = new Server(Integer.parseInt(propertiesReader.getProperty("appPort")));
         server.setHandler(servletContextHandler);
         server.start();
-        logger.info("Server started");
+        log.info("Server started");
     }
+
 }

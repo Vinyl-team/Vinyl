@@ -13,9 +13,11 @@ import java.sql.Timestamp;
 
 @Slf4j
 public class JdbcUserPostDao implements UserPostDao {
+
     private static final String INSERT = "INSERT INTO public.user_posts" +
             " (name, email, theme, message, created_at)" +
             " VALUES (?, ?, ?, ?, ?)";
+
     private final HikariDataSource dataSource;
 
     public JdbcUserPostDao(HikariDataSource dataSource) {
@@ -51,4 +53,5 @@ public class JdbcUserPostDao implements UserPostDao {
         }
         return isAdded;
     }
+
 }

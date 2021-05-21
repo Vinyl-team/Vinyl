@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toSet;
 @Slf4j
 public class JunoVinylParser implements VinylParser {
 
-    protected static final String BASE_LINK = "https://www.juno.co.uk";
+    private static final String BASE_LINK = "https://www.juno.co.uk";
     private static final String CATALOG_ROOT_LINK = BASE_LINK + "/all/";
     private static final String START_PAGE_LINK = CATALOG_ROOT_LINK + "back-cat/2/?media_type=vinyl";
 

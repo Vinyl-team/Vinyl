@@ -9,6 +9,7 @@ import java.util.Properties;
 
 @Slf4j
 public class MailSender {
+
     private String username;
     private Session session;
 
@@ -50,4 +51,5 @@ public class MailSender {
         }
         return true;
     }
+
 }

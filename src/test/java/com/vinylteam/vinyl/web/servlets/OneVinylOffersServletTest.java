@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class OneVinylOffersServletTest {
+
     private final UniqueVinylService mockedUniqueVinylService = mock(UniqueVinylService.class);
     private final OfferService mockedOfferService = mock(OfferService.class);
     private final ShopService mockedShopService = mock(ShopService.class);

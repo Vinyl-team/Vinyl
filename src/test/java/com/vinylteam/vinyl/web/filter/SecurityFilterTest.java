@@ -258,4 +258,5 @@ class SecurityFilterTest {
         verify(filterChain, times(1)).doFilter(mockedHttpServletRequest, mockedHttpServletResponse);
         inOrderResponse.verify(mockedHttpServletResponse, times(0)).sendRedirect("/signIn");
     }
+
 }

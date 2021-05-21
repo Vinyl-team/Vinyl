@@ -8,7 +8,7 @@ import org.thymeleaf.context.Context;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PageGeneratorTest {
 
@@ -33,4 +33,5 @@ class PageGeneratorTest {
         assertEquals(discogsUser, context.getVariable("discogsUserName"));
         assertEquals(discogsLink, context.getVariable("discogsLink"));
     }
+
 }

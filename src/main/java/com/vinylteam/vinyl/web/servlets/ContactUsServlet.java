@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ContactUsServlet extends HttpServlet {
+
     private final UserPostService userPostService;
     private final CaptchaService defaultCaptchaService;
 
@@ -56,4 +57,5 @@ public class ContactUsServlet extends HttpServlet {
             PageGenerator.getInstance().process("contactUs", attributes, response.getWriter());
         }
     }
+
 }
