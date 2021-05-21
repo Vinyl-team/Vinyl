@@ -9,12 +9,13 @@ import org.postgresql.util.PSQLException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 @Slf4j
 public class JdbcUserPostDao implements UserPostDao {
 
     private static final String INSERT = "INSERT INTO public.user_posts" +
-            " (user_id, name, email, theme, message)" +
+            " (name, email, theme, message, created_at)" +
             " VALUES (?, ?, ?, ?, ?)";
 
     private final HikariDataSource dataSource;
@@ -28,11 +29,11 @@ public class JdbcUserPostDao implements UserPostDao {
         boolean isAdded = false;
         try (Connection connection = dataSource.getConnection();
              PreparedStatement insertStatement = connection.prepareStatement(INSERT)) {
-            insertStatement.setLong(1, post.getUserId());
-            insertStatement.setString(2, post.getName());
-            insertStatement.setString(3, post.getEmail());
-            insertStatement.setString(4, post.getTheme());
-            insertStatement.setString(5, post.getMessage());
+            insertStatement.setString(1, post.getName());
+            insertStatement.setString(2, post.getEmail());
+            insertStatement.setString(3, post.getTheme());
+            insertStatement.setString(4, post.getMessage());
+            insertStatement.setTimestamp(5, Timestamp.valueOf(post.getCreatedAt()));
             log.debug("Prepared statement {'preparedStatement':{}}.", insertStatement);
             int result = insertStatement.executeUpdate();
             if (result > 0) {

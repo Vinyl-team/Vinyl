@@ -7,6 +7,7 @@ import com.vinylteam.vinyl.util.DatabasePreparerForITests;
 import org.junit.jupiter.api.*;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,8 +34,9 @@ class JdbcUserPostDaoITest {
     @Test
     @DisplayName("Adds user post to db")
     void addNewUserPostTest() {
+        LocalDateTime createdAt = LocalDateTime.of(2021, 5, 19, 21, 0);
         //prepare
-        UserPost expectedUserPost = new UserPost(1L, "name", "email", "theme", "message");
+        UserPost expectedUserPost = new UserPost("name", "email", "theme", "message", createdAt);
         //when
         assertTrue(userPostDao.add(expectedUserPost));
     }

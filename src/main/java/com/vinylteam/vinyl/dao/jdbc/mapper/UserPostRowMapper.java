@@ -15,11 +15,11 @@ public class UserPostRowMapper implements RowMapper<UserPost> {
         UserPost userPost = new UserPost();
         try {
             userPost.setId(resultSet.getLong("id"));
-            userPost.setUserId(resultSet.getLong("user_id"));
             userPost.setName(resultSet.getString("name"));
             userPost.setEmail(resultSet.getString("email"));
             userPost.setTheme(resultSet.getString("theme"));
             userPost.setMessage(resultSet.getString("message"));
+            userPost.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
             log.debug("Resulting user post object {'userPost':{}}", userPost);
             return userPost;
         } catch (SQLException e) {

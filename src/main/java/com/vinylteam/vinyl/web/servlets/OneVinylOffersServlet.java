@@ -72,7 +72,7 @@ public class OneVinylOffersServlet extends HttpServlet {
                     OneVinylOffersServletResponse offersResponse = new OneVinylOffersServletResponse();
                     offersResponse.setPrice(offer.getPrice());
                     offersResponse.setOfferLink(offer.getOfferLink());
-                    offersResponse.setShopImageLink(shop.getImageLink());
+                    offersResponse.setShopImageLink(shop.getSmallImageLink());
                     offersResponseList.add(offersResponse);
                 }
             }
