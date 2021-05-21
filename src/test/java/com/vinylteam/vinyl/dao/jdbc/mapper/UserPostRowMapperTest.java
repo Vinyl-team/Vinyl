@@ -20,7 +20,7 @@ class UserPostRowMapperTest {
     @Test
     @DisplayName("Map fields correctly for user post conversion")
     void mapFilledRowTest() throws SQLException {
-        LocalDateTime createdAt = LocalDateTime.of(2021, 5, 19, 21, 0);
+        LocalDateTime createdAt = LocalDateTime.now();
         //prepare
         ResultSet mockedFilledResultSet = mock(ResultSet.class);
         when(mockedFilledResultSet.getString("email")).thenReturn("testuser@vinyl.com");

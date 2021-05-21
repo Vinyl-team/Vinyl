@@ -5,10 +5,10 @@ import com.octo.captcha.service.image.ImageCaptchaService;
 
 public class CaptchaValidator {
 
-    private static ImageCaptchaService instance = new DefaultManageableImageCaptchaService();
+    private static ImageCaptchaService imageCaptchaService = new DefaultManageableImageCaptchaService();
 
-    public static ImageCaptchaService getInstance() {
-        return instance;
+    public static ImageCaptchaService getImageCaptchaService() {
+        return imageCaptchaService;
     }
 
 }
