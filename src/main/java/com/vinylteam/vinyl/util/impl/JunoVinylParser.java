@@ -108,11 +108,12 @@ public class JunoVinylParser implements VinylParser {
 
     @Override
     public RawOffer getRawOfferFromOfferLink(String offerLink) {
-        if (getDocument(offerLink).isEmpty()) {
+        Optional<Document> optionalDocument = getDocument(offerLink);
+        if (optionalDocument.isEmpty()) {
             log.error("Can`t get document by: {'offerLink':{}}", offerLink);
             return new RawOffer();
         } else {
-            Document document = getDocument(offerLink).get();
+            Document document = optionalDocument.get();
             var imageLink = getHighResImageLinkFromDocument(document);
             var price = getPriceFromDocument(document);
             var priceCurrency = getOptionalCurrencyFromDocument(document);
