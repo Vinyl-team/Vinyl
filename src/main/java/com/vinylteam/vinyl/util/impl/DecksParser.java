@@ -17,6 +17,7 @@ public class DecksParser implements VinylParser {
 
     private static final String BASE_LINK = "https://www.decks.de";
     private static final String START_PAGE_LINK = BASE_LINK + "/decks/workfloor/lists/list_db.php";
+    private static final int SHOP_ID = 5;
 
     @Override
     public List<RawOffer> getRawOffersList() {
@@ -32,7 +33,7 @@ public class DecksParser implements VinylParser {
         RawOffer rawOffer = new RawOffer();
         Optional<Document> offerDocument = getDocument(offerLink);
         if (offerDocument.isPresent()) {
-            rawOffer.setShopId(5);
+            rawOffer.setShopId(SHOP_ID);
             rawOffer.setRelease(getReleaseFromDocument(offerDocument.get()));
             rawOffer.setArtist(getArtistFromDocument(offerDocument.get()));
             rawOffer.setPrice(getPriceFromDocument(offerDocument.get()));
