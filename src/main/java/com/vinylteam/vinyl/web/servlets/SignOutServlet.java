@@ -22,4 +22,5 @@ public class SignOutServlet extends HttpServlet {
         log.debug("Set response status to {'status':{}}", HttpServletResponse.SC_OK);
         response.sendRedirect("/");
     }
+
 }

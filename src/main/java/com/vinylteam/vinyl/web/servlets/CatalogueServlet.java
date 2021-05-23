@@ -39,7 +39,8 @@ public class CatalogueServlet extends HttpServlet {
         response.setStatus(HttpServletResponse.SC_OK);
         Map<String, String> attributes = new HashMap<>();
         HttpSession session = request.getSession(false);
-        if (session != null) {
+        String isWantListEmpty = request.getParameter("wantlist");
+        if (session != null && isWantListEmpty == null) {
             user = (User) session.getAttribute("user");
             if (user != null) {
                 attributes.put("userRole", user.getRole().toString());
@@ -53,4 +54,5 @@ public class CatalogueServlet extends HttpServlet {
             PageGenerator.getInstance().process("catalog", randomUniqueVinyls, attributes, response.getWriter());
         }
     }
+
 }

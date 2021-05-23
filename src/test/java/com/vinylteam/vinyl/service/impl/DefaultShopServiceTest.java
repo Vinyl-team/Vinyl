@@ -8,8 +8,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -21,7 +19,6 @@ import static org.mockito.Mockito.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DefaultShopServiceTest {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
     private final ShopDao mockedShopDao = mock(JdbcShopDao.class);
     private final Shop mockedShop = mock(Shop.class);
     private final List<Shop> shops = List.of(mockedShop);
@@ -61,4 +58,5 @@ class DefaultShopServiceTest {
         assertTrue(actualShops.isEmpty());
         verify(mockedShopDao, never()).getManyByListOfIds(null);
     }
+
 }

@@ -16,9 +16,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.times;
 
 class DeleteProfileServletTest {
+
     private final UserService mockedUserService = mock(UserService.class);
     private final DeleteProfileServlet deleteProfileServlet = new DeleteProfileServlet(mockedUserService);
 
@@ -105,4 +105,5 @@ class DeleteProfileServletTest {
         verify(mockedHttpSession).invalidate();
         inOrderResponse.verify(mockedResponse).sendRedirect("/signUp");
     }
+
 }

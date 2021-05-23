@@ -11,21 +11,16 @@
     <title>Wax Deals</title>
 </head>
 <body>
-​
 <div class="wrapper">
-    ​
     <!-- header -->
-    ​
     <header class="header">
         <div class="container">
-            ​
             <!-- header menu -->
-            ​
             <div class="header__row">
                 <nav class="header__menu" role="navigation">
                     <ul class="header__menu-list">
                         <li>
-                            <a href="#" class="header__menu-item">about</a>
+                            <a href="/about" class="header__menu-item">about</a>
                         </li>
                         <li th:switch="${userRole}">
                             <div th:case="null">
@@ -41,10 +36,10 @@
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="header__menu-item">stores</a>
+                            <a href="/stores" class="header__menu-item">stores</a>
                         </li>
                         <li>
-                            <a href="#" class="header__menu-item">contact</a>
+                            <a href="/contact" class="header__menu-item header__menu-item_active">contact</a>
                         </li>
                     </ul>
                 </nav>
@@ -79,31 +74,20 @@
                     </div>
                 </div>
             </div>
-            ​
             <!-- header search -->
-            ​
             <div class="header__search">
-                ​
             </div>
-            ​
             <!-- #### -->
-            ​
         </div>
     </header>
-    ​
     <main class="main">
-        ​
         <!-- content of main -->
-        ​
         <div class="container">
             <div class="content-contact-us-page content">
-                ​
                 <div class="content-contact-us-page__column content-column">
-                    ​
                     <div class="content-user__title">
                         <h2>Contact us</h2>
                     </div>
-                    ​
                     <form action="#" method="POST" class="user contact-us-page-user">
                         <div class="user__fields-wrapper">
                             <div class="user__fields contact-us-page-user__fields">
@@ -120,22 +104,21 @@
                     <textarea class="user__input input-message" name="messageContactUs" placeholder="Message"
                               required></textarea>
                                 </label>
+                                <img src="/captcha" alt="" />
+                                <label class="user__label">
+                                    <input class="user__input" type="text" name="captcha" placeholder="captcha" required>
+                                </label>
                             </div>
                         </div>
                         <label class="user__submit-label">
                             <input class="user__submit-input" type="submit" value="SEND">
                         </label>
                     </form>
-                    ​
                 </div>
-                ​
             </div>
         </div>
-        ​
     </main>
-    ​
     <!-- footer -->
-    ​
     <footer class="footer">
         <div class="container">
             <div class="footer__row">
@@ -157,6 +140,5 @@
         </div>
     </footer>
 </div>
-​
 </body>
 </html>

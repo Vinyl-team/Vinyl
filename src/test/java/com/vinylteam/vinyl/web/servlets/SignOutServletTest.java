@@ -13,6 +13,7 @@ import java.io.IOException;
 import static org.mockito.Mockito.*;
 
 class SignOutServletTest {
+
     private final SignOutServlet signOutServlet = new SignOutServlet();
 
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
@@ -57,4 +58,5 @@ class SignOutServletTest {
         inOrderResponse.verify(mockedResponse).setStatus(HttpServletResponse.SC_OK);
         inOrderResponse.verify(mockedResponse).sendRedirect("/");
     }
+
 }

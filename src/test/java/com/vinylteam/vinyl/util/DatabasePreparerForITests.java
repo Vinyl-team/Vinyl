@@ -6,29 +6,27 @@ import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.entity.User;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+@Slf4j
 public class DatabasePreparerForITests {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
-    private final String TRUNCATE_SHOPS_CASCADE = "TRUNCATE public.shops RESTART IDENTITY CASCADE";
-    private final String TRUNCATE_UNIQUE_VINYLS_CASCADE = "TRUNCATE public.unique_vinyls RESTART IDENTITY CASCADE";
-    private final String TRUNCATE_OFFERS = "TRUNCATE public.offers RESTART IDENTITY";
-    private final String TRUNCATE_USERS_CASCADE = "TRUNCATE public.users RESTART IDENTITY CASCADE";
-    private final String TRUNCATE_USERS_POSTS_CASCADE = "TRUNCATE public.user_posts RESTART IDENTITY CASCADE";
-    private final String INSERT_IN_SHOPS = "INSERT INTO public.shops(id, link_to_main_page, link_to_image, name, link_to_small_image) VALUES(?, ?, ?, ?, ?)";
-    private final String INSERT_IN_UNIQUE_VINYLS = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image, has_offers) VALUES(?, ?, ?, ?, ?, ?)";
-    private final String INSERT_IN_OFFERS = "INSERT INTO public.offers(unique_vinyl_id, shop_id, price, currency, genre, link_to_offer) " +
+    private static final String TRUNCATE_SHOPS_CASCADE = "TRUNCATE public.shops RESTART IDENTITY CASCADE";
+    private static final String TRUNCATE_UNIQUE_VINYLS_CASCADE = "TRUNCATE public.unique_vinyls RESTART IDENTITY CASCADE";
+    private static final String TRUNCATE_OFFERS = "TRUNCATE public.offers RESTART IDENTITY";
+    private static final String TRUNCATE_USERS_CASCADE = "TRUNCATE public.users RESTART IDENTITY CASCADE";
+    private static final String TRUNCATE_USERS_POSTS_CASCADE = "TRUNCATE public.user_posts RESTART IDENTITY CASCADE";
+    private static final String INSERT_IN_SHOPS = "INSERT INTO public.shops(id, link_to_main_page, link_to_image, name, link_to_small_image) VALUES(?, ?, ?, ?, ?)";
+    private static final String INSERT_IN_UNIQUE_VINYLS = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image, has_offers) VALUES(?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_IN_OFFERS = "INSERT INTO public.offers(unique_vinyl_id, shop_id, price, currency, genre, link_to_offer) " +
             "VALUES(?, ?, ?, ?, ?, ?)";
-    private final String INSERT_IN_USERS = "INSERT INTO public.users (email, password, salt, iterations, status, role, discogs_user_name) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_IN_USERS = "INSERT INTO public.users (email, password, salt, iterations, status, role, discogs_user_name) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private final PropertiesReader propertiesReader = new PropertiesReader();
     private final HikariDataSource dataSource;
     private final HikariConfig config = new HikariConfig();
@@ -40,7 +38,7 @@ public class DatabasePreparerForITests {
         config.setDriverClassName(propertiesReader.getProperty("jdbc.driver"));
         config.setMaximumPoolSize(Integer.parseInt(propertiesReader.getProperty("jdbc.maximum.pool.size")));
         dataSource = new HikariDataSource(config);
-        logger.info("Configured and created HikariDataSource object {'dataSource':{}}", dataSource);
+        log.info("Configured and created HikariDataSource object {'dataSource':{}}", dataSource);
     }
 
     public HikariDataSource getDataSource() {
@@ -165,7 +163,7 @@ public class DatabasePreparerForITests {
         }
     }
 
-    public void closeDataSource(){
+    public void closeDataSource() {
         dataSource.close();
     }
 

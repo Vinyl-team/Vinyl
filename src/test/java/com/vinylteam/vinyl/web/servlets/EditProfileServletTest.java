@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class EditProfileServletTest {
+
     private final SecurityService mockedSecurityService = mock(SecurityService.class);
     private final UserService mockedUserService = mock(UserService.class);
     private final EditProfileServlet editProfileServlet = new EditProfileServlet(mockedSecurityService, mockedUserService);
@@ -349,4 +350,5 @@ class EditProfileServletTest {
         verify(mockedUserService).getByEmail("newTest@email.com");
         inOrderResponse.verify(mockedResponse).getWriter();
     }
+
 }

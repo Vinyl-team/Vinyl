@@ -18,7 +18,6 @@ import java.util.Optional;
 public class SignInServlet extends HttpServlet {
 
     private final UserService userService;
-    private final String verifiedRedirect = "/";
 
     public SignInServlet(UserService userService) {
         this.userService = userService;

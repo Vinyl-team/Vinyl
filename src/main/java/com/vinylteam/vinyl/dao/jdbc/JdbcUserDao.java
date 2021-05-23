@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Slf4j
 public class JdbcUserDao implements UserDao {
+
     private final UserRowMapper userRowMapper = new UserRowMapper();
     private final static String FIND_BY_EMAIL = "SELECT id, email, password, salt, iterations, role, status, discogs_user_name" +
             " FROM public.users" +
@@ -26,6 +27,7 @@ public class JdbcUserDao implements UserDao {
     private static final String UPDATE = "UPDATE public.users" +
             " SET email = ?, password = ?, salt = ?, iterations = ?, role = ?, status = ?, discogs_user_name = ?" +
             " WHERE email = ?";
+
     private final HikariDataSource dataSource;
 
     public JdbcUserDao(HikariDataSource dataSource) {
@@ -147,4 +149,5 @@ public class JdbcUserDao implements UserDao {
         log.debug("Resulting optional with user is {'Optional.ofNullable(user)':{}}", Optional.ofNullable(user));
         return Optional.ofNullable(user);
     }
+
 }

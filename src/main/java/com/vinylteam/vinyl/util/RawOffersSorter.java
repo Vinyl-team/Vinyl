@@ -3,18 +3,16 @@ package com.vinylteam.vinyl.util;
 import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.RawOffer;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 
+@Slf4j
 public class RawOffersSorter {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     public List<Offer> getOffersUpdateUniqueVinyls(List<RawOffer> rawOffers, List<UniqueVinyl> uniqueVinyls) {
         if (rawOffers != null && uniqueVinyls != null) {
-            logger.info("Received {} rawOffers from parser", rawOffers.size());
+            log.info("Received {} rawOffers from parser", rawOffers.size());
             List<Offer> offers = new ArrayList<>();
             if (!rawOffers.isEmpty()) {
                 ListIterator<UniqueVinyl> vinylIterator = uniqueVinyls.listIterator();
@@ -28,20 +26,20 @@ public class RawOffersSorter {
                         uniqueVinyl.setFullName(uniqueVinyl.getRelease() + " - " + uniqueVinyl.getArtist());
                         uniqueVinyl.setImageLink(rawOffers.get(0).getImageLink());
                         vinylIterator.add(uniqueVinyl);
-                        logger.debug("Added new uniqueVinyl {'uniqueVinyl':{}}", uniqueVinyl);
+                        log.debug("Added new uniqueVinyl {'uniqueVinyl':{}}", uniqueVinyl);
                         vinylIterator.previous();
                     }
                     addOffersSortingByVinyl(rawOffers, vinylIterator.next(), offers);
                 }
             } else {
-                logger.warn("Passed to RawOfferSorter.getOffersUpdateUniqueVinyls() list of raw offers is empty");
+                log.warn("Passed to RawOfferSorter.getOffersUpdateUniqueVinyls() list of raw offers is empty");
             }
-            logger.info("Sorting complete, {} unique vinyls, {} offers", uniqueVinyls.size(), offers.size());
-            logger.debug("Resulting list of offers and updated list of uniqueVinyls are {'offers':{}, 'uniqueVinyls':{}}", offers, uniqueVinyls);
+            log.info("Sorting complete, {} unique vinyls, {} offers", uniqueVinyls.size(), offers.size());
+            log.debug("Resulting list of offers and updated list of uniqueVinyls are {'offers':{}, 'uniqueVinyls':{}}", offers, uniqueVinyls);
             return offers;
         } else {
             RuntimeException e = new NullPointerException();
-            logger.error("At least one of passed arguments is null {'rawOffers':{}, 'uniqueVinyls':{}}}",
+            log.error("At least one of passed arguments is null {'rawOffers':{}, 'uniqueVinyls':{}}}",
                     rawOffers, uniqueVinyls, e);
             throw e;
         }
@@ -63,13 +61,13 @@ public class RawOffersSorter {
                     offer.setOfferLink(rawOffer.getOfferLink());
                     offers.add(offer);
                     uniqueVinyl.setHasOffers(true);
-                    logger.debug("Added new offer {'offer':{}}", offer);
+                    log.debug("Added new offer {'offer':{}}", offer);
                     rawOfferIterator.remove();
                 }
             }
         } else {
             RuntimeException e = new NullPointerException();
-            logger.error("At least one of passed arguments is null {'rawOffers':{}, 'uniqueVinyl':{}, 'offers':{}}",
+            log.error("At least one of passed arguments is null {'rawOffers':{}, 'uniqueVinyl':{}, 'offers':{}}",
                     rawOffers, uniqueVinyl, offers, e);
             throw e;
         }

@@ -3,20 +3,19 @@ package com.vinylteam.vinyl.util.impl;
 import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.RawOffer;
 import com.vinylteam.vinyl.util.VinylParser;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
 
+@Slf4j
 public class VinylUaParser implements VinylParser {
 
-    private static final Logger logger = LoggerFactory.getLogger(VinylUaParser.class);
     private static final String START_LINK = "http://vinyl.ua";
     private static final String SELECTOR_SCRIPT_WITH_HIGH_RES_IMAGE_LINK = "script:containsData(openPhotoSwipe)";
     private static final String SELECTOR_RELEASE = "div.boxed div.col-sm-7 > h3.normal-text";
@@ -34,22 +33,22 @@ public class VinylUaParser implements VinylParser {
         try {
             document = Jsoup.connect(START_LINK).get();
         } catch (IOException e) {
-            logger.error("Error while getting document by link {'link':{}}", START_LINK, e);
+            log.error("Error while getting document by link {'link':{}}", START_LINK, e);
             throw new RuntimeException("Fail while getting a document by " + START_LINK, e);
         }
-        logger.debug("Got document out of start link {'startLink':{}, 'document':{}",
+        log.debug("Got document out of start link {'startLink':{}, 'document':{}",
                 START_LINK, document);
         Elements genreAnchors = document.select(SELECTOR_GENRE_ANCHORS);
-        logger.debug("Got collection of genre anchors {'genreAnchors':{}}", genreAnchors);
+        log.debug("Got collection of genre anchors {'genreAnchors':{}}", genreAnchors);
         for (Element anchor : genreAnchors) {
             String anchorLink = anchor.attr("href");
             String link = START_LINK + anchorLink;
             genreLinks.add(link);
-            logger.debug("Added link to hash set of genre links {'link':{}}", link);
+            log.debug("Added link to hash set of genre links {'link':{}}", link);
         }
-        logger.debug("Resulting hash set of genre links is {'genreLinks':{}}", genreLinks);
+        log.debug("Resulting hash set of genre links is {'genreLinks':{}}", genreLinks);
         if (genreLinks.isEmpty()) {
-            logger.error("Zero genre links by start link {'startLink':{}}", START_LINK);
+            log.error("Zero genre links by start link {'startLink':{}}", START_LINK);
         }
         return genreLinks;
     }
@@ -61,20 +60,20 @@ public class VinylUaParser implements VinylParser {
             try {
                 document = Jsoup.connect(genreLink).get();
             } catch (IOException e) {
-                logger.error("Error while getting document by link {'link':{}}", genreLink, e);
+                log.error("Error while getting document by link {'link':{}}", genreLink, e);
                 throw new RuntimeException("Fail while getting a document by " + genreLink, e);
             }
-            logger.debug("Got document out of genre link {'genreLink':{}, 'document':{}", genreLink, document);
+            log.debug("Got document out of genre link {'genreLink':{}, 'document':{}", genreLink, document);
             Elements pageAnchors = document.select(SELECTOR_PAGE_ANCHORS);
-            logger.debug("Got collection of page anchors {'pageAnchors':{}}", pageAnchors);
+            log.debug("Got collection of page anchors {'pageAnchors':{}}", pageAnchors);
             for (Element anchor : pageAnchors) {
                 String anchorLink = anchor.attr("href");
                 String link = START_LINK + anchorLink;
                 pageLinks.add(link);
-                logger.debug("Added link to hash set of page links {'link':{}}", link);
+                log.debug("Added link to hash set of page links {'link':{}}", link);
             }
         }
-        logger.debug("Resulting hash set of page links is {'pageLinks':{}}", pageLinks);
+        log.debug("Resulting hash set of page links is {'pageLinks':{}}", pageLinks);
         return pageLinks;
     }
 
@@ -85,21 +84,21 @@ public class VinylUaParser implements VinylParser {
             try {
                 document = Jsoup.connect(pageLink).get();
             } catch (IOException e) {
-                logger.error("Error while getting document by link {'link':{}}", pageLink, e);
+                log.error("Error while getting document by link {'link':{}}", pageLink, e);
                 throw new RuntimeException("Fail while getting a document by " + pageLink, e);
             }
-            logger.debug("Got document out of page link {'pageLink':{}, 'document':{}", pageLink, document);
+            log.debug("Got document out of page link {'pageLink':{}, 'document':{}", pageLink, document);
             Elements offerAnchors = document.select(SELECTOR_OFFER_ANCHORS);
-            logger.debug("Got collection of offer anchors with links to offers {'offerAnchors':{}}", offerAnchors);
+            log.debug("Got collection of offer anchors with links to offers {'offerAnchors':{}}", offerAnchors);
 
             for (Element anchor : offerAnchors) {
                 String offerLink = START_LINK + anchor.attr("href");
                 offerLinks.add(offerLink);
-                logger.debug("Added link to hash set of offer links{'offerLink':{}}", offerLink);
+                log.debug("Added link to hash set of offer links{'offerLink':{}}", offerLink);
             }
-            logger.debug("Parsed page link {'pageLink':{}}", pageLink);
+            log.debug("Parsed page link {'pageLink':{}}", pageLink);
         }
-        logger.debug("Resulting hash set of offer links is {'offerLinks':{}}", offerLinks);
+        log.debug("Resulting hash set of offer links is {'offerLinks':{}}", offerLinks);
         return offerLinks;
     }
 
@@ -110,10 +109,10 @@ public class VinylUaParser implements VinylParser {
             if (isValid(rawOffer)) {
                 rawOfferSet.add(rawOffer);
             } else {
-                logger.warn("Can't fill raw offer by offer link, not adding it to set {'rawOffer':{}, 'offerLink':{}}", rawOffer, offerLink);
+                log.warn("Can't fill raw offer by offer link, not adding it to set {'rawOffer':{}, 'offerLink':{}}", rawOffer, offerLink);
             }
         }
-        logger.debug("Resulting hash set of rawOfferSet is {'rawOfferSet':{}}", rawOfferSet);
+        log.debug("Resulting hash set of rawOfferSet is {'rawOfferSet':{}}", rawOfferSet);
         return rawOfferSet;
     }
 
@@ -122,9 +121,9 @@ public class VinylUaParser implements VinylParser {
         Document document;
         try {
             document = Jsoup.connect(offerLink).get();
-            logger.debug("Got document out of offer link {'offerLink':{}, 'document':{}", offerLink, document);
+            log.debug("Got document out of offer link {'offerLink':{}, 'document':{}", offerLink, document);
         } catch (IOException e) {
-            logger.error("Error while getting document by link {'link':{}}", offerLink, e);
+            log.error("Error while getting document by link {'link':{}}", offerLink, e);
             throw new RuntimeException("Fail while getting a document by " + offerLink, e);
         }
         rawOffer.setShopId(1);
@@ -137,13 +136,13 @@ public class VinylUaParser implements VinylParser {
         rawOffer.setInStock(true);
         rawOffer.setOfferLink(offerLink);
         rawOffer.setImageLink(getHighResImageLinkFromDocument(document));
-        logger.debug("Parsed page link {'offerLink':{}}", offerLink);
+        log.debug("Parsed page link {'offerLink':{}}", offerLink);
         return rawOffer;
     }
 
     String getReleaseFromDocument(Document document) {
         String release = document.select(SELECTOR_RELEASE).text();
-        logger.debug("Got release from page by offer link {'release':{}, 'offerLink':{}}", release, document.location());
+        log.debug("Got release from page by offer link {'release':{}, 'offerLink':{}}", release, document.location());
         return release;
     }
 
@@ -152,17 +151,17 @@ public class VinylUaParser implements VinylParser {
         if (artist.isEmpty()) {
             artist = "Various Artists";
         }
-        logger.debug("Got artist from page by offer link  {'artist':{}, 'offerLink':{}}", artist, document.location());
+        log.debug("Got artist from page by offer link  {'artist':{}, 'offerLink':{}}", artist, document.location());
         return artist;
     }
 
     Double getPriceFromDocument(Document document) {
         String priceDetails = document.select(SELECTOR_PRICE_DETAILS).text();
-        logger.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", priceDetails, document.location());
+        log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", priceDetails, document.location());
         if (priceDetails.indexOf(' ') != -1) {
             String priceNumber = priceDetails.substring(0, priceDetails.indexOf(' '));
             double price = Double.parseDouble(priceNumber);
-            logger.debug("Got price from price details {'price':{}, 'priceDetails':{}}", price, priceDetails);
+            log.debug("Got price from price details {'price':{}, 'priceDetails':{}}", price, priceDetails);
             return price;
         }
         return 0.;
@@ -170,33 +169,33 @@ public class VinylUaParser implements VinylParser {
 
     Optional<Currency> getOptionalCurrencyFromDocument(Document document) {
         String priceDetails = document.select(SELECTOR_PRICE_DETAILS).text();
-        logger.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", priceDetails, document.location());
+        log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", priceDetails, document.location());
         if (priceDetails.indexOf(' ') != -1) {
             String currency = priceDetails.substring(priceDetails.indexOf(' ') + 1);
             Optional<Currency> optionalCurrency = Currency.getCurrency(currency);
-            logger.debug("Got optional with currency from price details {'optionalCurrency':{}, 'priceDetails':{}}", optionalCurrency, priceDetails);
+            log.debug("Got optional with currency from price details {'optionalCurrency':{}, 'priceDetails':{}}", optionalCurrency, priceDetails);
             return optionalCurrency;
         }
-        logger.warn("Can't find currency description from price details, returning empty optional {'priceDetails':{}}", priceDetails);
+        log.warn("Can't find currency description from price details, returning empty optional {'priceDetails':{}}", priceDetails);
         return Optional.empty();
     }
 
     String getHighResImageLinkFromDocument(Document document) {
         List<DataNode> scriptDataNodes = document.select(SELECTOR_SCRIPT_WITH_HIGH_RES_IMAGE_LINK).dataNodes();
         if (scriptDataNodes.isEmpty()) {
-            logger.warn("No script containing high resolution image link by offer link, returning default {'offerLink':{}}", document.location());
+            log.warn("No script containing high resolution image link by offer link, returning default {'offerLink':{}}", document.location());
             return "img/goods/no_image.jpg";
         }
         String scriptWithHighResImageLink = scriptDataNodes.get(0).getWholeData();
-        logger.debug("Got script containing high resolution image link from page by offer link {'script':{}, 'offerLink':{}}", scriptWithHighResImageLink, document.location());
+        log.debug("Got script containing high resolution image link from page by offer link {'script':{}, 'offerLink':{}}", scriptWithHighResImageLink, document.location());
         String highResImageLink;
         int beginIndexOfImageLink = scriptWithHighResImageLink.indexOf("src: '") + "src: '".length();
         if (beginIndexOfImageLink != -1) {
             int endIndexOfImageLink = scriptWithHighResImageLink.indexOf('\'', beginIndexOfImageLink);
             highResImageLink = scriptWithHighResImageLink.substring(beginIndexOfImageLink, endIndexOfImageLink);
-            logger.debug("Got high resolution image link from page by offer link {'highResImageLink':{}, 'offerLink':{}}", highResImageLink, document.location());
+            log.debug("Got high resolution image link from page by offer link {'highResImageLink':{}, 'offerLink':{}}", highResImageLink, document.location());
         } else {
-            logger.warn("Can't find image link from page by offer link, returning default {'offerLink':{}}", document.location());
+            log.warn("Can't find image link from page by offer link, returning default {'offerLink':{}}", document.location());
             highResImageLink = "img/goods/no_image.jpg";
         }
         return highResImageLink;
@@ -204,7 +203,7 @@ public class VinylUaParser implements VinylParser {
 
     String getGenreFromDocument(Document document) {
         String genre = document.select(SELECTOR_GENRE).text();
-        logger.debug("Got genre from page by offer link {'genre':{}, 'offerLink':{}}", genre, document.location());
+        log.debug("Got genre from page by offer link {'genre':{}, 'offerLink':{}}", genre, document.location());
         return genre;
     }
 
@@ -228,15 +227,15 @@ public class VinylUaParser implements VinylParser {
     @Override
     public List<RawOffer> getRawOffersList() {
         HashSet<String> genresLinks = getGenresLinks();
-        logger.debug("got genre links {'genreLinks':{}}", genresLinks);
+        log.debug("got genre links {'genreLinks':{}}", genresLinks);
         HashSet<String> pageLinks = getPageLinks(genresLinks);
-        logger.debug("got page links {'pageLinks':{}}", pageLinks);
+        log.debug("got page links {'pageLinks':{}}", pageLinks);
         HashSet<String> offerLinks = getOfferLinks(pageLinks);
-        logger.debug("got offer links {'offerLinks':{}}", offerLinks);
+        log.debug("got offer links {'offerLinks':{}}", offerLinks);
         HashSet<RawOffer> rawOfferSet = readRawOffersFromAllOfferLinks(offerLinks);
-        logger.info("read {} rawOffers from all offer links", rawOfferSet.size());
+        log.info("read {} rawOffers from all offer links", rawOfferSet.size());
         List<RawOffer> rawOffers = new ArrayList<>(rawOfferSet);
-        logger.debug("Resulting list of raw offers from vinyl.ua is {'rawOffers':{}}", rawOffers);
+        log.debug("Resulting list of raw offers from vinyl.ua is {'rawOffers':{}}", rawOffers);
         return rawOffers;
     }
 

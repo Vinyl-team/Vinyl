@@ -10,4 +10,5 @@ public interface DiscogsService {
     List<UniqueVinyl> getDiscogsMatchList(String discogsUserName, List<UniqueVinyl> allUniqueVinyl);
 
     String getDiscogsLink(String artist, String release, String fullName) throws ParseException;
+
 }

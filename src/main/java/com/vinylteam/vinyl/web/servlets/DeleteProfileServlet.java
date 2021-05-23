@@ -15,6 +15,7 @@ import java.util.Map;
 
 @Slf4j
 public class DeleteProfileServlet extends HttpServlet {
+
     private final UserService userService;
 
     public DeleteProfileServlet(UserService userService) {
@@ -48,4 +49,5 @@ public class DeleteProfileServlet extends HttpServlet {
             response.sendRedirect("/signIn");
         }
     }
+
 }
