@@ -26,8 +26,10 @@ public class MailSender {
         String env = System.getenv("env");
         if (PRODUCTION_ENVIRONMENT.equals(env)) {
             properties.put("mail.smtps.host", host);
+            properties.put("mail.smtps.auth", auth);
         } else {
             properties.put("mail.smtp.host", host);
+            properties.put("mail.smtp.auth", auth);
         }
 
         session = Session.getInstance(properties,
