@@ -171,11 +171,11 @@
                                     <div class="item-body shop-list__item-image">
                                         <img th:src="${vinylOffer.shopImageLink}" alt="shop icon">
                                     </div>
-                                    <div class="item-body shop-list__catalog-width shop-list__item-direction">GF2 3000
-                                    </div>
-                                    <div class="item-body on-stock shop-list__stock-width shop-list__item-direction"></div>
+                                    <div class="item-body shop-list__catalog-width shop-list__item-direction"
+                                         th:text="${vinylOffer.catNumber}"></div>
+                                    <div class="item-body shop-list__stock-width shop-list__item-direction" th:classappend="${vinylOffer.inStock} ? in-stock : out-of-stock"></div>
                                     <div class="item-body shop-list__item-price shop-list__price-width shop-list__item-direction"
-                                         th:text="${vinylOffer.price}">No price
+                                         th:text="${vinylOffer.price + ' ' + vinylOffer.currency}">No price
                                     </div>
                                     <div class="item-body shop-list__go-to-shop-width shop-list__item-direction">
                                         <a th:href="${vinylOffer.offerLink}" class="button on-stock-button"

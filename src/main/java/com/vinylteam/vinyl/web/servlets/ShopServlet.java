@@ -27,7 +27,7 @@ public class ShopServlet extends HttpServlet {
         response.setContentType("text/html;charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         var shopList = shopService.findAll();
-        log.info("Shops list is prepared to be included in response, size { 'Shops List size':}", shopList.size());
+        log.info("Shops list is prepared to be included in response, size {'shopsListSize':{}}", shopList.size());
         Map<String, String> attributes = new HashMap<>();
         HttpSession session = request.getSession(false);
         if (session != null) {
