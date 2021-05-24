@@ -35,7 +35,6 @@ public class JunoVinylParser implements VinylParser {
     private static final String SELECTOR_IN_STOCK = "em[itemprop=\"availability\"]";
     private static final String SELECTOR_PRICE_DETAILS = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.no-gutters.mt-2 > div.col-12.col-sm-7 > div.product-actions > div.product-pricing > span";
     private static final String SELECTOR_CATALOGUE_NUMBER_CONTAINER = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.no-gutters.mt-2 > div.col-12.col-sm-5 > div.product-meta.mb-2";
-    private static final String SELECTOR_CATALOGUE_NUMBER_FROM_CONTAINER_ELEMENT = ":matchText:last-child";
     private static final String SELECTOR_GENRE = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.no-gutters.mt-2 > div.col-12.col-sm-5 > div.product-meta.mb-2 > strong:contains(Genre:) + a";
     private static final String SELECTOR_SCRIPT_HIGH_RES_IMAGE_LINK = BASE_SELECTOR_OFFER_DETAILS + " > div.order-2 > div#artwork-carousel > div#artwork-carousel-jwc > div.jw-scroller.jws-transform > div.jw-page + div.jw-page > img";
 
@@ -201,15 +200,25 @@ public class JunoVinylParser implements VinylParser {
 
     String getCatNumberFromDocument(Document document) {
         Element catNumberContainer = document.select(SELECTOR_CATALOGUE_NUMBER_CONTAINER).first();
-        log.debug("Got element that contains catNumber from page by offer link {'catNumberContainer':{}, 'offerLink':{}}", catNumberContainer, document.location());
+        log.debug("Got the element that contains catNumber from page by offer link {'catNumberContainerText':{}, 'offerLink':{}}", catNumberContainer, document.location());
         if (catNumberContainer != null) {
-            String catNumber = catNumberContainer.select(SELECTOR_CATALOGUE_NUMBER_FROM_CONTAINER_ELEMENT).toString();
-            log.debug("Got catNumber from page by offer link {'catNumber':{}, 'offerLink':{}}", catNumber, document.location());
-            return catNumber;
+            String catNumberContainerText = catNumberContainer.text();
+            log.debug("Got text from the element that contains catNumber from page by offer link {'catNumberContainerText':{}, 'catNumberContainer':{}, 'offerLink':{}}",
+                    catNumberContainerText, catNumberContainer, document.location());
+            int catNumberBeginIndex = catNumberContainerText.indexOf("Cat: ") + 5;
+            int catNumberEndIndex = catNumberContainerText.indexOf(" Released:");
+            if (catNumberBeginIndex != -1 && catNumberEndIndex != 1) {
+                String catNumber = catNumberContainerText.substring(catNumberBeginIndex, catNumberEndIndex);
+                log.debug("Got catNumber from page by offer link {'catNumber':{}, 'offerLink':{}}", catNumber, document.location());
+                return catNumber;
+            } else {
+                log.error("Text from element containing catNumber from offer link doesn't contain \"Cat: \" or \"Release\", returning empty catNumber " +
+                        "{'catNumberContainerText':{}, 'offerLink': {}}", catNumberContainerText, document.location());
+            }
         } else {
             log.error("Couldn't get element containing catNumber from offer link, returning empty catNumber {'offerLink': {}}", document.location());
-            return "";
         }
+        return "";
     }
 
     boolean getInStockFromDocument(Document document) {
