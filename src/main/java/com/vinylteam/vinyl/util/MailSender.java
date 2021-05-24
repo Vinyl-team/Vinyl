@@ -19,7 +19,6 @@ public class MailSender {
 
         Properties properties = new Properties();
         properties.put("mail.smtp.port", port);
-        properties.put("mail.smtp.auth", auth);
         properties.put("mail.smtp.socketFactory.port", port);
         properties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
