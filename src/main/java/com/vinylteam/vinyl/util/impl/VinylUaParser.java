@@ -209,7 +209,7 @@ public class VinylUaParser implements VinylParser {
 
     String getCatNumberFromDocument(Document document) {
         String catNumber = document.select(SELECTOR_CATALOGUE_NUMBER).text();
-        logger.debug("Got catNumber from page by offer link {'catNumber':{}, 'offerLink':{}}", catNumber, document.location());
+        log.debug("Got catNumber from page by offer link {'catNumber':{}, 'offerLink':{}}", catNumber, document.location());
         return catNumber;
     }
 

@@ -35,7 +35,7 @@ public class JunoVinylParser implements VinylParser {
     private static final String SELECTOR_IN_STOCK = "em[itemprop=\"availability\"]";
     private static final String SELECTOR_PRICE_DETAILS = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.no-gutters.mt-2 > div.col-12.col-sm-7 > div.product-actions > div.product-pricing > span";
     private static final String SELECTOR_CATALOGUE_NUMBER_CONTAINER = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.no-gutters.mt-2 > div.col-12.col-sm-5 > div.product-meta.mb-2";
-    private static final String SELECTOR_CATALOGUE_NUMBER_FROM_CONTAINER_ELEMENT = ":matchText:nth-child(2)";
+    private static final String SELECTOR_CATALOGUE_NUMBER_FROM_CONTAINER_ELEMENT = ":matchText:last-child";
     private static final String SELECTOR_GENRE = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.no-gutters.mt-2 > div.col-12.col-sm-5 > div.product-meta.mb-2 > strong:contains(Genre:) + a";
     private static final String SELECTOR_SCRIPT_HIGH_RES_IMAGE_LINK = BASE_SELECTOR_OFFER_DETAILS + " > div.order-2 > div#artwork-carousel > div#artwork-carousel-jwc > div.jw-scroller.jws-transform > div.jw-page + div.jw-page > img";
 
@@ -124,6 +124,8 @@ public class JunoVinylParser implements VinylParser {
             var artist = getArtistFromDocument(document);
             var release = getReleaseFromDocument(document);
             var genre = getGenreFromDocument(document);
+            var catNumber = getCatNumberFromDocument(document);
+            var inStock = getInStockFromDocument(document);
 
             var rawOffer = new RawOffer();
             rawOffer.setShopId(2);
@@ -134,6 +136,8 @@ public class JunoVinylParser implements VinylParser {
             rawOffer.setOfferLink(offerLink);
             rawOffer.setImageLink(imageLink);
             rawOffer.setGenre(genre);
+            rawOffer.setCatNumber(catNumber);
+            rawOffer.setInStock(inStock);
             return rawOffer;
         }
     }
@@ -198,7 +202,7 @@ public class JunoVinylParser implements VinylParser {
     String getCatNumberFromDocument(Document document) {
         Element catNumberContainer = document.select(SELECTOR_CATALOGUE_NUMBER_CONTAINER).first();
         log.debug("Got element that contains catNumber from page by offer link {'catNumberContainer':{}, 'offerLink':{}}", catNumberContainer, document.location());
-        if (!catNumberContainer.toString().isEmpty()) {
+        if (catNumberContainer != null) {
             String catNumber = catNumberContainer.select(SELECTOR_CATALOGUE_NUMBER_FROM_CONTAINER_ELEMENT).toString();
             log.debug("Got catNumber from page by offer link {'catNumber':{}, 'offerLink':{}}", catNumber, document.location());
             return catNumber;

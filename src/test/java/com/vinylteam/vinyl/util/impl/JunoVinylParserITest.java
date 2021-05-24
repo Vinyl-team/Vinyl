@@ -78,18 +78,22 @@ class JunoVinylParserITest {
     @DisplayName("Checks that returned raw offer is filled with not-default values that aren't null after parsing valid offer link.")
     void getRawOfferFromValidOfferLinkTest() {
         RawOffer actualRawOffer = parser.getRawOfferFromOfferLink(validOfferLink);
+        assertNotEquals("Various Artists", actualRawOffer.getArtist());
+        assertFalse(actualRawOffer.getRelease().isEmpty());
         assertTrue(actualRawOffer.getPrice() > 0.);
         assertTrue(actualRawOffer.getCurrency().isPresent());
-        assertFalse(actualRawOffer.getRelease().isEmpty());
+        assertFalse(actualRawOffer.getCatNumber().isEmpty());
+        assertTrue(actualRawOffer.isInStock());
+        assertNotEquals("img/goods/no_image.jpg", actualRawOffer.getImageLink());
     }
 
     @Test
     @DisplayName("Checks that returned raw offer is filled but with default values after parsing not valid offer link.")
     void getRawOfferFromInvalidOfferLinkTest() {
         RawOffer actualRawOffer = parser.getRawOfferFromOfferLink(invalidOfferLink);
-        assertNotNull(actualRawOffer.getCurrency());
-        assertNotNull(actualRawOffer.getRelease());
         assertEquals("Various Artists", actualRawOffer.getArtist());
+        assertNotNull(actualRawOffer.getRelease());
+        assertNotNull(actualRawOffer.getCurrency());
         assertNotNull(actualRawOffer.getGenre());
         assertNotNull(actualRawOffer.getCatNumber());
         assertEquals("img/goods/no_image.jpg", actualRawOffer.getImageLink());
@@ -229,13 +233,13 @@ class JunoVinylParserITest {
     }
 
     @Test
-    @DisplayName("Checks that getCatNumberFrom-Valid-Document that marks offer as in stock returns true")
+    @DisplayName("Checks that getInStockFrom-Valid-Document that marks offer as in stock returns true")
     void getInStockFromValidDocument() {
         assertTrue(parser.getInStockFromDocument(validLinkDocument));
     }
 
     @Test
-    @DisplayName("Checks that getCatNumberFrom-Not Valid-Document returns false")
+    @DisplayName("Checks that getInStockFrom-Not Valid-Document returns false")
     void getInStockFromNotValidDocument() {
         assertFalse(parser.getInStockFromDocument(invalidLinkDocument));
     }

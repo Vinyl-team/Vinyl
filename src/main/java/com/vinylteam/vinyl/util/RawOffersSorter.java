@@ -58,6 +58,8 @@ public class RawOffersSorter {
                     offer.setPrice(rawOffer.getPrice());
                     offer.setCurrency(rawOffer.getCurrency());
                     offer.setGenre(rawOffer.getGenre());
+                    offer.setCatNumber(rawOffer.getCatNumber());
+                    offer.setInStock(rawOffer.isInStock());
                     offer.setOfferLink(rawOffer.getOfferLink());
                     offers.add(offer);
                     uniqueVinyl.setHasOffers(true);
