@@ -81,6 +81,20 @@ class CloneNlParserTest {
     }
 
     @Test
+    @DisplayName("Checks whether release is received from HTML Element that represents one vinyl Item")
+    void getCatNumberFromDocument() throws IOException {
+        String catalogNumber = parser.getCatNumberFromDocument(vinylElement);
+        assertEquals("Rothmans7", catalogNumber);
+    }
+
+    @Test
+    @DisplayName("Checks whether release is received from HTML Element that represents one vinyl Item")
+    void getInStockInfoFromDocument() throws IOException {
+        boolean inStock = parser.getInStockInfoFromDocument(vinylElement);
+        assertTrue(inStock);
+    }
+
+    @Test
     @DisplayName("Checks whether currency is received from HTML Element that represents one vinyl Item")
     void getOptionalCurrencyFromDocumentTest() throws IOException {
         var currency = parser.getOptionalCurrencyFromDocument(vinylElement);
