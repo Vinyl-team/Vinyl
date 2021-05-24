@@ -7,6 +7,7 @@ import com.vinylteam.vinyl.util.VinylParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.util.*;
@@ -31,7 +32,9 @@ public class JunoVinylParser implements VinylParser {
     private static final String BASE_SELECTOR_OFFER_TEXT_DETAILS = BASE_SELECTOR_OFFER_DETAILS + " > div.order-1 > div.juno-section";
     private static final String SELECTOR_RELEASE = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.gutters-sm + div.row.gutters-sm > div.col-12 > div.product-title > h2 > span";
     private static final String SELECTOR_ARTIST = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.gutters-sm + div.row.gutters-sm > div.col-12 > div.product-artist > h2 > a";
+    private static final String SELECTOR_IN_STOCK = "em[itemprop=\"availability\"]";
     private static final String SELECTOR_PRICE_DETAILS = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.no-gutters.mt-2 > div.col-12.col-sm-7 > div.product-actions > div.product-pricing > span";
+    private static final String SELECTOR_CATALOGUE_NUMBER_CONTAINER = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.no-gutters.mt-2 > div.col-12.col-sm-5 > div.product-meta.mb-2";
     private static final String SELECTOR_GENRE = BASE_SELECTOR_OFFER_TEXT_DETAILS + " > div.row.no-gutters.mt-2 > div.col-12.col-sm-5 > div.product-meta.mb-2 > strong:contains(Genre:) + a";
     private static final String SELECTOR_SCRIPT_HIGH_RES_IMAGE_LINK = BASE_SELECTOR_OFFER_DETAILS + " > div.order-2 > div#artwork-carousel > div#artwork-carousel-jwc > div.jw-scroller.jws-transform > div.jw-page + div.jw-page > img";
 
@@ -120,6 +123,8 @@ public class JunoVinylParser implements VinylParser {
             var artist = getArtistFromDocument(document);
             var release = getReleaseFromDocument(document);
             var genre = getGenreFromDocument(document);
+            var catNumber = getCatNumberFromDocument(document);
+            var inStock = getInStockFromDocument(document);
 
             var rawOffer = new RawOffer();
             rawOffer.setShopId(2);
@@ -130,13 +135,15 @@ public class JunoVinylParser implements VinylParser {
             rawOffer.setOfferLink(offerLink);
             rawOffer.setImageLink(imageLink);
             rawOffer.setGenre(genre);
+            rawOffer.setCatNumber(catNumber);
+            rawOffer.setInStock(inStock);
             return rawOffer;
         }
     }
 
     String getReleaseFromDocument(Document document) {
         String release = document.select(SELECTOR_RELEASE).text();
-        if ("".equals(release)) {
+        if (release.isEmpty()) {
             log.warn("Release from link is empty {'link':{}}", document.location());
         }
         log.debug("Got release from page by offer link {'release':{}, 'offerLink':{}}", release, document.location());
@@ -145,7 +152,7 @@ public class JunoVinylParser implements VinylParser {
 
     String getArtistFromDocument(Document document) {
         String artist = document.select(SELECTOR_ARTIST).text();
-        if ("".equals((artist))) {
+        if (artist.isEmpty()) {
             log.warn("Artist from link is empty, returning default value {'link':{}}", document.location());
             artist = "Various Artists";
         }
@@ -184,18 +191,56 @@ public class JunoVinylParser implements VinylParser {
 
     String getGenreFromDocument(Document document) {
         String genre = document.select(SELECTOR_GENRE).text();
-        if (genre.equals("")) {
+        if (genre.isEmpty()) {
             log.warn("Genre from link is empty {'link':{}}", document.location());
         }
         log.debug("Got genre from page by offer link {'genre':{}, 'offerLink':{}}", genre, document.location());
         return genre;
     }
 
+    String getCatNumberFromDocument(Document document) {
+        Element catNumberContainer = document.select(SELECTOR_CATALOGUE_NUMBER_CONTAINER).first();
+        log.debug("Got the element that contains catNumber from page by offer link {'catNumberContainerText':{}, 'offerLink':{}}", catNumberContainer, document.location());
+        if (catNumberContainer != null) {
+            String catNumberContainerText = catNumberContainer.text();
+            log.debug("Got text from the element that contains catNumber from page by offer link {'catNumberContainerText':{}, 'catNumberContainer':{}, 'offerLink':{}}",
+                    catNumberContainerText, catNumberContainer, document.location());
+            int catNumberBeginIndex = catNumberContainerText.indexOf("Cat: ") + 5;
+            int catNumberEndIndex = catNumberContainerText.indexOf(" Released:");
+            if (catNumberBeginIndex != -1 && catNumberEndIndex != 1) {
+                String catNumber = catNumberContainerText.substring(catNumberBeginIndex, catNumberEndIndex);
+                log.debug("Got catNumber from page by offer link {'catNumber':{}, 'offerLink':{}}", catNumber, document.location());
+                return catNumber;
+            } else {
+                log.error("Text from element containing catNumber from offer link doesn't contain \"Cat: \" or \"Release\", returning empty catNumber " +
+                        "{'catNumberContainerText':{}, 'offerLink': {}}", catNumberContainerText, document.location());
+            }
+        } else {
+            log.error("Couldn't get element containing catNumber from offer link, returning empty catNumber {'offerLink': {}}", document.location());
+        }
+        return "";
+    }
+
+    boolean getInStockFromDocument(Document document) {
+        String availabilityStatus = document.select(SELECTOR_IN_STOCK).text();
+        if (!availabilityStatus.isEmpty()) {
+            if (availabilityStatus.contains("in stock")) {
+                log.debug("Offer is in stock by offer link where availability status is {'availability':{}, 'offerLink':{}}", availabilityStatus, document.location());
+                return true;
+            } else {
+                log.debug("Offer is not in stock by offer link where availability status is {'availability':{}, 'offerLink':{}}", availabilityStatus, document.location());
+                return false;
+            }
+        }
+        log.warn("Can't find availability status by offer link, returning false {'offerLink':{}}", document.location());
+        return false;
+    }
+
     boolean isValid(RawOffer rawOffer) {
         boolean isValid = false;
         if (rawOffer.getPrice() != 0.
                 && rawOffer.getCurrency().isPresent()
-                && !("".equals(rawOffer.getRelease()))
+                && !(rawOffer.getRelease().isEmpty())
                 && rawOffer.getOfferLink() != null) {
             isValid = true;
         } else {

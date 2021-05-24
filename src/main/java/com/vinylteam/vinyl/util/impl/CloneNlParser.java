@@ -144,6 +144,8 @@ public class CloneNlParser implements VinylParser {
         var artist = getArtistFromDocument(releaseElement);
         var release = getReleaseFromDocument(releaseElement);
         var genre = getGenreFromDocument(releaseElement);
+        var catalogNumber = getCatNumberFromDocument(releaseElement);
+        var inStock = getInStockInfoFromDocument(releaseElement);
 
         var rawOffer = new RawOffer();
         rawOffer.setShopId(SHOP_ID);
@@ -154,6 +156,8 @@ public class CloneNlParser implements VinylParser {
         rawOffer.setOfferLink(offerLink);
         rawOffer.setImageLink(imageLink);
         rawOffer.setGenre(genre);
+        rawOffer.setCatNumber(catalogNumber);
+        rawOffer.setInStock(inStock);
         log.debug("New Raw Offer is Formed {'rawOffer': {}}", rawOffer);
         return rawOffer;
     }
@@ -173,6 +177,19 @@ public class CloneNlParser implements VinylParser {
 
     String getArtistFromDocument(Element document) {
         return document.select(ARTIST_SELECTOR).text();
+    }
+
+    String getCatNumberFromDocument(Element document) {
+        return document.select("span[itemprop=catalogNumber]").text();
+    }
+
+    Boolean getInStockInfoFromDocument(Element document) {
+        boolean inStock = true;
+        String inStockText = document.getElementsByClass("col-xs-2 status").text();
+        if ("out of stock".contains(inStockText)){
+            inStock = false;
+        }
+        return inStock;
     }
 
     Optional<Currency> getOptionalCurrencyFromDocument(Element document) {
