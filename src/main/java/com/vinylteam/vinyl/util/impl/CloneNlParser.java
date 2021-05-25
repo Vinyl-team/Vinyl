@@ -55,13 +55,14 @@ public class CloneNlParser implements VinylParser {
 
     @Override
     public RawOffer getRawOfferFromOfferLink(String offerLink) {
-        return getDocument(offerLink)
+        var offer = getDocument(offerLink)
                 .stream()
                 .flatMap(doc -> doc.select(ONE_VINYL_FROM_ONE_PAGE_SELECTOR).stream())
                 .map(oneVinyl -> getRawOfferFromElement(oneVinyl, onePageParser))
-                .peek(rawOffer -> rawOffer.setOfferLink(offerLink))
                 .findFirst()
                 .orElse(new RawOffer());
+        offer.setOfferLink(offerLink);
+        return offer;
     }
 
     Set<String> getAllPagesByGenre(String genreLink) {
