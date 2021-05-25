@@ -72,7 +72,7 @@ public class OneVinylOffersServlet extends HttpServlet {
                     OneVinylOffersServletResponse offersResponse = new OneVinylOffersServletResponse();
                     offersResponse.setPrice(offer.getPrice());
                     if (offer.getCurrency().isPresent()) {
-                        offersResponse.setCurrency(offer.getCurrency().get().toString());
+                        offersResponse.setCurrency(offer.getCurrency().get().getSymbol());
                     } else {
                         offersResponse.setCurrency("");
                     }
