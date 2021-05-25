@@ -71,24 +71,22 @@ public class OneVinylOffersServlet extends HttpServlet {
 
         for (Offer offer : offers) {
             for (Shop shop : shopsFromOffers) {
-                if (offer.getShopId() == shop.getId()) {
+                if (offer.getShopId() == shop.getId() && parserHolder.getShopParser(offer.getShopId()).isPresent()) {
                     VinylParser shopParser = parserHolder.getShopParser(offer.getShopId()).get();
 
                     var dynamicOffer = shopParser.getRawOfferFromOfferLink(offer.getOfferLink());
-                    double actualPrice = dynamicOffer.getPrice();
+                    var actualPrice = dynamicOffer.getPrice();
                     var actualCurrency = dynamicOffer.getCurrency();
                     offer.setInStock(dynamicOffer.isInStock());
                     if (offer.isInStock()) {
-                        OneVinylOffersServletResponse offersResponse = new OneVinylOffersServletResponse();
+                        var offersResponse = new OneVinylOffersServletResponse();
                         offer.setCurrency(actualCurrency);
                         offer.setPrice(actualPrice);
                         offersResponse.setPrice(offer.getPrice());
 
-                        if (offer.getCurrency().isPresent()) {
-                            offersResponse.setCurrency(offer.getCurrency().get().toString());
-                        } else {
-                            offersResponse.setCurrency("");
-                        }
+                        String currency = offer.getCurrency().map(String::valueOf).orElse("");
+                        offersResponse.setCurrency(currency);
+
                         offersResponse.setCatNumber(offer.getCatNumber());
                         offersResponse.setInStock(offer.isInStock());
                         offersResponse.setOfferLink(offer.getOfferLink());
