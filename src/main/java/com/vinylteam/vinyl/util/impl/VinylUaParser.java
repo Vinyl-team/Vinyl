@@ -26,6 +26,7 @@ public class VinylUaParser implements VinylParser {
     private static final String SELECTOR_GENRE_ANCHORS = "nav#intro div#bs-example-navbar-collapse-1 > ul.nav > li.dropdown > ul.dropdown-menu > li > a";
     private static final String SELECTOR_PAGE_ANCHORS = "div.pagination-wrapper > ul.pagination > li:not(.nav-pagi) > a";
     private static final String SELECTOR_OFFER_ANCHORS = "div.row > div.col-sm-9 > div.row div.vinyl-release > div.boxed > p > a";
+    private static final int SHOP_ID = 1;
 
     HashSet<String> getGenresLinks() {
         HashSet<String> genreLinks = new HashSet<>();
@@ -126,7 +127,7 @@ public class VinylUaParser implements VinylParser {
             log.error("Error while getting document by link {'link':{}}", offerLink, e);
             throw new RuntimeException("Fail while getting a document by " + offerLink, e);
         }
-        rawOffer.setShopId(1);
+        rawOffer.setShopId(SHOP_ID);
         rawOffer.setRelease(getReleaseFromDocument(document));
         rawOffer.setArtist(getArtistFromDocument(document));
         rawOffer.setPrice(getPriceFromDocument(document));
@@ -213,7 +214,7 @@ public class VinylUaParser implements VinylParser {
         return catNumber;
     }
 
-    boolean isValid(RawOffer rawOffer) {
+    public boolean isValid(RawOffer rawOffer) {
         boolean isValid = false;
         if (rawOffer.getPrice() != 0.
                 && rawOffer.getCurrency().isPresent()
@@ -239,4 +240,8 @@ public class VinylUaParser implements VinylParser {
         return rawOffers;
     }
 
+    @Override
+    public long getShopId() {
+        return SHOP_ID;
+    }
 }

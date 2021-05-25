@@ -39,6 +39,7 @@ public class JunoVinylParser implements VinylParser {
     private static final String SELECTOR_SCRIPT_HIGH_RES_IMAGE_LINK = BASE_SELECTOR_OFFER_DETAILS + " > div.order-2 > div#artwork-carousel > div#artwork-carousel-jwc > div.jw-scroller.jws-transform > div.jw-page + div.jw-page > img";
 
     private static final Pattern PAGE_NUMBER_PATTERN = Pattern.compile("/([0-9]+)/");
+    private static final int SHOP_ID = 2;
 
     @Override
     public List<RawOffer> getRawOffersList() {
@@ -127,7 +128,7 @@ public class JunoVinylParser implements VinylParser {
             var inStock = getInStockFromDocument(document);
 
             var rawOffer = new RawOffer();
-            rawOffer.setShopId(2);
+            rawOffer.setShopId(SHOP_ID);
             rawOffer.setRelease(release);
             rawOffer.setArtist(artist);
             rawOffer.setPrice(price);
@@ -236,7 +237,8 @@ public class JunoVinylParser implements VinylParser {
         return false;
     }
 
-    boolean isValid(RawOffer rawOffer) {
+    public boolean isValid(RawOffer rawOffer) {
+
         boolean isValid = false;
         if (rawOffer.getPrice() != 0.
                 && rawOffer.getCurrency().isPresent()
@@ -258,4 +260,8 @@ public class JunoVinylParser implements VinylParser {
         }
     }
 
+    @Override
+    public long getShopId() {
+        return SHOP_ID;
+    }
 }

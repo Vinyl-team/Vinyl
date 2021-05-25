@@ -140,7 +140,7 @@ public class DecksParser implements VinylParser {
         return rawOfferSet;
     }
 
-    boolean isValid(RawOffer rawOffer) {
+    public boolean isValid(RawOffer rawOffer) {
         return rawOffer.getPrice() != 0d
                 && rawOffer.getCurrency().isPresent()
                 && !rawOffer.getRelease().isEmpty()
@@ -205,4 +205,8 @@ public class DecksParser implements VinylParser {
         }
     }
 
+    @Override
+    public long getShopId() {
+        return SHOP_ID;
+    }
 }

@@ -41,4 +41,18 @@ class CloneNlParserITest {
         assertTrue(allGenrePages.size() >= 1);
     }
 
+    @Test
+    @DisplayName("Checks whether RawOffer is received from HTML Element that represents one vinyl Item")
+    void getRawOffersFromAllOfferLinksTest() {
+        var rawOffer = parser.getRawOfferFromOfferLink("https://clone.nl/item36449.html");
+        assertNotNull(rawOffer);
+        assertEquals("The Paul Breitner EP", rawOffer.getRelease());
+        assertEquals("https://clone.nl/item36449.html", rawOffer.getOfferLink());
+        assertEquals("https://clone.nl/platen/artwork/large/plaatimage36037.jpg", rawOffer.getImageLink());
+        assertEquals(Currency.EUR, rawOffer.getCurrency().get());
+        assertEquals(11.49d, rawOffer.getPrice());
+        assertEquals("Various Artists", rawOffer.getArtist());
+        assertTrue(rawOffer.getGenre().contains("House"));
+    }
+
 }

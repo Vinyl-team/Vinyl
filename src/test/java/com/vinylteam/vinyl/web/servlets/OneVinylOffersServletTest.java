@@ -5,6 +5,8 @@ import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.service.OfferService;
 import com.vinylteam.vinyl.service.ShopService;
 import com.vinylteam.vinyl.service.UniqueVinylService;
+import com.vinylteam.vinyl.util.VinylParser;
+import com.vinylteam.vinyl.util.impl.ParserHolder;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -25,14 +27,40 @@ import static org.mockito.Mockito.*;
 
 class OneVinylOffersServletTest {
 
+    private class MockVinylParser implements VinylParser {
+
+        @Override
+        public long getShopId() {
+            return 0;
+        }
+
+        @Override
+        public List<RawOffer> getRawOffersList() {
+            return null;
+        }
+
+        @Override
+        public RawOffer getRawOfferFromOfferLink(String offerLink) {
+            var rawOffer = new RawOffer();
+            rawOffer.setPrice(12.11d);
+            return rawOffer;
+        }
+
+        @Override
+        public boolean isValid(RawOffer rawOffer) {
+            return false;
+        }
+    }
+
     private final UniqueVinylService mockedUniqueVinylService = mock(UniqueVinylService.class);
     private final OfferService mockedOfferService = mock(OfferService.class);
     private final ShopService mockedShopService = mock(ShopService.class);
     private final InOrder inOrderUniqueVinylService = inOrder(mockedUniqueVinylService);
     private final InOrder inOrderOfferService = inOrder(mockedOfferService);
     private final DiscogsService discogsService = mock(DiscogsService.class);
+    private final ParserHolder parserHolder = new ParserHolder(List.of(new MockVinylParser()));
     private final OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(mockedUniqueVinylService,
-            mockedOfferService, mockedShopService, discogsService);
+            mockedOfferService, mockedShopService, discogsService, parserHolder);
 
     private final HttpServletRequest mockedRequest = mock(HttpServletRequest.class);
     private final HttpServletResponse mockedResponse = mock(HttpServletResponse.class);
