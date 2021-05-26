@@ -1,9 +1,6 @@
 package com.vinylteam.vinyl.web.servlets;
 
-import com.vinylteam.vinyl.entity.Offer;
-import com.vinylteam.vinyl.entity.Shop;
-import com.vinylteam.vinyl.entity.UniqueVinyl;
-import com.vinylteam.vinyl.entity.User;
+import com.vinylteam.vinyl.entity.*;
 import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.service.OfferService;
 import com.vinylteam.vinyl.service.ShopService;
@@ -70,18 +67,17 @@ public class OneVinylOffersServlet extends HttpServlet {
         }
 
         for (Offer offer : offers) {
+            var offerShopParser = parserHolder.getShopParser(offer.getShopId());
             for (Shop shop : shopsFromOffers) {
-                if (offer.getShopId() == shop.getId() && parserHolder.getShopParser(offer.getShopId()).isPresent()) {
-                    VinylParser shopParser = parserHolder.getShopParser(offer.getShopId()).get();
+                if (offer.getShopId() == shop.getId() && offerShopParser.isPresent()) {
+                    VinylParser shopParser = offerShopParser.get();
 
                     var dynamicOffer = shopParser.getRawOfferFromOfferLink(offer.getOfferLink());
-                    var actualPrice = dynamicOffer.getPrice();
-                    var actualCurrency = dynamicOffer.getCurrency();
-                    offer.setInStock(dynamicOffer.isInStock());
+                    offerService.mergeOfferChanges(offer, shopParser, dynamicOffer);
+
                     if (offer.isInStock()) {
                         var offersResponse = new OneVinylOffersServletResponse();
-                        offer.setCurrency(actualCurrency);
-                        offer.setPrice(actualPrice);
+
                         offersResponse.setPrice(offer.getPrice());
 
                         String currency = offer.getCurrency().map(String::valueOf).orElse("");
@@ -114,7 +110,7 @@ public class OneVinylOffersServlet extends HttpServlet {
             }
         }
 
-        if (offersResponseList.isEmpty()){
+        if (offersResponseList.isEmpty()) {
             uniqueVinyl.setHasOffers(false);
             //TODO: Save to DB
             attributes.put("message", "No any offer found at the moment for the selected vinyl. Try to find it later");

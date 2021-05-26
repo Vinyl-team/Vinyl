@@ -2,9 +2,12 @@ package com.vinylteam.vinyl.service.impl;
 
 import com.vinylteam.vinyl.dao.OfferDao;
 import com.vinylteam.vinyl.entity.Offer;
+import com.vinylteam.vinyl.entity.RawOffer;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.service.OfferService;
 import com.vinylteam.vinyl.util.DataGeneratorForTests;
+import com.vinylteam.vinyl.util.VinylParser;
+import com.vinylteam.vinyl.util.impl.CloneNlParser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -156,6 +159,37 @@ class DefaultOfferServiceTest {
         List<Integer> actualIds = offerService.getListOfShopIds(null);
         //then
         assertTrue(actualIds.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Checks that offers are merged during dynamic update")
+    void mergeOfferChangesTest() {
+        //when
+        VinylParser parser = new CloneNlParser();
+        Offer oldOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(12, 4);
+        RawOffer newlyLoadedOffer = dataGenerator.getRawOfferWithShopIdAndNumber(4, 12);
+        var newPrice = newlyLoadedOffer.getPrice() - 2d;
+        newlyLoadedOffer.setPrice(newPrice);
+        assertNotEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
+        offerService.mergeOfferChanges(oldOffer, parser, newlyLoadedOffer);
+        //then
+        assertEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
+        assertEquals(newPrice, oldOffer.getPrice());
+    }
+
+    @Test
+    @DisplayName("Checks that offers are not merged during dynamic update since new offer is not valid")
+    void noMergeOfferChangesTest() {
+        //when
+        VinylParser parser = new CloneNlParser();
+        Offer oldOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(12, 4);
+        RawOffer newlyLoadedOffer = new RawOffer();
+        var oldPrice = oldOffer.getPrice();
+        assertNotEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
+        offerService.mergeOfferChanges(oldOffer, parser, newlyLoadedOffer);
+        //then
+        assertNotEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
+        assertEquals(oldPrice, oldOffer.getPrice());
     }
 
 }
