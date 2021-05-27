@@ -88,8 +88,6 @@ public class CloneNlParser implements VinylParser {
 
     @Override
    public boolean isValid(RawOffer rawOffer) {
-        //!rawOffer.isEmpty
-        //Default for all parsers
         boolean isValid = rawOffer.getPrice() != 0d
                 && rawOffer.getCurrency().isPresent()
                 && !rawOffer.getRelease().isEmpty()

@@ -78,7 +78,7 @@ public class Starter {
         ShopsParser shopsParser = new ShopsParser();
         RawOffersSorter rawOffersSorter = new RawOffersSorter();
         List<VinylParser> vinylParsers = List.of(new VinylUaParser(), new JunoVinylParser(), new DecksParser(), new CloneNlParser());
-        var parserHolder = new ParserHolder(vinylParsers);
+        ParserHolder parserHolder = new ParserHolder(vinylParsers);
         Updater updater = new Updater(uniqueVinylService, offerService, shopsParser, vinylParsers, rawOffersSorter);
         TimerTask updateTask = new TimerTask() {
             @Override

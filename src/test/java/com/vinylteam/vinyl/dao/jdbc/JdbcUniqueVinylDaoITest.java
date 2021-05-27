@@ -270,7 +270,7 @@ class JdbcUniqueVinylDaoITest {
 
     @Test
     @DisplayName("Checks whether upsertOneUniqueVinyl set hasOffers = false for existing Vinyl")
-    void upsertOneUniqueVinylTest(){
+    void upsertOneUniqueVinylTest() {
         UniqueVinyl vinyl = uniqueVinyls.get(2);
         UniqueVinyl dbVinyl = uniqueVinylDao.findById(vinyl.getId());
         assertTrue(dbVinyl.getHasOffers());

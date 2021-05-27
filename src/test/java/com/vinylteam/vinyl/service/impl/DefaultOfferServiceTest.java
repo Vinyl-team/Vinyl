@@ -25,6 +25,7 @@ class DefaultOfferServiceTest {
     private final OfferService offerService = new DefaultOfferService(mockedOfferDao);
     private final List<Offer> offers = dataGenerator.getOffersList();
     private final List<UniqueVinyl> uniqueVinyls = dataGenerator.getUniqueVinylsList();
+    private final VinylParser parser = new CloneNlParser();
 
     @BeforeEach
     void beforeEach() {
@@ -164,13 +165,13 @@ class DefaultOfferServiceTest {
     @Test
     @DisplayName("Checks that offers are merged during dynamic update")
     void mergeOfferChangesTest() {
-        //when
-        VinylParser parser = new CloneNlParser();
+        //prepare
         Offer oldOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(12, 4);
         RawOffer newlyLoadedOffer = dataGenerator.getRawOfferWithShopIdAndNumber(4, 12);
         var newPrice = newlyLoadedOffer.getPrice() - 2d;
         newlyLoadedOffer.setPrice(newPrice);
         assertNotEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
+        //when
         offerService.mergeOfferChanges(oldOffer, parser, newlyLoadedOffer);
         //then
         assertEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
@@ -178,32 +179,20 @@ class DefaultOfferServiceTest {
     }
 
     @Test
-    @DisplayName("Checks that offers are merged correctly with non valid offer (as though the link is no more existing)")
-    void mergeOfferChangesWithNonValidOfferTest() {
-        //when
-        VinylParser parser = new CloneNlParser();
+    @DisplayName("Checks that offers are not merged during dynamic update since new offer is not valid (as though the link is no more existing)")
+    void noMergeOfferChangesTest() {
+        //prepare
         Offer oldOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(12, 4);
         RawOffer newlyLoadedOffer = new RawOffer();
         assertTrue(oldOffer.isInStock());
-
-        offerService.mergeOfferChanges(oldOffer, parser, newlyLoadedOffer);
-        //then
-        assertFalse(oldOffer.isInStock());
-    }
-
-    @Test
-    @DisplayName("Checks that offers are not merged during dynamic update since new offer is not valid")
-    void noMergeOfferChangesTest() {
-        //when
-        VinylParser parser = new CloneNlParser();
-        Offer oldOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(12, 4);
-        RawOffer newlyLoadedOffer = new RawOffer();
         var oldPrice = oldOffer.getPrice();
         assertNotEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
+        //when
         offerService.mergeOfferChanges(oldOffer, parser, newlyLoadedOffer);
         //then
         assertNotEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
         assertEquals(oldPrice, oldOffer.getPrice());
+        assertFalse(oldOffer.isInStock());
     }
 
 }
