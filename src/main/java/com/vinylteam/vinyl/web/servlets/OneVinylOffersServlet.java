@@ -63,32 +63,21 @@ public class OneVinylOffersServlet extends HttpServlet {
                     uniqueVinyl.getRelease(), uniqueVinyl.getFullName());
             attributes.put("discogsLink", discogsLink);
         } catch (ParseException e) {
-            e.printStackTrace();
+            log.error("discogsService.getDiscogsLink() thrown ParseException", e);
         }
 
         for (Offer offer : offers) {
             var offerShopParser = parserHolder.getShopParser(offer.getShopId());
-            for (Shop shop : shopsFromOffers) {
-                if (offer.getShopId() == shop.getId() && offerShopParser.isPresent()) {
-                    VinylParser shopParser = offerShopParser.get();
+            var shop = shopsFromOffers.stream().filter(store -> store.getId() == offer.getShopId()).findFirst().get();
+            if (offerShopParser.isPresent()) {
+                VinylParser shopParser = offerShopParser.get();
 
-                    var dynamicOffer = shopParser.getRawOfferFromOfferLink(offer.getOfferLink());
-                    offerService.mergeOfferChanges(offer, shopParser, dynamicOffer);
+                var dynamicOffer = shopParser.getRawOfferFromOfferLink(offer.getOfferLink());
+                offerService.mergeOfferChanges(offer, shopParser, dynamicOffer);
 
-                    if (offer.isInStock()) {
-                        var offersResponse = new OneVinylOffersServletResponse();
-
-                        offersResponse.setPrice(offer.getPrice());
-
-                        String currency = offer.getCurrency().map(String::valueOf).orElse("");
-                        offersResponse.setCurrency(currency);
-
-                        offersResponse.setCatNumber(offer.getCatNumber());
-                        offersResponse.setInStock(offer.isInStock());
-                        offersResponse.setOfferLink(offer.getOfferLink());
-                        offersResponse.setShopImageLink(shop.getSmallImageLink());
-                        offersResponseList.add(offersResponse);
-                    }
+                if (offer.isInStock()) {
+                    OneVinylOffersServletResponse offersResponse = getOfferResponseFromOffer(offer, shop);
+                    offersResponseList.add(offersResponse);
                 }
             }
         }
@@ -112,7 +101,7 @@ public class OneVinylOffersServlet extends HttpServlet {
 
         if (offersResponseList.isEmpty()) {
             uniqueVinyl.setHasOffers(false);
-            //TODO: Save to DB
+            uniqueVinylService.upsertOneUniqueVinyl(uniqueVinyl);
             attributes.put("message", "No any offer found at the moment for the selected vinyl. Try to find it later");
             PageGenerator.getInstance().process("vinyl", preparedListById, offersResponseList, attributes, response.getWriter());
             return;
@@ -121,6 +110,21 @@ public class OneVinylOffersServlet extends HttpServlet {
         offersResponseList.sort((offer1, offer2) -> (int) (offer1.getPrice() - offer2.getPrice()));
 
         PageGenerator.getInstance().process("vinyl", preparedListById, offersResponseList, attributes, response.getWriter());
+    }
+
+    OneVinylOffersServletResponse getOfferResponseFromOffer(Offer offer, Shop shop) {
+        var offersResponse = new OneVinylOffersServletResponse();
+
+        offersResponse.setPrice(offer.getPrice());
+
+        String currency = offer.getCurrency().map(String::valueOf).orElse("");
+        offersResponse.setCurrency(currency);
+
+        offersResponse.setCatNumber(offer.getCatNumber());
+        offersResponse.setInStock(offer.isInStock());
+        offersResponse.setOfferLink(offer.getOfferLink());
+        offersResponse.setShopImageLink(shop.getSmallImageLink());
+        return offersResponse;
     }
 
 }

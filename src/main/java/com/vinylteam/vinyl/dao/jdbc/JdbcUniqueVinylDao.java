@@ -18,15 +18,30 @@ import java.util.List;
 public class JdbcUniqueVinylDao implements UniqueVinylDao {
 
     private static final RowMapper<UniqueVinyl> rowMapper = new UniqueVinylRowMapper();
-    private static final String SELECT_ALL = "SELECT id, release, artist, full_name, link_to_image FROM public.unique_vinyls";
+    private static final String SELECT_ALL = "SELECT id, release, artist, full_name, link_to_image, has_offers FROM public.unique_vinyls";
     private static final String SELECT_BY_ID = SELECT_ALL + " WHERE id=?";
     private static final String SELECT_MANY_RANDOM = SELECT_ALL + " WHERE has_offers ORDER BY random() LIMIT ?";
     private static final String SELECT_MANY_BY_FULL_NAME_MATCH = SELECT_ALL + " WHERE full_name ILIKE ? AND has_offers";
     private static final String SELECT_BY_ARTIST = SELECT_ALL + " WHERE artist ILIKE ? AND has_offers";
+    private static final String UPSERT_UNIQUE_VINYLS = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image, has_offers) VALUES(?, ?, ?, ?, ?, ?)" +
+            " ON CONFLICT(id) DO UPDATE SET has_offers = EXCLUDED.has_offers WHERE unique_vinyls.has_offers <> EXCLUDED.has_offers";
+
     private final HikariDataSource dataSource;
 
     public JdbcUniqueVinylDao(HikariDataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    @Override
+    public UniqueVinyl upsertOneUniqueVinyl(UniqueVinyl vinyl) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement upsertUniqueVinyl = connection.prepareStatement(UPSERT_UNIQUE_VINYLS)) {
+            setVinylParameters(upsertUniqueVinyl, vinyl);
+            upsertUniqueVinyl.executeQuery();
+        } catch (SQLException e) {
+            log.error("Error while updating database with one uniqueVinyl {'uniqueVinyl':{}}", vinyl, e);
+        }
+        return vinyl;
     }
 
     @Override
@@ -142,6 +157,15 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
         }
         log.debug("Resulting uniqueVinyls are {'uniqueVinyls':{}}", uniqueVinyls);
         return uniqueVinyls;
+    }
+
+    private void setVinylParameters(PreparedStatement upsertUniqueVinyls, UniqueVinyl uniqueVinyl) throws SQLException {
+        upsertUniqueVinyls.setLong(1, uniqueVinyl.getId());
+        upsertUniqueVinyls.setString(2, uniqueVinyl.getRelease());
+        upsertUniqueVinyls.setString(3, uniqueVinyl.getArtist());
+        upsertUniqueVinyls.setString(4, uniqueVinyl.getFullName());
+        upsertUniqueVinyls.setString(5, uniqueVinyl.getImageLink());
+        upsertUniqueVinyls.setBoolean(6, uniqueVinyl.getHasOffers());
     }
 
 }

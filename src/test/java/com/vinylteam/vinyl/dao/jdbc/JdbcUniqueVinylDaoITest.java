@@ -268,4 +268,16 @@ class JdbcUniqueVinylDaoITest {
         assertTrue(actualUniqueVinyls.isEmpty());
     }
 
+    @Test
+    @DisplayName("Checks whether upsertOneUniqueVinyl set hasOffers = false for existing Vinyl")
+    void upsertOneUniqueVinylTest(){
+        UniqueVinyl vinyl = uniqueVinyls.get(2);
+        UniqueVinyl dbVinyl = uniqueVinylDao.findById(vinyl.getId());
+        assertTrue(dbVinyl.getHasOffers());
+        dbVinyl.setHasOffers(false);
+        uniqueVinylDao.upsertOneUniqueVinyl(dbVinyl);
+        UniqueVinyl dbVinylAfterUpdate = uniqueVinylDao.findById(vinyl.getId());
+        assertFalse(dbVinylAfterUpdate.getHasOffers());
+    }
+
 }

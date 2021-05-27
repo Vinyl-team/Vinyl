@@ -178,6 +178,20 @@ class DefaultOfferServiceTest {
     }
 
     @Test
+    @DisplayName("Checks that offers are merged correctly with non valid offer (as though the link is no more existing)")
+    void mergeOfferChangesWithNonValidOfferTest() {
+        //when
+        VinylParser parser = new CloneNlParser();
+        Offer oldOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(12, 4);
+        RawOffer newlyLoadedOffer = new RawOffer();
+        assertTrue(oldOffer.isInStock());
+
+        offerService.mergeOfferChanges(oldOffer, parser, newlyLoadedOffer);
+        //then
+        assertFalse(oldOffer.isInStock());
+    }
+
+    @Test
     @DisplayName("Checks that offers are not merged during dynamic update since new offer is not valid")
     void noMergeOfferChangesTest() {
         //when

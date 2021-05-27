@@ -94,12 +94,7 @@ public class JdbcOfferDao implements OfferDao {
             prepareTables.executeUpdate(TRUNCATE_RESTART_IDENTITY);
             log.debug(EXECUTED_STATEMENT, TRUNCATE_RESTART_IDENTITY);
             for (UniqueVinyl uniqueVinyl : uniqueVinyls) {
-                upsertUniqueVinyls.setLong(1, uniqueVinyl.getId());
-                upsertUniqueVinyls.setString(2, uniqueVinyl.getRelease());
-                upsertUniqueVinyls.setString(3, uniqueVinyl.getArtist());
-                upsertUniqueVinyls.setString(4, uniqueVinyl.getFullName());
-                upsertUniqueVinyls.setString(5, uniqueVinyl.getImageLink());
-                upsertUniqueVinyls.setBoolean(6, uniqueVinyl.getHasOffers());
+                setVinylParameters(upsertUniqueVinyls, uniqueVinyl);
                 log.debug(PREPARED_STATEMENT, upsertUniqueVinyls);
                 upsertUniqueVinyls.addBatch();
             }
@@ -133,6 +128,15 @@ public class JdbcOfferDao implements OfferDao {
         }
         log.info("Database updated, couldn't add {} offers", notAddedOffers.size());
         return notAddedOffers;
+    }
+
+    private void setVinylParameters(PreparedStatement upsertUniqueVinyls, UniqueVinyl uniqueVinyl) throws SQLException {
+        upsertUniqueVinyls.setLong(1, uniqueVinyl.getId());
+        upsertUniqueVinyls.setString(2, uniqueVinyl.getRelease());
+        upsertUniqueVinyls.setString(3, uniqueVinyl.getArtist());
+        upsertUniqueVinyls.setString(4, uniqueVinyl.getFullName());
+        upsertUniqueVinyls.setString(5, uniqueVinyl.getImageLink());
+        upsertUniqueVinyls.setBoolean(6, uniqueVinyl.getHasOffers());
     }
 
 }

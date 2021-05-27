@@ -17,6 +17,12 @@ public class DefaultUniqueVinylService implements UniqueVinylService {
         this.vinylDao = vinylDao;
     }
 
+
+    @Override
+    public UniqueVinyl upsertOneUniqueVinyl(UniqueVinyl vinyl) {
+        return vinylDao.upsertOneUniqueVinyl(vinyl);
+    }
+
     @Override
     public List<UniqueVinyl> findAll() {
         List<UniqueVinyl> gottenUniqueVinyls = vinylDao.findAll();

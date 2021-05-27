@@ -91,6 +91,8 @@ public class DefaultOfferService implements OfferService {
             offer.setInStock(dynamicOffer.isInStock());
             offer.setCurrency(actualCurrency);
             offer.setPrice(actualPrice);
+        } else {
+            offer.setInStock(false);
         }
     }
 

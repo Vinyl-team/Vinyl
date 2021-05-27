@@ -5,6 +5,7 @@ import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.service.OfferService;
 import com.vinylteam.vinyl.service.ShopService;
 import com.vinylteam.vinyl.service.UniqueVinylService;
+import com.vinylteam.vinyl.util.DataGeneratorForTests;
 import com.vinylteam.vinyl.util.VinylParser;
 import com.vinylteam.vinyl.util.impl.ParserHolder;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -198,6 +200,23 @@ class OneVinylOffersServletTest {
         verify(mockedUniqueVinyl, times(4)).getArtist();
         inOrderUniqueVinylService.verify(mockedUniqueVinylService).findManyByArtist("artist1");
         verify(mockedResponse).getWriter();
+    }
+
+    @Test
+    void test() {
+        var generator = new DataGeneratorForTests();
+        var offers = generator.getOffersList();
+        var shop = new Shop();
+        shop.setId(4);
+        shop.setSmallImageLink("imageLink");
+        for (Offer offer : offers) {
+            var offerResponse = oneVinylOffersServlet.getOfferResponseFromOffer(offer, shop);
+            assertEquals(offer.getPrice(), offerResponse.getPrice());
+            assertEquals(offer.getOfferLink(), offerResponse.getOfferLink());
+            assertEquals(offer.getCurrency().get().toString(), offerResponse.getCurrency());
+            assertEquals(offer.getCatNumber(), offerResponse.getCatNumber());
+            assertEquals(shop.getSmallImageLink(), offerResponse.getShopImageLink());
+        }
     }
 
 }

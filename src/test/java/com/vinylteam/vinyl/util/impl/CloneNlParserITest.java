@@ -1,7 +1,7 @@
 package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.Currency;
-import com.vinylteam.vinyl.util.VinylParser;
+import com.vinylteam.vinyl.entity.RawOffer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +38,6 @@ class CloneNlParserITest {
         String genreLink = "https://clone.nl/all/genre/Dubstep?sort=datum&order=desc";
         var allGenrePages = parser.getAllPagesByGenre(genreLink);
         assertFalse(allGenrePages.isEmpty());
-        assertTrue(allGenrePages.size() >= 1);
     }
 
     @Test
@@ -53,6 +52,17 @@ class CloneNlParserITest {
         assertEquals(11.49d, rawOffer.getPrice());
         assertEquals("Various Artists", rawOffer.getArtist());
         assertTrue(rawOffer.getGenre().contains("House"));
+    }
+
+    @Test
+    @DisplayName("Checks whether RawOffer is received from the non-valid link that must have represented on vinyl page")
+    void getRawOffersFromNonValidLinksTest() {
+        String nonExistingOfferLink = "https://clone.nl/iitem36449.html";
+        var rawOffer = parser.getRawOfferFromOfferLink(nonExistingOfferLink);
+        assertNotNull(rawOffer);
+        RawOffer expectedRawOffer = new RawOffer();
+        expectedRawOffer.setOfferLink(nonExistingOfferLink);
+        assertEquals(expectedRawOffer, rawOffer);
     }
 
 }
