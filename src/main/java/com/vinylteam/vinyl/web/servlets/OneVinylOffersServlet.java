@@ -1,6 +1,9 @@
 package com.vinylteam.vinyl.web.servlets;
 
-import com.vinylteam.vinyl.entity.*;
+import com.vinylteam.vinyl.entity.Offer;
+import com.vinylteam.vinyl.entity.Shop;
+import com.vinylteam.vinyl.entity.UniqueVinyl;
+import com.vinylteam.vinyl.entity.User;
 import com.vinylteam.vinyl.service.DiscogsService;
 import com.vinylteam.vinyl.service.OfferService;
 import com.vinylteam.vinyl.service.ShopService;
@@ -43,7 +46,6 @@ public class OneVinylOffersServlet extends HttpServlet {
         List<OneVinylOffersServletResponse> offersResponseList = new ArrayList<>();
         Map<String, String> attributes = new HashMap<>();
         HttpSession session = request.getSession(false);
-
         if (session != null) {
             User user = (User) session.getAttribute("user");
             if (user != null) {
@@ -117,8 +119,8 @@ public class OneVinylOffersServlet extends HttpServlet {
 
         offersResponse.setPrice(offer.getPrice());
 
-        String currency = offer.getCurrency().map(String::valueOf).orElse("");
-        offersResponse.setCurrency(currency);
+        String offerCurrency = offer.getCurrency().map(currency -> currency.getSymbol()).orElse("");
+        offersResponse.setCurrency(offerCurrency);
 
         offersResponse.setCatNumber(offer.getCatNumber());
         offersResponse.setInStock(offer.isInStock());

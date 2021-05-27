@@ -213,7 +213,7 @@ class OneVinylOffersServletTest {
             var offerResponse = oneVinylOffersServlet.getOfferResponseFromOffer(offer, shop);
             assertEquals(offer.getPrice(), offerResponse.getPrice());
             assertEquals(offer.getOfferLink(), offerResponse.getOfferLink());
-            assertEquals(offer.getCurrency().get().toString(), offerResponse.getCurrency());
+            assertEquals(offer.getCurrency().get().getSymbol(), offerResponse.getCurrency());
             assertEquals(offer.getCatNumber(), offerResponse.getCatNumber());
             assertEquals(shop.getSmallImageLink(), offerResponse.getShopImageLink());
         }
