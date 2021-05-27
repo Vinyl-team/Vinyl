@@ -281,6 +281,7 @@ public class CloneNlParser implements VinylParser {
         private static final String RELEASE_SELECTOR = "H1[itemprop=author] + H2";
         private static final String VINYL_GENRES_SELECTOR = "DIV.tagsbuttons > A.label";
         private static final String PRICE_DETAILS_SELECTOR = "DIV.release TABLE.availability A.addtocart";
+        public static final String OUT_OF_STOCK = "out of stock";
 
         @Override
         public String getGenreFromDocument(Element document) {
@@ -302,7 +303,7 @@ public class CloneNlParser implements VinylParser {
         public Boolean getInStockInfoFromDocument(Element document) {
             var inStock = true;
             String inStockText = document.getElementsByClass("col-xs-2 status").text();
-            if ("out of stock".contains(inStockText)) {
+            if (OUT_OF_STOCK.contains(inStockText)) {
                 inStock = false;
             }
             return inStock;

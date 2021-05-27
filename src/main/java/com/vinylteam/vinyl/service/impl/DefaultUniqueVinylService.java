@@ -19,8 +19,8 @@ public class DefaultUniqueVinylService implements UniqueVinylService {
 
 
     @Override
-    public UniqueVinyl upsertOneUniqueVinyl(UniqueVinyl vinyl) {
-        return vinylDao.upsertOneUniqueVinyl(vinyl);
+    public UniqueVinyl updateOneUniqueVinylAsHavingNoOffer(UniqueVinyl vinyl) {
+        return vinylDao.updateOneUniqueVinylAsHavingNoOffer(vinyl);
     }
 
     @Override

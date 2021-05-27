@@ -175,6 +175,7 @@ class DefaultOfferServiceTest {
         offerService.mergeOfferChanges(oldOffer, parser, newlyLoadedOffer);
         //then
         assertEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
+        assertEquals(newlyLoadedOffer.getCurrency(), oldOffer.getCurrency());
         assertEquals(newPrice, oldOffer.getPrice());
     }
 

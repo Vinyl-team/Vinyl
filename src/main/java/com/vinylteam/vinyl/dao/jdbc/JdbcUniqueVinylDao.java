@@ -23,8 +23,7 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
     private static final String SELECT_MANY_RANDOM = SELECT_ALL + " WHERE has_offers ORDER BY random() LIMIT ?";
     private static final String SELECT_MANY_BY_FULL_NAME_MATCH = SELECT_ALL + " WHERE full_name ILIKE ? AND has_offers";
     private static final String SELECT_BY_ARTIST = SELECT_ALL + " WHERE artist ILIKE ? AND has_offers";
-    private static final String UPSERT_UNIQUE_VINYLS = "INSERT INTO public.unique_vinyls(id, release, artist, full_name, link_to_image, has_offers) VALUES(?, ?, ?, ?, ?, ?)" +
-            " ON CONFLICT(id) DO UPDATE SET has_offers = EXCLUDED.has_offers WHERE unique_vinyls.has_offers <> EXCLUDED.has_offers";
+    private static final String UPDATE_UNIQUE_VINYL_FALSE = "UPDATE unique_vinyls SET has_offers=FALSE WHERE has_offers=TRUE AND id = ?";
 
     private final HikariDataSource dataSource;
 
@@ -33,11 +32,15 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
     }
 
     @Override
-    public UniqueVinyl upsertOneUniqueVinyl(UniqueVinyl vinyl) {
+    public UniqueVinyl updateOneUniqueVinylAsHavingNoOffer(UniqueVinyl vinyl) {
+        if (vinyl.getHasOffers()){
+            return vinyl;
+        }
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement upsertUniqueVinyl = connection.prepareStatement(UPSERT_UNIQUE_VINYLS)) {
+             PreparedStatement upsertUniqueVinyl = connection.prepareStatement(UPDATE_UNIQUE_VINYL_FALSE)) {
             setVinylParameters(upsertUniqueVinyl, vinyl);
-            upsertUniqueVinyl.executeQuery();
+            int rows = upsertUniqueVinyl.executeUpdate();
+            log.info("Unique vinyl(s) updated as having no any offer {}", rows);
         } catch (SQLException e) {
             log.error("Error while updating database with one uniqueVinyl {'uniqueVinyl':{}}", vinyl, e);
         }
@@ -159,13 +162,8 @@ public class JdbcUniqueVinylDao implements UniqueVinylDao {
         return uniqueVinyls;
     }
 
-    private void setVinylParameters(PreparedStatement upsertUniqueVinyls, UniqueVinyl uniqueVinyl) throws SQLException {
+    void setVinylParameters(PreparedStatement upsertUniqueVinyls, UniqueVinyl uniqueVinyl) throws SQLException {
         upsertUniqueVinyls.setLong(1, uniqueVinyl.getId());
-        upsertUniqueVinyls.setString(2, uniqueVinyl.getRelease());
-        upsertUniqueVinyls.setString(3, uniqueVinyl.getArtist());
-        upsertUniqueVinyls.setString(4, uniqueVinyl.getFullName());
-        upsertUniqueVinyls.setString(5, uniqueVinyl.getImageLink());
-        upsertUniqueVinyls.setBoolean(6, uniqueVinyl.getHasOffers());
     }
 
 }

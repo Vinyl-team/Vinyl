@@ -100,7 +100,6 @@ class CloneNlParserTest {
         parser = spy(parser);
         Mockito.doReturn(Optional.of(vinylElement.ownerDocument())).when(parser).getDocument(offerUrl);
         double actualPrice = parser.getRawOfferFromOfferLink(offerUrl).getPrice();
-        //assertNotEquals(actualPrice, oldPrice);
         assertEquals(0, actualPrice);
     }
 
@@ -115,7 +114,6 @@ class CloneNlParserTest {
         RawOffer rawOfferFromOfferLink = parser.getRawOfferFromOfferLink(offerUrl);
         double actualPrice = rawOfferFromOfferLink.getPrice();
         assertFalse(parser.isValid(rawOfferFromOfferLink));
-        //assertNotEquals(actualPrice, oldPrice);
         assertEquals(0, actualPrice);
     }
 

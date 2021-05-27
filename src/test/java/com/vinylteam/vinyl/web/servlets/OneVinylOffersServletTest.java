@@ -203,7 +203,8 @@ class OneVinylOffersServletTest {
     }
 
     @Test
-    void test() {
+    @DisplayName("Checks if all data from offer are copied into OneVinylOfferResponse")
+    void getOfferResponseFromOfferTest() {
         var generator = new DataGeneratorForTests();
         var offers = generator.getOffersList();
         var shop = new Shop();

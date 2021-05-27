@@ -103,7 +103,7 @@ public class OneVinylOffersServlet extends HttpServlet {
 
         if (offersResponseList.isEmpty()) {
             uniqueVinyl.setHasOffers(false);
-            uniqueVinylService.upsertOneUniqueVinyl(uniqueVinyl);
+            uniqueVinylService.updateOneUniqueVinylAsHavingNoOffer(uniqueVinyl);
             attributes.put("message", "No any offer found at the moment for the selected vinyl. Try to find it later");
             PageGenerator.getInstance().process("vinyl", preparedListById, offersResponseList, attributes, response.getWriter());
             return;

@@ -8,12 +8,16 @@ import com.vinylteam.vinyl.util.DataFinderFromDBForITests;
 import com.vinylteam.vinyl.util.DataGeneratorForTests;
 import com.vinylteam.vinyl.util.DatabasePreparerForITests;
 import org.junit.jupiter.api.*;
+import org.mockito.InOrder;
 
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JdbcOfferDaoITest {
@@ -21,7 +25,7 @@ class JdbcOfferDaoITest {
     private final DatabasePreparerForITests databasePreparer = new DatabasePreparerForITests();
     private final DataFinderFromDBForITests dataFinder = new DataFinderFromDBForITests(databasePreparer.getDataSource());
     private final DataGeneratorForTests dataGenerator = new DataGeneratorForTests();
-    private final OfferDao offerDao = new JdbcOfferDao(databasePreparer.getDataSource());
+    private final JdbcOfferDao offerDao = new JdbcOfferDao(databasePreparer.getDataSource());
     private final List<Shop> shops = dataGenerator.getShopsList();
     private final List<UniqueVinyl> uniqueVinyls = dataGenerator.getUniqueVinylsList();
     private final List<Offer> offers = dataGenerator.getOffersList();
@@ -242,6 +246,21 @@ class JdbcOfferDaoITest {
         List<Offer> actualUpdatedOffers = dataFinder.findAllOffers();
         assertEquals(expectedUpdatedUniqueVinyls, actualUpdatedUniqueVinyls);
         assertEquals(expectedUpdatedOffers, actualUpdatedOffers);
+    }
+
+    @Test
+    @DisplayName("Checks whether setVinylParameters call PreparedStatement`s methods and does it in the right order")
+    void setVinylParametersTest() throws SQLException {
+        var uniqueVinyl = dataGenerator.getUniqueVinylWithNumber(34);
+        var statement = mock(PreparedStatement.class);
+        offerDao.setVinylParameters(statement, uniqueVinyl);
+        InOrder inOrderStatement = inOrder(statement);
+        inOrderStatement.verify(statement).setLong(1, uniqueVinyl.getId());
+        inOrderStatement.verify(statement).setString(2, uniqueVinyl.getRelease());
+        inOrderStatement.verify(statement).setString(3, uniqueVinyl.getArtist());
+        inOrderStatement.verify(statement).setString(4, uniqueVinyl.getFullName());
+        inOrderStatement.verify(statement).setString(5, uniqueVinyl.getImageLink());
+        inOrderStatement.verify(statement).setBoolean(6, uniqueVinyl.getHasOffers());
     }
 
 }

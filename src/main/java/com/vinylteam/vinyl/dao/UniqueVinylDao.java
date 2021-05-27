@@ -16,6 +16,6 @@ public interface UniqueVinylDao {
 
     List<UniqueVinyl> findManyByArtist(String artist);
 
-    UniqueVinyl upsertOneUniqueVinyl(UniqueVinyl vinyl);
+    UniqueVinyl updateOneUniqueVinylAsHavingNoOffer(UniqueVinyl vinyl);
 
 }
