@@ -191,8 +191,8 @@ class DefaultDiscogsServiceITest {
     @DisplayName("Return empty String when no link on Discogs")
     void getDiscogsLinkWhenNoSearchReleaseOnDiscogsTest() throws ParseException {
         //when
-        String discogsLink = defaultDiscogsService.getDiscogsLink("no_existed_artist", "no_existed_release",
-                "no_existed_release - no_existed_artist");
+        String discogsLink = defaultDiscogsService.getDiscogsLink("qwedsazxcvfr", "qwedsazxcvfr",
+                "qwedsazxcvfr - qwedsazxcvfr");
 
         //then
         assertEquals("", discogsLink);

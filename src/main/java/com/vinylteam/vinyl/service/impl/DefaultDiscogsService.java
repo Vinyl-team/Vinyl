@@ -15,6 +15,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -87,14 +88,22 @@ public class DefaultDiscogsService implements DiscogsService {
         String requestBody;
         String discogsLink = "";
         if (artist == null || release == null || fullName == null
-                || artist.isEmpty() || release.isEmpty() || fullName.isEmpty()) {
+                || artist.isEmpty() || release.isEmpty() || fullName.isEmpty()
+                || !fullName.toLowerCase().contains(artist.toLowerCase())
+                || !fullName.toLowerCase().contains(release.toLowerCase())) {
             return discogsLink;
         }
-        String artistComparing = getParametersForComparison(artist);
-        log.debug("Prepared artistComparing for comparison with release from Discogs {'artistComparing':{}}", artistComparing);
-        String releaseComparing = getParametersForComparison(release);
-        log.debug("Prepared releaseComparing for comparison with artist from Discogs {'releaseComparing':{}}", releaseComparing);
-        query = fullName.replace(" ", "+");
+        artist = artist.toLowerCase();
+        release = release.toLowerCase();
+        fullName = fullName.toLowerCase();
+        String[] preparedFullNameForMatching;
+        if (artist.toLowerCase().contains("various")){
+            preparedFullNameForMatching = Arrays.stream(release.split("[- ()!@#$%^&*_+={}:;\"']")).filter(e -> e.trim().length() > 0).toArray(String[]::new);
+        } else {
+            preparedFullNameForMatching = Arrays.stream(fullName.split("[- ()!@#$%^&*_+={}:;\"']")).filter(e -> e.trim().length() > 0).toArray(String[]::new);
+        }
+        log.debug("Prepared preparedFullNameForMatching for comparison with artist from Discogs {'preparedFullNameForMatching':{}}", preparedFullNameForMatching);
+        query = String.join("+", preparedFullNameForMatching);
         log.debug("Prepared query for search vinyl on Discogs {'query':{}}", query);
         HttpRequest request = HttpRequest.get("https://api.discogs.com/database/search?q=" + query +
                 "&token=DzUqaiWPuQDWExZlqrAUuIZBYAHuBjNnapETonep");
@@ -105,19 +114,35 @@ public class DefaultDiscogsService implements DiscogsService {
         JSONArray resultSearch = (JSONArray) jsonRequest.get("results");
         log.debug("Get JSONArray of necessary data from JSONObject after search vinyl on Discogs {'resultSearch':{}}", resultSearch);
         if (resultSearch != null) {
-            for (Object searchItem : resultSearch) {
-                JSONObject jsonItem = (JSONObject) searchItem;
-                String discogsFullName = jsonItem.get("title").toString().toLowerCase();
-                log.debug("Prepared discogsFullName from Discogs for comparison with artist & release {'discogsFullName':{}}",
-                        discogsFullName);
-                if (discogsFullName.contains(artistComparing) && discogsFullName.contains(releaseComparing)) {
+            discogsLink = getMatchedDiscogsLinks(resultSearch, preparedFullNameForMatching);
+        }
+        return discogsLink;
+    }
+
+    String getMatchedDiscogsLinks(JSONArray resultSearch, String[] preparedFullNameForMatching) {
+        String discogsLink = "";
+        int maxMatching = 0;
+        int percentMatching = 75;
+        for (Object searchItem : resultSearch) {
+            int currentMatching = 0;
+            JSONObject jsonItem = (JSONObject) searchItem;
+            String discogsFullName = jsonItem.get("title").toString().toLowerCase();
+            String[] preparedDiscogsFullName = Arrays.stream(discogsFullName.split("[- ()!@#$%^&*_+={}:;\"']")).filter(e -> e.trim().length() > 0).toArray(String[]::new);
+            for (String prepareItem : preparedFullNameForMatching) {
+                if (discogsFullName.contains(prepareItem.toLowerCase())){
+                    currentMatching++;
+                }
+            }
+            if (currentMatching > maxMatching){
+                maxMatching = currentMatching;
+                if (((float) maxMatching)/preparedFullNameForMatching.length*100 >= percentMatching
+                        || preparedDiscogsFullName.length == currentMatching){
                     discogsLink = jsonItem.get("uri").toString();
                     discogsLink = "https://www.discogs.com/ru" + discogsLink;
-                    log.debug("Created link of vinyl to Discogs after successful comparison with data from db {'discogsLink':{}}", discogsLink);
-                    break;
                 }
             }
         }
+        log.debug("Created link of vinyl to Discogs after successful comparison with data from db {'discogsLink':{}}", discogsLink);
         return discogsLink;
     }
 
