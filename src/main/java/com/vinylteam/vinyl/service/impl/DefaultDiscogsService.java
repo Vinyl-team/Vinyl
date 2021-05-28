@@ -22,6 +22,8 @@ import java.util.Optional;
 @Slf4j
 public class DefaultDiscogsService implements DiscogsService {
 
+    public static final String REGEX_FOR_SPLIT = "[- ()!@#$%^&*_+={}:;\"']";
+
     private final ObjectMapper objectMapper;
     private final DiscogsClient discogsClient;
 
@@ -98,9 +100,9 @@ public class DefaultDiscogsService implements DiscogsService {
         fullName = fullName.toLowerCase();
         String[] preparedFullNameForMatching;
         if (artist.toLowerCase().contains("various")) {
-            preparedFullNameForMatching = Arrays.stream(release.split("[- ()!@#$%^&*_+={}:;\"']")).filter(e -> e.trim().length() > 0).toArray(String[]::new);
+            preparedFullNameForMatching = Arrays.stream(release.split(REGEX_FOR_SPLIT)).filter(e -> e.trim().length() > 0).toArray(String[]::new);
         } else {
-            preparedFullNameForMatching = Arrays.stream(fullName.split("[- ()!@#$%^&*_+={}:;\"']")).filter(e -> e.trim().length() > 0).toArray(String[]::new);
+            preparedFullNameForMatching = Arrays.stream(fullName.split(REGEX_FOR_SPLIT)).filter(e -> e.trim().length() > 0).toArray(String[]::new);
         }
         log.debug("Prepared preparedFullNameForMatching for comparison with artist from Discogs {'preparedFullNameForMatching':{}}", preparedFullNameForMatching);
         query = String.join("+", preparedFullNameForMatching);
@@ -128,7 +130,7 @@ public class DefaultDiscogsService implements DiscogsService {
             int currentMatching = 0;
             JSONObject jsonItem = (JSONObject) searchItem;
             String discogsFullName = jsonItem.get("title").toString().toLowerCase();
-            String[] preparedDiscogsFullName = Arrays.stream(discogsFullName.split("[- ()!@#$%^&*_+={}:;\"']")).filter(e -> e.trim().length() > 0).toArray(String[]::new);
+            String[] preparedDiscogsFullName = Arrays.stream(discogsFullName.split(REGEX_FOR_SPLIT)).filter(e -> e.trim().length() > 0).toArray(String[]::new);
             for (String prepareItem : preparedFullNameForMatching) {
                 if (discogsFullName.contains(prepareItem.toLowerCase())) {
                     currentMatching++;

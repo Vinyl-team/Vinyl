@@ -215,7 +215,11 @@ public class CloneNlParser implements VinylParser {
     String getHighResImageLinkFromDocument(Element document) {
         String imageLink = document.select(HIGH_RES_IMAGE_LINK_SELECTOR).attr("src");
         if (imageLink != null && !Objects.equals(imageLink, "")){
-            log.debug("Got high resolution image link {'highResImageLink':{}}", imageLink);
+            if (!imageLink.contains("no-cover")){
+                log.debug("Got high resolution image link {'highResImageLink':{}}", imageLink);
+            } else {
+                imageLink = "img/goods/no_image.jpg";
+            }
         } else {
             log.warn("Can't find image link, returning default");
             imageLink = "img/goods/no_image.jpg";

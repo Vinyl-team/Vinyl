@@ -194,7 +194,7 @@ class RawOffersSorterTest {
         //when
         String parameterForComparison = sorter.getParametersForComparison(null);
         //then
-        assertEquals("", parameterForComparison);
+        assertTrue(parameterForComparison.isEmpty());
     }
 
     @Test
