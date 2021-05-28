@@ -4,13 +4,9 @@ import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.RawOffer;
 import com.vinylteam.vinyl.util.PriceUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -32,8 +28,6 @@ public class CloneNlParser extends AbstractVinylParser {
     private static final String ONE_VINYL_SELECTOR = "DIV.release";
     private static final String ONE_VINYL_FROM_ONE_PAGE_SELECTOR = "DIV.musicrelease";
     private static final int SHOP_ID = 4;
-
-    private final AtomicInteger documentCounter = new AtomicInteger(0);
 
     private final DetailedVinylParser batchParser = new DefaultDetailedVinylParser();
     private final DetailedVinylParser onePageParser = new OnePageDetailedVinylParser();
@@ -195,6 +189,7 @@ public class CloneNlParser extends AbstractVinylParser {
         private static final String VINYL_GENRES_SELECTOR = "DIV.tagsbuttons > A.label";
         private static final String PRICE_DETAILS_SELECTOR = "DIV.release TABLE.availability A.addtocart";
         public static final String CATALOG_NUMBER_SELECTOR = "span[itemprop=catalogNumber]";
+        public static final String OUT_OF_STOCK = "out of stock";
 
         @Override
         public String getGenreFromDocument(Element document) {
@@ -216,7 +211,7 @@ public class CloneNlParser extends AbstractVinylParser {
         public Boolean getInStockInfoFromDocument(Element document) {
             var inStock = true;
             String inStockText = document.getElementsByClass("col-xs-2 status").text();
-            if ("out of stock".contains(inStockText)) {
+            if (OUT_OF_STOCK.contains(inStockText)) {
                 inStock = false;
             }
             return inStock;
