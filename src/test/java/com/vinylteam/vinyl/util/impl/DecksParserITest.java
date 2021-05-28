@@ -107,7 +107,7 @@ class DecksParserITest {
 
     @Test
     @DisplayName("Get link to image")
-    void getHighResImageLinkFromDocument(){
+    void getHighResImageLinkFromDocument() {
         //when
         String imageLink = decksParser.getHighResImageLinkFromDocument(testDocument);
         //then

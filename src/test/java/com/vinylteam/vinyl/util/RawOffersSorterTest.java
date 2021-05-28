@@ -189,28 +189,10 @@ class RawOffersSorterTest {
     }
 
     @Test
-    void fordel() {
-        //prepare
-        List<RawOffer> actualRawOffers = new ArrayList<>(rawOffers.subList(0, 4));
-        List<RawOffer> expectedRawOffers = new ArrayList<>(actualRawOffers);
-        UniqueVinyl actualUniqueVinyl = dataGenerator.getUniqueVinylWithNumber(3);
-        UniqueVinyl expectedUniqueVinyl = dataGenerator.getUniqueVinylWithNumber(3);
-        List<Offer> actualOffers = new ArrayList<>(offers.subList(0, 4));
-        List<Offer> expectedOffers = new ArrayList<>(actualOffers);
-        //when
-        sorter.addOffersSortingByVinyl(actualRawOffers, actualUniqueVinyl, actualOffers);
-        //then
-        assertEquals(expectedRawOffers, actualRawOffers);
-        assertEquals(expectedUniqueVinyl, actualUniqueVinyl);
-        assertEquals(expectedOffers, actualOffers);
-    }
-
-    @Test
     @DisplayName("Return empty String when parameter is null")
     void getParametersForComparisonWhenParameterIsNullTest() {
         //when
         String parameterForComparison = sorter.getParametersForComparison(null);
-
         //then
         assertEquals("", parameterForComparison);
     }
@@ -220,7 +202,6 @@ class RawOffersSorterTest {
     void getParametersForComparisonWhenStringContainsOnlyOneWordAndItIsTheTest() {
         //when
         String parameterForComparison = sorter.getParametersForComparison("ThE");
-
         //then
         assertEquals("the", parameterForComparison);
     }
@@ -230,7 +211,6 @@ class RawOffersSorterTest {
     void getParametersForComparisonWhenStringContainsOnlyOneWordAndItIsATest() {
         //when
         String parameterForComparison = sorter.getParametersForComparison("A");
-
         //then
         assertEquals("a", parameterForComparison);
     }
@@ -240,7 +220,6 @@ class RawOffersSorterTest {
     void getParametersForComparisonWhenStringContainsTwoWordsWithArticleTheTest() {
         //when
         String parameterForComparison = sorter.getParametersForComparison("The Artist");
-
         //then
         assertEquals("artist", parameterForComparison);
     }
@@ -250,7 +229,6 @@ class RawOffersSorterTest {
     void getParametersForComparisonWhenStringContainsTwoWordsWithArticleATest() {
         //when
         String parameterForComparison = sorter.getParametersForComparison("A Release");
-
         //then
         assertEquals("release", parameterForComparison);
     }
@@ -260,7 +238,6 @@ class RawOffersSorterTest {
     void getParametersForComparisonWhenStringContainsManyWordsWithoutArticleTest() {
         //when
         String parameterForComparison = sorter.getParametersForComparison("BEST RELEASE is here");
-
         //then
         assertEquals("best", parameterForComparison);
     }

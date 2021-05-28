@@ -11,7 +11,6 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +31,7 @@ class DecksParserTest {
 
     }
 
-        @Test
+    @Test
     @DisplayName("Get genre from document")
     void getGenreFromDocument() {
         //when
@@ -86,7 +85,7 @@ class DecksParserTest {
         assertNotNull(actualCatalogNumberFromDocument);
     }
 
-        @Test
+    @Test
     @DisplayName("Get stock info from document")
     void getInStockInfoFromDocument() {
         //when
@@ -97,7 +96,7 @@ class DecksParserTest {
 
     @Test
     @DisplayName("Get link to image")
-    void getHighResImageLinkFromDocument(){
+    void getHighResImageLinkFromDocument() {
         //when
         String imageLink = decksParser.getHighResImageLinkFromDocument(offerPageDocument);
         //then

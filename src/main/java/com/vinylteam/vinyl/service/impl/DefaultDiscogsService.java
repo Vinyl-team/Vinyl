@@ -97,7 +97,7 @@ public class DefaultDiscogsService implements DiscogsService {
         release = release.toLowerCase();
         fullName = fullName.toLowerCase();
         String[] preparedFullNameForMatching;
-        if (artist.toLowerCase().contains("various")){
+        if (artist.toLowerCase().contains("various")) {
             preparedFullNameForMatching = Arrays.stream(release.split("[- ()!@#$%^&*_+={}:;\"']")).filter(e -> e.trim().length() > 0).toArray(String[]::new);
         } else {
             preparedFullNameForMatching = Arrays.stream(fullName.split("[- ()!@#$%^&*_+={}:;\"']")).filter(e -> e.trim().length() > 0).toArray(String[]::new);
@@ -122,21 +122,23 @@ public class DefaultDiscogsService implements DiscogsService {
     String getMatchedDiscogsLinks(JSONArray resultSearch, String[] preparedFullNameForMatching) {
         String discogsLink = "";
         int maxMatching = 0;
-        int percentMatching = 75;
+        float currentMatchPercent;
+        int requiredPercentageOfMatch = 75;
         for (Object searchItem : resultSearch) {
             int currentMatching = 0;
             JSONObject jsonItem = (JSONObject) searchItem;
             String discogsFullName = jsonItem.get("title").toString().toLowerCase();
             String[] preparedDiscogsFullName = Arrays.stream(discogsFullName.split("[- ()!@#$%^&*_+={}:;\"']")).filter(e -> e.trim().length() > 0).toArray(String[]::new);
             for (String prepareItem : preparedFullNameForMatching) {
-                if (discogsFullName.contains(prepareItem.toLowerCase())){
+                if (discogsFullName.contains(prepareItem.toLowerCase())) {
                     currentMatching++;
                 }
             }
-            if (currentMatching > maxMatching){
+            if (currentMatching > maxMatching) {
                 maxMatching = currentMatching;
-                if (((float) maxMatching)/preparedFullNameForMatching.length*100 >= percentMatching
-                        || preparedDiscogsFullName.length == currentMatching){
+                currentMatchPercent = ((float) maxMatching) / preparedFullNameForMatching.length * 100;
+                if (currentMatchPercent >= requiredPercentageOfMatch
+                        || preparedDiscogsFullName.length == currentMatching) {
                     discogsLink = jsonItem.get("uri").toString();
                     discogsLink = "https://www.discogs.com/ru" + discogsLink;
                 }
