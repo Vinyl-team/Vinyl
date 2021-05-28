@@ -166,34 +166,34 @@ class DefaultOfferServiceTest {
     @DisplayName("Checks that offers are merged during dynamic update")
     void mergeOfferChangesTest() {
         //prepare
-        Offer oldOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(12, 4);
-        RawOffer newlyLoadedOffer = dataGenerator.getRawOfferWithShopIdAndNumber(4, 12);
-        var newPrice = newlyLoadedOffer.getPrice() - 2d;
-        newlyLoadedOffer.setPrice(newPrice);
-        assertNotEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
+        Offer dbOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(12, 4);
+        RawOffer webOffer = dataGenerator.getRawOfferWithShopIdAndNumber(4, 12);
+        double newWebPrice = webOffer.getPrice() - 2d;
+        webOffer.setPrice(newWebPrice);
+        assertNotEquals(webOffer.getPrice(), dbOffer.getPrice());
         //when
-        offerService.mergeOfferChanges(oldOffer, parser, newlyLoadedOffer);
+        offerService.mergeOfferChanges(dbOffer, parser, webOffer);
         //then
-        assertEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
-        assertEquals(newlyLoadedOffer.getCurrency(), oldOffer.getCurrency());
-        assertEquals(newPrice, oldOffer.getPrice());
+        assertEquals(webOffer.getPrice(), dbOffer.getPrice());
+        assertEquals(webOffer.getCurrency(), dbOffer.getCurrency());
+        assertEquals(newWebPrice, dbOffer.getPrice());
     }
 
     @Test
     @DisplayName("Checks that offers are not merged during dynamic update since new offer is not valid (as though the link is no more existing)")
     void noMergeOfferChangesTest() {
         //prepare
-        Offer oldOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(12, 4);
-        RawOffer newlyLoadedOffer = new RawOffer();
-        assertTrue(oldOffer.isInStock());
-        var oldPrice = oldOffer.getPrice();
-        assertNotEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
+        Offer dbOffer = dataGenerator.getOfferWithUniqueVinylIdAndShopId(12, 4);
+        RawOffer webOffer = new RawOffer();
+        assertTrue(dbOffer.isInStock());
+        double dbPrice = dbOffer.getPrice();
+        assertNotEquals(webOffer.getPrice(), dbOffer.getPrice());
         //when
-        offerService.mergeOfferChanges(oldOffer, parser, newlyLoadedOffer);
+        offerService.mergeOfferChanges(dbOffer, parser, webOffer);
         //then
-        assertNotEquals(newlyLoadedOffer.getPrice(), oldOffer.getPrice());
-        assertEquals(oldPrice, oldOffer.getPrice());
-        assertFalse(oldOffer.isInStock());
+        assertNotEquals(webOffer.getPrice(), dbOffer.getPrice());
+        assertEquals(dbPrice, dbOffer.getPrice());
+        assertFalse(dbOffer.isInStock());
     }
 
 }
