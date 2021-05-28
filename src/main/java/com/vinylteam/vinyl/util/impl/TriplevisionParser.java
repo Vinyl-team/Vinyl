@@ -13,16 +13,15 @@ import java.io.IOException;
 import java.util.*;
 
 @Slf4j
-public class DecksParser implements VinylParser {
+public class TriplevisionParser implements VinylParser {
 
-    private static final String BASE_LINK = "https://www.decks.de";
-    private static final String START_PAGE_LINK = BASE_LINK + "/decks/workfloor/lists/list_db.php";
-    private static final int SHOP_ID = 5;
+    private static final String BASE_LINK = "https://www.triplevision.nl";
+    private static final String START_PAGE_LINK = BASE_LINK + "/releases";
+    private static final int SHOP_ID = 10;
 
     @Override
     public List<RawOffer> getRawOffersList() {
-        HashSet<String> genresLinks = getGenresLinks();
-        HashSet<String> pageLinks = getPageLinks(genresLinks);
+        HashSet<String> pageLinks = getPageLinks();
         HashSet<String> offerLinks = getOfferLinks(pageLinks);
         HashSet<RawOffer> rawOfferSet = readRawOffersFromAllOfferLinks(offerLinks);
         return new ArrayList<>(rawOfferSet);
@@ -47,24 +46,6 @@ public class DecksParser implements VinylParser {
         return rawOffer;
     }
 
-    HashSet<String> getGenresLinks() {
-        HashSet<String> genreLinks = new HashSet<>();
-        Optional<Document> startDocument = getDocument(START_PAGE_LINK);
-        if (startDocument.isPresent()) {
-            Element iframeElement = startDocument.get().select("iframe").first();
-            Elements elementsWithGenreLinks = iframeElement.parents().get(0).getElementsByClass("menueBodySub")
-                    .select("a");
-            for (Element elementWithGenreLink : elementsWithGenreLinks) {
-                String genresLink = elementWithGenreLink.attr("href");
-                if (!genresLink.equals("javascript:void(0);")) {
-                    genreLinks.add(BASE_LINK + genresLink);
-                }
-            }
-        }
-        log.info("Got genres from Decks.de: {}", genreLinks.size());
-        return genreLinks;
-    }
-
     String getCatNumberFromDocument(Document offerDocument) {
         Element iframeElement = offerDocument.select("iframe").first();
         String[] catNumbers = iframeElement.parents().get(0).getElementsByClass("detail_label").text().split("[/ ]");
@@ -76,7 +57,7 @@ public class DecksParser implements VinylParser {
         boolean inStock = true;
         Element iframeElement = offerDocument.select("iframe").first();
         String inStockText = iframeElement.parents().get(0).getElementsByClass("stockBlockaround").text();
-        if ("out of stock".contains(inStockText)){
+        if ("out of stock".contains(inStockText)) {
             inStock = false;
         }
         return inStock;
@@ -163,41 +144,68 @@ public class DecksParser implements VinylParser {
                 }
             }
         }
-        log.info("Got offer links from Decks.de: {}", offerLinks.size());
+        log.info("Got offer links from Triplevision.nl: {}", offerLinks.size());
         return offerLinks;
     }
 
-    HashSet<String> getPageLinks(HashSet<String> genresLinks) {
+    HashSet<String> getPageLinks() {
         LinkedHashSet<String> pageLinks = new LinkedHashSet<>();
-        String pageCount;
-        for (String genreLink : genresLinks) {
-            List<String> pageCountList = new ArrayList<>();
-            Optional<Document> genreDocument = getDocument(genreLink);
+        String nextPage = START_PAGE_LINK + "/";
+//        int counter = 0;
+        while (!nextPage.isEmpty()){
+//            if (counter % 100 == 0){
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+            pageLinks.add(nextPage);
+            Optional<Document> genreDocument = getDocument(nextPage);
             if (genreDocument.isPresent()) {
-                Element iframeElement = genreDocument.get().select("iframe").first();
-                Elements elementsWithLinkToPages = iframeElement.parents().get(0).
-                        getElementsByClass("pager").select("a");
-                String templateLink = START_PAGE_LINK + elementsWithLinkToPages.get(0).attr("href");
-                for (Element elementWithLinkToPages : elementsWithLinkToPages) {
-                    pageCountList.add(elementWithLinkToPages.text());
-                }
-                if (pageCountList.size() > 1) {
-                    pageCount = pageCountList.get(pageCountList.size() - 2);
-                } else {
-                    pageCount = pageCountList.get(pageCountList.size() - 1);
-                }
-                for (int i = 0; i < Integer.parseInt(pageCount); i++) {
-                    pageLinks.add(templateLink.replace("aktuell=0", "aktuell=" + i));
+                nextPage = BASE_LINK + genreDocument.get()
+                        .getElementsByClass("btn btn-secondary pagination__next d-none")
+                        .attr("href");
+                log.info("Got pages from Triplevision.nl: {}", pageLinks.size());
+                if (nextPage.equals(BASE_LINK)){
+                    nextPage = "";
+                    log.info("Got last page from Triplevision.nl: {}", pageLinks.size());
                 }
             }
+//            counter++;
         }
+//        Optional<Document> genreDocument = getDocument(allGenres);
+//        if (genreDocument.isPresent()) {
+//            Elements elementsWithLinkToPages = genreDocument.get().
+//                    getElementsByClass("pager").select("a");
+//        }
+//
+//        String pageCount;
+//        List<String> pageCountList = new ArrayList<>();
+//        if (genreDocument.isPresent()) {
+//            Element iframeElement = genreDocument.get().select("iframe").first();
+//            Elements elementsWithLinkToPages = iframeElement.parents().get(0).
+//                    getElementsByClass("pager").select("a");
+//            String templateLink = START_PAGE_LINK + elementsWithLinkToPages.get(0).attr("href");
+//            for (Element elementWithLinkToPages : elementsWithLinkToPages) {
+//                pageCountList.add(elementWithLinkToPages.text());
+//            }
+//            if (pageCountList.size() > 1) {
+//                pageCount = pageCountList.get(pageCountList.size() - 2);
+//            } else {
+//                pageCount = pageCountList.get(pageCountList.size() - 1);
+//            }
+//            for (int i = 0; i < Integer.parseInt(pageCount); i++) {
+//                pageLinks.add(templateLink.replace("aktuell=0", "aktuell=" + i));
+//            }
+//        }
         log.info("Got pages from Decks.de: {}", pageLinks.size());
         return pageLinks;
     }
 
     Optional<Document> getDocument(String url) {
         try {
-            return Optional.ofNullable(Jsoup.connect(url).get());
+            return Optional.ofNullable(Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11").get());
         } catch (IOException e) {
             log.warn("Page represented by the link will be skipped, since some error happened while getting document" +
                     " by link {'link':{}}", url, e);

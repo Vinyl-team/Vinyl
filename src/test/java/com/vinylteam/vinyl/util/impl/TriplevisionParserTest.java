@@ -16,7 +16,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class DecksParserTest {
+class TriplevisionParserTest {
 
     private final DecksParser decksParser = new DecksParser();
     private Document startPageDocument;
@@ -24,9 +24,9 @@ class DecksParserTest {
 
     @BeforeAll
     void beforeAll() throws IOException {
-        File startHtml = new File(this.getClass().getClassLoader().getResource("HtmlPages/decks/decks_start_page.html").getPath());
+        File startHtml = new File(this.getClass().getClassLoader().getResource("HtmlPages/triplevision/triplevisionStartPage.html").getPath());
         startPageDocument = Jsoup.parse(startHtml, null);
-        File offerHtml = new File(this.getClass().getClassLoader().getResource("HtmlPages/decks/decks_release.html").getPath());
+        File offerHtml = new File(this.getClass().getClassLoader().getResource("HtmlPages/triplevision/triplevisionOfferPage.html").getPath());
         offerPageDocument = Jsoup.parse(offerHtml, null);
 
     }
