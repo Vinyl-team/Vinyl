@@ -4,6 +4,7 @@ import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.RawOffer;
 import com.vinylteam.vinyl.util.PriceUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.util.*;
@@ -48,7 +49,7 @@ public class CloneNlParser extends AbstractVinylParser {
 
     @Override
     public RawOffer getRawOfferFromOfferLink(String offerLink) {
-        var offer = getDocument(offerLink)
+        RawOffer offer = getDocument(offerLink)
                 .stream()
                 .flatMap(doc -> doc.select(ONE_VINYL_FROM_ONE_PAGE_SELECTOR).stream())
                 .map(oneVinyl -> getRawOfferFromElement(oneVinyl, onePageParser))
@@ -59,7 +60,7 @@ public class CloneNlParser extends AbstractVinylParser {
     }
 
     Set<String> getAllPagesByGenre(String genreLink) {
-        var allPages = getDocument(genreLink)
+        Set<String> allPages = getDocument(genreLink)
                 .stream()
                 .flatMap(document -> document.select(PRELIMINARY_PAGE_LINK_SELECTOR).stream())
                 .filter(supposedPageLink -> supposedPageLink.text().matches("[0-9]+"))
@@ -80,7 +81,7 @@ public class CloneNlParser extends AbstractVinylParser {
     }
 
     Set<RawOffer> readOffersFromAllPages(Set<String> pageLinks) {
-        var offerLinks = pageLinks
+        Set<RawOffer> offerLinks = pageLinks
                 .stream()
                 .flatMap(link -> this.getDocument(link).stream())
                 .map(document -> document.select(OFFER_LIST_SELECTOR))
@@ -94,9 +95,9 @@ public class CloneNlParser extends AbstractVinylParser {
 
     Set<String> getAllPageLinksSet(Set<String> pageLinks) {
         int maxPageNumber = countPageLinks(pageLinks);
-        var pageLinkPattern = pageLinks.iterator().next();
+        String pageLinkPattern = pageLinks.iterator().next();
         log.debug("Pages found {'maxPageNumber':{}}", maxPageNumber);
-        var fullListOfPageLinks =
+        Set<String> fullListOfPageLinks =
                 IntStream.rangeClosed(1, maxPageNumber)
                         .mapToObj(pageNumber -> pageLinkPattern.replaceAll(PAGE_NUMBER_PATTERN.toString(), "&page=" + pageNumber))
                         .collect(toSet());
@@ -105,8 +106,9 @@ public class CloneNlParser extends AbstractVinylParser {
     }
 
     Set<String> getAllGenreLinks() {
-        var startDocument = getDocument(START_PAGE_LINK);
-        var allGenresLinks = startDocument
+        Optional<Document> startDocument;
+        startDocument = getDocument(START_PAGE_LINK);
+        Set<String> allGenresLinks = startDocument
                 .stream()
                 .flatMap(document -> document.select(GENRES_SELECTOR).stream())
                 .map(link -> BASE_LINK + link.attr("href"))
@@ -128,17 +130,17 @@ public class CloneNlParser extends AbstractVinylParser {
     }
 
     public RawOffer getRawOfferFromElement(Element releaseElement, DetailedVinylParser detailedParser) {
-        var imageLink = detailedParser.getHighResImageLinkFromDocument(releaseElement);
-        var offerLink = detailedParser.getOfferLinkFromDocument(releaseElement);
-        var price = detailedParser.getPriceFromDocument(releaseElement);
-        var priceCurrency = detailedParser.getOptionalCurrencyFromDocument(releaseElement);
-        var artist = detailedParser.getArtistFromDocument(releaseElement);
-        var release = detailedParser.getReleaseFromDocument(releaseElement);
-        var genre = detailedParser.getGenreFromDocument(releaseElement);
-        var catalogNumber = detailedParser.getCatNumberFromDocument(releaseElement);
-        var inStock = detailedParser.getInStockInfoFromDocument(releaseElement);
+        String imageLink = detailedParser.getHighResImageLinkFromDocument(releaseElement);
+        String offerLink = detailedParser.getOfferLinkFromDocument(releaseElement);
+        double price = detailedParser.getPriceFromDocument(releaseElement);
+        Optional<Currency> priceCurrency = detailedParser.getOptionalCurrencyFromDocument(releaseElement);
+        String artist = detailedParser.getArtistFromDocument(releaseElement);
+        String release = detailedParser.getReleaseFromDocument(releaseElement);
+        String genre = detailedParser.getGenreFromDocument(releaseElement);
+        String catalogNumber = detailedParser.getCatNumberFromDocument(releaseElement);
+        Boolean inStock = detailedParser.getInStockInfoFromDocument(releaseElement);
 
-        var rawOffer = new RawOffer();
+        RawOffer rawOffer = new RawOffer();
         rawOffer.setShopId(SHOP_ID);
         rawOffer.setRelease(release);
         rawOffer.setArtist(artist);
@@ -209,7 +211,7 @@ public class CloneNlParser extends AbstractVinylParser {
         }
 
         public Boolean getInStockInfoFromDocument(Element document) {
-            var inStock = true;
+            boolean inStock = true;
             String inStockText = document.getElementsByClass("col-xs-2 status").text();
             if (OUT_OF_STOCK.contains(inStockText)) {
                 inStock = false;
@@ -218,21 +220,21 @@ public class CloneNlParser extends AbstractVinylParser {
         }
 
         public Optional<Currency> getOptionalCurrencyFromDocument(Element document) {
-            var pricesBlock = document.select(PRICE_DETAILS_SELECTOR).eachText();
+            List<String> pricesBlock = document.select(PRICE_DETAILS_SELECTOR).eachText();
             if (pricesBlock.isEmpty()) {
                 return Optional.empty();
             }
-            var fullPriceDetails = pricesBlock.get(0);
+            String fullPriceDetails = pricesBlock.get(0);
             log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", fullPriceDetails, document.ownerDocument().location());
             return PriceUtils.getCurrencyFromString(fullPriceDetails);
         }
 
         public double getPriceFromDocument(Element document) {
-            var pricesBlock = document.select(PRICE_DETAILS_SELECTOR).eachText();
+            List<String> pricesBlock = document.select(PRICE_DETAILS_SELECTOR).eachText();
             if (pricesBlock.isEmpty()) {
                 return 0d;
             }
-            var fullPriceDetails = pricesBlock.get(0);
+            String fullPriceDetails = pricesBlock.get(0);
             log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", fullPriceDetails, document.ownerDocument().location());
             return PriceUtils.getPriceFromString(fullPriceDetails);
         }
@@ -273,7 +275,7 @@ public class CloneNlParser extends AbstractVinylParser {
         }
 
         public Boolean getInStockInfoFromDocument(Element document) {
-            var inStock = true;
+            boolean inStock = true;
             String inStockText = document.getElementsByClass("col-xs-2 status").text();
             if (OUT_OF_STOCK.contains(inStockText)) {
                 inStock = false;
@@ -282,21 +284,21 @@ public class CloneNlParser extends AbstractVinylParser {
         }
 
         public Optional<Currency> getOptionalCurrencyFromDocument(Element document) {
-            var pricesBlock = document.select(PRICE_DETAILS_SELECTOR).eachText();
+            List<String> pricesBlock = document.select(PRICE_DETAILS_SELECTOR).eachText();
             if (pricesBlock.isEmpty()) {
                 return Optional.empty();
             }
-            var fullPriceDetails = pricesBlock.get(0);
+            String fullPriceDetails = pricesBlock.get(0);
             log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", fullPriceDetails, document.ownerDocument().location());
             return PriceUtils.getCurrencyFromString(fullPriceDetails);
         }
 
         public double getPriceFromDocument(Element document) {
-            var pricesBlock = document.select(PRICE_DETAILS_SELECTOR).eachText();
+            List<String> pricesBlock = document.select(PRICE_DETAILS_SELECTOR).eachText();
             if (pricesBlock.isEmpty()) {
                 return 0d;
             }
-            var fullPriceDetails = pricesBlock.get(0);
+            String fullPriceDetails = pricesBlock.get(0);
             log.debug("Got price details from page by offer link {'priceDetails':{}, 'offerLink':{}}", fullPriceDetails, document.ownerDocument().location());
             return PriceUtils.getPriceFromString(fullPriceDetails);
         }
