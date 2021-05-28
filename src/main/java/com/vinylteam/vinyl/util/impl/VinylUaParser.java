@@ -182,21 +182,23 @@ public class VinylUaParser implements VinylParser {
 
     String getHighResImageLinkFromDocument(Document document) {
         List<DataNode> scriptDataNodes = document.select(SELECTOR_SCRIPT_WITH_HIGH_RES_IMAGE_LINK).dataNodes();
+        String highResImageLink = "img/goods/no_image.jpg";
         if (scriptDataNodes.isEmpty()) {
             log.warn("No script containing high resolution image link by offer link, returning default {'offerLink':{}}", document.location());
-            return "img/goods/no_image.jpg";
+            return highResImageLink;
         }
         String scriptWithHighResImageLink = scriptDataNodes.get(0).getWholeData();
         log.debug("Got script containing high resolution image link from page by offer link {'script':{}, 'offerLink':{}}", scriptWithHighResImageLink, document.location());
-        String highResImageLink;
         int beginIndexOfImageLink = scriptWithHighResImageLink.indexOf("src: '") + "src: '".length();
         if (beginIndexOfImageLink != -1) {
             int endIndexOfImageLink = scriptWithHighResImageLink.indexOf('\'', beginIndexOfImageLink);
             highResImageLink = scriptWithHighResImageLink.substring(beginIndexOfImageLink, endIndexOfImageLink);
+            if (highResImageLink.contains("release-original")){
+                highResImageLink = "img/goods/no_image.jpg";
+            }
             log.debug("Got high resolution image link from page by offer link {'highResImageLink':{}, 'offerLink':{}}", highResImageLink, document.location());
         } else {
             log.warn("Can't find image link from page by offer link, returning default {'offerLink':{}}", document.location());
-            highResImageLink = "img/goods/no_image.jpg";
         }
         return highResImageLink;
     }

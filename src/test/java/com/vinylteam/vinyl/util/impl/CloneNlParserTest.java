@@ -12,7 +12,6 @@ import org.junit.jupiter.api.TestInstance;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,24 +24,8 @@ class CloneNlParserTest {
 
     @BeforeAll
     void init() throws IOException {
-        File testHtml = new File(this.getClass().getClassLoader().getResource("cloneNLItem.html").getPath());
+        File testHtml = new File(this.getClass().getClassLoader().getResource("HtmlPages/cloneNLItem.html").getPath());
         vinylElement = Jsoup.parse(testHtml, null).select("DIV.release").first();
-    }
-
-    @Test
-    @DisplayName("Checks whether page links are counted correctly")
-    void countPageLinksTest() {
-        Set<String> links = Set.of("https://clone.nl/all/genre/Disco?sort=datum&order=desc&page=4", "https://clone.nl/all/genre/Disco?sort=datum&order=desc&page=333");
-        Integer number = parser.countPageLinks(links);
-        assertEquals(333, number);
-    }
-
-    @Test
-    @DisplayName("Checks whether page links are fully returned")
-    void getAllPageLinksSetTest() {
-        Set<String> links = Set.of("https://clone.nl/all/genre/Disco?sort=datum&order=desc&page=4", "https://clone.nl/all/genre/Disco?sort=datum&order=desc&page=333");
-        var allPageLinks = parser.getAllPageLinksSet(links);
-        assertEquals(333, allPageLinks.size());
     }
 
     @Test

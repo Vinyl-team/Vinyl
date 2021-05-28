@@ -76,16 +76,23 @@ public class DecksParser implements VinylParser {
         boolean inStock = true;
         Element iframeElement = offerDocument.select("iframe").first();
         String inStockText = iframeElement.parents().get(0).getElementsByClass("stockBlockaround").text();
-        if ("out of stock".contains(inStockText)){
+        if (inStockText.contains("out of stock")){
             inStock = false;
         }
         return inStock;
     }
 
-    private String getHighResImageLinkFromDocument(Document offerDocument) {
+    String getHighResImageLinkFromDocument(Document offerDocument) {
         Element iframeElement = offerDocument.select("iframe").first();
-        return iframeElement.parents().get(0).getElementsByClass("bigCoverDetail").select("img")
+        String imageLink = iframeElement.parents().get(0).getElementsByClass("bigCoverDetail").select("img")
                 .attr("src");
+        if (imageLink != null && !Objects.equals(imageLink, "")){
+            log.debug("Got high resolution image link from page by offer link {'highResImageLink':{}, 'offerLink':{}}", imageLink, offerDocument.location());
+        } else {
+            log.warn("Can't find image link from page by offer link, returning default {'offerLink':{}}", offerDocument.location());
+            imageLink = "img/goods/no_image.jpg";
+        }
+        return imageLink;
     }
 
     String getGenreFromDocument(Document offerDocument) {
@@ -125,7 +132,7 @@ public class DecksParser implements VinylParser {
                 .select("h1").text();
     }
 
-    public HashSet<RawOffer> readRawOffersFromAllOfferLinks(HashSet<String> offerLinks) {
+    HashSet<RawOffer> readRawOffersFromAllOfferLinks(HashSet<String> offerLinks) {
         HashSet<RawOffer> rawOfferSet = new HashSet<>();
         for (String offerLink : offerLinks) {
             RawOffer rawOffer = getRawOfferFromOfferLink(offerLink);
@@ -147,7 +154,7 @@ public class DecksParser implements VinylParser {
                 && rawOffer.getOfferLink() != null;
     }
 
-    public HashSet<String> getOfferLinks(HashSet<String> pageLinks) {
+    HashSet<String> getOfferLinks(HashSet<String> pageLinks) {
         HashSet<String> offerLinks = new HashSet<>();
         for (String pageLink : pageLinks) {
             Optional<Document> pageDocument = getDocument(pageLink);

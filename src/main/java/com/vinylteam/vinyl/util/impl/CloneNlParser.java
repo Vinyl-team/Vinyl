@@ -186,7 +186,7 @@ public class CloneNlParser implements VinylParser {
     Boolean getInStockInfoFromDocument(Element document) {
         boolean inStock = true;
         String inStockText = document.getElementsByClass("col-xs-2 status").text();
-        if ("out of stock".contains(inStockText)){
+        if (inStockText.contains("out of stock")){
             inStock = false;
         }
         return inStock;
@@ -213,7 +213,18 @@ public class CloneNlParser implements VinylParser {
     }
 
     String getHighResImageLinkFromDocument(Element document) {
-        return document.select(HIGH_RES_IMAGE_LINK_SELECTOR).attr("src");
+        String imageLink = document.select(HIGH_RES_IMAGE_LINK_SELECTOR).attr("src");
+        if (imageLink != null && !Objects.equals(imageLink, "")){
+            if (!imageLink.contains("no-cover")){
+                log.debug("Got high resolution image link {'highResImageLink':{}}", imageLink);
+            } else {
+                imageLink = "img/goods/no_image.jpg";
+            }
+        } else {
+            log.warn("Can't find image link, returning default");
+            imageLink = "img/goods/no_image.jpg";
+        }
+        return imageLink;
     }
 
     String getOfferLinkFromDocument(Element document) {
