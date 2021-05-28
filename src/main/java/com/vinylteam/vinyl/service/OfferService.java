@@ -3,7 +3,7 @@ package com.vinylteam.vinyl.service;
 import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.RawOffer;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
-import com.vinylteam.vinyl.util.VinylParser;
+import com.vinylteam.vinyl.util.impl.VinylParser;
 
 import java.util.List;
 

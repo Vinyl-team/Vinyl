@@ -64,4 +64,20 @@ class CloneNlParserITest {
         assertEquals(expectedRawOffer, actualRawOffer);
     }
 
+    @Test
+    @DisplayName("Checks whether page links are counted correctly")
+    void countPageLinksTest() {
+        Set<String> links = Set.of("https://clone.nl/all/genre/Disco?sort=datum&order=desc&page=4", "https://clone.nl/all/genre/Disco?sort=datum&order=desc&page=333");
+        Integer number = parser.countPageLinks(links);
+        assertEquals(333, number);
+    }
+
+    @Test
+    @DisplayName("Checks whether page links are fully returned")
+    void getAllPageLinksSetTest() {
+        Set<String> links = Set.of("https://clone.nl/all/genre/Disco?sort=datum&order=desc&page=4", "https://clone.nl/all/genre/Disco?sort=datum&order=desc&page=333");
+        var allPageLinks = parser.getAllPageLinksSet(links);
+        assertEquals(333, allPageLinks.size());
+    }
+
 }

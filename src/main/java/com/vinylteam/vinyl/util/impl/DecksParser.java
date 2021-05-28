@@ -10,7 +10,7 @@ import org.jsoup.select.Elements;
 import java.util.*;
 
 @Slf4j
-public class DecksParser extends AbstractVinylParser {
+public class DecksParser extends VinylParser {
 
     private static final String BASE_LINK = "https://www.decks.de";
     private static final String START_PAGE_LINK = BASE_LINK + "/decks/workfloor/lists/list_db.php";
@@ -73,16 +73,23 @@ public class DecksParser extends AbstractVinylParser {
         boolean inStock = true;
         Element iframeElement = offerDocument.select("iframe").first();
         String inStockText = iframeElement.parents().get(0).getElementsByClass("stockBlockaround").text();
-        if ("out of stock".contains(inStockText)){
+        if (inStockText.contains("out of stock")){
             inStock = false;
         }
         return inStock;
     }
 
-    private String getHighResImageLinkFromDocument(Document offerDocument) {
+    String getHighResImageLinkFromDocument(Document offerDocument) {
         Element iframeElement = offerDocument.select("iframe").first();
-        return iframeElement.parents().get(0).getElementsByClass("bigCoverDetail").select("img")
+        String imageLink = iframeElement.parents().get(0).getElementsByClass("bigCoverDetail").select("img")
                 .attr("src");
+        if (imageLink != null && !Objects.equals(imageLink, "")){
+            log.debug("Got high resolution image link from page by offer link {'highResImageLink':{}, 'offerLink':{}}", imageLink, offerDocument.location());
+        } else {
+            log.warn("Can't find image link from page by offer link, returning default {'offerLink':{}}", offerDocument.location());
+            imageLink = "img/goods/no_image.jpg";
+        }
+        return imageLink;
     }
 
     String getGenreFromDocument(Document offerDocument) {

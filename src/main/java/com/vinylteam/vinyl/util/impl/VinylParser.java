@@ -1,7 +1,6 @@
 package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.RawOffer;
-import com.vinylteam.vinyl.util.VinylParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -11,23 +10,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class AbstractVinylParser implements VinylParser {
-    @Override
-    public long getShopId() {
-        return 0;
-    }
+public abstract class VinylParser {
 
-    @Override
-    public List<RawOffer> getRawOffersList() {
-        return null;
-    }
+    public abstract long getShopId();
 
-    @Override
-    public RawOffer getRawOfferFromOfferLink(String offerLink) {
-        return null;
-    }
+    public abstract List<RawOffer> getRawOffersList();
 
-    @Override
+    public abstract RawOffer getRawOfferFromOfferLink(String offerLink);;
+
     public boolean isValid(RawOffer rawOffer) {
         boolean isValid = false;
         if (rawOffer.getPrice() != 0.
@@ -39,7 +29,7 @@ public class AbstractVinylParser implements VinylParser {
         return isValid;
     }
 
-    protected Optional<Document> getDocument(String url) {
+    public Optional<Document> getDocument(String url) {
         try {
             return Optional.ofNullable(Jsoup.connect(url).get());
         } catch (IOException e) {
@@ -47,5 +37,4 @@ public class AbstractVinylParser implements VinylParser {
             return Optional.empty();
         }
     }
-
 }

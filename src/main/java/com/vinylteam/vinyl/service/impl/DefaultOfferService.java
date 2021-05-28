@@ -5,7 +5,7 @@ import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.RawOffer;
 import com.vinylteam.vinyl.entity.UniqueVinyl;
 import com.vinylteam.vinyl.service.OfferService;
-import com.vinylteam.vinyl.util.VinylParser;
+import com.vinylteam.vinyl.util.impl.VinylParser;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

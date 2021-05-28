@@ -1,7 +1,5 @@
 package com.vinylteam.vinyl.util.impl;
 
-import com.vinylteam.vinyl.util.VinylParser;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

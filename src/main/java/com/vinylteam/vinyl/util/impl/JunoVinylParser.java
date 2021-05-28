@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.toSet;
 
 @Slf4j
-public class JunoVinylParser extends AbstractVinylParser {
+public class JunoVinylParser extends VinylParser {
 
     private static final String BASE_LINK = "https://www.juno.co.uk";
     private static final String CATALOG_ROOT_LINK = BASE_LINK + "/all/";

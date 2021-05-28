@@ -25,7 +25,7 @@ class CloneNlParserTest {
     @BeforeEach
     void init() throws IOException {
         parser = new CloneNlParser();
-        setVinylElement("cloneNLItem.html");
+        setVinylElement("HtmlPages/cloneNLItem.html");
     }
 
     private void setVinylElement(String fromResourceFile) throws IOException {
@@ -66,7 +66,7 @@ class CloneNlParserTest {
     @Test
     @DisplayName("Checks whether RawOffer is received from HTML Element that represents one vinyl Item from one vinyl page")
     void getRawOffersFromOneVinylPageLinkTest() throws IOException {
-        File testHtml = new File(this.getClass().getClassLoader().getResource("cloneNLItemOnePage.html").getPath());
+        File testHtml = new File(this.getClass().getClassLoader().getResource("HtmlPages/cloneNLItemOnePage.html").getPath());
         vinylElement = Jsoup.parse(testHtml, null).select("DIV").first();
         var rawOffer = parser.getRawOfferFromElement(vinylElement, new CloneNlParser.OnePageDetailedVinylParser());
         assertNotNull(rawOffer);
@@ -93,7 +93,7 @@ class CloneNlParserTest {
     @Test
     @DisplayName("Checks for actual price of vinyl, the vinyl is not in stock")
     void getActualPriceWhenNoOffer() throws IOException {
-        String fromResourceFile = "cloneNLItemNotInStock.html";
+        String fromResourceFile = "HtmlPages/cloneNLItemNotInStock.html";
         setVinylElement(fromResourceFile);
         double oldPrice = 0.44;
         String offerUrl = "https://clone.nl/item63738.html";
@@ -106,7 +106,7 @@ class CloneNlParserTest {
     @Test
     @DisplayName("Checks for actual price of vinyl, the vinyl is non-accessible due to network issues")
     void getActualPriceWhenNoResponseForPriceRequest() throws IOException {
-        String fromResourceFile = "cloneNLItemNotInStock.html";
+        String fromResourceFile = "HtmlPages/cloneNLItemNotInStock.html";
         setVinylElement(fromResourceFile);
         String offerUrl = "https://clone.nl/item63738.html";
         parser = spy(parser);

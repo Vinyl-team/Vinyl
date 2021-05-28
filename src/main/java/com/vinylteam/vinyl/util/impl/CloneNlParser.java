@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
@@ -15,8 +17,9 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.toSet;
 
 @Slf4j
-public class CloneNlParser extends AbstractVinylParser {
+public class CloneNlParser extends VinylParser {
 
+    //TODO: Tests for PriceUtils
     protected static final String BASE_LINK = "https://clone.nl";
     private static final String CATALOG_ROOT_LINK = BASE_LINK + "/genres";
     private static final String START_PAGE_LINK = CATALOG_ROOT_LINK;
@@ -239,9 +242,20 @@ public class CloneNlParser extends AbstractVinylParser {
             return PriceUtils.getPriceFromString(fullPriceDetails);
         }
 
-        public String getHighResImageLinkFromDocument(Element document) {
-            return document.select(HIGH_RES_IMAGE_LINK_SELECTOR).attr("src");
+    public String getHighResImageLinkFromDocument(Element document) {
+        String imageLink = document.select(HIGH_RES_IMAGE_LINK_SELECTOR).attr("src");
+        if (imageLink != null && !Objects.equals(imageLink, "")){
+            if (!imageLink.contains("no-cover")){
+                log.debug("Got high resolution image link {'highResImageLink':{}}", imageLink);
+            } else {
+                imageLink = "img/goods/no_image.jpg";
+            }
+        } else {
+            log.warn("Can't find image link, returning default");
+            imageLink = "img/goods/no_image.jpg";
         }
+        return imageLink;
+    }
 
         public String getOfferLinkFromDocument(Element document) {
             return BASE_LINK + document.select(OFFER_LINK_SELECTOR).attr("href");
@@ -304,12 +318,22 @@ public class CloneNlParser extends AbstractVinylParser {
         }
 
         public String getHighResImageLinkFromDocument(Element document) {
-            return document.select(HIGH_RES_IMAGE_LINK_SELECTOR).attr("src");
+            String imageLink = document.select(HIGH_RES_IMAGE_LINK_SELECTOR).attr("src");
+            if (imageLink != null && !Objects.equals(imageLink, "")){
+                if (!imageLink.contains("no-cover")){
+                    log.debug("Got high resolution image link {'highResImageLink':{}}", imageLink);
+                } else {
+                    imageLink = "img/goods/no_image.jpg";
+                }
+            } else {
+                log.warn("Can't find image link, returning default");
+                imageLink = "img/goods/no_image.jpg";
+            }
+            return imageLink;
         }
 
         public String getOfferLinkFromDocument(Element document) {
             return "";
         }
     }
-
 }
