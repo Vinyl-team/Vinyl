@@ -69,7 +69,7 @@ public class OneVinylOffersServlet extends HttpServlet {
         }
 
         for (Offer offer : offers) {
-            var offerShopParser = parserHolder.getShopParser(offer.getShopId());
+            var offerShopParser = parserHolder.getShopParserByShopId(offer.getShopId());
             var shop = shopsFromOffers.stream().filter(store -> store.getId() == offer.getShopId()).findFirst().get();
             if (offerShopParser.isPresent()) {
                 VinylParser shopParser = offerShopParser.get();

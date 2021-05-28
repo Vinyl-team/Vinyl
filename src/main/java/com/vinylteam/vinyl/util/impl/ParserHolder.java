@@ -19,7 +19,7 @@ public class ParserHolder {
         this.parsers.addAll(parsers);
     }
 
-    public Optional<VinylParser> getShopParser(long shopId){
+    public Optional<VinylParser> getShopParserByShopId(long shopId){
         return parsers.stream()
                 .filter(parser -> parser.getShopId() == shopId)
                 .findFirst();
