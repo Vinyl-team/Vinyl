@@ -29,8 +29,8 @@ public class CloneNlDetailedParserTest {
 
     static Stream<Arguments> getTestData() {
         return Stream.of(
-                Arguments.of(new CloneNlParser.DefaultDetailedVinylParser(), getVinylElement("cloneNLItem.html")),
-                Arguments.of(new CloneNlParser.OnePageDetailedVinylParser(), getVinylElement("cloneNLItemOnePage.html"))
+                Arguments.of(new CloneNlParser.DefaultDetailedVinylParser(), getVinylElement("HtmlPages/cloneNLItem.html")),
+                Arguments.of(new CloneNlParser.OnePageDetailedVinylParser(), getVinylElement("HtmlPages/cloneNLItemOnePage.html"))
                 );
     }
 
@@ -101,7 +101,7 @@ public class CloneNlDetailedParserTest {
     @Test
     @DisplayName("Checks whether offer link is received from HTML Element that is a part of list")
     void getOfferLinkFromDocumentTest()  {
-        var vinylElement = getVinylElement("cloneNLItem.html");
+        var vinylElement = getVinylElement("HtmlPages/cloneNLItem.html");
         String offerLink = new CloneNlParser.DefaultDetailedVinylParser().getOfferLinkFromDocument(vinylElement);
         assertNotNull(offerLink);
         assertFalse(offerLink.isEmpty());
@@ -110,7 +110,7 @@ public class CloneNlDetailedParserTest {
     @Test
     @DisplayName("Checks whether offer link is empty from HTML Element that represents one vinyl Item")
     void getOfferLinkFromOnePAgeDocumentTest()  {
-        var vinylElement = getVinylElement("cloneNLItemOnePage.html");
+        var vinylElement = getVinylElement("HtmlPages/cloneNLItemOnePage.html");
         String offerLink = new CloneNlParser.OnePageDetailedVinylParser().getOfferLinkFromDocument(vinylElement);
         assertNotNull(offerLink);
         assertTrue(offerLink.isEmpty());
