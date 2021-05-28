@@ -65,7 +65,7 @@ public class OneVinylOffersServlet extends HttpServlet {
                     uniqueVinyl.getRelease(), uniqueVinyl.getFullName());
             attributes.put("discogsLink", discogsLink);
         } catch (ParseException e) {
-            log.error("discogsService.getDiscogsLink() thrown ParseException", e);
+            log.error("Error while getting discogs link for unique vinyl, ParseException thrown {'uniqueVinyl':{}}", uniqueVinyl, e);
         }
 
         for (Offer offer : offers) {

@@ -2,7 +2,6 @@ package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.RawOffer;
-import com.vinylteam.vinyl.util.VinylParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,7 +12,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Slf4j
-public class DecksParser implements VinylParser {
+public class DecksParser extends AbstractVinylParser {
 
     private static final String BASE_LINK = "https://www.decks.de";
     private static final String START_PAGE_LINK = BASE_LINK + "/decks/workfloor/lists/list_db.php";
@@ -140,13 +139,6 @@ public class DecksParser implements VinylParser {
         return rawOfferSet;
     }
 
-    public boolean isValid(RawOffer rawOffer) {
-        return rawOffer.getPrice() != 0d
-                && rawOffer.getCurrency().isPresent()
-                && !rawOffer.getRelease().isEmpty()
-                && rawOffer.getOfferLink() != null;
-    }
-
     public HashSet<String> getOfferLinks(HashSet<String> pageLinks) {
         HashSet<String> offerLinks = new HashSet<>();
         for (String pageLink : pageLinks) {
@@ -193,16 +185,6 @@ public class DecksParser implements VinylParser {
         }
         log.info("Got pages from Decks.de: {}", pageLinks.size());
         return pageLinks;
-    }
-
-    Optional<Document> getDocument(String url) {
-        try {
-            return Optional.ofNullable(Jsoup.connect(url).get());
-        } catch (IOException e) {
-            log.warn("Page represented by the link will be skipped, since some error happened while getting document" +
-                    " by link {'link':{}}", url, e);
-            return Optional.empty();
-        }
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.RawOffer;
-import com.vinylteam.vinyl.util.VinylParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
@@ -14,7 +13,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Slf4j
-public class VinylUaParser implements VinylParser {
+public class VinylUaParser extends AbstractVinylParser {
 
     private static final String START_LINK = "http://vinyl.ua";
     private static final String SELECTOR_SCRIPT_WITH_HIGH_RES_IMAGE_LINK = "script:containsData(openPhotoSwipe)";
@@ -212,17 +211,6 @@ public class VinylUaParser implements VinylParser {
         String catNumber = document.select(SELECTOR_CATALOGUE_NUMBER).text();
         log.debug("Got catNumber from page by offer link {'catNumber':{}, 'offerLink':{}}", catNumber, document.location());
         return catNumber;
-    }
-
-    public boolean isValid(RawOffer rawOffer) {
-        boolean isValid = false;
-        if (rawOffer.getPrice() != 0.
-                && rawOffer.getCurrency().isPresent()
-                && !rawOffer.getRelease().isEmpty()
-                && rawOffer.getOfferLink() != null) {
-            isValid = true;
-        }
-        return isValid;
     }
 
     @Override

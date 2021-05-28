@@ -12,4 +12,5 @@ public interface VinylParser extends HasShopIdentifier {
     RawOffer getRawOfferFromOfferLink(String offerLink);
 
     boolean isValid(RawOffer rawOffer);
+
 }

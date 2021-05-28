@@ -3,7 +3,6 @@ package com.vinylteam.vinyl.util.impl;
 import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.RawOffer;
 import com.vinylteam.vinyl.util.PriceUtils;
-import com.vinylteam.vinyl.util.VinylParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,7 +18,7 @@ import java.util.stream.IntStream;
 import static java.util.stream.Collectors.toSet;
 
 @Slf4j
-public class CloneNlParser implements VinylParser {
+public class CloneNlParser extends AbstractVinylParser {
 
     protected static final String BASE_LINK = "https://clone.nl";
     private static final String CATALOG_ROOT_LINK = BASE_LINK + "/genres";
@@ -84,18 +83,6 @@ public class CloneNlParser implements VinylParser {
                 .map(link -> link.replace("/all/", "/instock/"))
                 .flatMap(genre -> getAllPagesByGenre(genre).stream())
                 .collect(toSet());
-    }
-
-    @Override
-   public boolean isValid(RawOffer rawOffer) {
-        boolean isValid = rawOffer.getPrice() != 0d
-                && rawOffer.getCurrency().isPresent()
-                && !rawOffer.getRelease().isEmpty()
-                && rawOffer.getOfferLink() != null;
-        if (!isValid) {
-            log.error("Raw offer isn't valid {'rawOffer':{}}", rawOffer);
-        }
-        return isValid;
     }
 
     Set<RawOffer> readOffersFromAllPages(Set<String> pageLinks) {
@@ -172,17 +159,6 @@ public class CloneNlParser implements VinylParser {
         return rawOffer;
     }
 
-    Optional<Document> getDocument(String url) {
-        try {
-            documentCounter.addAndGet(1);
-            log.info("Document {} was read", documentCounter.get());
-            return Optional.ofNullable(Jsoup.connect(url).get());
-        } catch (IOException e) {
-            log.warn("Page represented by the link will be skipped, since some error happened while getting document by link {'link':{}, 'totalDocuments':{}}", url, documentCounter.get(), e);
-            return Optional.empty();
-        }
-    }
-
     @Override
     public long getShopId() {
         return SHOP_ID;
@@ -218,6 +194,7 @@ public class CloneNlParser implements VinylParser {
         private static final String RELEASE_SELECTOR = "DIV.description > H2 + H3 > A";
         private static final String VINYL_GENRES_SELECTOR = "DIV.tagsbuttons > A.label";
         private static final String PRICE_DETAILS_SELECTOR = "DIV.release TABLE.availability A.addtocart";
+        public static final String CATALOG_NUMBER_SELECTOR = "span[itemprop=catalogNumber]";
 
         @Override
         public String getGenreFromDocument(Element document) {
@@ -233,7 +210,7 @@ public class CloneNlParser implements VinylParser {
         }
 
         public String getCatNumberFromDocument(Element document) {
-            return document.select("span[itemprop=catalogNumber]").text();
+            return document.select(CATALOG_NUMBER_SELECTOR).text();
         }
 
         public Boolean getInStockInfoFromDocument(Element document) {
@@ -337,4 +314,5 @@ public class CloneNlParser implements VinylParser {
             return "";
         }
     }
+
 }
