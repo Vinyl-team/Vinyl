@@ -37,4 +37,5 @@ public abstract class VinylParser {
             return Optional.empty();
         }
     }
+
 }
