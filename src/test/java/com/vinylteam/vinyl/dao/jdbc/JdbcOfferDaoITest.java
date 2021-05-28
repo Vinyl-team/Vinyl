@@ -1,6 +1,5 @@
 package com.vinylteam.vinyl.dao.jdbc;
 
-import com.vinylteam.vinyl.dao.OfferDao;
 import com.vinylteam.vinyl.entity.Offer;
 import com.vinylteam.vinyl.entity.Shop;
 import com.vinylteam.vinyl.entity.UniqueVinyl;

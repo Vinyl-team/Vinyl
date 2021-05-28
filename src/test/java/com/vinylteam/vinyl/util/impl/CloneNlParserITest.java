@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CloneNlParserITest {
 
-    private CloneNlParser parser = new CloneNlParser();
+    private final CloneNlParser parser = new CloneNlParser();
 
     @Test
     @DisplayName("Checks whether genre links can be received")
