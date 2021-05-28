@@ -29,38 +29,14 @@ import static org.mockito.Mockito.*;
 
 class OneVinylOffersServletTest {
 
-    private class MockVinylParser implements VinylParser {
-
-        @Override
-        public long getShopId() {
-            return 0;
-        }
-
-        @Override
-        public List<RawOffer> getRawOffersList() {
-            return null;
-        }
-
-        @Override
-        public RawOffer getRawOfferFromOfferLink(String offerLink) {
-            var rawOffer = new RawOffer();
-            rawOffer.setPrice(12.11d);
-            return rawOffer;
-        }
-
-        @Override
-        public boolean isValid(RawOffer rawOffer) {
-            return false;
-        }
-    }
-
     private final UniqueVinylService mockedUniqueVinylService = mock(UniqueVinylService.class);
     private final OfferService mockedOfferService = mock(OfferService.class);
     private final ShopService mockedShopService = mock(ShopService.class);
     private final InOrder inOrderUniqueVinylService = inOrder(mockedUniqueVinylService);
     private final InOrder inOrderOfferService = inOrder(mockedOfferService);
     private final DiscogsService discogsService = mock(DiscogsService.class);
-    private final ParserHolder parserHolder = new ParserHolder(List.of(new MockVinylParser()));
+    private final VinylParser parser = mock(VinylParser.class);
+    private final ParserHolder parserHolder = new ParserHolder(List.of(parser));
     private final OneVinylOffersServlet oneVinylOffersServlet = new OneVinylOffersServlet(mockedUniqueVinylService,
             mockedOfferService, mockedShopService, discogsService, parserHolder);
 
@@ -104,6 +80,9 @@ class OneVinylOffersServletTest {
         when(mockedOfferService.findManyByUniqueVinylId(1)).thenReturn(offers);
         when(mockedOfferService.getListOfShopIds(offers)).thenReturn(shopsIds);
         when(mockedShopService.getManyByListOfIds(shopsIds)).thenReturn(shopsByIds);
+        RawOffer returnedOffer = new RawOffer();
+        returnedOffer.setPrice(12.11d);
+        when(parser.getRawOfferFromOfferLink(any())).thenReturn(returnedOffer);
 
         when(mockedUniqueVinyl.getArtist()).thenReturn("artist1");
         when(mockedUniqueVinylService.findManyByArtist("artist1")).thenReturn(uniqueVinyls);
@@ -120,6 +99,7 @@ class OneVinylOffersServletTest {
         inOrderOfferService.verify(mockedOfferService).findManyByUniqueVinylId(1);
         inOrderOfferService.verify(mockedOfferService).getListOfShopIds(offers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
+        verify(parser).getRawOfferFromOfferLink(any());
 
         verify(mockedUniqueVinyl, times(4)).getArtist();
         inOrderUniqueVinylService.verify(mockedUniqueVinylService).findManyByArtist("artist1");
@@ -159,6 +139,7 @@ class OneVinylOffersServletTest {
         inOrderOfferService.verify(mockedOfferService).findManyByUniqueVinylId(1L);
         inOrderOfferService.verify(mockedOfferService).getListOfShopIds(offers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
+        verify(parser).getRawOfferFromOfferLink(any());
 
         verify(mockedUniqueVinyl, times(4)).getArtist();
         inOrderUniqueVinylService.verify(mockedUniqueVinylService).findManyByArtist("artist1");
@@ -196,6 +177,7 @@ class OneVinylOffersServletTest {
         inOrderOfferService.verify(mockedOfferService).findManyByUniqueVinylId(1L);
         inOrderOfferService.verify(mockedOfferService).getListOfShopIds(offers);
         verify(mockedShopService).getManyByListOfIds(shopsIds);
+        verify(parser).getRawOfferFromOfferLink(any());
 
         verify(mockedUniqueVinyl, times(4)).getArtist();
         inOrderUniqueVinylService.verify(mockedUniqueVinylService).findManyByArtist("artist1");
