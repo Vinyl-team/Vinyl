@@ -1,4 +1,4 @@
-package com.vinylteam.vinyl.util;
+package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.RawOffer;
 import com.vinylteam.vinyl.util.impl.VinylParser;

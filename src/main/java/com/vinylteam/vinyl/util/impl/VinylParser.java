@@ -12,12 +12,6 @@ import java.util.Optional;
 @Slf4j
 public abstract class VinylParser {
 
-    public abstract long getShopId();
-
-    public abstract List<RawOffer> getRawOffersList();
-
-    public abstract RawOffer getRawOfferFromOfferLink(String offerLink);;
-
     public boolean isValid(RawOffer rawOffer) {
         boolean isValid = false;
         if (rawOffer.getPrice() != 0.
@@ -29,7 +23,13 @@ public abstract class VinylParser {
         return isValid;
     }
 
-    public Optional<Document> getDocument(String url) {
+    public abstract RawOffer getRawOfferFromOfferLink(String offerLink);;
+
+    protected abstract long getShopId();
+
+    protected abstract List<RawOffer> getRawOffersList();
+
+    protected Optional<Document> getDocument(String url) {
         try {
             return Optional.ofNullable(Jsoup.connect(url).get());
         } catch (IOException e) {
