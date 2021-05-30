@@ -2,7 +2,6 @@ package com.vinylteam.vinyl.util.impl;
 
 import com.vinylteam.vinyl.entity.Currency;
 import com.vinylteam.vinyl.entity.RawOffer;
-import com.vinylteam.vinyl.util.VinylParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.DataNode;
@@ -14,7 +13,7 @@ import java.io.IOException;
 import java.util.*;
 
 @Slf4j
-public class VinylUaParser implements VinylParser {
+public class VinylUaParser extends VinylParser {
 
     private static final String START_LINK = "http://vinyl.ua";
     private static final String SELECTOR_SCRIPT_WITH_HIGH_RES_IMAGE_LINK = "script:containsData(openPhotoSwipe)";
@@ -26,6 +25,7 @@ public class VinylUaParser implements VinylParser {
     private static final String SELECTOR_GENRE_ANCHORS = "nav#intro div#bs-example-navbar-collapse-1 > ul.nav > li.dropdown > ul.dropdown-menu > li > a";
     private static final String SELECTOR_PAGE_ANCHORS = "div.pagination-wrapper > ul.pagination > li:not(.nav-pagi) > a";
     private static final String SELECTOR_OFFER_ANCHORS = "div.row > div.col-sm-9 > div.row div.vinyl-release > div.boxed > p > a";
+    private static final int SHOP_ID = 1;
 
     HashSet<String> getGenresLinks() {
         HashSet<String> genreLinks = new HashSet<>();
@@ -126,7 +126,7 @@ public class VinylUaParser implements VinylParser {
             log.error("Error while getting document by link {'link':{}}", offerLink, e);
             throw new RuntimeException("Fail while getting a document by " + offerLink, e);
         }
-        rawOffer.setShopId(1);
+        rawOffer.setShopId(SHOP_ID);
         rawOffer.setRelease(getReleaseFromDocument(document));
         rawOffer.setArtist(getArtistFromDocument(document));
         rawOffer.setPrice(getPriceFromDocument(document));
@@ -215,17 +215,6 @@ public class VinylUaParser implements VinylParser {
         return catNumber;
     }
 
-    boolean isValid(RawOffer rawOffer) {
-        boolean isValid = false;
-        if (rawOffer.getPrice() != 0.
-                && rawOffer.getCurrency().isPresent()
-                && !rawOffer.getRelease().isEmpty()
-                && rawOffer.getOfferLink() != null) {
-            isValid = true;
-        }
-        return isValid;
-    }
-
     @Override
     public List<RawOffer> getRawOffersList() {
         HashSet<String> genresLinks = getGenresLinks();
@@ -241,4 +230,8 @@ public class VinylUaParser implements VinylParser {
         return rawOffers;
     }
 
+    @Override
+    public long getShopId() {
+        return SHOP_ID;
+    }
 }
