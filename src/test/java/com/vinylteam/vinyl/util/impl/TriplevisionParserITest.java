@@ -148,7 +148,7 @@ class TriplevisionParserITest {
     }
 
     @Test
-    @DisplayName("Returns document from https://www.decks.de")
+    @DisplayName("Returns document from https://www.triplevision.nl/releases/")
     void getDocument() {
         //prepare
         String testUrl = "https://www.triplevision.nl/releases/";

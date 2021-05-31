@@ -9,7 +9,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
 import java.util.*;
 
 @Slf4j
@@ -18,6 +24,8 @@ public class TriplevisionParser implements VinylParser {
     private static final String BASE_LINK = "https://www.triplevision.nl";
     private static final String START_PAGE_LINK = BASE_LINK + "/releases";
     private static final int SHOP_ID = 10;
+
+    int i = 0;
 
     @Override
     public List<RawOffer> getRawOffersList() {
@@ -174,38 +182,45 @@ public class TriplevisionParser implements VinylParser {
             }
 //            counter++;
         }
-//        Optional<Document> genreDocument = getDocument(allGenres);
-//        if (genreDocument.isPresent()) {
-//            Elements elementsWithLinkToPages = genreDocument.get().
-//                    getElementsByClass("pager").select("a");
-//        }
-//
-//        String pageCount;
-//        List<String> pageCountList = new ArrayList<>();
-//        if (genreDocument.isPresent()) {
-//            Element iframeElement = genreDocument.get().select("iframe").first();
-//            Elements elementsWithLinkToPages = iframeElement.parents().get(0).
-//                    getElementsByClass("pager").select("a");
-//            String templateLink = START_PAGE_LINK + elementsWithLinkToPages.get(0).attr("href");
-//            for (Element elementWithLinkToPages : elementsWithLinkToPages) {
-//                pageCountList.add(elementWithLinkToPages.text());
-//            }
-//            if (pageCountList.size() > 1) {
-//                pageCount = pageCountList.get(pageCountList.size() - 2);
-//            } else {
-//                pageCount = pageCountList.get(pageCountList.size() - 1);
-//            }
-//            for (int i = 0; i < Integer.parseInt(pageCount); i++) {
-//                pageLinks.add(templateLink.replace("aktuell=0", "aktuell=" + i));
-//            }
-//        }
         log.info("Got pages from Decks.de: {}", pageLinks.size());
         return pageLinks;
     }
 
     Optional<Document> getDocument(String url) {
         try {
-            return Optional.ofNullable(Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11").get());
+//            URL link = new URL(url);
+//            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("159.224.235.218", 443)); // or whatever your proxy is
+//            HttpURLConnection uc = (HttpURLConnection)link.openConnection(proxy);
+//
+//            uc.connect();
+//
+//            String line = null;
+//            StringBuffer tmp = new StringBuffer();
+//            BufferedReader in = new BufferedReader(new InputStreamReader(uc.getInputStream()));
+//            while ((line = in.readLine()) != null) {
+//                tmp.append(line);
+//            }
+//
+//            return Optional.ofNullable(Jsoup.parse(String.valueOf(tmp)));
+//            return Optional.ofNullable(Jsoup.connect(url)
+//                    .proxy("127.0.0.1", 443)
+//                    .userAgent("Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2")
+//                    .header("Content-Language", "en-US")
+//                    .get());
+//            Proxy proxy = new Proxy(Proxy.Type.HTTP,
+//                    new InetSocketAddress("159.224.235.218", 8080));
+//
+//            return Optional.ofNullable(Jsoup.connect(url)
+//                    .proxy(proxy)
+//                    .get());
+            return Optional.ofNullable(Jsoup.connect(url).userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11")
+                    //.ignoreContentType(true)
+                    //.followRedirects(true)
+                    //.ignoreHttpErrors(true)
+                    //.validateTLSCertificates(false)
+                    //.timeout(TIME_OUT)
+                    //.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("", 8080)))
+                    .get());
         } catch (IOException e) {
             log.warn("Page represented by the link will be skipped, since some error happened while getting document" +
                     " by link {'link':{}}", url, e);
